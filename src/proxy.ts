@@ -136,8 +136,12 @@ export default async function proxy(request: NextRequest) {
 
   const isLoginRoute = pathname === '/login'
   if (isLoginRoute) {
-    if (user || hasValidAccessToken) {
-      Logger.debug('[proxy] request has valid session')
+    // Only auto-redirect to library if we have a valid LEGACY session.
+    // If we only have a Supabase session, we stay on /login to allow the user 
+    // to complete the backend login or to avoid redirect loops if the backend 
+    // doesn't recognize the Supabase token yet.
+    if (hasValidAccessToken) {
+      Logger.debug('[proxy] request has valid legacy session, redirecting to library')
       return redirect(createUrl('/library'))
     }
     return finalize(supabaseResponse)
