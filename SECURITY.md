@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within this project, please send an e-mail to security@organic.nz. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within this project, please send an e-mail to tamerlanium@gmail.com. All security vulnerabilities will be promptly addressed.
 
 Please include the following information in your report:
 - Type of issue (e.g., cross-site scripting, SQL injection, remote code execution)
