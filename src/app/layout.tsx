@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale } from 'next-intl/server'
 
+import { Analytics } from '@vercel/analytics/react'
 import GlobalToastContainer from '../components/widgets/GlobalToastContainer'
 import { CardSizeProvider } from '../contexts/CardSizeContext'
 import { ToastProvider } from '../contexts/ToastContext'
@@ -19,12 +20,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} className={`theme-${theme}`}>
-      <body className="overflow-hidden">
+      <body className="overflow-hidden" suppressHydrationWarning>
         <NextIntlClientProvider>
           <ToastProvider>
             <CardSizeProvider>
               {children}
               <GlobalToastContainer />
+              <Analytics />
             </CardSizeProvider>
           </ToastProvider>
         </NextIntlClientProvider>
