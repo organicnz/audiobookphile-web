@@ -150,7 +150,10 @@ export default async function proxy(request: NextRequest) {
   // Non-login routes
   if (!user && !hasValidAccessToken && !hasValidRefreshToken) {
     Logger.debug(`[proxy] no valid session found`)
-    return redirect(createUrl('/login'))
+    if (!isLoginRoute) {
+      return redirect(createUrl('/login'))
+    }
+    return finalize(supabaseResponse)
   }
 
   // Handle legacy token refresh if needed (fallback)
