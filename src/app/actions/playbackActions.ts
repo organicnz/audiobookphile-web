@@ -3,10 +3,13 @@
 import * as api from '@/lib/api'
 import type { PlaybackSession, StartSessionPayload } from '@/types/api'
 import { headers } from 'next/headers'
+import { syncProgressToSupabase } from '@/utils/supabase/progress'
 
 interface SessionSyncData {
   currentTime: number
   timeListened: number
+  libraryItemId?: string
+  episodeId?: string | null
 }
 
 /**
@@ -39,9 +42,21 @@ export async function syncPlaybackSession(sessionId: string, syncData: SessionSy
   const headersList = await headers()
   const userAgent = headersList.get('user-agent') || ''
 
+  // Mirror to Supabase if IDs are provided
+  if (syncData.libraryItemId) {
+    await syncProgressToSupabase({
+      library_item_id: syncData.libraryItemId,
+      episode_id: syncData.episodeId,
+      current_time_pos: syncData.currentTime
+    })
+  }
+
   await api.apiRequest<void>(`/api/session/${sessionId}/sync`, {
     method: 'POST',
-    body: JSON.stringify(syncData),
+    body: JSON.stringify({
+      currentTime: syncData.currentTime,
+      timeListened: syncData.timeListened
+    }),
     headers: {
       'User-Agent': userAgent
     }
@@ -57,9 +72,23 @@ export async function closePlaybackSession(sessionId: string, syncData: SessionS
   const headersList = await headers()
   const userAgent = headersList.get('user-agent') || ''
 
+  // Mirror final progress to Supabase
+  if (syncData?.libraryItemId) {
+    await syncProgressToSupabase({
+      library_item_id: syncData.libraryItemId,
+      episode_id: syncData.episodeId,
+      current_time_pos: syncData.currentTime
+    })
+  }
+
   await api.apiRequest<void>(`/api/session/${sessionId}/close`, {
     method: 'POST',
-    body: syncData ? JSON.stringify(syncData) : undefined,
+    body: syncData
+      ? JSON.stringify({
+          currentTime: syncData.currentTime,
+          timeListened: syncData.timeListened
+        })
+      : undefined,
     headers: {
       'User-Agent': userAgent
     }
