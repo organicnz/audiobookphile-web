@@ -44,3 +44,4 @@ next-env.d.ts
 express-server
 *.vue
 .idea
+.env*.local
