@@ -10,11 +10,17 @@ import { UserLoginResponse } from '@/types/api'
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
 
+  console.log('[MainLayout] checking auth...')
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    data: { session },
+    error
+  } = await supabase.auth.getSession()
+  const user = session?.user
+  const token = session?.access_token || null
+  console.log('[MainLayout] auth result:', { user: user?.id, hasToken: !!token, error })
 
   if (!user) {
+    console.log('[MainLayout] no user found, redirecting to /login')
     redirect('/login')
   }
 
@@ -90,7 +96,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <SocketProvider accessToken={null}>
+    <SocketProvider accessToken={token}>
       <UserProvider initialUser={mockUser}>
         <TasksProvider>
           <MetadataProvider>

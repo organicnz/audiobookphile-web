@@ -3,6 +3,7 @@ import { createServerClient } from '@supabase/ssr'
 import { getServerStatus } from './lib/api'
 import { isTokenExpired } from './lib/jwt'
 import Logger from './lib/Logger'
+import { Database } from '@/types/supabase'
 
 /** Next.js App Router sends this on Server Action POSTs */
 const NEXT_ACTION_HEADER = 'next-action'
@@ -19,7 +20,7 @@ export default async function proxy(request: NextRequest) {
     request,
   })
 
-  const supabase = createServerClient(
+  const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -28,7 +29,7 @@ export default async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
           })
@@ -41,7 +42,9 @@ export default async function proxy(request: NextRequest) {
   )
 
   // Refresh Supabase session
-  const { data: { user } } = await supabase.auth.getUser()
+  console.log('[Proxy] refreshing session...')
+  const { data: { user }, error } = await supabase.auth.getUser()
+  console.log('[Proxy] getUser result:', { user: user?.id, error })
 
   const accessTokenCookie = request.cookies.get('access_token')?.value
   const refreshTokenCookie = request.cookies.get('refresh_token')?.value

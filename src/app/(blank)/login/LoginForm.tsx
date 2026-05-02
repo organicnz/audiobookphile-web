@@ -23,10 +23,12 @@ export default function LoginForm() {
       setError('')
       setLoading(true)
       try {
+        console.log('[LoginForm] attempting sign in with password for:', email)
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password
         })
+        console.log('[LoginForm] sign in result:', { user: data.user?.id, error })
 
         if (error) {
           console.error('[LoginForm] Error:', error.message)
@@ -37,6 +39,7 @@ export default function LoginForm() {
 
         // Get redirect parameter
         const redirect = searchParams.get('redirect')
+        console.log('[LoginForm] redirecting to:', redirect || '/')
         if (redirect) {
           router.replace(redirect)
         } else {
