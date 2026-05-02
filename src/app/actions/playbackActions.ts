@@ -44,11 +44,15 @@ export async function syncPlaybackSession(sessionId: string, syncData: SessionSy
 
   // Mirror to Supabase if IDs are provided
   if (syncData.libraryItemId) {
-    await syncProgressToSupabase({
-      library_item_id: syncData.libraryItemId,
-      episode_id: syncData.episodeId,
-      current_time_pos: syncData.currentTime
-    })
+    try {
+      await syncProgressToSupabase({
+        library_item_id: syncData.libraryItemId,
+        episode_id: syncData.episodeId,
+        current_time_pos: syncData.currentTime
+      })
+    } catch (err) {
+      console.error('[Supabase] Mirroring failed:', err)
+    }
   }
 
   await api.apiRequest<void>(`/api/session/${sessionId}/sync`, {
@@ -74,11 +78,15 @@ export async function closePlaybackSession(sessionId: string, syncData: SessionS
 
   // Mirror final progress to Supabase
   if (syncData?.libraryItemId) {
-    await syncProgressToSupabase({
-      library_item_id: syncData.libraryItemId,
-      episode_id: syncData.episodeId,
-      current_time_pos: syncData.currentTime
-    })
+    try {
+      await syncProgressToSupabase({
+        library_item_id: syncData.libraryItemId,
+        episode_id: syncData.episodeId,
+        current_time_pos: syncData.currentTime
+      })
+    } catch (err) {
+      console.error('[Supabase] Mirroring final progress failed:', err)
+    }
   }
 
   await api.apiRequest<void>(`/api/session/${sessionId}/close`, {
