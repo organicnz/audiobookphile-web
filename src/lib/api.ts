@@ -278,6 +278,16 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
         didProactiveRefresh = true
       }
 
+      // Fallback to Supabase session if no legacy token
+      if (!accessToken) {
+        const { createClient } = await import('@/utils/supabase/server')
+        const supabase = await createClient()
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session) {
+          accessToken = session.access_token
+        }
+      }
+
       if (!accessToken) {
         throw new UnauthorizedError('No authentication token found')
       }
