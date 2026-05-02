@@ -108,13 +108,18 @@ export default async function proxy(request: NextRequest) {
     return response
   }
 
-  const redirect = (url: URL): NextResponse => {
-    Logger.debug(`[proxy] redirecting to: ${url}`)
+  function redirect(url: string | URL, source: string): NextResponse {
+    Logger.debug(`[proxy] redirecting to: ${url} (reason: ${source})`)
     const response = NextResponse.redirect(url)
-    // Transfer cookies from supabaseResponse to the redirect response
-    supabaseResponse.cookies.getAll().forEach(cookie => {
-      response.cookies.set(cookie.name, cookie.value, cookie)
-    })
+    response.headers.set('x-proxy-redirect-reason', source)
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
+
+    // Copy cookies from the current supabaseResponse to the redirect response
+    if (supabaseResponse) {
+      supabaseResponse.cookies.getAll().forEach(cookie => {
+        response.cookies.set(cookie.name, cookie.value, cookie)
+      })
+    }
     return applySettings(response)
   }
 
@@ -141,8 +146,7 @@ export default async function proxy(request: NextRequest) {
     // to complete the backend login or to avoid redirect loops if the backend 
     // doesn't recognize the Supabase token yet.
     if (hasValidAccessToken) {
-      Logger.debug('[proxy] request has valid legacy session, redirecting to library')
-      return redirect(createUrl('/library'))
+      return redirect(createUrl('/library'), 'login-to-library')
     }
     return finalize(supabaseResponse)
   }
@@ -151,7 +155,7 @@ export default async function proxy(request: NextRequest) {
   if (!user && !hasValidAccessToken && !hasValidRefreshToken) {
     Logger.debug(`[proxy] no valid session found`)
     if (!isLoginRoute) {
-      return redirect(createUrl('/login'))
+      return redirect(createUrl('/login'), 'no-session-redirect')
     }
     return finalize(supabaseResponse)
   }
@@ -168,11 +172,11 @@ export default async function proxy(request: NextRequest) {
     if (pathname !== '/') {
       refreshUrl.searchParams.set('redirect', path)
     }
-    return redirect(refreshUrl)
+    return redirect(refreshUrl, 'fallback-refresh')
   }
 
   if (pathname === '/') {
-    return redirect(createUrl('/library'))
+    return redirect(createUrl('/library'), 'root-to-library')
   }
 
   supabaseResponse.headers.set('x-current-path', path)
