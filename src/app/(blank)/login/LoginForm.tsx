@@ -5,15 +5,17 @@ import TextInput from '@/components/ui/TextInput'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
+import { createClient } from '@/utils/supabase/client'
 
 export default function LoginForm() {
   const t = useTypeSafeTranslations()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const supabase = createClient()
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -21,29 +23,26 @@ export default function LoginForm() {
       setError('')
       setLoading(true)
       try {
-        const res = await fetch('/internal-api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
         })
-        if (!res.ok) {
-          const data = await res.json()
-          console.error('[LoginForm] Error:', res.statusText, data?.error)
-          setError(data?.error || t('ErrorLoginFailed'))
+
+        if (error) {
+          console.error('[LoginForm] Error:', error.message)
+          setError(error.message || t('ErrorLoginFailed'))
           setLoading(false)
           return
         }
-        const userResponse = await res.json()
-        const userDefaultLibraryId = userResponse?.userDefaultLibraryId
 
         // Get redirect parameter
         const redirect = searchParams.get('redirect')
         if (redirect) {
           router.replace(redirect)
-        } else if (userDefaultLibraryId) {
-          router.replace(`/library/${userDefaultLibraryId}`)
         } else {
-          router.replace('/settings')
+          // In a real app, we might fetch user settings from Supabase here
+          // For now, redirect to root or settings
+          router.replace('/')
         }
       } catch (error) {
         console.error('[LoginForm] Error:', error)
@@ -51,7 +50,7 @@ export default function LoginForm() {
         setLoading(false)
       }
     },
-    [username, password, t, router, searchParams]
+    [email, password, t, router, searchParams, supabase]
   )
 
   return (
@@ -59,7 +58,7 @@ export default function LoginForm() {
       <h1 className="text-postcss mb-6 text-center text-2xl font-bold">{t('LabelLogin')}</h1>
 
       <div className="mb-4 flex flex-col gap-4">
-        <TextInput label={t('LabelUsername')} value={username} autocomplete="username" onChange={setUsername} />
+        <TextInput label={t('LabelEmail')} value={email} autocomplete="email" onChange={setEmail} />
         <TextInput label={t('LabelPassword')} value={password} type="password" autocomplete="current-password" onChange={setPassword} />
       </div>
       {error && <div className="mb-4 text-center text-sm text-red-400">{error}</div>}

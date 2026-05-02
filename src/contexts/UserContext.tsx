@@ -3,6 +3,7 @@
 import { EReaderDevice, MediaProgress, ServerSettings, User, UserLoginResponse } from '@/types/api'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { useSocketEvent } from './SocketContext'
+import { createClient } from '@/utils/supabase/client'
 
 interface UserItemProgressUpdatedPayload {
   id: string // MediaProgress ID
@@ -30,6 +31,23 @@ export const UserContext = createContext<UserContextType | undefined>(undefined)
 
 export function UserProvider({ children, initialUser }: { children: ReactNode; initialUser: UserLoginResponse }) {
   const [currentUserData, setCurrentUserData] = useState<UserLoginResponse>(initialUser)
+  const supabase = createClient()
+
+  useEffect(() => {
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        // Handle sign out if needed, though MainLayout usually redirects
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        // We could refresh user data here if needed
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [supabase])
   const user = currentUserData.user
   const userIsAdminOrUp = user.type === 'admin' || user.type === 'root'
 

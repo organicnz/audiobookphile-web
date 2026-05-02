@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 import { getServerStatus } from './lib/api'
 import { isTokenExpired } from './lib/jwt'
 import Logger from './lib/Logger'
@@ -12,36 +13,55 @@ function isNextServerActionRequest(request: NextRequest): boolean {
 
 export default async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
+  const path = pathname + search
+
+  let supabaseResponse = NextResponse.next({
+    request,
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({
+            request,
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  // Refresh Supabase session
+  const { data: { user } } = await supabase.auth.getUser()
+
   const accessTokenCookie = request.cookies.get('access_token')?.value
   const refreshTokenCookie = request.cookies.get('refresh_token')?.value
   const languageCookie = request.cookies.get('language')?.value
   const themeCookie = request.cookies.get('theme')?.value
-  const path = pathname + search
 
   // Validate JWT tokens - treat expired tokens as non-existent
-  // Add 5 second buffer to proactively refresh tokens that are about to expire
   const hasValidAccessToken = !!(accessTokenCookie && !isTokenExpired(accessTokenCookie, 5))
   const hasValidRefreshToken = !!(refreshTokenCookie && !isTokenExpired(refreshTokenCookie, 5))
 
-  Logger.debug('[middleware] handling request for:', path)
-  if (accessTokenCookie && !hasValidAccessToken) {
-    Logger.debug('[middleware] access token is expired')
-  }
-  if (refreshTokenCookie && !hasValidRefreshToken) {
-    Logger.debug('[middleware] refresh token is expired')
-  }
+  Logger.debug('[proxy] handling request for:', path)
 
   // Helper to create URLs with correct host/port from request headers.
-  // nextUrl/url don't always containt the right host/port,
-  // but nextjs populates the x-forwarded-host and x-forwarded-proto headers correctly.
   const createUrl = (path: string) => {
     try {
       const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || request.nextUrl.host
       const protocol = request.headers.get('x-forwarded-proto') || (host.includes('localhost') || host.includes('127.0.0.1') ? 'http' : 'https')
       return new URL(path, `${protocol}://${host}`)
     } catch (error) {
-      Logger.error('[middleware] failed to create URL:', { path, error })
-      // Fallback: use the current request's URL as base
+      Logger.error('[proxy] failed to create URL:', { path, error })
       return new URL(path, request.nextUrl.origin)
     }
   }
@@ -55,7 +75,7 @@ export default async function proxy(request: NextRequest) {
         serverLanguage = statusResponse.language
       }
     } catch (error) {
-      Logger.error('[middleware] failed to fetch server status for language:', error)
+      Logger.error('[proxy] failed to fetch server status for language:', error)
     }
   }
 
@@ -63,7 +83,7 @@ export default async function proxy(request: NextRequest) {
   const shouldSetDefaultTheme = !themeCookie
 
   // Helper function to set language and theme cookies on any response
-  const setLanguageCookie = (response: NextResponse) => {
+  const applySettings = (response: NextResponse) => {
     if (serverLanguage) {
       response.cookies.set('language', serverLanguage, {
         httpOnly: false,
@@ -86,75 +106,67 @@ export default async function proxy(request: NextRequest) {
   }
 
   const redirect = (url: URL): NextResponse => {
-    Logger.debug(`[middleware] redirecting to: ${url}`)
-    return setLanguageCookie(NextResponse.redirect(url))
+    Logger.debug(`[proxy] redirecting to: ${url}`)
+    const response = NextResponse.redirect(url)
+    // Transfer cookies from supabaseResponse to the redirect response
+    supabaseResponse.cookies.getAll().forEach(cookie => {
+      response.cookies.set(cookie.name, cookie.value, cookie)
+    })
+    return applySettings(response)
   }
 
-  const next = (): NextResponse => {
-    Logger.debug(`[middleware] continuing to: ${path}`)
-    return setLanguageCookie(NextResponse.next())
+  const finalize = (response: NextResponse): NextResponse => {
+    Logger.debug(`[proxy] finalizing for: ${path}`)
+    // Transfer cookies from supabaseResponse to the final response if it's not the same object
+    if (response !== supabaseResponse) {
+      supabaseResponse.cookies.getAll().forEach(cookie => {
+        response.cookies.set(cookie.name, cookie.value, cookie)
+      })
+    }
+    return applySettings(response)
   }
 
   const isShareRoute = pathname.startsWith('/share/')
   if (isShareRoute) {
-    return next()
+    return finalize(supabaseResponse)
   }
 
   const isLoginRoute = pathname === '/login'
   if (isLoginRoute) {
-    if (hasValidAccessToken) {
-      Logger.debug('[middleware] request has valid accessToken')
-      const libraryUrl = createUrl('/library')
-      return redirect(libraryUrl)
-    } else if (hasValidRefreshToken) {
-      // Has valid refreshToken redirect to refresh
-      const refreshUrl = createUrl('/internal-api/refresh')
-      Logger.debug('[middleware] request has no valid accessToken but has valid refreshToken')
-      return redirect(refreshUrl)
+    if (user || hasValidAccessToken) {
+      Logger.debug('[proxy] request has valid session')
+      return redirect(createUrl('/library'))
     }
-
-    Logger.debug('[middleware] no valid tokens found')
-    return next()
+    return finalize(supabaseResponse)
   }
 
   // Non-login routes
-  if (!hasValidAccessToken && !hasValidRefreshToken) {
-    // No valid tokens found, redirect to login
-    Logger.debug(`[middleware] no valid tokens found`)
-    const loginUrl = createUrl('/login')
-    return redirect(loginUrl)
+  if (!user && !hasValidAccessToken && !hasValidRefreshToken) {
+    Logger.debug(`[proxy] no valid session found`)
+    return redirect(createUrl('/login'))
   }
 
-  if (!hasValidAccessToken && hasValidRefreshToken) {
-    // Server Actions POST to the page URL. Redirecting to /internal-api/refresh replaces the
-    // action response with a 302, so the client never receives the action result. Let the action
-    // run and refresh tokens in apiRequest (server-side) instead.
+  // Handle legacy token refresh if needed (fallback)
+  if (!user && !hasValidAccessToken && hasValidRefreshToken) {
     if (isNextServerActionRequest(request)) {
-      Logger.debug('[middleware] server action with expired access token; continuing so apiRequest can refresh')
-      const response = next()
-      response.headers.set('x-current-path', path)
-      return response
+      Logger.debug('[proxy] server action with expired access token; continuing so apiRequest can refresh')
+      supabaseResponse.headers.set('x-current-path', path)
+      return finalize(supabaseResponse)
     }
 
-    // Redirect to refresh token route with current path
     const refreshUrl = createUrl('/internal-api/refresh')
     if (pathname !== '/') {
       refreshUrl.searchParams.set('redirect', path)
     }
-    Logger.debug(`[middleware] valid accessToken not found, valid refreshToken found`)
     return redirect(refreshUrl)
   }
 
   if (pathname === '/') {
-    const libraryUrl = createUrl('/library')
-    return redirect(libraryUrl)
+    return redirect(createUrl('/library'))
   }
 
-  const response = next()
-  // Set current path to use for redirects on token refresh
-  response.headers.set('x-current-path', path)
-
-  return response
+  supabaseResponse.headers.set('x-current-path', path)
+  return finalize(supabaseResponse)
 }
 
 export const config = {
