@@ -146,42 +146,18 @@ export default async function proxy(request: NextRequest) {
   }
 
   const isShareRoute = pathname.startsWith('/share/')
-  if (isShareRoute) {
-    return finalize(supabaseResponse)
-  }
-
   const isLoginRoute = pathname === '/login'
-  if (isLoginRoute) {
-    if (hasValidAccessToken) {
-      return redirect(getRedirectUrl('/library'), 'login-to-library')
-    }
+
+  // Let the application handle redirects to /login or /library
+  // Middleware should focus on session refreshing and cookie sync
+  if (isLoginRoute || isShareRoute) {
     return finalize(supabaseResponse)
   }
 
-  // Non-login routes
-  if (!user && !hasValidAccessToken && !hasValidRefreshToken) {
-    Logger.debug(`[proxy] no valid session found; redirecting to login`)
-    return redirect(getRedirectUrl('/login'), 'no-session-redirect')
-  }
-
-  // Handle legacy token refresh if needed (fallback)
-  if (!user && !hasValidAccessToken && hasValidRefreshToken) {
-    if (isNextServerActionRequest(request)) {
-      Logger.debug('[proxy] server action with expired access token; continuing so apiRequest can refresh')
-      supabaseResponse.headers.set('x-current-path', path)
-      return finalize(supabaseResponse)
-    }
-
-    const refreshUrl = getRedirectUrl('/internal-api/refresh')
-    if (pathname !== '/') {
-      refreshUrl.searchParams.set('redirect', path)
-    }
-    return redirect(refreshUrl, 'fallback-refresh')
-  }
-
-  if (pathname === '/') {
-    return redirect(getRedirectUrl('/library'), 'root-to-library')
-  }
+  // Handle root redirect only if needed, but let's be safe and just continue
+  // if (pathname === '/') {
+  //   return redirect(getRedirectUrl('/library'), 'root-to-library')
+  // }
 
   supabaseResponse.headers.set('x-current-path', path)
   return finalize(supabaseResponse)
