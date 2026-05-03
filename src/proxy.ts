@@ -75,14 +75,17 @@ export default async function proxy(request: NextRequest) {
   let serverLanguage: string | null = null
   if (!languageCookie) {
     try {
-      const statusPromise = getServerStatus()
+      // Wrap in a try-catch and ensure it doesn't throw even if getServerStatus() fails
+      const statusPromise = getServerStatus().catch(() => null)
       const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000))
       const statusResponse = await Promise.race([statusPromise, timeoutPromise])
-      if (statusResponse && 'language' in statusResponse && statusResponse.language) {
+      
+      if (statusResponse && typeof statusResponse === 'object' && 'language' in statusResponse) {
         serverLanguage = statusResponse.language
       }
     } catch (error) {
-      Logger.error('[proxy] failed to fetch server status for language:', error)
+      // We already catch inside getServerStatus, but being extra safe here
+      Logger.debug('[proxy] skipping server language detection (backend unreachable)')
     }
   }
 
