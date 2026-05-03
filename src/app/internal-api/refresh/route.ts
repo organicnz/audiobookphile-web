@@ -21,7 +21,6 @@ async function handleRefresh(request: Request) {
     const refreshToken = cookieStore.get('refresh_token')?.value
 
     if (!refreshToken) {
-      console.log('No refresh token found')
       return NextResponse.json({ error: 'No refresh token found' }, { status: 401 })
     }
 

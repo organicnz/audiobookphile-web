@@ -40,6 +40,8 @@ export async function syncProgressToSupabase(payload: SupabaseProgressPayload) {
     })
 
   if (error) {
-    console.error('[Supabase] Failed to upsert media progress:', error.message)
+    // Only log actual database errors, ignoring network transient issues if needed
+    // or using a proper logger.
+    console.error(`[Supabase] Progress sync failed for ${payload.library_item_id}:`, error.message)
   }
 }
