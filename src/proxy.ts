@@ -58,26 +58,20 @@ export default async function proxy(request: NextRequest) {
 
   Logger.debug('[proxy] handling request for:', path)
 
-  // Helper to create URLs with correct host/port from request headers.
-  const createUrl = (path: string) => {
-    try {
-      const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || request.nextUrl.host
-      const protocol = request.headers.get('x-forwarded-proto') || (host.includes('localhost') || host.includes('127.0.0.1') ? 'http' : 'https')
-      return new URL(path, `${protocol}://${host}`)
-    } catch (error) {
-      Logger.error('[proxy] failed to create URL:', { path, error })
-      return new URL(path, request.nextUrl.origin)
-    }
+  // Helper to create URLs for redirects using the existing request URL context
+  const getRedirectUrl = (newPath: string) => {
+    const url = request.nextUrl.clone()
+    url.pathname = newPath
+    // Preserve existing search params if we're just changing the path
+    return url
   }
 
   // Fetch server language if cookie doesn't exist
   let serverLanguage: string | null = null
   if (!languageCookie) {
     try {
-      // Use a fast-failing status check for the middleware to avoid blocking
       const statusPromise = getServerStatus()
       const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000))
-      
       const statusResponse = await Promise.race([statusPromise, timeoutPromise])
       if (statusResponse && 'language' in statusResponse && statusResponse.language) {
         serverLanguage = statusResponse.language
@@ -113,14 +107,9 @@ export default async function proxy(request: NextRequest) {
     return response
   }
 
-  function redirect(url: string | URL, source: string): NextResponse {
-    Logger.debug(`[proxy] redirecting to: ${url} (reason: ${source})`)
-    const response = NextResponse.redirect(url)
-    response.headers.set('x-proxy-redirect-reason', source)
-    response.headers.set('Cache-Control', 'no-store, max-age=0')
-
-    // Copy cookies from the current supabaseResponse to the redirect response
-    if (supabaseResponse) {
+  const finalize = (response: NextResponse): NextResponse => {
+    // Transfer cookies from supabaseResponse to the final response if it's not the same object
+    if (response !== supabaseResponse) {
       supabaseResponse.cookies.getAll().forEach(cookie => {
         response.cookies.set(cookie.name, cookie.value, cookie)
       })
@@ -128,10 +117,22 @@ export default async function proxy(request: NextRequest) {
     return applySettings(response)
   }
 
-  const finalize = (response: NextResponse): NextResponse => {
-    Logger.debug(`[proxy] finalizing for: ${path}`)
-    // Transfer cookies from supabaseResponse to the final response if it's not the same object
-    if (response !== supabaseResponse) {
+  function redirect(url: string | URL, source: string): NextResponse {
+    const targetUrl = typeof url === 'string' ? new URL(url, request.url) : url
+    
+    // Prevent redirecting to the exact same path to avoid infinite loops
+    if (targetUrl.pathname === request.nextUrl.pathname && targetUrl.search === request.nextUrl.search) {
+      Logger.debug(`[proxy] skipping self-referential redirect to: ${targetUrl.pathname}${targetUrl.search} (source: ${source})`)
+      return finalize(supabaseResponse)
+    }
+
+    Logger.debug(`[proxy] redirecting to: ${targetUrl.href} (reason: ${source})`)
+    const response = NextResponse.redirect(targetUrl)
+    response.headers.set('x-proxy-redirect-reason', source)
+    response.headers.set('Cache-Control', 'no-store, max-age=0')
+
+    // Copy cookies from the current supabaseResponse to the redirect response
+    if (supabaseResponse) {
       supabaseResponse.cookies.getAll().forEach(cookie => {
         response.cookies.set(cookie.name, cookie.value, cookie)
       })
@@ -146,23 +147,16 @@ export default async function proxy(request: NextRequest) {
 
   const isLoginRoute = pathname === '/login'
   if (isLoginRoute) {
-    // Only auto-redirect to library if we have a valid LEGACY session.
-    // If we only have a Supabase session, we stay on /login to allow the user 
-    // to complete the backend login or to avoid redirect loops if the backend 
-    // doesn't recognize the Supabase token yet.
     if (hasValidAccessToken) {
-      return redirect(createUrl('/library'), 'login-to-library')
+      return redirect(getRedirectUrl('/library'), 'login-to-library')
     }
     return finalize(supabaseResponse)
   }
 
   // Non-login routes
   if (!user && !hasValidAccessToken && !hasValidRefreshToken) {
-    Logger.debug(`[proxy] no valid session found`)
-    if (!isLoginRoute) {
-      return redirect(createUrl('/login'), 'no-session-redirect')
-    }
-    return finalize(supabaseResponse)
+    Logger.debug(`[proxy] no valid session found; redirecting to login`)
+    return redirect(getRedirectUrl('/login'), 'no-session-redirect')
   }
 
   // Handle legacy token refresh if needed (fallback)
@@ -173,7 +167,7 @@ export default async function proxy(request: NextRequest) {
       return finalize(supabaseResponse)
     }
 
-    const refreshUrl = createUrl('/internal-api/refresh')
+    const refreshUrl = getRedirectUrl('/internal-api/refresh')
     if (pathname !== '/') {
       refreshUrl.searchParams.set('redirect', path)
     }
@@ -181,7 +175,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   if (pathname === '/') {
-    return redirect(createUrl('/library'), 'root-to-library')
+    return redirect(getRedirectUrl('/library'), 'root-to-library')
   }
 
   supabaseResponse.headers.set('x-current-path', path)
