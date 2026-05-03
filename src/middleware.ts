@@ -62,7 +62,12 @@ export default async function proxy(request: NextRequest) {
   const getRedirectUrl = (newPath: string) => {
     const url = request.nextUrl.clone()
     url.pathname = newPath
-    // Preserve existing search params if we're just changing the path
+    
+    // Force HTTPS when behind Cloudflare to avoid protocol-mismatch loops
+    if (!url.host.includes('localhost') && !url.host.includes('127.0.0.1')) {
+      url.protocol = 'https:'
+    }
+    
     return url
   }
 
