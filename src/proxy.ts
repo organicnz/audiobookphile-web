@@ -45,7 +45,13 @@ export default async function proxy(request: NextRequest) {
   )
 
   // Refresh Supabase session
-  const { data: { user }, error } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data?.user
+  } catch (error) {
+    Logger.debug('[proxy] Supabase getUser failed, continuing without user session')
+  }
 
   const accessTokenCookie = request.cookies.get('access_token')?.value
   const refreshTokenCookie = request.cookies.get('refresh_token')?.value
