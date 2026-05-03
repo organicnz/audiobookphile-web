@@ -29,7 +29,10 @@ export default async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          // Synchronize cookies across the request and the response
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value)
+          })
           supabaseResponse = NextResponse.next({
             request,
           })
@@ -42,9 +45,7 @@ export default async function proxy(request: NextRequest) {
   )
 
   // Refresh Supabase session
-  console.log('[Proxy] refreshing session...')
   const { data: { user }, error } = await supabase.auth.getUser()
-  console.log('[Proxy] getUser result:', { user: user?.id, error })
 
   const accessTokenCookie = request.cookies.get('access_token')?.value
   const refreshTokenCookie = request.cookies.get('refresh_token')?.value
@@ -73,8 +74,12 @@ export default async function proxy(request: NextRequest) {
   let serverLanguage: string | null = null
   if (!languageCookie) {
     try {
-      const statusResponse = await getServerStatus()
-      if (statusResponse.language) {
+      // Use a fast-failing status check for the middleware to avoid blocking
+      const statusPromise = getServerStatus()
+      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000))
+      
+      const statusResponse = await Promise.race([statusPromise, timeoutPromise])
+      if (statusResponse && 'language' in statusResponse && statusResponse.language) {
         serverLanguage = statusResponse.language
       }
     } catch (error) {

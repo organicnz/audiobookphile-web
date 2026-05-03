@@ -10,8 +10,15 @@ import { ToastProvider } from '../contexts/ToastContext'
 import { getTheme } from '../lib/theme'
 
 export const metadata: Metadata = {
-  title: 'audiobookshelf',
-  description: 'audiobookshelf'
+  title: 'Audiobookshelf',
+  description: 'A self-hosted audiobook and podcast server',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+  themeColor: '#1ad691',
+  openGraph: {
+    title: 'Audiobookshelf',
+    description: 'A self-hosted audiobook and podcast server',
+    type: 'website',
+  }
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
