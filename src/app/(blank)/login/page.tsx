@@ -5,18 +5,20 @@ import ServerInitForm from './ServerInitForm'
 export const dynamic = 'force-dynamic'
 
 export default async function LoginPage() {
+  let isServerInitialized = true
+  
   try {
     const status = await getServerStatus()
-    const isServerInitialized = !!status?.isInit
-
-    return (
-      <div className="-mt-[var(--header-height)] flex min-h-full items-center justify-center">{isServerInitialized ? <LoginForm /> : <ServerInitForm />}</div>
-    )
+    isServerInitialized = !!status?.isInit
   } catch (error) {
-    return (
-      <div className="flex min-h-full items-center justify-center">
-        <div className="mb-4 text-center text-sm text-red-500">{error instanceof Error ? error.message : 'Server error'}</div>
-      </div>
-    )
+    // If we can't reach the backend server, we still want to show the login form
+    // so users can authenticate with Supabase.
+    console.error('[LoginPage] Failed to fetch server status, falling back to LoginForm:', error)
   }
+
+  return (
+    <div className="-mt-[var(--header-height)] flex min-h-full items-center justify-center">
+      {isServerInitialized ? <LoginForm /> : <ServerInitForm />}
+    </div>
+  )
 }
