@@ -71,38 +71,14 @@ export default async function proxy(request: NextRequest) {
     return url
   }
 
-  // Fetch server language if cookie doesn't exist
-  let serverLanguage: string | null = null
-  if (!languageCookie) {
-    try {
-      // Wrap in a try-catch and ensure it doesn't throw even if getServerStatus() fails
-      const statusPromise = getServerStatus().catch(() => null)
-      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 1000))
-      const statusResponse = await Promise.race([statusPromise, timeoutPromise])
-      
-      if (statusResponse && typeof statusResponse === 'object' && 'language' in statusResponse) {
-        serverLanguage = statusResponse.language
-      }
-    } catch (error) {
-      // We already catch inside getServerStatus, but being extra safe here
-      Logger.debug('[proxy] skipping server language detection (backend unreachable)')
-    }
-  }
-
   // Set default theme if cookie doesn't exist
   const shouldSetDefaultTheme = !themeCookie
 
   // Helper function to set language and theme cookies on any response
   const applySettings = (response: NextResponse) => {
-    if (serverLanguage) {
-      response.cookies.set('language', serverLanguage, {
-        httpOnly: false,
-        secure: false,
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 365 * 24 * 60 * 60 // 1 year
-      })
-    }
+    // We no longer fetch server language in middleware to avoid network errors
+    // Default to 'en-us' if cookie is missing (handled by i18n config)
+    
     if (shouldSetDefaultTheme) {
       response.cookies.set('theme', 'dark', {
         httpOnly: false,
