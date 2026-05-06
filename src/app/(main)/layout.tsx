@@ -11,8 +11,11 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   const supabase = await createClient()
 
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    data: { session },
+    error
+  } = await supabase.auth.getSession()
+  const user = session?.user
+  const token = session?.access_token || null
 
   if (!user) {
     redirect('/login')
@@ -90,7 +93,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <SocketProvider accessToken={null}>
+    <SocketProvider accessToken={token}>
       <UserProvider initialUser={mockUser}>
         <TasksProvider>
           <MetadataProvider>

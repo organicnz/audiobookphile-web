@@ -150,7 +150,9 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
       try {
         await syncPlaybackSession(session.id, {
           currentTime,
-          timeListened
+          timeListened,
+          libraryItemId: session.libraryItemId,
+          episodeId: session.episodeId
         })
 
         failedSyncsRef.current = 0
@@ -236,7 +238,9 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
         if (timeListened > FIRST_SYNC_DELAY && getCurrentTime) {
           syncData = {
             currentTime: getCurrentTime(),
-            timeListened
+            timeListened,
+            libraryItemId: session.libraryItemId,
+            episodeId: session.episodeId
           }
         }
 

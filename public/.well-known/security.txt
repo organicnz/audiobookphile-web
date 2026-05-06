@@ -1,0 +1,5 @@
+Contact: mailto:tamerlanium@gmail.com
+Expires: 2027-05-02T12:00:00.000Z
+Preferred-Languages: en
+Canonical: https://audiobookshelf.foodshare.club/.well-known/security.txt
+Policy: https://audiobookshelf.foodshare.club/security

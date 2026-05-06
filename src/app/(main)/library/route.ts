@@ -10,7 +10,7 @@ export const GET = async () => {
     const currentUser = await getCurrentUser()
 
     if (!currentUser?.user) {
-      return redirect('/login')
+      return redirect('/login?error=no_session')
     }
 
     // Redirect to user default library or settings/account page
@@ -25,7 +25,6 @@ export const GET = async () => {
       throw error
     }
     // Any other errors (including UnauthorizedError) should redirect to login
-    console.error('Error in library route:', error)
-    return redirect('/login')
+    return redirect('/login?error=unauthorized_backend')
   }
 }
