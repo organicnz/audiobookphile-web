@@ -45,3 +45,5 @@ express-server
 *.vue
 .idea
 .env*.local
+.kiro/
+.snapshots/

@@ -1,16 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
-import { getServerStatus } from './lib/api'
-import { isTokenExpired } from './lib/jwt'
 import Logger from './lib/Logger'
 import { Database } from '@/types/supabase'
-
-/** Next.js App Router sends this on Server Action POSTs */
-const NEXT_ACTION_HEADER = 'next-action'
-
-function isNextServerActionRequest(request: NextRequest): boolean {
-  return request.method === 'POST' && request.headers.has(NEXT_ACTION_HEADER)
-}
 
 export default async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
@@ -29,8 +20,7 @@ export default async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          // Synchronize cookies across the request and the response
-          cookiesToSet.forEach(({ name, value, options }) => {
+          cookiesToSet.forEach(({ name, value }) => {
             request.cookies.set(name, value)
           })
           supabaseResponse = NextResponse.next({
@@ -44,108 +34,29 @@ export default async function proxy(request: NextRequest) {
     }
   )
 
-  // Refresh Supabase session
-  let user = null
+  // Refresh Supabase session — wrapped in try-catch so the page always loads
   try {
-    const { data } = await supabase.auth.getUser()
-    user = data?.user
+    await supabase.auth.getUser()
   } catch (error) {
-    Logger.debug('[proxy] Supabase getUser failed, continuing without user session')
+    Logger.debug('[proxy] Supabase getUser failed, continuing without session')
   }
 
-  const accessTokenCookie = request.cookies.get('access_token')?.value
-  const refreshTokenCookie = request.cookies.get('refresh_token')?.value
-  const languageCookie = request.cookies.get('language')?.value
+  // Set default theme cookie if missing
   const themeCookie = request.cookies.get('theme')?.value
-
-  // Validate JWT tokens - treat expired tokens as non-existent
-  const hasValidAccessToken = !!(accessTokenCookie && !isTokenExpired(accessTokenCookie, 5))
-  const hasValidRefreshToken = !!(refreshTokenCookie && !isTokenExpired(refreshTokenCookie, 5))
-
-  Logger.debug('[proxy] handling request for:', path)
-
-  // Helper to create URLs for redirects using the existing request URL context
-  const getRedirectUrl = (newPath: string) => {
-    const url = request.nextUrl.clone()
-    url.pathname = newPath
-    
-    // Force HTTPS when behind Cloudflare to avoid protocol-mismatch loops
-    if (!url.host.includes('localhost') && !url.host.includes('127.0.0.1')) {
-      url.protocol = 'https:'
-    }
-    
-    return url
+  if (!themeCookie) {
+    supabaseResponse.cookies.set('theme', 'dark', {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 365 * 24 * 60 * 60 // 1 year
+    })
   }
 
-  // Set default theme if cookie doesn't exist
-  const shouldSetDefaultTheme = !themeCookie
-
-  // Helper function to set language and theme cookies on any response
-  const applySettings = (response: NextResponse) => {
-    // We no longer fetch server language in middleware to avoid network errors
-    // Default to 'en-us' if cookie is missing (handled by i18n config)
-    
-    if (shouldSetDefaultTheme) {
-      response.cookies.set('theme', 'dark', {
-        httpOnly: false,
-        secure: false,
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 365 * 24 * 60 * 60 // 1 year
-      })
-    }
-    return response
-  }
-
-  const finalize = (response: NextResponse): NextResponse => {
-    // Transfer cookies from supabaseResponse to the final response if it's not the same object
-    if (response !== supabaseResponse) {
-      supabaseResponse.cookies.getAll().forEach(cookie => {
-        response.cookies.set(cookie.name, cookie.value, cookie)
-      })
-    }
-    return applySettings(response)
-  }
-
-  function redirect(url: string | URL, source: string): NextResponse {
-    const targetUrl = typeof url === 'string' ? new URL(url, request.url) : url
-    
-    // Prevent redirecting to the exact same path to avoid infinite loops
-    if (targetUrl.pathname === request.nextUrl.pathname && targetUrl.search === request.nextUrl.search) {
-      Logger.debug(`[proxy] skipping self-referential redirect to: ${targetUrl.pathname}${targetUrl.search} (source: ${source})`)
-      return finalize(supabaseResponse)
-    }
-
-    Logger.debug(`[proxy] redirecting to: ${targetUrl.href} (reason: ${source})`)
-    const response = NextResponse.redirect(targetUrl)
-    response.headers.set('x-proxy-redirect-reason', source)
-    response.headers.set('Cache-Control', 'no-store, max-age=0')
-
-    // Copy cookies from the current supabaseResponse to the redirect response
-    if (supabaseResponse) {
-      supabaseResponse.cookies.getAll().forEach(cookie => {
-        response.cookies.set(cookie.name, cookie.value, cookie)
-      })
-    }
-    return applySettings(response)
-  }
-
-  const isShareRoute = pathname.startsWith('/share/')
-  const isLoginRoute = pathname === '/login'
-
-  // Let the application handle redirects to /login or /library
-  // Middleware should focus on session refreshing and cookie sync
-  if (isLoginRoute || isShareRoute) {
-    return finalize(supabaseResponse)
-  }
-
-  // Handle root redirect only if needed, but let's be safe and just continue
-  // if (pathname === '/') {
-  //   return redirect(getRedirectUrl('/library'), 'root-to-library')
-  // }
-
+  // Pass the current path to server components via header
   supabaseResponse.headers.set('x-current-path', path)
-  return finalize(supabaseResponse)
+
+  return supabaseResponse
 }
 
 export const config = {

@@ -7,6 +7,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 
+// Module-level singleton — avoid recreating on every render
+const supabase = createClient()
+
 export default function LoginForm() {
   const t = useTypeSafeTranslations()
   const router = useRouter()
@@ -15,7 +18,6 @@ export default function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const supabase = createClient()
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -23,34 +25,28 @@ export default function LoginForm() {
       setError('')
       setLoading(true)
       try {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email,
           password
         })
 
         if (error) {
-          console.error('[LoginForm] Error:', error.message)
           setError(error.message || t('ErrorLoginFailed'))
           setLoading(false)
           return
         }
 
-        // Get redirect parameter
         const redirect = searchParams.get('redirect')
-        if (redirect) {
-          router.replace(redirect)
-        } else {
-          // In a real app, we might fetch user settings from Supabase here
-          // For now, redirect to root or settings
-          router.replace('/')
-        }
-      } catch (error) {
-        console.error('[LoginForm] Error:', error)
-        setError(t('ErrorNetwork'))
+        router.replace(redirect || '/')
+      } catch (err) {
+        // Network-level failure — Supabase couldn't be reached at all
+        const message = err instanceof Error ? err.message : 'Unknown error'
+        console.error('[LoginForm] Network error:', message)
+        setError(`Unable to connect to authentication service. Please check your internet connection.`)
         setLoading(false)
       }
     },
-    [email, password, t, router, searchParams, supabase]
+    [email, password, t, router, searchParams]
   )
 
   return (
