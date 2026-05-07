@@ -1,0 +1,79 @@
+🚀 Starting migration from SQLite to Supabase...
+
+📦 Migrating settings -> settings...
+   Found 3 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.settings' in the schema cache
+✅ Completed settings: 0 successful, 3 failed.
+
+📦 Migrating libraries -> libraries...
+   Found 1 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.libraries' in the schema cache
+✅ Completed libraries: 0 successful, 1 failed.
+
+📦 Migrating libraryFolders -> libraryFolders...
+   Found 1 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.libraryFolders' in the schema cache
+✅ Completed libraryFolders: 0 successful, 1 failed.
+
+📦 Migrating users -> profiles...
+   Found 12 rows to migrate.
+   ❌ Error creating auth user sepultura: A user with this email address has already been registered
+   ❌ Error creating auth user organic: A user with this email address has already been registered
+   ❌ Error creating auth user sashochek66: A user with this email address has already been registered
+   ❌ Error creating auth user eduardo: A user with this email address has already been registered
+   ❌ Error creating auth user Illiana: A user with this email address has already been registered
+   ❌ Error creating auth user ivan: A user with this email address has already been registered
+   ❌ Error creating auth user vitaly: A user with this email address has already been registered
+   ❌ Error creating auth user dima: A user with this email address has already been registered
+   ❌ Error creating auth user stas: A user with this email address has already been registered
+   ❌ Error creating auth user Hasibullah: A user with this email address has already been registered
+   ❌ Error creating auth user Fatemeh: A user with this email address has already been registered
+   ❌ Error creating auth user cherylruff: A user with this email address has already been registered
+✅ Completed users: 0 successful, 12 failed.
+
+📦 Migrating authors -> authors...
+   Found 78 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.authors' in the schema cache
+✅ Completed authors: 0 successful, 78 failed.
+
+📦 Migrating series -> series...
+   Found 9 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.series' in the schema cache
+✅ Completed series: 0 successful, 9 failed.
+
+📦 Migrating books -> books...
+   Found 131 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.books' in the schema cache
+✅ Completed books: 0 successful, 131 failed.
+
+📦 Migrating libraryItems -> libraryItems...
+   Found 131 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.libraryItems' in the schema cache
+✅ Completed libraryItems: 0 successful, 131 failed.
+
+📦 Migrating bookAuthors -> bookAuthors...
+   Found 185 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.bookAuthors' in the schema cache
+✅ Completed bookAuthors: 0 successful, 185 failed.
+
+📦 Migrating bookSeries -> bookSeries...
+   Found 18 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.bookSeries' in the schema cache
+✅ Completed bookSeries: 0 successful, 18 failed.
+
+📦 Migrating devices -> devices...
+   Found 9 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.devices' in the schema cache
+✅ Completed devices: 0 successful, 9 failed.
+
+📦 Migrating playbackSessions -> playbackSessions...
+   Found 60 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.playbackSessions' in the schema cache
+✅ Completed playbackSessions: 0 successful, 60 failed.
+
+📦 Migrating mediaProgresses -> mediaProgresses...
+   Found 14 rows to migrate.
+   ❌ Error inserting batch: Could not find the table 'public.mediaProgresses' in the schema cache
+✅ Completed mediaProgresses: 0 successful, 14 failed.
+
+🎉 Migration finished!
