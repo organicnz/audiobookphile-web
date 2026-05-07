@@ -15,7 +15,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set({ name, value, ...options }))
           supabaseResponse = NextResponse.next({
             request,
           })
@@ -29,6 +29,22 @@ export async function updateSession(request: NextRequest) {
 
   // refreshing the auth token
   await supabase.auth.getUser()
+
+  // Set default theme cookie if missing
+  const themeCookie = request.cookies.get('theme')?.value
+  if (!themeCookie) {
+    supabaseResponse.cookies.set('theme', 'dark', {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 365 * 24 * 60 * 60 // 1 year
+    })
+  }
+
+  // Pass the current path to server components via header
+  const { pathname, search } = request.nextUrl
+  supabaseResponse.headers.set('x-current-path', pathname + search)
 
   return supabaseResponse
 }

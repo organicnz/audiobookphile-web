@@ -21,80 +21,18 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     redirect('/login')
   }
 
-  // TODO: Fetch additional user data/settings from Supabase database if needed
-  // For now, we mock the UserLoginResponse to satisfy existing components
-  const mockUser: UserLoginResponse = {
-    user: {
-      id: user.id,
-      username: user.email?.split('@')[0] || 'user',
-      type: 'user',
-      token: '', // Supabase uses its own session tokens
-      mediaProgress: [],
-      seriesHideFromContinueListening: [],
-      bookmarks: [],
-      isActive: true,
-      isLocked: false,
-      createdAt: Date.now(),
-      permissions: {
-        download: true,
-        update: true,
-        delete: true,
-        upload: true,
-        createEreader: true,
-        accessAllLibraries: true,
-        accessAllTags: true,
-        accessExplicitContent: true,
-        selectedTagsNotAccessible: false
-      },
-      librariesAccessible: [],
-      itemTagsSelected: [],
-      hasOpenIDLink: false
-    },
-    serverSettings: {
-      scannerParseSubtitle: false,
-      scannerFindCovers: false,
-      scannerCoverProvider: '',
-      scannerPreferMatchedMetadata: false,
-      scannerDisableWatcher: false,
-      storeCoverWithItem: false,
-      storeMetadataWithItem: false,
-      metadataFileFormat: '',
-      rateLimitLoginRequests: 0,
-      rateLimitLoginWindow: 0,
-      allowIframe: false,
-      backupPath: '',
-      backupSchedule: false,
-      backupsToKeep: 0,
-      maxBackupSize: 0,
-      loggerDailyLogsToKeep: 0,
-      loggerScannerLogsToKeep: 0,
-      homeBookshelfView: 0,
-      bookshelfView: 0,
-      podcastEpisodeSchedule: '',
-      sortingIgnorePrefix: false,
-      sortingPrefixes: [],
-      chromecastEnabled: false,
-      dateFormat: '',
-      timeFormat: '',
-      language: 'en-us',
-      allowedOrigins: [],
-      logLevel: 0,
-      version: '',
-      buildNumber: '',
-      authActiveAuthMethods: [],
-      authOpenIDTokenSigningAlgorithm: '',
-      authOpenIDButtonText: '',
-      authOpenIDAutoLaunch: false,
-      authOpenIDAutoRegister: false
-    },
-    userDefaultLibraryId: undefined,
-    ereaderDevices: [],
-    Source: 'supabase'
+  const { getCurrentUser } = await import('@/lib/supabase-api')
+  const realUser = await getCurrentUser()
+
+  if (!realUser) {
+    // If the auth session exists but no profile exists, we might need to sign out or redirect to onboarding
+    console.error('Supabase session exists but no user profile found for', user.id)
+    redirect('/login')
   }
 
   return (
     <SocketProvider accessToken={token}>
-      <UserProvider initialUser={mockUser}>
+      <UserProvider initialUser={realUser}>
         <TasksProvider>
           <MetadataProvider>
             <MediaProvider>{children}</MediaProvider>

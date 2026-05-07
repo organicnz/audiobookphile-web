@@ -60,6 +60,7 @@ import {
 } from '../types/api'
 
 import { ApiError, NetworkError, UnauthorizedError } from './apiErrors'
+import * as supabaseApi from './supabase-api'
 
 const publicEndpoints = ['/status']
 const RefreshTokenExpiry = parseInt(process.env.REFRESH_TOKEN_EXPIRY || '') || 7 * 24 * 60 * 60 // 7 days
@@ -371,19 +372,52 @@ export const getServerStatus = cache(async (): Promise<ServerStatus> => {
 })
 
 export const getLibraries = cache(async (): Promise<GetLibrariesResponse> => {
-  return apiRequest<GetLibrariesResponse>('/api/libraries', {})
+  try {
+    return await apiRequest<GetLibrariesResponse>('/api/libraries', {})
+  } catch (error) {
+    console.warn('[api] getLibraries failed, falling back to Supabase')
+    const libraries = await supabaseApi.getLibraries()
+    return { libraries }
+  }
 })
 
 export const getLibrary = cache(async (libraryId: string): Promise<Library> => {
-  return apiRequest<Library>(`/api/libraries/${libraryId}`, {})
+  try {
+    return await apiRequest<Library>(`/api/libraries/${libraryId}`, {})
+  } catch (error) {
+    console.warn(`[api] getLibrary(${libraryId}) failed, falling back to Supabase`)
+    return await supabaseApi.getLibrary(libraryId)
+  }
 })
 
 export const getLibraryPersonalized = cache(async (libraryId: string): Promise<PersonalizedShelf[]> => {
-  return apiRequest<PersonalizedShelf[]>(`/api/libraries/${libraryId}/personalized?include=rssfeed,share`, {})
+  try {
+    return await apiRequest<PersonalizedShelf[]>(`/api/libraries/${libraryId}/personalized?include=rssfeed,share`, {})
+  } catch (error) {
+    console.warn(`[api] getLibraryPersonalized(${libraryId}) failed, falling back to Supabase`)
+    return await supabaseApi.getLibraryPersonalized(libraryId)
+  }
 })
 
 export const getLibraryItems = cache(async (libraryId: string, queryParams?: string): Promise<GetLibraryItemsResponse> => {
-  return apiRequest<GetLibraryItemsResponse>(`/api/libraries/${libraryId}/items${queryParams ? `?${queryParams}` : ''}`, {})
+  try {
+    return await apiRequest<GetLibraryItemsResponse>(`/api/libraries/${libraryId}/items${queryParams ? `?${queryParams}` : ''}`, {})
+  } catch (error) {
+    console.warn(`[api] getLibraryItems(${libraryId}) failed, falling back to Supabase`)
+    const results = await supabaseApi.getLibraryItems(libraryId)
+    return {
+      results,
+      total: results.length,
+      limit: 50,
+      page: 0,
+      sortDesc: false,
+      mediaType: 'book',
+      minified: false,
+      collapseseries: false,
+      include: '',
+      offset: 0
+    }
+  }
 })
 
 /**
@@ -391,7 +425,12 @@ export const getLibraryItems = cache(async (libraryId: string, queryParams?: str
  * Used for populating filter dropdown menus
  */
 export async function getLibraryFilterData(libraryId: string): Promise<LibraryFilterData> {
-  return apiRequest<LibraryFilterData>(`/api/libraries/${libraryId}/filterdata`, {})
+  try {
+    return await apiRequest<LibraryFilterData>(`/api/libraries/${libraryId}/filterdata`, {})
+  } catch (error) {
+    console.warn(`[api] getLibraryFilterData(${libraryId}) failed, falling back to Supabase`)
+    return await supabaseApi.getLibraryFilterData(libraryId)
+  }
 }
 
 /**
@@ -401,10 +440,15 @@ export async function getLibraryFilterData(libraryId: string): Promise<LibraryFi
  * @param include - Optional comma-separated includes: rssfeed, share, downloads
  */
 export const getLibraryItem = cache(async (itemId: string, expanded?: boolean, include?: string): Promise<LibraryItem> => {
-  const params = new URLSearchParams()
-  params.set('expanded', expanded ? '1' : '0')
-  if (include) params.set('include', include)
-  return apiRequest<LibraryItem>(`/api/items/${itemId}?${params.toString()}`, {})
+  try {
+    const params = new URLSearchParams()
+    params.set('expanded', expanded ? '1' : '0')
+    if (include) params.set('include', include)
+    return await apiRequest<LibraryItem>(`/api/items/${itemId}?${params.toString()}`, {})
+  } catch (error) {
+    console.warn(`[api] getLibraryItem(${itemId}) failed, falling back to Supabase`)
+    return await supabaseApi.getLibraryItem(itemId)
+  }
 })
 
 /**
@@ -417,6 +461,8 @@ export const getLibraryItem = cache(async (itemId: string, expanded?: boolean, i
 export async function getAudioFileFFProbeData(itemId: string, fileIno: string): Promise<FFProbeData> {
   return apiRequest<FFProbeData>(`/api/items/${itemId}/ffprobe/${fileIno}`, {})
 }
+
+
 
 export const getUsers = cache(async (queryParams?: string): Promise<GetUsersResponse> => {
   return apiRequest<GetUsersResponse>(`/api/users${queryParams ? `?${queryParams}` : ''}`, {})
@@ -509,7 +555,12 @@ export async function searchLibrary(libraryId: string, query: string, limit?: nu
     params.set('limit', limit.toString())
   }
 
-  return apiRequest<SearchLibraryResponse>(`/api/libraries/${libraryId}/search?${params.toString()}`, {})
+  try {
+    return await apiRequest<SearchLibraryResponse>(`/api/libraries/${libraryId}/search?${params.toString()}`, {})
+  } catch (error) {
+    console.warn(`[api] searchLibrary(${libraryId}, ${query}) failed, falling back to Supabase`)
+    return await supabaseApi.searchLibrary(libraryId, query, limit)
+  }
 }
 
 //
@@ -545,7 +596,13 @@ export const getPlaylist = cache(async (playlistId: string): Promise<Playlist> =
 })
 
 export const getCollection = cache(async (collectionId: string): Promise<Collection> => {
-  return apiRequest<Collection>(`/api/collections/${collectionId}?include=rssfeed`, {})
+  try {
+    return await apiRequest<Collection>(`/api/collections/${collectionId}?include=rssfeed`, {})
+  } catch (error) {
+    console.warn(`[api] getCollection(${collectionId}) failed, falling back to Supabase`)
+    // Mock for now, need collection implementation in supabase-api
+    throw error 
+  }
 })
 
 export const getSeries = cache(async (libraryId: string, seriesId: string): Promise<Series> => {
@@ -554,19 +611,60 @@ export const getSeries = cache(async (libraryId: string, seriesId: string): Prom
 
 // Paginated entity list functions for bookshelf views
 export const getLibrarySeries = cache(async (libraryId: string, queryParams?: string): Promise<GetSeriesResponse> => {
-  return apiRequest<GetSeriesResponse>(`/api/libraries/${libraryId}/series${queryParams ? `?${queryParams}` : ''}`, {})
+  try {
+    return await apiRequest<GetSeriesResponse>(`/api/libraries/${libraryId}/series${queryParams ? `?${queryParams}` : ''}`, {})
+  } catch (error) {
+    console.warn(`[api] getLibrarySeries(${libraryId}) failed, falling back to Supabase`)
+    const results = await supabaseApi.getLibrarySeries(libraryId)
+    return {
+      results,
+      total: results.length,
+      limit: 50,
+      page: 0,
+      sortDesc: false,
+      minified: false,
+      include: ''
+    }
+  }
 })
 
 export const getLibraryAuthors = cache(async (libraryId: string, queryParams?: string): Promise<GetAuthorsResponse> => {
-  return apiRequest<GetAuthorsResponse>(`/api/libraries/${libraryId}/authors${queryParams ? `?${queryParams}` : ''}`, {})
+  try {
+    return await apiRequest<GetAuthorsResponse>(`/api/libraries/${libraryId}/authors${queryParams ? `?${queryParams}` : ''}`, {})
+  } catch (error) {
+    console.warn(`[api] getLibraryAuthors(${libraryId}) failed, falling back to Supabase`)
+    const authors = await supabaseApi.getLibraryAuthors(libraryId)
+    return { authors }
+  }
 })
 
 export const getLibraryCollections = cache(async (libraryId: string, queryParams?: string): Promise<GetCollectionsResponse> => {
-  return apiRequest<GetCollectionsResponse>(`/api/libraries/${libraryId}/collections${queryParams ? `?${queryParams}` : ''}`, {})
+  try {
+    return await apiRequest<GetCollectionsResponse>(`/api/libraries/${libraryId}/collections${queryParams ? `?${queryParams}` : ''}`, {})
+  } catch (error) {
+    return {
+      results: [],
+      total: 0,
+      limit: 50,
+      page: 0,
+      sortDesc: false,
+      minified: false,
+      include: ''
+    }
+  }
 })
 
 export const getLibraryPlaylists = cache(async (libraryId: string, queryParams?: string): Promise<GetPlaylistsResponse> => {
-  return apiRequest<GetPlaylistsResponse>(`/api/libraries/${libraryId}/playlists${queryParams ? `?${queryParams}` : ''}`, {})
+  try {
+    return await apiRequest<GetPlaylistsResponse>(`/api/libraries/${libraryId}/playlists${queryParams ? `?${queryParams}` : ''}`, {})
+  } catch (error) {
+    return {
+      results: [],
+      total: 0,
+      limit: 50,
+      page: 0
+    }
+  }
 })
 
 export const getApiKeys = cache(async (): Promise<GetApiKeysResponse> => {

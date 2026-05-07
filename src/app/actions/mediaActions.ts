@@ -4,7 +4,22 @@ import * as api from '@/lib/api'
 import { RssPodcastEpisode, UpdateLibraryItemMediaPayload } from '@/types/api'
 
 export async function toggleFinishedAction(libraryItemId: string, params: { isFinished: boolean; episodeId?: string }) {
-  return api.updateMediaFinished(libraryItemId, params)
+  const result = await api.updateMediaFinished(libraryItemId, params)
+  
+  // Sync to Supabase
+  try {
+    const { syncProgressToSupabase } = await import('@/utils/supabase/progress')
+    await syncProgressToSupabase({
+      library_item_id: libraryItemId,
+      episode_id: params.episodeId,
+      is_finished: params.isFinished,
+      current_time_pos: params.isFinished ? 0 : 0 // Simplified for toggle
+    })
+  } catch (err) {
+    console.error('[mediaActions] Supabase sync failed for toggleFinished', err)
+  }
+
+  return result
 }
 
 export async function batchUpdateMediaFinishedAction(payload: { libraryItemId: string; episodeId?: string; isFinished: boolean }[]) {
@@ -28,7 +43,14 @@ export async function removeSeriesFromContinueListeningAction(seriesId: string) 
 }
 
 export async function removeFromContinueListeningAction(progressId: string) {
-  return api.removeFromContinueListening(progressId)
+  const result = await api.removeFromContinueListening(progressId)
+  
+  // Sync to Supabase - we need the user ID and library item ID
+  // Since we only have progressId (legacy), we might need to fetch the item ID or just try to match.
+  // For now, let's keep it simple and just do legacy.
+  // TODO: Implement Supabase-native removal if needed.
+  
+  return result
 }
 
 export async function deleteLibraryItemAction(libraryItemId: string, hardDelete: boolean) {
