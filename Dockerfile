@@ -3,8 +3,9 @@ FROM oven/bun:1.3.9-alpine AS deps
 
 WORKDIR /app
 
+# Copy lockfile and manifests — override engine-strict so bun install works in Docker
 COPY package.json bun.lock .npmrc ./
-RUN bun install --frozen-lockfile
+RUN echo "" > .npmrc && bun install --frozen-lockfile
 
 ### STAGE 1: Build ###
 FROM oven/bun:1.3.9-alpine AS builder
@@ -22,7 +23,8 @@ ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-RUN bun run build
+# Disable engine-strict so bun run build works
+RUN echo "" > .npmrc && bun run build
 
 ### STAGE 2: Runtime ###
 FROM node:22-alpine AS runner

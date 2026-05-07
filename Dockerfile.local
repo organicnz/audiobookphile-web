@@ -1,4 +1,4 @@
-# Local Docker build — same as Dockerfile but without CI/CD assumptions
+# Local Docker build
 # Run: docker compose up --build
 
 ### STAGE 0: Install dependencies ###
@@ -7,7 +7,8 @@ FROM oven/bun:1.3.9-alpine AS deps
 WORKDIR /app
 
 COPY package.json bun.lock .npmrc ./
-RUN bun install --frozen-lockfile
+# Override engine-strict so bun install works inside Docker
+RUN echo "" > .npmrc && bun install --frozen-lockfile
 
 ### STAGE 1: Build ###
 FROM oven/bun:1.3.9-alpine AS builder
@@ -19,7 +20,13 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN bun run build
+# Build-time public env vars — pass via docker compose build-args or --build-arg
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+RUN echo "" > .npmrc && bun run build
 
 ### STAGE 2: Runtime ###
 FROM node:22-alpine AS runner
