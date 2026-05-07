@@ -2,8 +2,7 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [master]
-  # Allows you to run workflow manually from Actions tab
+    branches: [organicnz]
   workflow_dispatch:
     inputs:
       tags:
@@ -20,16 +19,8 @@ jobs:
       packages: write
 
     steps:
-      - name: Check out audiobookshelf server
+      - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          repository: advplyr/audiobookshelf
-          path: .
-
-      - name: Check out React client
-        uses: actions/checkout@v4
-        with:
-          path: client-react
 
       - name: Docker meta
         id: meta
@@ -61,9 +52,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Copy Dockerfile from React client
-        run: cp client-react/Dockerfile ./Dockerfile
-
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
@@ -74,6 +62,9 @@ jobs:
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          build-args: |
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Move cache
         run: |

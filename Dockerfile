@@ -1,86 +1,53 @@
-ARG NUSQLITE3_DIR="/usr/local/lib/nusqlite3"
-ARG NUSQLITE3_PATH="${NUSQLITE3_DIR}/libnusqlite3.so"
-
-### STAGE 0: Build React client ###
-FROM oven/bun:1.3.9-alpine AS build-client
-
-WORKDIR /client-react
-
-COPY ./client-react/package.json ./client-react/bun.lock ./client-react/.npmrc ./
-
-RUN bun install --frozen-lockfile
-
-COPY ./client-react .
-
-RUN bun run build
-
-RUN rm -rf node_modules && bun install --frozen-lockfile --production
-
-### STAGE 1: Build server ###
-FROM node:20-alpine AS build-server
-
-ARG NUSQLITE3_DIR
-ARG TARGETPLATFORM
-
-ENV NODE_ENV=production
-
-RUN apk add --no-cache --update \
-  curl \
-  make \
-  python3 \
-  g++ \
-  unzip
-
-WORKDIR /server
-COPY index.js package* /server
-COPY /server /server/server
-
-RUN case "$TARGETPLATFORM" in \
-  "linux/amd64") \
-  curl -L -o /tmp/library.zip "https://github.com/mikiher/nunicode-sqlite/releases/download/v1.2/libnusqlite3-linux-musl-x64.zip" ;; \
-  "linux/arm64") \
-  curl -L -o /tmp/library.zip "https://github.com/mikiher/nunicode-sqlite/releases/download/v1.2/libnusqlite3-linux-musl-arm64.zip" ;; \
-  *) echo "Unsupported platform: $TARGETPLATFORM" && exit 1 ;; \
-  esac && \
-  unzip /tmp/library.zip -d $NUSQLITE3_DIR && \
-  rm /tmp/library.zip
-
-RUN npm ci --only=production
-
-### STAGE 2: Create minimal runtime image ###
-FROM node:20-alpine
-
-ARG NUSQLITE3_DIR
-ARG NUSQLITE3_PATH
-
-# Install only runtime dependencies
-RUN apk add --no-cache --update \
-  tzdata \
-  ffmpeg \
-  tini
+### STAGE 0: Install dependencies ###
+FROM oven/bun:1.3.9-alpine AS deps
 
 WORKDIR /app
 
-# Copy compiled React frontend from build stage
-COPY --from=build-client /client-react/.next /app/client-react/.next
-COPY --from=build-client /client-react/public /app/client-react/public
-COPY --from=build-client /client-react/package.json /app/client-react/package.json
-COPY --from=build-client /client-react/node_modules /app/client-react/node_modules
+COPY package.json bun.lock .npmrc ./
+RUN bun install --frozen-lockfile
 
-# Copy server from build stage
-COPY --from=build-server /server /app
-COPY --from=build-server /usr/local/lib/nusqlite3 /usr/local/lib/nusqlite3
+### STAGE 1: Build ###
+FROM oven/bun:1.3.9-alpine AS builder
 
-EXPOSE 80
+WORKDIR /app
 
-ENV PORT=80
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build-time public env vars (passed via --build-arg in CI)
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+RUN bun run build
+
+### STAGE 2: Runtime ###
+FROM node:22-alpine AS runner
+
+WORKDIR /app
+
 ENV NODE_ENV=production
-ENV CONFIG_PATH="/config"
-ENV METADATA_PATH="/metadata"
-ENV SOURCE="docker"
-ENV NUSQLITE3_DIR=${NUSQLITE3_DIR}
-ENV NUSQLITE3_PATH=${NUSQLITE3_PATH}
-ENV REACT_CLIENT_PATH="/app/client-react"
+ENV NEXT_TELEMETRY_DISABLED=1
 
-ENTRYPOINT ["tini", "--"]
-CMD ["node", "index.js"]
+RUN addgroup --system --gid 1001 nodejs \
+ && adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Standalone output
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:3000/ || exit 1
+
+CMD ["node", "server.js"]
