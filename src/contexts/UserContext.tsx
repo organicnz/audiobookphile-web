@@ -27,6 +27,20 @@ export interface UserContextType {
   userCanDownload: boolean
   /** Raw profile row for settings pages */
   profile: Profile
+  // ---------------------------------------------------------------------------
+  // Compatibility shims — keep existing components working during migration
+  // ---------------------------------------------------------------------------
+  /** @deprecated use userIsAdmin */
+  userIsAdminOrUp: boolean
+  /** @deprecated use user.id to fetch token from Supabase session */
+  token: string
+  /** @deprecated no server settings in Supabase-native mode */
+  serverSettings: Record<string, unknown>
+  userDefaultLibraryId?: string
+  /** @deprecated no e-reader devices in Supabase-native mode */
+  ereaderDevices: unknown[]
+  Source: string
+  getMediaItemProgress: (mediaItemId: string) => undefined
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined)
@@ -89,6 +103,14 @@ export function UserProvider({
     userCanUpdate: userIsAdmin,
     userCanDelete: userIsAdmin,
     userCanDownload: true,
+    // Compatibility shims
+    userIsAdminOrUp: userIsAdmin,
+    token: '',
+    serverSettings: {},
+    userDefaultLibraryId: profile.default_library_id ?? undefined,
+    ereaderDevices: [],
+    Source: 'supabase',
+    getMediaItemProgress: () => undefined,
   }
 
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>

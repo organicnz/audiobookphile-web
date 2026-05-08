@@ -1,43 +1,39 @@
 import ChaptersTable from '@/components/widgets/ChaptersTable'
-import { UserContext, type UserContextType } from '@/contexts/UserContext'
-import { BookLibraryItem, User } from '@/types/api'
+import { UserContext, type AppUser, type UserContextType } from '@/contexts/UserContext'
+import { BookLibraryItem } from '@/types/api'
+import type { Profile } from '@/types/index'
 
-// Inline mocks since fixtures are not found
-const mockUser: User = {
+const mockProfile: Profile = {
   id: 'root',
   username: 'admin',
-  type: 'root',
-  token: 'test-token',
-  permissions: {
-    download: true,
-    update: true,
-    delete: true,
-    upload: true,
-    accessAllLibraries: true,
-    accessAllTags: true,
-    accessExplicitContent: true,
-    createEreader: true,
-    selectedTagsNotAccessible: false
-  },
-  mediaProgress: [],
-  seriesHideFromContinueListening: [],
-  bookmarks: [],
-  isActive: true,
-  isLocked: false,
-  createdAt: 1234567890,
-  librariesAccessible: [],
-  itemTagsSelected: [],
-  hasOpenIDLink: false
+  user_type: 'admin',
+  language: 'en-us',
+  theme: 'dark',
+  default_library_id: 'test-library-id',
+  created_at: null,
+  updated_at: null
+}
+
+const mockUser: AppUser = {
+  id: 'root',
+  email: 'admin@example.com',
+  username: 'admin',
+  userType: 'admin',
+  language: 'en-us',
+  theme: 'dark',
+  defaultLibraryId: 'test-library-id'
 }
 
 const mockUserContextValue: UserContextType = {
   user: mockUser,
+  profile: mockProfile,
+  userIsAdmin: true,
   userCanUpdate: true,
   userCanDelete: true,
   userCanDownload: true,
   userIsAdminOrUp: true,
-  token: mockUser.token,
-  serverSettings: {} as UserContextType['serverSettings'],
+  token: '',
+  serverSettings: {},
   userDefaultLibraryId: 'test-library-id',
   ereaderDevices: [],
   Source: 'test',
@@ -78,7 +74,7 @@ const mockLibraryItem: BookLibraryItem = {
     tags: [],
     audioFiles: [],
     chapters: [],
-    duration: 120, // 2 minutes
+    duration: 120,
     size: 1000,
     tracks: [],
     ebookFile: undefined
@@ -88,10 +84,8 @@ const mockLibraryItem: BookLibraryItem = {
 
 describe('ChaptersTable', () => {
   it('renders correctly', () => {
-    // Ensure viewport is large enough to show all columns (Duration hides below md)
     cy.viewport(1024, 768)
 
-    // Add chapters to the test item
     const libraryItem = { ...mockLibraryItem }
     libraryItem.media.chapters = [
       { id: 1, start: 0, end: 60, title: 'Chapter 1' },
@@ -107,8 +101,8 @@ describe('ChaptersTable', () => {
     cy.get('table').should('exist')
     cy.contains('Chapter 1').should('be.visible')
     cy.contains('Chapter 2').should('be.visible')
-    cy.contains('00:00').should('be.visible') // Start time
-    cy.contains('01:00').should('be.visible') // Duration
+    cy.contains('00:00').should('be.visible')
+    cy.contains('01:00').should('be.visible')
   })
 
   it('hides Duration column below md breakpoint', () => {
@@ -121,11 +115,9 @@ describe('ChaptersTable', () => {
       </UserContext.Provider>
     )
 
-    // Mobile (xs) - Duration should be hidden
     cy.viewport(375, 667)
     cy.contains('th', 'Duration').should('have.class', 'hidden')
 
-    // Desktop (md) - Duration becomes visible
     cy.viewport(768, 1024)
     cy.contains('th', 'Duration').should('be.visible')
   })
