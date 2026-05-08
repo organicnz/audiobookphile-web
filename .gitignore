@@ -48,3 +48,7 @@ express-server
 .env*.local
 .kiro/
 .snapshots/
+
+# Supabase — keep migrations tracked; exclude local runtime state
+supabase/.temp
+supabase/.branches
