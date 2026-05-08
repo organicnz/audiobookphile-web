@@ -12,7 +12,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 export interface AppUser {
   id: string
   email: string | undefined
-  username: string | null
+  username: string
   userType: 'admin' | 'user' | string
   language: string
   theme: string
@@ -118,7 +118,7 @@ export function UserProvider({
   const appUser: AppUser = {
     id: userData.id,
     email: userData.email,
-    username: profile.username,
+    username: profile.username ?? userData.email?.split('@')[0] ?? userData.id,
     userType: profile.user_type,
     language: profile.language,
     theme: profile.theme,
