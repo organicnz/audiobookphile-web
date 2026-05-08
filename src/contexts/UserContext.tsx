@@ -66,7 +66,14 @@ export interface UserContextType {
   /** @deprecated use userIsAdmin */
   userIsAdminOrUp: boolean
   /** @deprecated no server settings in Supabase-native mode */
-  serverSettings: Record<string, unknown>
+  serverSettings: {
+    dateFormat?: string
+    timeFormat?: string
+    language?: string
+    version?: string
+    buildNumber?: string
+    [key: string]: unknown
+  }
   userDefaultLibraryId?: string
   /** @deprecated no e-reader devices in Supabase-native mode */
   ereaderDevices: unknown[]
