@@ -3,36 +3,24 @@ import { MetadataProvider } from '@/contexts/MetadataContext'
 import { SocketProvider } from '@/contexts/SocketContext'
 import { TasksProvider } from '@/contexts/TasksContext'
 import { UserProvider } from '@/contexts/UserContext'
-import { createClient } from '@/utils/supabase/server'
+import { getCurrentUser } from '@/lib/supabase-api'
 import { redirect } from 'next/navigation'
-import { UserLoginResponse } from '@/types/api'
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
-
-  const {
-    data: { session },
-    error
-  } = await supabase.auth.getSession()
-  const user = session?.user
-  const token = session?.access_token || null
-
-  if (!user) {
+  let userData
+  try {
+    userData = await getCurrentUser()
+  } catch {
     redirect('/login')
   }
 
-  const { getCurrentUser } = await import('@/lib/supabase-api')
-  const realUser = await getCurrentUser()
-
-  if (!realUser) {
-    // If the auth session exists but no profile exists, we might need to sign out or redirect to onboarding
-    console.error('Supabase session exists but no user profile found for', user.id)
+  if (!userData) {
     redirect('/login')
   }
 
   return (
-    <SocketProvider accessToken={token}>
-      <UserProvider initialUser={realUser}>
+    <SocketProvider accessToken={null}>
+      <UserProvider initialUser={userData}>
         <TasksProvider>
           <MetadataProvider>
             <MediaProvider>{children}</MediaProvider>

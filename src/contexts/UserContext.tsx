@@ -1,109 +1,94 @@
 'use client'
 
-import { EReaderDevice, MediaProgress, ServerSettings, User, UserLoginResponse } from '@/types/api'
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
-import { useSocketEvent } from './SocketContext'
+import type { Profile } from '@/types/index'
 import { createClient } from '@/utils/supabase/client'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
-interface UserItemProgressUpdatedPayload {
-  id: string // MediaProgress ID
-  data?: MediaProgress | null
-  deviceDescription?: string // e.g. "Windows 10 / Chrome"
-  sessionId?: string // PlaybackSession ID
+// ---------------------------------------------------------------------------
+// Shape of the user data passed from the server (layout.tsx)
+// Derived from auth.User + public.profiles
+// ---------------------------------------------------------------------------
+
+export interface AppUser {
+  id: string
+  email: string | undefined
+  username: string | null
+  userType: 'admin' | 'user' | string
+  language: string
+  theme: string
+  defaultLibraryId: string | null
 }
 
 export interface UserContextType {
-  user: User
+  user: AppUser
+  userIsAdmin: boolean
   userCanUpdate: boolean
   userCanDelete: boolean
   userCanDownload: boolean
-  userIsAdminOrUp: boolean
-  token: string
-  serverSettings: ServerSettings
-  userDefaultLibraryId?: string
-  ereaderDevices: EReaderDevice[]
-  Source: string
-  /** Book media id or podcast episode id matches `MediaProgress.mediaItemId` */
-  getMediaItemProgress: (mediaItemId: string) => MediaProgress | undefined
+  /** Raw profile row for settings pages */
+  profile: Profile
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined)
 
-export function UserProvider({ children, initialUser }: { children: ReactNode; initialUser: UserLoginResponse }) {
-  const [currentUserData, setCurrentUserData] = useState<UserLoginResponse>(initialUser)
+// ---------------------------------------------------------------------------
+// Provider
+// ---------------------------------------------------------------------------
+
+export interface InitialUserData {
+  id: string
+  email: string | undefined
+  profile: Profile
+}
+
+export function UserProvider({
+  children,
+  initialUser,
+}: {
+  children: ReactNode
+  initialUser: InitialUserData
+}) {
+  const [userData, setUserData] = useState<InitialUserData>(initialUser)
   const supabase = createClient()
 
+  // Keep in sync with auth state changes (token refresh, sign-out)
   useEffect(() => {
     const {
-      data: { subscription }
-    } = supabase.auth.onAuthStateChange((event, session) => {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
-        // Handle sign out if needed, though MainLayout usually redirects
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        // We could refresh user data here if needed
+        // MainLayout will redirect; nothing to do here
       }
     })
-
-    return () => {
-      subscription.unsubscribe()
-    }
+    return () => subscription.unsubscribe()
   }, [supabase])
-  const user = currentUserData.user
-  const userIsAdminOrUp = user.type === 'admin' || user.type === 'root'
 
-  useSocketEvent<User>('user_updated', (updatedUser) => {
-    if (updatedUser.id === currentUserData.user.id) {
-      setCurrentUserData((prev) => ({
-        ...prev,
-        user: updatedUser
-      }))
-    }
-  })
-
-  useSocketEvent<UserItemProgressUpdatedPayload>('user_item_progress_updated', (payload) => {
-    if (!payload?.id) return
-
-    // TODO: handle check if media item is currently playing to show alert if another device is playing the same item
-
-    setCurrentUserData((prev) => {
-      const currentProgress = prev.user.mediaProgress || []
-
-      const index = currentProgress.findIndex((entry) => entry.id === payload.id)
-      const nextProgress = [...currentProgress]
-
-      if (index >= 0) {
-        nextProgress[index] = payload.data!
-      } else {
-        nextProgress.push(payload.data!)
-      }
-
-      return {
-        ...prev,
-        user: {
-          ...prev.user,
-          mediaProgress: nextProgress
-        }
-      }
-    })
-  })
-
-  // To capture if initialUser changes from server refresh
+  // Re-sync when server re-renders with fresh data
   useEffect(() => {
-    setCurrentUserData(initialUser)
+    setUserData(initialUser)
   }, [initialUser])
 
+  const { profile } = userData
+
+  const appUser: AppUser = {
+    id: userData.id,
+    email: userData.email,
+    username: profile.username,
+    userType: profile.user_type,
+    language: profile.language,
+    theme: profile.theme,
+    defaultLibraryId: profile.default_library_id,
+  }
+
+  const userIsAdmin = appUser.userType === 'admin'
+
   const contextValue: UserContextType = {
-    user,
-    userCanUpdate: !!(user.permissions?.update || userIsAdminOrUp),
-    userCanDelete: !!(user.permissions?.delete || userIsAdminOrUp),
-    userCanDownload: !!(user.permissions?.download || userIsAdminOrUp),
-    userIsAdminOrUp,
-    token: user.token,
-    serverSettings: currentUserData.serverSettings,
-    userDefaultLibraryId: currentUserData.userDefaultLibraryId,
-    ereaderDevices: currentUserData.ereaderDevices,
-    Source: currentUserData.Source,
-    getMediaItemProgress: (mediaItemId: string) => user.mediaProgress.find((p) => p.mediaItemId === mediaItemId)
+    user: appUser,
+    profile,
+    userIsAdmin,
+    userCanUpdate: userIsAdmin,
+    userCanDelete: userIsAdmin,
+    userCanDownload: true,
   }
 
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
