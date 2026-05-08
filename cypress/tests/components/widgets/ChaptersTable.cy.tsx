@@ -21,7 +21,21 @@ const mockUser: AppUser = {
   userType: 'admin',
   language: 'en-us',
   theme: 'dark',
-  defaultLibraryId: 'test-library-id'
+  defaultLibraryId: 'test-library-id',
+  type: 'admin',
+  permissions: {
+    download: true, update: true, delete: true, upload: true,
+    createEreader: true, accessAllLibraries: true, accessAllTags: true,
+    accessExplicitContent: true, selectedTagsNotAccessible: false
+  },
+  mediaProgress: [],
+  bookmarks: [],
+  isActive: true,
+  isLocked: false,
+  librariesAccessible: [],
+  itemTagsSelected: [],
+  hasOpenIDLink: false,
+  token: ''
 }
 
 const mockUserContextValue: UserContextType = {
@@ -32,7 +46,6 @@ const mockUserContextValue: UserContextType = {
   userCanDelete: true,
   userCanDownload: true,
   userIsAdminOrUp: true,
-  token: '',
   serverSettings: {},
   userDefaultLibraryId: 'test-library-id',
   ereaderDevices: [],

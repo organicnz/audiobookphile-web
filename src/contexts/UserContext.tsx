@@ -17,6 +17,39 @@ export interface AppUser {
   language: string
   theme: string
   defaultLibraryId: string | null
+  // ---------------------------------------------------------------------------
+  // Compatibility shims — keep existing components working during migration
+  // ---------------------------------------------------------------------------
+  /** @deprecated use userType */
+  type: 'admin' | 'user' | 'root' | string
+  /** @deprecated no ABS permissions in Supabase-native mode */
+  permissions: {
+    download: boolean
+    update: boolean
+    delete: boolean
+    upload: boolean
+    createEreader: boolean
+    accessAllLibraries: boolean
+    accessAllTags: boolean
+    accessExplicitContent: boolean
+    selectedTagsNotAccessible: boolean
+  }
+  /** @deprecated no ABS media progress in Supabase-native mode */
+  mediaProgress: unknown[]
+  /** @deprecated */
+  bookmarks: unknown[]
+  /** @deprecated */
+  isActive: boolean
+  /** @deprecated */
+  isLocked: boolean
+  /** @deprecated */
+  librariesAccessible: string[]
+  /** @deprecated */
+  itemTagsSelected: string[]
+  /** @deprecated */
+  hasOpenIDLink: boolean
+  /** @deprecated */
+  token: string
 }
 
 export interface UserContextType {
@@ -32,8 +65,6 @@ export interface UserContextType {
   // ---------------------------------------------------------------------------
   /** @deprecated use userIsAdmin */
   userIsAdminOrUp: boolean
-  /** @deprecated use user.id to fetch token from Supabase session */
-  token: string
   /** @deprecated no server settings in Supabase-native mode */
   serverSettings: Record<string, unknown>
   userDefaultLibraryId?: string
@@ -92,6 +123,27 @@ export function UserProvider({
     language: profile.language,
     theme: profile.theme,
     defaultLibraryId: profile.default_library_id,
+    // Compat shims
+    type: profile.user_type,
+    permissions: {
+      download: true,
+      update: userIsAdmin,
+      delete: userIsAdmin,
+      upload: userIsAdmin,
+      createEreader: true,
+      accessAllLibraries: true,
+      accessAllTags: true,
+      accessExplicitContent: true,
+      selectedTagsNotAccessible: false,
+    },
+    mediaProgress: [],
+    bookmarks: [],
+    isActive: true,
+    isLocked: false,
+    librariesAccessible: [],
+    itemTagsSelected: [],
+    hasOpenIDLink: false,
+    token: '',
   }
 
   const userIsAdmin = appUser.userType === 'admin'
@@ -105,7 +157,6 @@ export function UserProvider({
     userCanDownload: true,
     // Compatibility shims
     userIsAdminOrUp: userIsAdmin,
-    token: '',
     serverSettings: {},
     userDefaultLibraryId: profile.default_library_id ?? undefined,
     ereaderDevices: [],
