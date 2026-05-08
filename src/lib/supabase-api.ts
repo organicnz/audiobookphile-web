@@ -552,3 +552,68 @@ export async function getPersonalizedShelves(
     ),
   }
 }
+
+// ---------------------------------------------------------------------------
+// Legacy compatibility shims (called from src/lib/api.ts fallback paths)
+// ---------------------------------------------------------------------------
+
+/**
+ * Personalized shelves for the library page — wraps getPersonalizedShelves
+ * using the current authenticated user.
+ */
+export async function getLibraryPersonalized(libraryId: string): Promise<PersonalizedShelves> {
+  const { user } = await requireUser()
+  return getPersonalizedShelves(libraryId, user.id)
+}
+
+export interface LibraryFilterData {
+  genres: string[]
+  tags: string[]
+  authors: { id: string; name: string }[]
+  series: { id: string; name: string }[]
+  narrators: { id: string; name: string }[]
+}
+
+/**
+ * Aggregate filter data (genres, tags, authors, series, narrators) for a library.
+ */
+export async function getLibraryFilterData(libraryId: string): Promise<LibraryFilterData> {
+  const supabase = await createClient()
+
+  const [itemsResult, authorsResult, seriesResult, narratorsResult] = await Promise.all([
+    supabase
+      .from('library_items')
+      .select('genres, tags')
+      .eq('library_id', libraryId),
+    supabase
+      .from('authors')
+      .select('id, name')
+      .eq('library_id', libraryId)
+      .order('name', { ascending: true }),
+    supabase
+      .from('series')
+      .select('id, name')
+      .eq('library_id', libraryId)
+      .order('name', { ascending: true }),
+    supabase
+      .from('narrators')
+      .select('id, name')
+      .eq('library_id', libraryId)
+      .order('name', { ascending: true }),
+  ])
+
+  const genres = new Set<string>()
+  const tags = new Set<string>()
+  for (const row of itemsResult.data ?? []) {
+    for (const g of row.genres ?? []) genres.add(g)
+    for (const t of row.tags ?? []) tags.add(t)
+  }
+
+  return {
+    genres: Array.from(genres).sort(),
+    tags: Array.from(tags).sort(),
+    authors: (authorsResult.data ?? []).map(r => ({ id: r.id, name: r.name })),
+    series: (seriesResult.data ?? []).map(r => ({ id: r.id, name: r.name })),
+    narrators: (narratorsResult.data ?? []).map(r => ({ id: r.id, name: r.name })),
+  }
+}
