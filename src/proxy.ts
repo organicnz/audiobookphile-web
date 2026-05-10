@@ -16,6 +16,15 @@ import { NextResponse, type NextRequest } from 'next/server'
  */
 export async function proxy(request: NextRequest) {
   console.log(`[Proxy] Handling request: ${request.nextUrl.pathname}`)
+
+  // If Supabase env vars are missing, skip session update and redirect root to /login
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    if (request.nextUrl.pathname === '/') {
+      return NextResponse.redirect(new URL('/login', request.nextUrl.origin))
+    }
+    return NextResponse.next()
+  }
+
   const response = await updateSession(request)
 
   if (request.nextUrl.pathname !== '/') {
