@@ -6,6 +6,13 @@ const withNextIntl = createNextIntlPlugin('./src/lib/i18n.ts')
 const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: NextConfig }) => {
   const baseConfig: NextConfig = {
     ...defaultConfig,
+    redirects: async () => [
+      {
+        source: '/',
+        destination: '/login',
+        permanent: false,
+      },
+    ],
     headers: async () => [
       {
         source: '/(.*)',
