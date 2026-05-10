@@ -9,31 +9,30 @@ import { useGlobalToast } from '@/contexts/ToastContext'
 import { useUser } from '@/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { formatJsDate, formatJsDatetime } from '@/lib/datefns'
-import { DeviceInfo, User } from '@/types/api'
+import { Profile } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useCallback, useRef, useState } from 'react'
 import { deleteUser } from './actions'
 
 interface UsersTableProps {
-  users: User[]
+  profiles: Profile[]
   dateFormat: string
   timeFormat: string
-  onEditUser: (user: User) => void
 }
 
-export default function UsersTable({ users, dateFormat, timeFormat, onEditUser }: UsersTableProps) {
+export default function UsersTable({ profiles, dateFormat, timeFormat }: UsersTableProps) {
   const t = useTypeSafeTranslations()
   const router = useRouter()
   const { showToast } = useGlobalToast()
   const { user } = useUser()
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
-  const deletingUserRef = useRef<User | null>(null)
+  const deletingUserRef = useRef<Profile | null>(null)
   const currentUserId = user.id
 
-  const handleDeleteClick = useCallback((user: User) => {
-    deletingUserRef.current = user
+  const handleDeleteClick = useCallback((profile: Profile) => {
+    deletingUserRef.current = profile
     setShowConfirmDialog(true)
   }, [])
 
@@ -41,11 +40,11 @@ export default function UsersTable({ users, dateFormat, timeFormat, onEditUser }
     if (!deletingUserRef.current) return
     setShowConfirmDialog(false)
 
-    const userToDelete = deletingUserRef.current
-    setDeletingUserId(userToDelete.id)
+    const profileToDelete = deletingUserRef.current
+    setDeletingUserId(profileToDelete.id)
 
     try {
-      await deleteUser(userToDelete.id)
+      await deleteUser(profileToDelete.id)
       showToast(t('ToastUserDeleteSuccess'), { type: 'success' })
     } catch (error) {
       showToast(t('ToastUserDeleteFailed'), { type: 'error' })
@@ -56,85 +55,54 @@ export default function UsersTable({ users, dateFormat, timeFormat, onEditUser }
     }
   }, [showToast, t])
 
-  const getDeviceInfoString = (deviceInfo: DeviceInfo | null) => {
-    if (!deviceInfo) return ''
-    if (deviceInfo.manufacturer && deviceInfo.model) return `${deviceInfo.manufacturer} ${deviceInfo.model}`
-
-    return `${deviceInfo.osName || 'Unknown'} ${deviceInfo.osVersion || ''} ${deviceInfo.browserName || ''}`
-  }
-
-  const columns: DataTableColumn<User>[] = [
+  const columns: DataTableColumn<Profile>[] = [
     {
       label: t('LabelUsername'),
-      accessor: (user) => (
+      accessor: (profile) => (
         <div className="flex items-center gap-2">
-          {/* TODO: Use actual user online status that comes from web socket */}
-          <OnlineIndicator value={user.id === currentUserId} />
-          <p className="text-base font-medium">{user.username}</p>
+          <OnlineIndicator value={profile.id === currentUserId} />
+          <p className="text-base font-medium">{profile.username ?? profile.id}</p>
         </div>
       )
     },
     {
       label: t('LabelAccountType'),
-      accessor: 'type'
+      accessor: 'user_type'
     },
     {
-      label: t('LabelActivity'),
-      accessor: (user) => {
-        const latestSession = user.latestSession
-        if (!latestSession) return ''
-        const latestSessionDisplayTitle = latestSession.displayTitle || ''
-        const latestSessionDeviceInfo = getDeviceInfoString(latestSession.deviceInfo)
+      label: t('LabelCreatedAt'),
+      accessor: (profile) => {
+        if (!profile.created_at) return ''
         return (
-          <div className="flex flex-col text-xs">
-            <span>{latestSessionDisplayTitle}</span>
-            <span className="text-foreground-muted">{latestSessionDeviceInfo}</span>
-          </div>
-        )
-      }
-    },
-    {
-      label: t('LabelLastSeen'),
-      accessor: (user) => {
-        if (!user.lastSeen) return ''
-        return (
-          <Tooltip text={formatJsDatetime(new Date(user.lastSeen), dateFormat, timeFormat)} position="top">
-            <span className="text-xs">{formatDistanceToNow(new Date(user.lastSeen), { addSuffix: true })}</span>
+          <Tooltip text={formatJsDatetime(new Date(profile.created_at), dateFormat, timeFormat)} position="top">
+            <span className="text-xs">{formatJsDate(new Date(profile.created_at), dateFormat)}</span>
           </Tooltip>
         )
       }
     },
     {
-      label: t('LabelCreatedAt'),
-      accessor: (user) => {
+      label: t('LabelLastSeen'),
+      accessor: (profile) => {
+        if (!profile.updated_at) return ''
         return (
-          <Tooltip text={formatJsDatetime(new Date(user.createdAt), dateFormat, timeFormat)} position="top">
-            <span className="text-xs">{formatJsDate(new Date(user.createdAt), dateFormat)}</span>
+          <Tooltip text={formatJsDatetime(new Date(profile.updated_at), dateFormat, timeFormat)} position="top">
+            <span className="text-xs">{formatDistanceToNow(new Date(profile.updated_at), { addSuffix: true })}</span>
           </Tooltip>
         )
       }
     },
     {
       label: '',
-      accessor: (user) => (
+      accessor: (profile) => (
         <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-          <IconBtn
-            ariaLabel={t('ButtonUserEdit', { 0: user.username })}
-            borderless
-            size="small"
-            className="text-foreground-muted"
-            onClick={() => onEditUser(user)}
-          >
-            edit
-          </IconBtn>
-          {user.type !== 'root' && (
+          {profile.user_type !== 'root' && (
             <IconBtn
-              ariaLabel={t('ButtonUserDelete', { 0: user.username })}
+              ariaLabel={t('ButtonUserDelete', { 0: profile.username ?? profile.id })}
               borderless
               size="small"
               className="text-foreground-muted hover:not-disabled:text-error"
-              loading={deletingUserId === user.id}
-              onClick={() => handleDeleteClick(user)}
+              loading={deletingUserId === profile.id}
+              onClick={() => handleDeleteClick(profile)}
             >
               delete
             </IconBtn>
@@ -147,11 +115,10 @@ export default function UsersTable({ users, dateFormat, timeFormat, onEditUser }
   return (
     <>
       <SimpleDataTable
-        data={users}
+        data={profiles}
         columns={columns}
-        getRowKey={(user) => user.id}
-        rowClassName={(user) => (!user.isActive ? 'bg-error/10 even:bg-error/10 hover:bg-error/5' : '')}
-        onRowClick={(user) => router.push(`/settings/users/${user.id}`)}
+        getRowKey={(profile) => profile.id}
+        onRowClick={(profile) => router.push(`/settings/users/${profile.id}`)}
       />
       <ConfirmDialog
         isOpen={showConfirmDialog}

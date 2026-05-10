@@ -1,11 +1,10 @@
-import { getData, getUsers } from '../../../../lib/api'
+import { getUsers } from '@/lib/supabase-api'
 import UsersClient from './UsersClient'
 
 export const dynamic = 'force-dynamic'
 
 export default async function UsersPage() {
-  const [usersResponse] = await getData(getUsers('include=latestSession'))
-  const users = usersResponse?.users || []
+  const profiles = await getUsers()
 
-  return <UsersClient users={users} />
+  return <UsersClient profiles={profiles} />
 }

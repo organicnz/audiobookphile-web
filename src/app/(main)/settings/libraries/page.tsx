@@ -1,11 +1,10 @@
-import { getData, getLibraries } from '../../../../lib/api'
+import { getLibraries } from '@/lib/supabase-api'
 import LibrariesClient from './LibrariesClient'
 
 export const dynamic = 'force-dynamic'
 
 export default async function LibrariesPage() {
-  const [librariesResponse] = await getData(getLibraries())
-  const libraries = librariesResponse?.libraries || []
+  const { libraries } = await getLibraries()
 
   return <LibrariesClient libraries={libraries} />
 }

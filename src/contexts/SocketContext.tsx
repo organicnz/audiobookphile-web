@@ -1,156 +1,32 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
-import { Socket, io } from 'socket.io-client'
+import { ReactNode } from 'react'
 
-interface SocketContextType {
-  socket: Socket | null
-  isConnected: boolean
-  connectionError: string | null
-}
-
-const SocketContext = createContext<SocketContextType | undefined>(undefined)
+// Stub context — no socket.io-client, no connection attempt.
+// The app is fully serverless (Vercel + Supabase); there is no ABS Socket.IO server.
 
 interface SocketProviderProps {
   children: ReactNode
-  accessToken: string | null
 }
 
-export function SocketProvider({ children, accessToken }: SocketProviderProps) {
-  const router = useRouter()
-  const [socket, setSocket] = useState<Socket | null>(null)
-  const [isConnected, setIsConnected] = useState(false)
-  const [connectionError, setConnectionError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const socketInstance = io()
-    setSocket(socketInstance)
-
-    const handleConnect = () => {
-      setIsConnected(true)
-      setConnectionError(null)
-      console.log('Socket connected - authenticating')
-      socketInstance.emit('auth', accessToken)
-    }
-
-    const handleDisconnect = () => {
-      setIsConnected(false)
-      console.log('Socket disconnected')
-    }
-
-    const handleConnectError = (error: Error) => {
-      setConnectionError(error.message)
-      setIsConnected(false)
-      console.error('Socket connection error:', error)
-    }
-
-    const handleInitialized = () => {
-      console.log('Socket initialized successfully')
-    }
-
-    const handleAuthFailed = async () => {
-      console.log('Socket auth failed. Attempting silent token refresh.')
-      try {
-        const res = await fetch('/internal-api/refresh', {
-          headers: {
-            Accept: 'application/json'
-          }
-        })
-        if (res.ok) {
-          console.log('Silent token refresh successful. Refreshing router to get new token.')
-          router.refresh()
-        } else {
-          console.error('Silent token refresh failed.')
-          window.location.reload() // Reload to let middleware trigger redirect to login
-        }
-      } catch (err) {
-        console.error('Error during token refresh:', err)
-        window.location.reload()
-      }
-    }
-
-    /**
-     * Force reload for all clients when a backup has been applied
-     */
-    const handleBackupApplied = () => {
-      try {
-        if (sessionStorage.getItem('abs_backup_restore_navigating') === '1') {
-          sessionStorage.removeItem('abs_backup_restore_navigating')
-          return
-        }
-      } catch {
-        /* ignore */
-      }
-      window.location.reload()
-    }
-
-    socketInstance.on('connect', handleConnect)
-    socketInstance.on('disconnect', handleDisconnect)
-    socketInstance.on('connect_error', handleConnectError)
-    socketInstance.on('init', handleInitialized)
-    socketInstance.on('auth_failed', handleAuthFailed)
-    socketInstance.on('backup_applied', handleBackupApplied)
-
-    return () => {
-      socketInstance.off('connect', handleConnect)
-      socketInstance.off('disconnect', handleDisconnect)
-      socketInstance.off('connect_error', handleConnectError)
-      socketInstance.off('init', handleInitialized)
-      socketInstance.off('auth_failed', handleAuthFailed)
-      socketInstance.off('backup_applied', handleBackupApplied)
-      socketInstance.disconnect()
-    }
-  }, [accessToken, router])
-
-  const value: SocketContextType = {
-    socket,
-    isConnected,
-    connectionError
-  }
-
-  return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
+export function SocketProvider({ children }: SocketProviderProps) {
+  return <>{children}</>
 }
 
 export function useSocket() {
-  const context = useContext(SocketContext)
-  if (context === undefined) {
-    throw new Error('useSocket must be used within a SocketProvider')
-  }
-  return context
+  return { socket: null, isConnected: false, connectionError: null }
 }
 
-// Hook for listening to specific socket events
-export function useSocketEvent(event: string, callback: () => void, dependencies?: unknown[]): void
-export function useSocketEvent<T>(event: string, callback: (data: T) => void, dependencies?: unknown[]): void
-export function useSocketEvent<T>(event: string, callback: ((data: T) => void) | (() => void), dependencies: unknown[] = []) {
-  const { socket } = useSocket()
-
-  useEffect(() => {
-    if (!socket) return
-
-    socket.on(event, callback)
-
-    return () => {
-      socket.off(event, callback)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, event, callback, ...dependencies])
+// No-op: socket events are not supported in the serverless architecture
+export function useSocketEvent<T>(
+  _event: string,
+  _callback: ((data: T) => void) | (() => void),
+  _dependencies?: unknown[]
+): void {
+  // no-op
 }
 
-// Hook for emitting socket events
+// No-op emit
 export function useSocketEmit() {
-  const { socket, isConnected } = useSocket()
-
-  function emit(event: string): void
-  function emit<T>(event: string, data: T): void
-  function emit(event: string, data?: unknown): void {
-    if (socket && isConnected) {
-      socket.emit(event, data)
-    } else {
-      console.warn('Socket not connected, cannot emit event:', event)
-    }
-  }
-
-  return { emit }
+  return { emit: <T extends unknown>(_event: string, _data?: T) => {} }
 }

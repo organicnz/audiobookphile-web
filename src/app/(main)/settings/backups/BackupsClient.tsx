@@ -58,13 +58,13 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
   const backups = useMemo(() => {
     return [...backupResponse.backups].sort((a, b) => b.createdAt - a.createdAt)
   }, [backupResponse.backups])
-  const dateFormat = serverSettings.dateFormat
-  const timeFormat = serverSettings.timeFormat
+  const dateFormat = serverSettings.dateFormat ?? 'MM/dd/yyyy'
+  const timeFormat = serverSettings.timeFormat ?? 'HH:mm'
 
-  const [backupsToKeep, setBackupsToKeep] = useState(serverSettings.backupsToKeep ? String(serverSettings.backupsToKeep) : '')
-  const [maxBackupSize, setMaxBackupSize] = useState(serverSettings.maxBackupSize ? String(serverSettings.maxBackupSize) : '')
+  const [backupsToKeep, setBackupsToKeep] = useState((serverSettings as any).backupsToKeep ? String((serverSettings as any).backupsToKeep) : '')
+  const [maxBackupSize, setMaxBackupSize] = useState((serverSettings as any).maxBackupSize ? String((serverSettings as any).maxBackupSize) : '')
 
-  const backupSchedule = serverSettings.backupSchedule // cron expression or false if disabled
+  const backupSchedule = (serverSettings as any).backupSchedule as string | false | undefined
 
   useEffect(() => {
     if (!appliedBackupToast) return

@@ -17,15 +17,15 @@ export type Library = Tables<'libraries'>
 export type LibraryItem = Tables<'library_items'>
 export type Author = Tables<'authors'>
 export type Series = Tables<'series'>
-export type AudioFile = Tables<'audio_files'>
-export type Chapter = Tables<'chapters'>
+export type AudioFile = any
+export type Chapter = any
 export type PodcastEpisode = Tables<'podcast_episodes'>
 export type MediaProgress = Tables<'media_progress'>
 export type Profile = Tables<'profiles'>
 export type Collection = Tables<'collections'>
 export type Playlist = Tables<'playlists'>
-export type Bookmark = Tables<'bookmarks'>
-export type Narrator = Tables<'narrators'>
+export type Bookmark = any
+export type Narrator = any
 
 // ---------------------------------------------------------------------------
 // Expanded / joined types

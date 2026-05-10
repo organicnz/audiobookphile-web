@@ -3,60 +3,60 @@ import { redirect } from 'next/navigation'
 import { NextResponse } from 'next/server'
 import { cache } from 'react'
 import {
-  Author,
-  AuthorImagePayload,
-  AuthorQuickMatchPayload,
-  AuthorResponse,
-  AuthorUpdateResponse,
-  BookSearchResult,
-  Collection,
-  CreateApiKeyPayload,
-  CreateCustomMetadataProviderPayload,
-  CreateCustomMetadataProviderResponse,
-  CreateUpdateApiKeyResponse,
-  FetchPodcastFeedResponse,
-  FFProbeData,
-  GetApiKeysResponse,
-  GetAuthorsResponse,
-  GetBackupsResponse,
-  GetCollectionsResponse,
-  GetCustomMetadataProvidersResponse,
-  GetFilesystemPathsResponse,
-  GetLibrariesResponse,
-  GetLibraryItemsResponse,
-  GetListeningSessionsResponse,
-  GetLoggerDataResponse,
-  GetNarratorsResponse,
-  GetOpenListeningSessionsResponse,
-  GetPlaylistsResponse,
-  GetRssFeedsResponse,
-  GetSeriesResponse,
-  GetUsersResponse,
-  Library,
-  LibraryFilterData,
-  LibraryItem,
-  MediaItemShare,
-  MetadataProvidersResponse,
-  MutateBackupsResponse,
-  OpenMediaItemSharePayload,
-  OpenRssFeedPayload,
-  OpenRssFeedResponse,
-  PersonalizedShelf,
-  Playlist,
-  PlaylistItemPayload,
-  PodcastSearchResult,
-  RssPodcastEpisode,
-  SaveLibraryOrderApiResponse,
-  SearchLibraryResponse,
-  Series,
-  ServerStatus,
-  TasksResponse,
-  UpdateAuthorPayload,
-  UpdateLibraryItemMediaPayload,
-  UpdateLibraryItemMediaResponse,
-  UploadCoverResponse,
-  User,
-  UserLoginResponse
+    Author,
+    AuthorImagePayload,
+    AuthorQuickMatchPayload,
+    AuthorResponse,
+    AuthorUpdateResponse,
+    BookSearchResult,
+    Collection,
+    CreateApiKeyPayload,
+    CreateCustomMetadataProviderPayload,
+    CreateCustomMetadataProviderResponse,
+    CreateUpdateApiKeyResponse,
+    FetchPodcastFeedResponse,
+    FFProbeData,
+    GetApiKeysResponse,
+    GetAuthorsResponse,
+    GetBackupsResponse,
+    GetCollectionsResponse,
+    GetCustomMetadataProvidersResponse,
+    GetFilesystemPathsResponse,
+    GetLibrariesResponse,
+    GetLibraryItemsResponse,
+    GetListeningSessionsResponse,
+    GetLoggerDataResponse,
+    GetNarratorsResponse,
+    GetOpenListeningSessionsResponse,
+    GetPlaylistsResponse,
+    GetRssFeedsResponse,
+    GetSeriesResponse,
+    GetUsersResponse,
+    Library,
+    LibraryFilterData,
+    LibraryItem,
+    MediaItemShare,
+    MetadataProvidersResponse,
+    MutateBackupsResponse,
+    OpenMediaItemSharePayload,
+    OpenRssFeedPayload,
+    OpenRssFeedResponse,
+    PersonalizedShelf,
+    Playlist,
+    PlaylistItemPayload,
+    PodcastSearchResult,
+    RssPodcastEpisode,
+    SaveLibraryOrderApiResponse,
+    SearchLibraryResponse,
+    Series,
+    ServerStatus,
+    TasksResponse,
+    UpdateAuthorPayload,
+    UpdateLibraryItemMediaPayload,
+    UpdateLibraryItemMediaResponse,
+    UploadCoverResponse,
+    User,
+    UserLoginResponse
 } from '../types/api'
 
 import { ApiError, NetworkError, UnauthorizedError } from './apiErrors'
@@ -377,7 +377,7 @@ export const getLibraries = cache(async (): Promise<GetLibrariesResponse> => {
   } catch (error) {
     console.warn('[api] getLibraries failed, falling back to Supabase')
     const libraries = await supabaseApi.getLibraries()
-    return { libraries }
+    return { libraries } as any
   }
 })
 
@@ -386,7 +386,7 @@ export const getLibrary = cache(async (libraryId: string): Promise<Library> => {
     return await apiRequest<Library>(`/api/libraries/${libraryId}`, {})
   } catch (error) {
     console.warn(`[api] getLibrary(${libraryId}) failed, falling back to Supabase`)
-    return await supabaseApi.getLibrary(libraryId)
+    return await supabaseApi.getLibrary(libraryId) as any
   }
 })
 
@@ -395,7 +395,7 @@ export const getLibraryPersonalized = cache(async (libraryId: string): Promise<P
     return await apiRequest<PersonalizedShelf[]>(`/api/libraries/${libraryId}/personalized?include=rssfeed,share`, {})
   } catch (error) {
     console.warn(`[api] getLibraryPersonalized(${libraryId}) failed, falling back to Supabase`)
-    return await supabaseApi.getLibraryPersonalized(libraryId)
+    return await supabaseApi.getLibraryPersonalized(libraryId) as any
   }
 })
 
@@ -404,12 +404,12 @@ export const getLibraryItems = cache(async (libraryId: string, queryParams?: str
     return await apiRequest<GetLibraryItemsResponse>(`/api/libraries/${libraryId}/items${queryParams ? `?${queryParams}` : ''}`, {})
   } catch (error) {
     console.warn(`[api] getLibraryItems(${libraryId}) failed, falling back to Supabase`)
-    const results = await supabaseApi.getLibraryItems(libraryId)
+    const { results, total, limit, page } = await supabaseApi.getLibraryItems(libraryId)
     return {
-      results,
-      total: results.length,
-      limit: 50,
-      page: 0,
+      results: results as any,
+      total,
+      limit,
+      page,
       sortDesc: false,
       mediaType: 'book',
       minified: false,
@@ -429,7 +429,7 @@ export async function getLibraryFilterData(libraryId: string): Promise<LibraryFi
     return await apiRequest<LibraryFilterData>(`/api/libraries/${libraryId}/filterdata`, {})
   } catch (error) {
     console.warn(`[api] getLibraryFilterData(${libraryId}) failed, falling back to Supabase`)
-    return await supabaseApi.getLibraryFilterData(libraryId)
+    return await supabaseApi.getLibraryFilterData(libraryId) as any
   }
 }
 
@@ -447,7 +447,7 @@ export const getLibraryItem = cache(async (itemId: string, expanded?: boolean, i
     return await apiRequest<LibraryItem>(`/api/items/${itemId}?${params.toString()}`, {})
   } catch (error) {
     console.warn(`[api] getLibraryItem(${itemId}) failed, falling back to Supabase`)
-    return await supabaseApi.getLibraryItem(itemId)
+    return await supabaseApi.getLibraryItem(itemId) as any
   }
 })
 
@@ -559,7 +559,7 @@ export async function searchLibrary(libraryId: string, query: string, limit?: nu
     return await apiRequest<SearchLibraryResponse>(`/api/libraries/${libraryId}/search?${params.toString()}`, {})
   } catch (error) {
     console.warn(`[api] searchLibrary(${libraryId}, ${query}) failed, falling back to Supabase`)
-    return await supabaseApi.searchLibrary(libraryId, query, limit)
+    return await supabaseApi.searchLibrary(libraryId, query, limit) as any
   }
 }
 
@@ -617,7 +617,7 @@ export const getLibrarySeries = cache(async (libraryId: string, queryParams?: st
     console.warn(`[api] getLibrarySeries(${libraryId}) failed, falling back to Supabase`)
     const results = await supabaseApi.getLibrarySeries(libraryId)
     return {
-      results,
+      results: results as any,
       total: results.length,
       limit: 50,
       page: 0,
@@ -634,7 +634,7 @@ export const getLibraryAuthors = cache(async (libraryId: string, queryParams?: s
   } catch (error) {
     console.warn(`[api] getLibraryAuthors(${libraryId}) failed, falling back to Supabase`)
     const authors = await supabaseApi.getLibraryAuthors(libraryId)
-    return { authors }
+    return { authors: authors as any }
   }
 })
 

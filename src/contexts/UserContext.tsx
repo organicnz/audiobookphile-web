@@ -1,5 +1,6 @@
 'use client'
 
+import type { EReaderDevice, MediaProgress, AudioBookmark } from '@/types/api'
 import type { Profile } from '@/types/index'
 import { createClient } from '@/utils/supabase/client'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
@@ -21,7 +22,7 @@ export interface AppUser {
   // Compatibility shims — keep existing components working during migration
   // ---------------------------------------------------------------------------
   /** @deprecated use userType */
-  type: 'admin' | 'user' | 'root' | string
+  type: 'admin' | 'user' | 'root' | 'guest'
   /** @deprecated no ABS permissions in Supabase-native mode */
   permissions: {
     download: boolean
@@ -35,13 +36,15 @@ export interface AppUser {
     selectedTagsNotAccessible: boolean
   }
   /** @deprecated no ABS media progress in Supabase-native mode */
-  mediaProgress: unknown[]
+  mediaProgress: MediaProgress[]
   /** @deprecated */
-  bookmarks: unknown[]
+  bookmarks: AudioBookmark[]
   /** @deprecated */
   isActive: boolean
   /** @deprecated */
   isLocked: boolean
+  /** @deprecated */
+  seriesHideFromContinueListening: string[]
   /** @deprecated */
   librariesAccessible: string[]
   /** @deprecated */
@@ -50,6 +53,8 @@ export interface AppUser {
   hasOpenIDLink: boolean
   /** @deprecated */
   token: string
+  /** @deprecated */
+  createdAt: number
 }
 
 export interface UserContextType {
@@ -72,13 +77,15 @@ export interface UserContextType {
     language?: string
     version?: string
     buildNumber?: string
+    homeBookshelfView?: number
+    bookshelfView?: number
     [key: string]: unknown
   }
   userDefaultLibraryId?: string
   /** @deprecated no e-reader devices in Supabase-native mode */
-  ereaderDevices: unknown[]
+  ereaderDevices: EReaderDevice[]
   Source: string
-  getMediaItemProgress: (mediaItemId: string) => undefined
+  getMediaItemProgress: (mediaItemId: string) => MediaProgress | undefined
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined)
@@ -103,35 +110,34 @@ export function UserProvider({
   const [userData, setUserData] = useState<InitialUserData>(initialUser)
   const supabase = createClient()
 
-  // Keep in sync with auth state changes (token refresh, sign-out)
   useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
-        // MainLayout will redirect; nothing to do here
+        // MainLayout will redirect
       }
     })
     return () => subscription.unsubscribe()
   }, [supabase])
 
-  // Re-sync when server re-renders with fresh data
   useEffect(() => {
     setUserData(initialUser)
   }, [initialUser])
 
   const { profile } = userData
+  const userIsAdmin = profile.user_type === 'admin'
 
   const appUser: AppUser = {
     id: userData.id,
     email: userData.email,
     username: profile.username ?? userData.email?.split('@')[0] ?? userData.id,
-    userType: profile.user_type,
-    language: profile.language,
-    theme: profile.theme,
+    userType: profile.user_type ?? 'user',
+    language: profile.language ?? 'en-US',
+    theme: profile.theme ?? 'dark',
     defaultLibraryId: profile.default_library_id,
     // Compat shims
-    type: profile.user_type,
+    type: (profile.user_type as AppUser['type']) ?? 'user',
     permissions: {
       download: true,
       update: userIsAdmin,
@@ -147,13 +153,13 @@ export function UserProvider({
     bookmarks: [],
     isActive: true,
     isLocked: false,
+    seriesHideFromContinueListening: [],
     librariesAccessible: [],
     itemTagsSelected: [],
     hasOpenIDLink: false,
     token: '',
+    createdAt: 0,
   }
-
-  const userIsAdmin = appUser.userType === 'admin'
 
   const contextValue: UserContextType = {
     user: appUser,
@@ -162,9 +168,16 @@ export function UserProvider({
     userCanUpdate: userIsAdmin,
     userCanDelete: userIsAdmin,
     userCanDownload: true,
-    // Compatibility shims
     userIsAdminOrUp: userIsAdmin,
-    serverSettings: {},
+    serverSettings: {
+      dateFormat: 'MM/dd/yyyy',
+      timeFormat: 'HH:mm',
+      language: profile.language ?? 'en-US',
+      version: 'supabase',
+      buildNumber: '1',
+      homeBookshelfView: 1,
+      bookshelfView: 1,
+    },
     userDefaultLibraryId: profile.default_library_id ?? undefined,
     ereaderDevices: [],
     Source: 'supabase',

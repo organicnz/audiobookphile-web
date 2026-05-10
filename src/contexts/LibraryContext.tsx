@@ -104,8 +104,8 @@ export function LibraryProvider({ children, library }: { children: React.ReactNo
   const [isSettingsLoaded, setIsSettingsLoaded] = useState(false)
 
   const { serverSettings } = useUser()
-  const homeBookshelfView = serverSettings?.homeBookshelfView || 0
-  const bookshelfView = serverSettings?.bookshelfView || 0
+  const homeBookshelfView = (serverSettings?.homeBookshelfView ?? 0) as BookshelfView
+  const bookshelfView = (serverSettings?.bookshelfView ?? 0) as BookshelfView
 
   // Filter data hook
   const { filterData, isLoading: filterDataLoading, updateFilterDataWithItem, removeSeriesFromFilterData } = useFilterData(library.id)

@@ -7,107 +7,46 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
   public: {
     Tables: {
-      audio_files: {
-        Row: {
-          id: string
-          library_item_id: string
-          episode_id: string | null
-          storage_path: string
-          filename: string
-          mime_type: string
-          size: number
-          duration: number
-          track_index: number
-          bit_rate: number | null
-          codec: string | null
-          channels: number | null
-          channel_layout: string | null
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          library_item_id: string
-          episode_id?: string | null
-          storage_path: string
-          filename: string
-          mime_type: string
-          size: number
-          duration: number
-          track_index?: number
-          bit_rate?: number | null
-          codec?: string | null
-          channels?: number | null
-          channel_layout?: string | null
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          library_item_id?: string
-          episode_id?: string | null
-          storage_path?: string
-          filename?: string
-          mime_type?: string
-          size?: number
-          duration?: number
-          track_index?: number
-          bit_rate?: number | null
-          codec?: string | null
-          channels?: number | null
-          channel_layout?: string | null
-          created_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "audio_files_library_item_id_fkey"
-            columns: ["library_item_id"]
-            isOneToOne: false
-            referencedRelation: "library_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audio_files_episode_id_fkey"
-            columns: ["episode_id"]
-            isOneToOne: false
-            referencedRelation: "podcast_episodes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       authors: {
         Row: {
-          id: string
-          library_id: string
-          name: string
-          name_lf: string | null
-          description: string | null
-          image_path: string | null
           asin: string | null
-          created_at: string | null
-          updated_at: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_path: string | null
+          last_first: string | null
+          library_id: string | null
+          name: string | null
+          updated_at: string
         }
         Insert: {
-          id?: string
-          library_id: string
-          name: string
-          name_lf?: string | null
-          description?: string | null
-          image_path?: string | null
           asin?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          created_at?: string
+          description?: string | null
+          id: string
+          image_path?: string | null
+          last_first?: string | null
+          library_id?: string | null
+          name?: string | null
+          updated_at?: string
         }
         Update: {
-          id?: string
-          library_id?: string
-          name?: string
-          name_lf?: string | null
-          description?: string | null
-          image_path?: string | null
           asin?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_path?: string | null
+          last_first?: string | null
+          library_id?: string | null
+          name?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -121,25 +60,24 @@ export type Database = {
       }
       book_authors: {
         Row: {
-          book_id: string
           author_id: string
+          book_id: string
+          created_at: string | null
+          id: string
         }
         Insert: {
-          book_id: string
           author_id: string
+          book_id: string
+          created_at?: string | null
+          id?: string
         }
         Update: {
-          book_id?: string
           author_id?: string
+          book_id?: string
+          created_at?: string | null
+          id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "book_authors_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "library_items"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "book_authors_author_id_fkey"
             columns: ["author_id"]
@@ -147,34 +85,11 @@ export type Database = {
             referencedRelation: "authors"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      book_narrators: {
-        Row: {
-          book_id: string
-          narrator_id: string
-        }
-        Insert: {
-          book_id: string
-          narrator_id: string
-        }
-        Update: {
-          book_id?: string
-          narrator_id?: string
-        }
-        Relationships: [
           {
-            foreignKeyName: "book_narrators_book_id_fkey"
+            foreignKeyName: "book_authors_book_id_fkey"
             columns: ["book_id"]
             isOneToOne: false
-            referencedRelation: "library_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "book_narrators_narrator_id_fkey"
-            columns: ["narrator_id"]
-            isOneToOne: false
-            referencedRelation: "narrators"
+            referencedRelation: "books"
             referencedColumns: ["id"]
           },
         ]
@@ -182,25 +97,31 @@ export type Database = {
       book_series: {
         Row: {
           book_id: string
-          series_id: string
+          created_at: string | null
+          id: string
           sequence: string | null
+          series_id: string
         }
         Insert: {
           book_id: string
-          series_id: string
+          created_at?: string | null
+          id?: string
           sequence?: string | null
+          series_id: string
         }
         Update: {
           book_id?: string
-          series_id?: string
+          created_at?: string | null
+          id?: string
           sequence?: string | null
+          series_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "book_series_book_id_fkey"
             columns: ["book_id"]
             isOneToOne: false
-            referencedRelation: "library_items"
+            referencedRelation: "books"
             referencedColumns: ["id"]
           },
           {
@@ -212,150 +133,144 @@ export type Database = {
           },
         ]
       }
-      bookmarks: {
+      books: {
         Row: {
+          abridged: boolean | null
+          asin: string | null
+          audio_files: Json | null
+          chapters: Json | null
+          cover_path: string | null
+          created_at: string
+          description: string | null
+          duration: number | null
+          ebook_file: Json | null
+          explicit: boolean | null
+          genres: Json | null
           id: string
-          user_id: string
-          library_item_id: string
-          time_pos: number
+          isbn: string | null
+          language: string | null
+          narrators: Json | null
+          published_date: string | null
+          published_year: string | null
+          publisher: string | null
+          subtitle: string | null
+          tags: Json | null
           title: string | null
-          created_at: string | null
+          updated_at: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          library_item_id: string
-          time_pos: number
-          title?: string | null
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          library_item_id?: string
-          time_pos?: number
-          title?: string | null
-          created_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bookmarks_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookmarks_library_item_id_fkey"
-            columns: ["library_item_id"]
-            isOneToOne: false
-            referencedRelation: "library_items"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chapters: {
-        Row: {
+          abridged?: boolean | null
+          asin?: string | null
+          audio_files?: Json | null
+          chapters?: Json | null
+          cover_path?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          ebook_file?: Json | null
+          explicit?: boolean | null
+          genres?: Json | null
           id: string
-          library_item_id: string
-          audio_file_id: string | null
-          chapter_index: number
-          title: string
-          start_time: number
-          end_time: number
-        }
-        Insert: {
-          id?: string
-          library_item_id: string
-          audio_file_id?: string | null
-          chapter_index: number
-          title: string
-          start_time: number
-          end_time: number
+          isbn?: string | null
+          language?: string | null
+          narrators?: Json | null
+          published_date?: string | null
+          published_year?: string | null
+          publisher?: string | null
+          subtitle?: string | null
+          tags?: Json | null
+          title?: string | null
+          updated_at?: string
         }
         Update: {
+          abridged?: boolean | null
+          asin?: string | null
+          audio_files?: Json | null
+          chapters?: Json | null
+          cover_path?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          ebook_file?: Json | null
+          explicit?: boolean | null
+          genres?: Json | null
           id?: string
-          library_item_id?: string
-          audio_file_id?: string | null
-          chapter_index?: number
-          title?: string
-          start_time?: number
-          end_time?: number
+          isbn?: string | null
+          language?: string | null
+          narrators?: Json | null
+          published_date?: string | null
+          published_year?: string | null
+          publisher?: string | null
+          subtitle?: string | null
+          tags?: Json | null
+          title?: string | null
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "chapters_library_item_id_fkey"
-            columns: ["library_item_id"]
-            isOneToOne: false
-            referencedRelation: "library_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "chapters_audio_file_id_fkey"
-            columns: ["audio_file_id"]
-            isOneToOne: false
-            referencedRelation: "audio_files"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
-      collection_items: {
+      collection_books: {
         Row: {
-          collection_id: string
-          book_id: string
-          display_order: number
+          book_id: string | null
+          collection_id: string | null
+          created_at: string
+          id: string
+          order: number | null
         }
         Insert: {
-          collection_id: string
-          book_id: string
-          display_order?: number
+          book_id?: string | null
+          collection_id?: string | null
+          created_at?: string
+          id: string
+          order?: number | null
         }
         Update: {
-          collection_id?: string
-          book_id?: string
-          display_order?: number
+          book_id?: string | null
+          collection_id?: string | null
+          created_at?: string
+          id?: string
+          order?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "collection_items_collection_id_fkey"
+            foreignKeyName: "collection_books_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collection_books_collection_id_fkey"
             columns: ["collection_id"]
             isOneToOne: false
             referencedRelation: "collections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "collection_items_book_id_fkey"
-            columns: ["book_id"]
-            isOneToOne: false
-            referencedRelation: "library_items"
             referencedColumns: ["id"]
           },
         ]
       }
       collections: {
         Row: {
-          id: string
-          library_id: string
-          name: string
+          created_at: string
           description: string | null
-          created_at: string | null
-          updated_at: string | null
+          id: string
+          library_id: string | null
+          name: string | null
+          updated_at: string
         }
         Insert: {
-          id?: string
-          library_id: string
-          name: string
+          created_at?: string
           description?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          id: string
+          library_id?: string | null
+          name?: string | null
+          updated_at?: string
         }
         Update: {
-          id?: string
-          library_id?: string
-          name?: string
+          created_at?: string
           description?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          id?: string
+          library_id?: string | null
+          name?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -367,129 +282,409 @@ export type Database = {
           },
         ]
       }
-      libraries: {
+      custom_metadata_providers: {
         Row: {
+          auth_header_value: string | null
+          created_at: string
+          extra_data: Json | null
           id: string
-          name: string
-          media_type: string
-          icon: string
-          display_order: number
-          settings: Json
-          created_at: string | null
-          updated_at: string | null
+          media_type: string | null
+          name: string | null
+          updated_at: string
+          url: string | null
         }
         Insert: {
-          id?: string
-          name: string
-          media_type: string
-          icon?: string
-          display_order?: number
-          settings?: Json
-          created_at?: string | null
-          updated_at?: string | null
+          auth_header_value?: string | null
+          created_at?: string
+          extra_data?: Json | null
+          id: string
+          media_type?: string | null
+          name?: string | null
+          updated_at?: string
+          url?: string | null
         }
         Update: {
+          auth_header_value?: string | null
+          created_at?: string
+          extra_data?: Json | null
           id?: string
-          name?: string
-          media_type?: string
-          icon?: string
-          display_order?: number
-          settings?: Json
-          created_at?: string | null
-          updated_at?: string | null
+          media_type?: string | null
+          name?: string | null
+          updated_at?: string
+          url?: string | null
         }
         Relationships: []
       }
-      library_items: {
+      devices: {
         Row: {
+          client_name: string | null
+          client_version: string | null
+          created_at: string
+          device_id: string | null
+          device_name: string | null
+          device_version: string | null
+          extra_data: Json | null
           id: string
-          library_id: string
-          media_type: string
-          title: string
-          subtitle: string | null
-          description: string | null
-          cover_path: string | null
-          tags: string[]
-          genres: string[]
-          language: string | null
-          explicit: boolean
-          publisher: string | null
-          published_year: string | null
-          published_date: string | null
-          isbn: string | null
-          asin: string | null
-          abridged: boolean | null
-          feed_url: string | null
-          image_url: string | null
-          itunes_id: string | null
-          auto_download_episodes: boolean | null
-          auto_download_schedule: string | null
-          max_episodes_to_keep: number | null
-          duration: number | null
-          size: number | null
-          num_files: number | null
-          added_at: string | null
-          updated_at: string | null
+          ip_address: string | null
+          updated_at: string
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          library_id: string
-          media_type: string
-          title: string
-          subtitle?: string | null
-          description?: string | null
-          cover_path?: string | null
-          tags?: string[]
-          genres?: string[]
-          language?: string | null
-          explicit?: boolean
-          publisher?: string | null
-          published_year?: string | null
-          published_date?: string | null
-          isbn?: string | null
-          asin?: string | null
-          abridged?: boolean | null
-          feed_url?: string | null
-          image_url?: string | null
-          itunes_id?: string | null
-          auto_download_episodes?: boolean | null
-          auto_download_schedule?: string | null
-          max_episodes_to_keep?: number | null
-          duration?: number | null
-          size?: number | null
-          num_files?: number | null
-          added_at?: string | null
-          updated_at?: string | null
+          client_name?: string | null
+          client_version?: string | null
+          created_at?: string
+          device_id?: string | null
+          device_name?: string | null
+          device_version?: string | null
+          extra_data?: Json | null
+          id: string
+          ip_address?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Update: {
+          client_name?: string | null
+          client_version?: string | null
+          created_at?: string
+          device_id?: string | null
+          device_name?: string | null
+          device_version?: string | null
+          extra_data?: Json | null
           id?: string
-          library_id?: string
-          media_type?: string
-          title?: string
-          subtitle?: string | null
+          ip_address?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      feed_episodes: {
+        Row: {
+          author: string | null
+          created_at: string
+          description: string | null
+          duration: number | null
+          enclosure_size: number | null
+          enclosure_type: string | null
+          enclosure_url: string | null
+          episode: string | null
+          episode_type: string | null
+          explicit: boolean | null
+          feed_id: string | null
+          file_path: string | null
+          id: string
+          pub_date: string | null
+          season: string | null
+          site_url: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          created_at?: string
           description?: string | null
-          cover_path?: string | null
-          tags?: string[]
-          genres?: string[]
-          language?: string | null
-          explicit?: boolean
-          publisher?: string | null
-          published_year?: string | null
-          published_date?: string | null
-          isbn?: string | null
-          asin?: string | null
-          abridged?: boolean | null
-          feed_url?: string | null
-          image_url?: string | null
-          itunes_id?: string | null
-          auto_download_episodes?: boolean | null
-          auto_download_schedule?: string | null
-          max_episodes_to_keep?: number | null
           duration?: number | null
+          enclosure_size?: number | null
+          enclosure_type?: string | null
+          enclosure_url?: string | null
+          episode?: string | null
+          episode_type?: string | null
+          explicit?: boolean | null
+          feed_id?: string | null
+          file_path?: string | null
+          id: string
+          pub_date?: string | null
+          season?: string | null
+          site_url?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          enclosure_size?: number | null
+          enclosure_type?: string | null
+          enclosure_url?: string | null
+          episode?: string | null
+          episode_type?: string | null
+          explicit?: boolean | null
+          feed_id?: string | null
+          file_path?: string | null
+          id?: string
+          pub_date?: string | null
+          season?: string | null
+          site_url?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_episodes_feed_id_fkey"
+            columns: ["feed_id"]
+            isOneToOne: false
+            referencedRelation: "feeds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feeds: {
+        Row: {
+          author: string | null
+          cover_path: string | null
+          created_at: string
+          description: string | null
+          entity_id: string | null
+          entity_type: string | null
+          entity_updated_at: string | null
+          explicit: boolean | null
+          feed_url: string | null
+          id: string
+          image_url: string | null
+          language: string | null
+          owner_email: string | null
+          owner_name: string | null
+          podcast_type: string | null
+          prevent_indexing: boolean | null
+          server_address: string | null
+          site_url: string | null
+          slug: string | null
+          title: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          author?: string | null
+          cover_path?: string | null
+          created_at?: string
+          description?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          entity_updated_at?: string | null
+          explicit?: boolean | null
+          feed_url?: string | null
+          id: string
+          image_url?: string | null
+          language?: string | null
+          owner_email?: string | null
+          owner_name?: string | null
+          podcast_type?: string | null
+          prevent_indexing?: boolean | null
+          server_address?: string | null
+          site_url?: string | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          author?: string | null
+          cover_path?: string | null
+          created_at?: string
+          description?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          entity_updated_at?: string | null
+          explicit?: boolean | null
+          feed_url?: string | null
+          id?: string
+          image_url?: string | null
+          language?: string | null
+          owner_email?: string | null
+          owner_name?: string | null
+          podcast_type?: string | null
+          prevent_indexing?: boolean | null
+          server_address?: string | null
+          site_url?: string | null
+          slug?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      legacy_users: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          permissions: Json | null
+          updated_at: string
+          user_type: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          is_active?: boolean | null
+          permissions?: Json | null
+          updated_at?: string
+          user_type?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          permissions?: Json | null
+          updated_at?: string
+          user_type?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      libraries: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          extra_data: Json | null
+          icon: string | null
+          id: string
+          media_type: string | null
+          name: string
+          provider: string | null
+          settings: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          extra_data?: Json | null
+          icon?: string | null
+          id: string
+          media_type?: string | null
+          name: string
+          provider?: string | null
+          settings?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          extra_data?: Json | null
+          icon?: string | null
+          id?: string
+          media_type?: string | null
+          name?: string
+          provider?: string | null
+          settings?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      library_folders: {
+        Row: {
+          created_at: string
+          id: string
+          library_id: string | null
+          path: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          library_id?: string | null
+          path?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          library_id?: string | null
+          path?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_folders_library_id_fkey"
+            columns: ["library_id"]
+            isOneToOne: false
+            referencedRelation: "libraries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_items: {
+        Row: {
+          author_names_first_last: string | null
+          author_names_last_first: string | null
+          birthtime: string | null
+          cover_path: string | null
+          created_at: string
+          ctime: string | null
+          extra_data: Json | null
+          id: string
+          ino: string | null
+          is_file: boolean | null
+          is_invalid: boolean | null
+          is_missing: boolean | null
+          last_scan: string | null
+          last_scan_version: string | null
+          library_files: Json | null
+          library_id: string | null
+          media_id: string | null
+          media_type: string | null
+          mtime: string | null
+          path: string | null
+          rel_path: string | null
+          size: number | null
+          title: string | null
+          title_ignore_prefix: string | null
+          updated_at: string
+        }
+        Insert: {
+          author_names_first_last?: string | null
+          author_names_last_first?: string | null
+          birthtime?: string | null
+          cover_path?: string | null
+          created_at?: string
+          ctime?: string | null
+          extra_data?: Json | null
+          id: string
+          ino?: string | null
+          is_file?: boolean | null
+          is_invalid?: boolean | null
+          is_missing?: boolean | null
+          last_scan?: string | null
+          last_scan_version?: string | null
+          library_files?: Json | null
+          library_id?: string | null
+          media_id?: string | null
+          media_type?: string | null
+          mtime?: string | null
+          path?: string | null
+          rel_path?: string | null
           size?: number | null
-          num_files?: number | null
-          added_at?: string | null
-          updated_at?: string | null
+          title?: string | null
+          title_ignore_prefix?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author_names_first_last?: string | null
+          author_names_last_first?: string | null
+          birthtime?: string | null
+          cover_path?: string | null
+          created_at?: string
+          ctime?: string | null
+          extra_data?: Json | null
+          id?: string
+          ino?: string | null
+          is_file?: boolean | null
+          is_invalid?: boolean | null
+          is_missing?: boolean | null
+          last_scan?: string | null
+          last_scan_version?: string | null
+          library_files?: Json | null
+          library_id?: string | null
+          media_id?: string | null
+          media_type?: string | null
+          mtime?: string | null
+          path?: string | null
+          rel_path?: string | null
+          size?: number | null
+          title?: string | null
+          title_ignore_prefix?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -499,85 +694,181 @@ export type Database = {
             referencedRelation: "libraries"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "library_items_media_id_fkey"
+            columns: ["media_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      media_item_shares: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          extra_data: Json | null
+          id: string
+          is_downloadable: boolean | null
+          media_item_id: string | null
+          media_item_type: string | null
+          pash: string | null
+          slug: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          extra_data?: Json | null
+          id: string
+          is_downloadable?: boolean | null
+          media_item_id?: string | null
+          media_item_type?: string | null
+          pash?: string | null
+          slug?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          extra_data?: Json | null
+          id?: string
+          is_downloadable?: boolean | null
+          media_item_id?: string | null
+          media_item_type?: string | null
+          pash?: string | null
+          slug?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       media_progress: {
         Row: {
-          id: string
-          user_id: string
-          library_item_id: string
-          episode_id: string | null
-          current_time_pos: number
+          current_time_pos: number | null
           duration: number | null
-          progress: number | null
-          is_finished: boolean
-          last_update: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          library_item_id: string
-          episode_id?: string | null
-          current_time_pos?: number
-          duration?: number | null
-          progress?: number | null
-          is_finished?: boolean
-          last_update?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          library_item_id?: string
-          episode_id?: string | null
-          current_time_pos?: number
-          duration?: number | null
-          progress?: number | null
-          is_finished?: boolean
-          last_update?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "media_progress_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "media_progress_library_item_id_fkey"
-            columns: ["library_item_id"]
-            isOneToOne: false
-            referencedRelation: "library_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "media_progress_episode_id_fkey"
-            columns: ["episode_id"]
-            isOneToOne: false
-            referencedRelation: "podcast_episodes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      narrators: {
-        Row: {
+          episode_id: string | null
           id: string
-          library_id: string
-          name: string
+          is_finished: boolean | null
+          last_update: string | null
+          library_item_id: string
+          progress: number | null
+          user_id: string
         }
         Insert: {
+          current_time_pos?: number | null
+          duration?: number | null
+          episode_id?: string | null
           id?: string
-          library_id: string
-          name: string
+          is_finished?: boolean | null
+          last_update?: string | null
+          library_item_id: string
+          progress?: number | null
+          user_id: string
         }
         Update: {
+          current_time_pos?: number | null
+          duration?: number | null
+          episode_id?: string | null
           id?: string
-          library_id?: string
-          name?: string
+          is_finished?: boolean | null
+          last_update?: string | null
+          library_item_id?: string
+          progress?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      migrations_meta: {
+        Row: {
+          key: string
+          value: string | null
+        }
+        Insert: {
+          key: string
+          value?: string | null
+        }
+        Update: {
+          key?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
+      playback_sessions: {
+        Row: {
+          cover_path: string | null
+          created_at: string
+          current_time_pos: number | null
+          day_of_week: string | null
+          display_author: string | null
+          display_title: string | null
+          duration: number | null
+          extra_data: Json | null
+          id: string
+          library_id: string | null
+          media_item_id: string | null
+          media_item_type: string | null
+          media_metadata: Json | null
+          media_player: string | null
+          play_method: number | null
+          server_version: string | null
+          session_date: string | null
+          start_time_pos: number | null
+          time_listening: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          cover_path?: string | null
+          created_at?: string
+          current_time_pos?: number | null
+          day_of_week?: string | null
+          display_author?: string | null
+          display_title?: string | null
+          duration?: number | null
+          extra_data?: Json | null
+          id: string
+          library_id?: string | null
+          media_item_id?: string | null
+          media_item_type?: string | null
+          media_metadata?: Json | null
+          media_player?: string | null
+          play_method?: number | null
+          server_version?: string | null
+          session_date?: string | null
+          start_time_pos?: number | null
+          time_listening?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          cover_path?: string | null
+          created_at?: string
+          current_time_pos?: number | null
+          day_of_week?: string | null
+          display_author?: string | null
+          display_title?: string | null
+          duration?: number | null
+          extra_data?: Json | null
+          id?: string
+          library_id?: string | null
+          media_item_id?: string | null
+          media_item_type?: string | null
+          media_metadata?: Json | null
+          media_player?: string | null
+          play_method?: number | null
+          server_version?: string | null
+          session_date?: string | null
+          start_time_pos?: number | null
+          time_listening?: number | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "narrators_library_id_fkey"
+            foreignKeyName: "playback_sessions_library_id_fkey"
             columns: ["library_id"]
             isOneToOne: false
             referencedRelation: "libraries"
@@ -585,88 +876,70 @@ export type Database = {
           },
         ]
       }
-      playlist_items: {
+      playlist_media_items: {
         Row: {
+          created_at: string
           id: string
-          playlist_id: string
-          library_item_id: string
-          episode_id: string | null
-          display_order: number
+          media_item_id: string | null
+          media_item_type: string | null
+          order: number | null
+          playlist_id: string | null
         }
         Insert: {
-          id?: string
-          playlist_id: string
-          library_item_id: string
-          episode_id?: string | null
-          display_order?: number
+          created_at?: string
+          id: string
+          media_item_id?: string | null
+          media_item_type?: string | null
+          order?: number | null
+          playlist_id?: string | null
         }
         Update: {
+          created_at?: string
           id?: string
-          playlist_id?: string
-          library_item_id?: string
-          episode_id?: string | null
-          display_order?: number
+          media_item_id?: string | null
+          media_item_type?: string | null
+          order?: number | null
+          playlist_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "playlist_items_playlist_id_fkey"
+            foreignKeyName: "playlist_media_items_playlist_id_fkey"
             columns: ["playlist_id"]
             isOneToOne: false
             referencedRelation: "playlists"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "playlist_items_library_item_id_fkey"
-            columns: ["library_item_id"]
-            isOneToOne: false
-            referencedRelation: "library_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "playlist_items_episode_id_fkey"
-            columns: ["episode_id"]
-            isOneToOne: false
-            referencedRelation: "podcast_episodes"
             referencedColumns: ["id"]
           },
         ]
       }
       playlists: {
         Row: {
-          id: string
-          user_id: string
-          library_id: string
-          name: string
+          created_at: string
           description: string | null
-          created_at: string | null
-          updated_at: string | null
+          id: string
+          library_id: string | null
+          name: string | null
+          updated_at: string
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          user_id: string
-          library_id: string
-          name: string
+          created_at?: string
           description?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          id: string
+          library_id?: string | null
+          name?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Update: {
-          id?: string
-          user_id?: string
-          library_id?: string
-          name?: string
+          created_at?: string
           description?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          id?: string
+          library_id?: string | null
+          name?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "playlists_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "playlists_library_id_fkey"
             columns: ["library_id"]
@@ -678,102 +951,192 @@ export type Database = {
       }
       podcast_episodes: {
         Row: {
-          id: string
-          library_item_id: string
-          episode_index: number | null
-          season: string | null
+          audio_file: Json | null
+          chapters: Json | null
+          created_at: string
+          description: string | null
+          enclosure_size: number | null
+          enclosure_type: string | null
+          enclosure_url: string | null
           episode: string | null
           episode_type: string | null
-          title: string
-          subtitle: string | null
-          description: string | null
+          extra_data: Json | null
+          id: string
+          index: number | null
+          podcast_id: string | null
           pub_date: string | null
           published_at: string | null
-          guid: string | null
-          enclosure_url: string | null
-          enclosure_type: string | null
-          duration: number | null
-          created_at: string | null
-          updated_at: string | null
+          season: string | null
+          subtitle: string | null
+          title: string | null
+          updated_at: string
         }
         Insert: {
-          id?: string
-          library_item_id: string
-          episode_index?: number | null
-          season?: string | null
+          audio_file?: Json | null
+          chapters?: Json | null
+          created_at?: string
+          description?: string | null
+          enclosure_size?: number | null
+          enclosure_type?: string | null
+          enclosure_url?: string | null
           episode?: string | null
           episode_type?: string | null
-          title: string
-          subtitle?: string | null
-          description?: string | null
+          extra_data?: Json | null
+          id: string
+          index?: number | null
+          podcast_id?: string | null
           pub_date?: string | null
           published_at?: string | null
-          guid?: string | null
-          enclosure_url?: string | null
-          enclosure_type?: string | null
-          duration?: number | null
-          created_at?: string | null
-          updated_at?: string | null
+          season?: string | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
         }
         Update: {
-          id?: string
-          library_item_id?: string
-          episode_index?: number | null
-          season?: string | null
+          audio_file?: Json | null
+          chapters?: Json | null
+          created_at?: string
+          description?: string | null
+          enclosure_size?: number | null
+          enclosure_type?: string | null
+          enclosure_url?: string | null
           episode?: string | null
           episode_type?: string | null
-          title?: string
-          subtitle?: string | null
-          description?: string | null
+          extra_data?: Json | null
+          id?: string
+          index?: number | null
+          podcast_id?: string | null
           pub_date?: string | null
           published_at?: string | null
-          guid?: string | null
-          enclosure_url?: string | null
-          enclosure_type?: string | null
-          duration?: number | null
-          created_at?: string | null
-          updated_at?: string | null
+          season?: string | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "podcast_episodes_library_item_id_fkey"
-            columns: ["library_item_id"]
+            foreignKeyName: "podcast_episodes_podcast_id_fkey"
+            columns: ["podcast_id"]
             isOneToOne: false
-            referencedRelation: "library_items"
+            referencedRelation: "podcasts"
             referencedColumns: ["id"]
           },
         ]
       }
-      profiles: {
+      podcasts: {
         Row: {
+          author: string | null
+          auto_download_episodes: boolean | null
+          auto_download_schedule: string | null
+          cover_path: string | null
+          created_at: string
+          description: string | null
+          explicit: boolean | null
+          feed_url: string | null
+          genres: Json | null
           id: string
-          username: string | null
-          user_type: string
-          language: string
-          theme: string
-          default_library_id: string | null
-          created_at: string | null
-          updated_at: string | null
+          image_url: string | null
+          itunes_artist_id: string | null
+          itunes_id: string | null
+          itunes_page_url: string | null
+          language: string | null
+          last_episode_check: string | null
+          max_episodes_to_keep: number | null
+          max_new_episodes_to_download: number | null
+          num_episodes: number
+          podcast_type: string | null
+          release_date: string | null
+          tags: Json | null
+          title: string | null
+          title_ignore_prefix: string | null
+          updated_at: string
         }
         Insert: {
+          author?: string | null
+          auto_download_episodes?: boolean | null
+          auto_download_schedule?: string | null
+          cover_path?: string | null
+          created_at?: string
+          description?: string | null
+          explicit?: boolean | null
+          feed_url?: string | null
+          genres?: Json | null
           id: string
-          username?: string | null
-          user_type?: string
-          language?: string
-          theme?: string
-          default_library_id?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          image_url?: string | null
+          itunes_artist_id?: string | null
+          itunes_id?: string | null
+          itunes_page_url?: string | null
+          language?: string | null
+          last_episode_check?: string | null
+          max_episodes_to_keep?: number | null
+          max_new_episodes_to_download?: number | null
+          num_episodes?: number
+          podcast_type?: string | null
+          release_date?: string | null
+          tags?: Json | null
+          title?: string | null
+          title_ignore_prefix?: string | null
+          updated_at?: string
         }
         Update: {
+          author?: string | null
+          auto_download_episodes?: boolean | null
+          auto_download_schedule?: string | null
+          cover_path?: string | null
+          created_at?: string
+          description?: string | null
+          explicit?: boolean | null
+          feed_url?: string | null
+          genres?: Json | null
           id?: string
-          username?: string | null
-          user_type?: string
-          language?: string
-          theme?: string
-          default_library_id?: string | null
+          image_url?: string | null
+          itunes_artist_id?: string | null
+          itunes_id?: string | null
+          itunes_page_url?: string | null
+          language?: string | null
+          last_episode_check?: string | null
+          max_episodes_to_keep?: number | null
+          max_new_episodes_to_download?: number | null
+          num_episodes?: number
+          podcast_type?: string | null
+          release_date?: string | null
+          tags?: Json | null
+          title?: string | null
+          title_ignore_prefix?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          default_library_id: string | null
+          id: string
+          language: string | null
+          theme: string | null
+          updated_at: string | null
+          user_type: string | null
+          username: string | null
+        }
+        Insert: {
           created_at?: string | null
+          default_library_id?: string | null
+          id: string
+          language?: string | null
+          theme?: string | null
           updated_at?: string | null
+          user_type?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          default_library_id?: string | null
+          id?: string
+          language?: string | null
+          theme?: string | null
+          updated_at?: string | null
+          user_type?: string | null
+          username?: string | null
         }
         Relationships: [
           {
@@ -785,36 +1148,45 @@ export type Database = {
           },
         ]
       }
-      series: {
+      sequelize_meta: {
         Row: {
-          id: string
-          library_id: string
           name: string
-          name_ignore_prefix: string | null
-          description: string | null
-          cover_path: string | null
-          created_at: string | null
-          updated_at: string | null
         }
         Insert: {
-          id?: string
-          library_id: string
           name: string
-          name_ignore_prefix?: string | null
-          description?: string | null
-          cover_path?: string | null
-          created_at?: string | null
-          updated_at?: string | null
         }
         Update: {
-          id?: string
-          library_id?: string
           name?: string
-          name_ignore_prefix?: string | null
+        }
+        Relationships: []
+      }
+      series: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          library_id: string | null
+          name: string | null
+          name_ignore_prefix: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
           description?: string | null
-          cover_path?: string | null
-          created_at?: string | null
-          updated_at?: string | null
+          id: string
+          library_id?: string | null
+          name?: string | null
+          name_ignore_prefix?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          library_id?: string | null
+          name?: string | null
+          name_ignore_prefix?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -826,27 +1198,33 @@ export type Database = {
           },
         ]
       }
+      server_settings: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          value: Json | null
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          value?: Json | null
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          value?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      search_library_items: {
-        Args: {
-          p_library_id: string
-          p_query: string
-          p_limit?: number
-        }
-        Returns: {
-          id: string
-          title: string
-          media_type: string
-          cover_path: string | null
-          author_names: string[] | null
-          series_names: string[] | null
-          rank: number
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
@@ -857,21 +1235,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -889,14 +1271,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -912,14 +1296,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -935,14 +1321,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -950,14 +1338,22 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const

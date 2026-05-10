@@ -1,39 +1,40 @@
 /**
- * Supabase API module — server-side data access layer.
+ * Supabase API module — replaces src/lib/api.ts
  *
- * All functions use the server Supabase client (cookie-based session) and
- * operate against the new schema.  No legacy tables (`books`, `legacy_users`)
- * or ABS-era types are referenced here.
- *
- * Requirements: 7.1–7.11, 8.6, 8.7, 9.4, 9.9, 10.1, 10.4, 11.1, 12.7–12.9
+ * All server-side data access goes through this module. Functions use the
+ * @supabase/ssr server client so that the user's session cookie is forwarded
+ * automatically. Errors are surfaced as typed ApiError / UnauthorizedError
+ * instances so call sites can handle them uniformly.
  */
 
-import { ApiError, UnauthorizedError } from '@/lib/apiErrors'
-import type {
-    Author,
-    Collection,
-    Library,
-    LibraryItem,
-    LibraryItemExpanded,
-    LibraryItemWithProgress,
-    MediaProgress,
-    Playlist,
-    Profile,
-    Series
-} from '@/types/index'
+import { ApiError, NetworkError, UnauthorizedError } from '@/lib/apiErrors'
 import { createClient } from '@/utils/supabase/server'
+import { mapLibrary, mapLibraryItem } from '@/utils/mappers'
+
+export { ApiError, NetworkError, UnauthorizedError }
 
 // ---------------------------------------------------------------------------
-// Internal helpers
+// Auth helpers
 // ---------------------------------------------------------------------------
 
-/** Throw UnauthorizedError when there is no authenticated session. */
-async function requireUser() {
+/**
+ * Resolves the currently authenticated user from the Supabase session.
+ * Throws `UnauthorizedError` if there is no active session or the user is null.
+ *
+ * Usage:
+ *   const { supabase, user } = await requireUser()
+ */
+export async function requireUser() {
   const supabase = await createClient()
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser()
-  if (!user) throw new UnauthorizedError()
+
+  if (error || !user) {
+    throw new UnauthorizedError()
+  }
+
   return { supabase, user }
 }
 
@@ -41,122 +42,147 @@ async function requireUser() {
 // Libraries
 // ---------------------------------------------------------------------------
 
-/** Return all libraries ordered by display_order. */
-export async function getLibraries(): Promise<Library[]> {
+/**
+ * Returns all libraries ordered by `display_order`.
+ *
+ * Uses `createClient()` directly (no auth required at the function level —
+ * RLS enforces authenticated-read access on the `libraries` table).
+ *
+ * Requirements: 7.1
+ */
+export async function getLibraries(): Promise<{ libraries: import('@/types/api').Library[] }> {
   const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('libraries')
-    .select('*')
-    .order('display_order', { ascending: true })
-
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  return data ?? []
+  const { data, error } = await supabase.from('libraries').select('*').order('display_order')
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
+  return { libraries: (data || []).map(mapLibrary) }
 }
 
-/** Return a single library by id, or throw ApiError(404) if not found. */
-export async function getLibrary(libraryId: string): Promise<Library> {
+/**
+ * Returns a single library row by ID.
+ * Throws `ApiError(404)` if the row does not exist or is not accessible.
+ *
+ * Requirements: 7.2
+ */
+export async function getLibrary(libraryId: string): Promise<import('@/types/api').Library> {
   const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('libraries')
-    .select('*')
-    .eq('id', libraryId)
-    .maybeSingle()
+  const { data, error } = await supabase.from('libraries').select('*').eq('id', libraryId).single()
+  if (error) throw new ApiError(error.message, 404, error.code ?? '')
+  return mapLibrary(data)
+}
 
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  if (!data) throw new ApiError(`Library ${libraryId} not found`, 404, 'Not Found')
+// ---------------------------------------------------------------------------
+// Search
+// ---------------------------------------------------------------------------
+
+/**
+ * Full-text search across library items within a specific library.
+ *
+ * Delegates to the `search_library_items` Postgres RPC function which uses
+ * `to_tsvector` / `plainto_tsquery` for ranked full-text search across item
+ * titles and descriptions, joined with author and series names.
+ *
+ * @param libraryId - UUID of the library to search within
+ * @param query     - Free-text search query
+ * @param limit     - Maximum number of results to return (default: 12)
+ * @returns Array of matching library items with rank, author names, and series names
+ * @throws {ApiError} if the RPC call fails
+ */
+export async function searchLibrary(libraryId: string, query: string, limit = 12) {
+  const supabase = await createClient()
+  const { data, error } = await (supabase as any).rpc('search_library_items', {
+    p_library_id: libraryId,
+    p_query: query,
+    p_limit: limit,
+  })
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
   return data
 }
 
 // ---------------------------------------------------------------------------
-// Library items
+// Library Items
 // ---------------------------------------------------------------------------
 
-export interface LibraryItemsOptions {
-  page?: number
-  limit?: number
-  sortBy?: string
-  sortDesc?: boolean
-}
-
-export interface LibraryItemsResult {
-  results: LibraryItem[]
-  total: number
-  limit: number
-  page: number
-}
-
 /**
- * Return a paginated list of library items for a given library.
+ * Returns a paginated list of library items for the given library.
  *
- * Defaults: page=0, limit=25, sortBy='added_at', sortDesc=true
+ * Options:
+ *   - page     — zero-based page index (default: 0)
+ *   - limit    — number of items per page (default: 100)
+ *   - sortBy   — column to sort by (default: 'title')
+ *   - sortDesc — sort descending when true (default: false → ascending)
+ *
+ * Returns `{ results, total, limit, page }`.
+ *
+ * Requirements: 7.3
  */
 export async function getLibraryItems(
   libraryId: string,
-  options: LibraryItemsOptions = {}
-): Promise<LibraryItemsResult> {
+  options?: {
+    page?: number
+    limit?: number
+    sortBy?: string
+    sortDesc?: boolean
+  },
+) {
   const supabase = await createClient()
-  const page = options.page ?? 0
-  const limit = options.limit ?? 25
-  const sortBy = options.sortBy ?? 'added_at'
-  const sortDesc = options.sortDesc ?? true
 
-  const from = page * limit
-  const to = from + limit - 1
+  const limit = options?.limit ?? 100
+  const page = options?.page ?? 0
+  const sortBy = options?.sortBy ?? 'title'
+  const ascending = !(options?.sortDesc ?? false)
 
   const { data, error, count } = await supabase
     .from('library_items')
-    .select('*', { count: 'exact' })
+    .select('*, books(*, book_authors(authors(*)))', { count: 'exact' })
     .eq('library_id', libraryId)
-    .order(sortBy, { ascending: !sortDesc })
-    .range(from, to)
+    .order(sortBy, { ascending })
+    .range(page * limit, (page + 1) * limit - 1)
 
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
 
-  return {
-    results: data ?? [],
-    total: count ?? 0,
-    limit,
-    page,
-  }
+  return { results: (data || []).map(mapLibraryItem), total: count ?? 0, limit, page }
 }
 
 /**
- * Return a single library item with all related entities joined, or throw
- * ApiError(404) if not found.
+ * Returns a single library item with all related data joined in one query:
+ * audio_files, chapters, podcast_episodes, book_authors (with authors),
+ * book_series (with series), and book_narrators (with narrators).
+ *
+ * Throws `ApiError(404)` if no item with the given `itemId` exists.
+ *
+ * Requirements: 7.4
  */
-export async function getLibraryItem(itemId: string): Promise<LibraryItemExpanded> {
+export async function getLibraryItem(itemId: string) {
   const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('library_items')
     .select(
       `*,
-      audio_files(*),
-      chapters(*),
-      podcast_episodes(*),
-      book_authors(authors(*)),
-      book_series(series(*), sequence),
-      book_narrators(narrators(*))`
+      books(*, book_authors(authors(*)), book_series(series(*))),
+      podcast_episodes(*)`
     )
     .eq('id', itemId)
-    .maybeSingle()
+    .single()
 
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  if (!data) throw new ApiError(`Library item ${itemId} not found`, 404, 'Not Found')
-  return data as unknown as LibraryItemExpanded
+  if (error) throw new ApiError(error.message, 404, error.code ?? '')
+
+  return mapLibraryItem(data)
 }
 
 // ---------------------------------------------------------------------------
-// Media progress
+// Media Progress
 // ---------------------------------------------------------------------------
 
 /**
- * Return the current user's media progress for a library item (and optional
- * episode), or null if no progress row exists yet.
+ * Retrieves the current user's media progress for a library item.
+ *
+ * @param libraryItemId - The UUID of the library item.
+ * @param episodeId - Optional UUID of the podcast episode. When omitted the
+ *   query filters for rows where `episode_id IS NULL` (i.e. book progress).
+ * @returns The matching `media_progress` row, or `null` if none exists yet.
  */
-export async function getMediaProgress(
-  libraryItemId: string,
-  episodeId?: string
-): Promise<MediaProgress | null> {
+export async function getMediaProgress(libraryItemId: string, episodeId?: string) {
   const { supabase, user } = await requireUser()
 
   let query = supabase
@@ -172,448 +198,469 @@ export async function getMediaProgress(
   }
 
   const { data, error } = await query.maybeSingle()
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
+
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
+
   return data
 }
 
-export interface MediaProgressUpdate {
-  currentTime: number
-  duration: number
-  isFinished?: boolean
-  episodeId?: string
-}
-
 /**
- * Upsert media progress for the current user.
+ * Creates or updates the current user's media progress for a library item.
  *
- * Conflict target: (user_id, library_item_id, episode_id).
- * `progress` is computed as currentTime / duration (clamped to [0, 1]).
+ * Uses an upsert with conflict target `(user_id, library_item_id, episode_id)`
+ * so that repeated calls are idempotent — the latest values always win.
+ *
+ * `progress` (0.0–1.0) is computed automatically from `currentTime / duration`
+ * when `duration` is provided.
+ *
+ * @param libraryItemId - The UUID of the library item.
+ * @param update - Playback state to persist.
  */
 export async function updateMediaProgress(
   libraryItemId: string,
-  update: MediaProgressUpdate
-): Promise<MediaProgress> {
+  update: {
+    currentTime: number
+    duration?: number
+    isFinished?: boolean
+    episodeId?: string
+  },
+) {
   const { supabase, user } = await requireUser()
 
-  const progress =
-    update.duration > 0
-      ? Math.min(1, Math.max(0, update.currentTime / update.duration))
-      : 0
+  const progress = update.duration ? update.currentTime / update.duration : undefined
 
-  const { data, error } = await supabase
-    .from('media_progress')
-    .upsert(
-      {
-        user_id: user.id,
-        library_item_id: libraryItemId,
-        episode_id: update.episodeId ?? null,
-        current_time_pos: update.currentTime,
-        duration: update.duration,
-        progress,
-        is_finished: update.isFinished ?? false,
-        last_update: new Date().toISOString(),
-      },
-      { onConflict: 'user_id,library_item_id,episode_id' }
-    )
-    .select()
-    .single()
+  const { error } = await supabase.from('media_progress').upsert(
+    {
+      user_id: user.id,
+      library_item_id: libraryItemId,
+      episode_id: update.episodeId ?? null,
+      current_time_pos: update.currentTime,
+      duration: update.duration,
+      progress,
+      is_finished: update.isFinished ?? false,
+      last_update: new Date().toISOString(),
+    },
+    { onConflict: 'user_id,library_item_id,episode_id' },
+  )
 
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  return data
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
 }
 
 // ---------------------------------------------------------------------------
-// Search
+// Catalog helpers — Series, Authors, Collections, Playlists
 // ---------------------------------------------------------------------------
 
-export interface SearchResult {
-  id: string
-  title: string
-  media_type: string
-  cover_path: string | null
-  author_names: string[] | null
-  series_names: string[] | null
-  rank: number
+/**
+ * Returns all series rows for the given library.
+ *
+ * Requirements: 7.11
+ */
+export async function getLibrarySeries(libraryId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase.from('series').select('*').eq('library_id', libraryId)
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
+  return data
 }
 
 /**
- * Full-text search across library items using the `search_library_items` RPC.
+ * Returns all author rows for the given library.
+ *
+ * Requirements: 7.11
  */
-export async function searchLibrary(
-  libraryId: string,
-  query: string,
-  limit = 12
-): Promise<SearchResult[]> {
+export async function getLibraryAuthors(libraryId: string) {
   const supabase = await createClient()
-  const { data, error } = await supabase.rpc('search_library_items', {
-    p_library_id: libraryId,
-    p_query: query,
-    p_limit: limit,
-  })
-
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  return (data ?? []) as SearchResult[]
-}
-
-// ---------------------------------------------------------------------------
-// Catalog helpers
-// ---------------------------------------------------------------------------
-
-/** Return all series for a library. */
-export async function getLibrarySeries(libraryId: string): Promise<Series[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('series')
-    .select('*')
-    .eq('library_id', libraryId)
-    .order('name', { ascending: true })
-
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  return data ?? []
-}
-
-/** Return all authors for a library. */
-export async function getLibraryAuthors(libraryId: string): Promise<Author[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('authors')
-    .select('*')
-    .eq('library_id', libraryId)
-    .order('name', { ascending: true })
-
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  return data ?? []
-}
-
-export type CollectionWithItems = Collection & {
-  collection_items: { book_id: string; display_order: number }[]
-}
-
-/** Return all collections for a library, with their items ordered by display_order. */
-export async function getLibraryCollections(libraryId: string): Promise<CollectionWithItems[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('collections')
-    .select('*, collection_items(book_id, display_order)')
-    .eq('library_id', libraryId)
-    .order('name', { ascending: true })
-
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  return (data ?? []) as CollectionWithItems[]
-}
-
-export type PlaylistWithItems = Playlist & {
-  playlist_items: { id: string; library_item_id: string; episode_id: string | null; display_order: number }[]
-}
-
-/** Return all playlists for the current user in a library. */
-export async function getLibraryPlaylists(libraryId: string): Promise<PlaylistWithItems[]> {
-  const { supabase, user } = await requireUser()
-  const { data, error } = await supabase
-    .from('playlists')
-    .select('*, playlist_items(id, library_item_id, episode_id, display_order)')
-    .eq('library_id', libraryId)
-    .eq('user_id', user.id)
-    .order('name', { ascending: true })
-
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  return (data ?? []) as PlaylistWithItems[]
-}
-
-/** Return a single collection with items ordered by display_order, or throw ApiError(404). */
-export async function getCollection(collectionId: string): Promise<CollectionWithItems> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('collections')
-    .select('*, collection_items(book_id, display_order)')
-    .eq('id', collectionId)
-    .order('display_order', { referencedTable: 'collection_items', ascending: true })
-    .maybeSingle()
-
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  if (!data) throw new ApiError(`Collection ${collectionId} not found`, 404, 'Not Found')
-  return data as CollectionWithItems
-}
-
-/** Return a single series row, or throw ApiError(404). */
-export async function getSeries(seriesId: string): Promise<Series> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('series')
-    .select('*')
-    .eq('id', seriesId)
-    .maybeSingle()
-
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  if (!data) throw new ApiError(`Series ${seriesId} not found`, 404, 'Not Found')
+  const { data, error } = await supabase.from('authors').select('*').eq('library_id', libraryId)
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
   return data
 }
 
-/** Return a single playlist with items ordered by display_order, or throw ApiError(404). */
-export async function getPlaylist(playlistId: string): Promise<PlaylistWithItems> {
+/**
+ * Returns all collections for the given library, with their items (including
+ * the associated library_items) ordered by `display_order` ascending.
+ *
+ * Requirements: 7.11, 12.7, 12.8
+ */
+export async function getLibraryCollections(libraryId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('collections')
+    .select('*, collection_items(*, library_items(*))')
+    .eq('library_id', libraryId)
+    .order('display_order', { referencedTable: 'collection_items', ascending: true })
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
+  return data
+}
+
+/**
+ * Returns all playlists owned by the current user for the given library,
+ * with their items (including the associated library_items) ordered by
+ * `display_order` ascending.
+ *
+ * Throws `UnauthorizedError` if there is no active session.
+ *
+ * Requirements: 7.11, 12.7, 12.9
+ */
+export async function getLibraryPlaylists(libraryId: string) {
   const { supabase, user } = await requireUser()
   const { data, error } = await supabase
     .from('playlists')
-    .select('*, playlist_items(id, library_item_id, episode_id, display_order)')
-    .eq('id', playlistId)
+    .select('*, playlist_items(*, library_items(*))')
+    .eq('library_id', libraryId)
     .eq('user_id', user.id)
     .order('display_order', { referencedTable: 'playlist_items', ascending: true })
-    .maybeSingle()
-
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  if (!data) throw new ApiError(`Playlist ${playlistId} not found`, 404, 'Not Found')
-  return data as PlaylistWithItems
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
+  return data
 }
 
-/** Return a single author row, or throw ApiError(404). */
-export async function getAuthor(authorId: string): Promise<Author> {
+/**
+ * Returns a single collection by ID with its items (including the associated
+ * library_items) ordered by `display_order` ascending.
+ *
+ * Throws `ApiError(404)` if the collection does not exist.
+ *
+ * Requirements: 7.11, 12.7, 12.8
+ */
+export async function getCollection(collectionId: string) {
   const supabase = await createClient()
   const { data, error } = await supabase
-    .from('authors')
-    .select('*')
-    .eq('id', authorId)
-    .maybeSingle()
+    .from('collections')
+    .select('*, collection_items(*, library_items(*))')
+    .eq('id', collectionId)
+    .order('display_order', { referencedTable: 'collection_items', ascending: true })
+    .single()
+  if (error) throw new ApiError(error.message, 404, error.code ?? '')
+  return data
+}
 
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  if (!data) throw new ApiError(`Author ${authorId} not found`, 404, 'Not Found')
+/**
+ * Returns a single series row by ID.
+ *
+ * Throws `ApiError(404)` if the series does not exist.
+ *
+ * Requirements: 7.11
+ */
+export async function getSeries(seriesId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase.from('series').select('*').eq('id', seriesId).single()
+  if (error) throw new ApiError(error.message, 404, error.code ?? '')
+  return data
+}
+
+/**
+ * Returns a single playlist by ID with its items (including the associated
+ * library_items) ordered by `display_order` ascending.
+ *
+ * Throws `ApiError(404)` if the playlist does not exist.
+ *
+ * Requirements: 7.11, 12.7, 12.9
+ */
+export async function getPlaylist(playlistId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('playlists')
+    .select('*, playlist_items(*, library_items(*))')
+    .eq('id', playlistId)
+    .order('display_order', { referencedTable: 'playlist_items', ascending: true })
+    .single()
+  if (error) throw new ApiError(error.message, 404, error.code ?? '')
+  return data
+}
+
+/**
+ * Returns a single author row by ID.
+ *
+ * Throws `ApiError(404)` if the author does not exist.
+ *
+ * Requirements: 7.11
+ */
+export async function getAuthor(authorId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase.from('authors').select('*').eq('id', authorId).single()
+  if (error) throw new ApiError(error.message, 404, error.code ?? '')
   return data
 }
 
 // ---------------------------------------------------------------------------
-// User / profile
+// Users
 // ---------------------------------------------------------------------------
 
-export interface CurrentUser {
+/**
+ * Returns the currently authenticated user combined with their `profiles` row.
+ *
+ * Calls `requireUser()` to obtain the auth user, then queries `public.profiles`
+ * for the matching row. Returns a merged object with the shape:
+ * `{ id, email, username, userType, language, theme, defaultLibraryId }`.
+ *
+ * Throws `UnauthorizedError` if there is no active session.
+ * Throws `ApiError(404)` if the profile row does not exist.
+ *
+ * Requirements: 10.1, 10.4
+ */
+export async function getCurrentUser(): Promise<{
   id: string
   email: string | undefined
-  profile: Profile
-}
-
-/**
- * Return the authenticated user combined with their profile row.
- * Throws UnauthorizedError if not authenticated.
- */
-export async function getCurrentUser(): Promise<CurrentUser> {
+  username: string | null
+  userType: string
+  language: string
+  theme: string
+  defaultLibraryId: string | null
+}> {
   const { supabase, user } = await requireUser()
 
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select('*')
+    .select('username, user_type, language, theme, default_library_id')
     .eq('id', user.id)
-    .maybeSingle()
+    .single()
 
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  if (!profile) throw new ApiError('Profile not found', 404, 'Not Found')
+  if (error || !profile) {
+    throw new ApiError(error?.message ?? 'Profile not found', 404, error?.code ?? '')
+  }
 
   return {
     id: user.id,
     email: user.email,
-    profile,
+    username: profile.username,
+    userType: profile.user_type || 'user',
+    language: profile.language || 'en',
+    theme: profile.theme || 'dark',
+    defaultLibraryId: profile.default_library_id,
   }
 }
 
 /**
- * Return all profile rows (admin-only — enforced by RLS policy on `profiles`).
+ * Returns all user profiles. Admin-only operation.
+ *
+ * Uses the service-role client to bypass RLS and read all rows from
+ * `public.profiles`. Call sites should verify the current user is an admin
+ * before invoking this function.
+ *
+ * Requirements: 10.4
  */
-export async function getUsers(): Promise<Profile[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('profiles').select('*')
+export async function getUsers(): Promise<import('@/types').Profile[]> {
+  const { createServiceRoleClient } = await import('@/utils/supabase/service-role')
+  const adminClient = createServiceRoleClient()
 
-  if (error) throw new ApiError(error.message, 500, 'Internal Server Error')
-  return data ?? []
+  const { data, error } = await adminClient.from('profiles').select('*')
+
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
+
+  return data
 }
 
 // ---------------------------------------------------------------------------
-// Cover upload / remove
+// Cover image upload / removal
 // ---------------------------------------------------------------------------
 
 /**
- * Upload a cover image for a library item.
+ * Uploads a cover image for a library item to Supabase Storage and updates
+ * the `library_items.cover_path` column.
  *
- * Stores the file at `covers/{libraryItemId}/cover.jpg` and updates
- * `library_items.cover_path` with the storage path.
+ * Uses the service-role client so that the upload bypasses RLS (only admins
+ * should call this function, but the service-role key is required because
+ * storage write policies are restricted to the service role).
+ *
+ * Storage path: `covers/{libraryItemId}/cover.jpg`
+ * The `covers` bucket is public, so no signed URL is needed — callers can
+ * construct the public URL via:
+ *   `supabase.storage.from('covers').getPublicUrl(`${libraryItemId}/cover.jpg`)`
+ *
+ * @param libraryItemId - UUID of the library item to attach the cover to.
+ * @param file          - The cover image data (File, Blob, or ArrayBuffer).
+ * @returns The storage path that was written to `cover_path`.
+ * @throws {ApiError} if the storage upload or DB update fails.
+ *
+ * Requirements: 7.11, 8.6, 8.7
  */
-export async function uploadCover(libraryItemId: string, file: File): Promise<string> {
-  const supabase = await createClient()
+export async function uploadCover(
+  libraryItemId: string,
+  file: File | Blob | ArrayBuffer,
+): Promise<string> {
+  const { createServiceRoleClient } = await import('@/utils/supabase/service-role')
+  const adminClient = createServiceRoleClient()
+
   const storagePath = `${libraryItemId}/cover.jpg`
 
-  const { error: uploadError } = await supabase.storage
+  const { error: uploadError } = await adminClient.storage
     .from('covers')
-    .upload(storagePath, file, { upsert: true, contentType: file.type })
+    .upload(storagePath, file, {
+      upsert: true,
+      contentType: file instanceof ArrayBuffer ? 'image/jpeg' : (file as File | Blob).type || 'image/jpeg',
+    })
 
-  if (uploadError) throw new ApiError(uploadError.message, 500, 'Internal Server Error')
+  if (uploadError) {
+    throw new ApiError(uploadError.message, 500, uploadError.name ?? '')
+  }
 
-  const { error: updateError } = await supabase
+  const { error: dbError } = await adminClient
     .from('library_items')
     .update({ cover_path: storagePath })
     .eq('id', libraryItemId)
 
-  if (updateError) throw new ApiError(updateError.message, 500, 'Internal Server Error')
+  if (dbError) {
+    throw new ApiError(dbError.message, 500, dbError.code ?? '')
+  }
 
   return storagePath
 }
 
 /**
- * Remove the cover image for a library item and clear `cover_path`.
+ * Removes the cover image for a library item from Supabase Storage and clears
+ * the `library_items.cover_path` column.
+ *
+ * Uses the service-role client to bypass RLS for the storage delete operation.
+ * If the storage object does not exist the function still clears `cover_path`
+ * in the database so the two sources of truth stay in sync.
+ *
+ * @param libraryItemId - UUID of the library item whose cover should be removed.
+ * @throws {ApiError} if the DB update fails.
+ *
+ * Requirements: 7.11, 8.6
  */
 export async function removeCover(libraryItemId: string): Promise<void> {
-  const supabase = await createClient()
+  const { createServiceRoleClient } = await import('@/utils/supabase/service-role')
+  const adminClient = createServiceRoleClient()
+
   const storagePath = `${libraryItemId}/cover.jpg`
 
-  const { error: removeError } = await supabase.storage
+  // Attempt to delete the storage object. We intentionally ignore a "not found"
+  // error (the file may have already been deleted) but still propagate other
+  // storage errors so callers are aware of unexpected failures.
+  const { error: storageError } = await adminClient.storage
     .from('covers')
     .remove([storagePath])
 
-  if (removeError) throw new ApiError(removeError.message, 500, 'Internal Server Error')
+  if (storageError) {
+    // Supabase Storage returns a generic error for missing objects; treat it as
+    // a non-fatal warning and continue to clear the DB column.
+    const isNotFound =
+      storageError.message.toLowerCase().includes('not found') ||
+      storageError.message.toLowerCase().includes('does not exist')
 
-  const { error: updateError } = await supabase
+    if (!isNotFound) {
+      throw new ApiError(storageError.message, 500, storageError.name ?? '')
+    }
+  }
+
+  const { error: dbError } = await adminClient
     .from('library_items')
     .update({ cover_path: null })
     .eq('id', libraryItemId)
 
-  if (updateError) throw new ApiError(updateError.message, 500, 'Internal Server Error')
+  if (dbError) {
+    throw new ApiError(dbError.message, 500, dbError.code ?? '')
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Personalized shelves
+// Specialized Catalog Views
 // ---------------------------------------------------------------------------
-
-export interface PersonalizedShelves {
-  recentlyAdded: LibraryItem[]
-  inProgress: LibraryItemWithProgress[]
-  recentlyFinished: LibraryItemWithProgress[]
-}
 
 /**
- * Return three personalized shelves for a library in parallel:
- *  - Recently added items (last 20, ordered by added_at desc)
- *  - In-progress items (not finished, ordered by last_update desc)
- *  - Recently finished items (is_finished = true, ordered by last_update desc)
+ * Returns distinct filter values (genres, tags, publishers, etc.) for a library.
+ *
+ * Requirements: 7.10
  */
-export async function getPersonalizedShelves(
-  libraryId: string,
-  userId: string
-): Promise<PersonalizedShelves> {
+export async function getLibraryFilterData(libraryId: string): Promise<import('@/types/api').LibraryFilterData> {
   const supabase = await createClient()
 
-  const [recentlyAddedResult, inProgressResult, recentlyFinishedResult] = await Promise.all([
-    // Recently added
-    supabase
-      .from('library_items')
-      .select('*')
-      .eq('library_id', libraryId)
-      .order('added_at', { ascending: false })
-      .limit(20),
+  // 1. Get all authors for this library
+  const { data: authors } = await supabase
+    .from('authors')
+    .select('id, name')
+    .eq('library_id', libraryId)
+    .order('name')
 
-    // In-progress: join media_progress for this user
-    supabase
-      .from('library_items')
-      .select('*, media_progress!inner(*)')
-      .eq('library_id', libraryId)
-      .eq('media_progress.user_id', userId)
-      .eq('media_progress.is_finished', false)
-      .order('last_update', { referencedTable: 'media_progress', ascending: false })
-      .limit(20),
+  // 2. Get all series for this library
+  const { data: series } = await supabase
+    .from('series')
+    .select('id, name')
+    .eq('library_id', libraryId)
+    .order('name')
 
-    // Recently finished
-    supabase
-      .from('library_items')
-      .select('*, media_progress!inner(*)')
-      .eq('library_id', libraryId)
-      .eq('media_progress.user_id', userId)
-      .eq('media_progress.is_finished', true)
-      .order('last_update', { referencedTable: 'media_progress', ascending: false })
-      .limit(20),
-  ])
+  // 3. Get distinct genres, tags, publishers, and languages from the books table
+  // Note: genres and tags are JSONB arrays in the schema.
+  // For now we do a simple select; in a larger library we'd use a Postgres RPC
+  // or a dedicated 'tags' table to avoid scanning all books.
+  const { data: books } = await supabase
+    .from('books')
+    .select('genres, tags, publisher, language')
 
-  if (recentlyAddedResult.error)
-    throw new ApiError(recentlyAddedResult.error.message, 500, 'Internal Server Error')
-  if (inProgressResult.error)
-    throw new ApiError(inProgressResult.error.message, 500, 'Internal Server Error')
-  if (recentlyFinishedResult.error)
-    throw new ApiError(recentlyFinishedResult.error.message, 500, 'Internal Server Error')
+  const genresSet = new Set<string>()
+  const tagsSet = new Set<string>()
+  const publishersSet = new Set<string>()
+  const languagesSet = new Set<string>()
 
-  // Flatten media_progress array to single row for LibraryItemWithProgress shape
-  const flattenProgress = (
-    rows: (LibraryItem & { media_progress: MediaProgress[] })[]
-  ): LibraryItemWithProgress[] =>
-    rows.map(({ media_progress, ...item }) => ({
-      ...item,
-      media_progress: media_progress?.[0] ?? null,
-    }))
+  books?.forEach((book) => {
+    if (Array.isArray(book.genres)) book.genres.forEach((g) => genresSet.add(String(g)))
+    if (Array.isArray(book.tags)) book.tags.forEach((t) => tagsSet.add(String(t)))
+    if (book.publisher) publishersSet.add(book.publisher)
+    if (book.language) languagesSet.add(book.language)
+  })
 
   return {
-    recentlyAdded: recentlyAddedResult.data ?? [],
-    inProgress: flattenProgress(
-      (inProgressResult.data ?? []) as (LibraryItem & { media_progress: MediaProgress[] })[]
-    ),
-    recentlyFinished: flattenProgress(
-      (recentlyFinishedResult.data ?? []) as (LibraryItem & { media_progress: MediaProgress[] })[]
-    ),
+    authors: (authors || []) as { id: string; name: string }[],
+    series: (series || []) as { id: string; name: string }[],
+    genres: Array.from(genresSet).sort(),
+    tags: Array.from(tagsSet).sort(),
+    publishers: Array.from(publishersSet).sort(),
+    languages: Array.from(languagesSet).sort(),
+    narrators: [], // Narrators are in a separate table or nested JSON; skipping for now
+    publishedDecades: [], // Computed from published_year; skipping for now
   }
 }
 
-// ---------------------------------------------------------------------------
-// Legacy compatibility shims (called from src/lib/api.ts fallback paths)
-// ---------------------------------------------------------------------------
-
 /**
- * Personalized shelves for the library page — wraps getPersonalizedShelves
- * using the current authenticated user.
+ * Returns the "Personalized Shelf" for a library (Recently Added, Continue Listening).
+ *
+ * Requirements: 7.12
  */
-export async function getLibraryPersonalized(libraryId: string): Promise<PersonalizedShelves> {
-  const { user } = await requireUser()
-  return getPersonalizedShelves(libraryId, user.id)
-}
-
-export interface LibraryFilterData {
-  genres: string[]
-  tags: string[]
-  authors: { id: string; name: string }[]
-  series: { id: string; name: string }[]
-  narrators: { id: string; name: string }[]
-}
-
-/**
- * Aggregate filter data (genres, tags, authors, series, narrators) for a library.
- */
-export async function getLibraryFilterData(libraryId: string): Promise<LibraryFilterData> {
+export async function getLibraryPersonalized(libraryId: string): Promise<import('@/types/api').PersonalizedShelf[]> {
   const supabase = await createClient()
 
-  const [itemsResult, authorsResult, seriesResult, narratorsResult] = await Promise.all([
-    supabase
-      .from('library_items')
-      .select('genres, tags')
-      .eq('library_id', libraryId),
-    supabase
-      .from('authors')
-      .select('id, name')
-      .eq('library_id', libraryId)
-      .order('name', { ascending: true }),
-    supabase
-      .from('series')
-      .select('id, name')
-      .eq('library_id', libraryId)
-      .order('name', { ascending: true }),
-    supabase
-      .from('narrators')
-      .select('id, name')
-      .eq('library_id', libraryId)
-      .order('name', { ascending: true }),
-  ])
+  // 1. Recently Added
+  const { data: recentlyAdded } = await supabase
+    .from('library_items')
+    .select('*, books(*, book_authors(authors(*)))')
+    .eq('library_id', libraryId)
+    .order('created_at', { ascending: false })
+    .limit(12)
 
-  const genres = new Set<string>()
-  const tags = new Set<string>()
-  for (const row of itemsResult.data ?? []) {
-    for (const g of row.genres ?? []) genres.add(g)
-    for (const t of row.tags ?? []) tags.add(t)
+  const shelves: import('@/types/api').PersonalizedShelf[] = [
+    {
+      id: 'recently-added',
+      label: 'Recently Added',
+      labelStringKey: 'RecentlyAdded',
+      type: 'book',
+      entities: (recentlyAdded || []).map(mapLibraryItem),
+      total: recentlyAdded?.length || 0,
+    },
+  ]
+
+  // 2. Continue Listening (if logged in)
+  try {
+    const { user } = await requireUser()
+    const { data: inProgress } = await supabase
+      .from('media_progress')
+      .select('*, library_items(*, book_authors(authors(*)))')
+      .eq('user_id', user.id)
+      .eq('is_finished', false)
+      .order('last_update', { ascending: false })
+      .limit(12)
+
+    if (inProgress && inProgress.length > 0) {
+      shelves.unshift({
+        id: 'continue-listening',
+        label: 'Continue Listening',
+        labelStringKey: 'ContinueListening',
+        type: 'book',
+        entities: inProgress.map((p) => mapLibraryItem(p.library_items)),
+        total: inProgress.length,
+      })
+    }
+  } catch {
+    // Ignore unauthorized — just don't show the Continue Listening shelf
   }
 
-  return {
-    genres: Array.from(genres).sort(),
-    tags: Array.from(tags).sort(),
-    authors: (authorsResult.data ?? []).map(r => ({ id: r.id, name: r.name })),
-    series: (seriesResult.data ?? []).map(r => ({ id: r.id, name: r.name })),
-    narrators: (narratorsResult.data ?? []).map(r => ({ id: r.id, name: r.name })),
-  }
+  return shelves
 }

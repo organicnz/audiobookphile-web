@@ -32,10 +32,12 @@ const mockUser: AppUser = {
   bookmarks: [],
   isActive: true,
   isLocked: false,
+  seriesHideFromContinueListening: [],
   librariesAccessible: [],
   itemTagsSelected: [],
   hasOpenIDLink: false,
-  token: ''
+  token: '',
+  createdAt: 0
 }
 
 const mockUserContextValue: UserContextType = {

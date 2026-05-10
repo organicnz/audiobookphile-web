@@ -1,6 +1,15 @@
 import { type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 
+/**
+ * Next.js 16 Proxy (formerly Middleware)
+ * 
+ * As of Next.js 16, the `middleware.ts` convention has been renamed to `proxy.ts`.
+ * This function handles Supabase session updates and token refreshing for all
+ * matched routes, ensuring authentication state is persisted across requests.
+ * 
+ * @see https://nextjs.org/docs/messages/middleware-to-proxy
+ */
 export async function proxy(request: NextRequest) {
   return await updateSession(request)
 }

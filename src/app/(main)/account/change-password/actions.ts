@@ -1,11 +1,16 @@
-import { apiRequest } from '@/lib/api'
+'use server'
 
-// Server Action
-export async function changePassword(oldPassword: string, newPassword: string): Promise<void> {
-  'use server'
+import { createClient } from '@/utils/supabase/server'
 
-  return apiRequest<void>('/api/me/password', {
-    method: 'PATCH',
-    body: JSON.stringify({ password: oldPassword, newPassword })
-  })
+export async function changePassword(
+  _oldPassword: string,
+  newPassword: string
+): Promise<void> {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.updateUser({ password: newPassword })
+
+  if (error) {
+    throw new Error(error.message)
+  }
 }
