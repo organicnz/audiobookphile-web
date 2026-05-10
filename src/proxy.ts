@@ -11,6 +11,7 @@ import { updateSession } from '@/utils/supabase/middleware'
  * @see https://nextjs.org/docs/messages/middleware-to-proxy
  */
 export async function proxy(request: NextRequest) {
+  console.log(`[Proxy] Handling request: ${request.nextUrl.pathname}`)
   return await updateSession(request)
 }
 
