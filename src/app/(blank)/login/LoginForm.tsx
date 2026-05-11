@@ -4,7 +4,6 @@ import { signInWithGoogle } from '@/app/actions/authActions'
 import AuthCard from '@/components/auth/AuthCard'
 import Btn from '@/components/ui/Btn'
 import TextInput from '@/components/ui/TextInput'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -13,7 +12,6 @@ import { useCallback, useState } from 'react'
 const supabase = createClient()
 
 export default function LoginForm() {
-  const t = useTypeSafeTranslations()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
@@ -30,10 +28,13 @@ export default function LoginForm() {
       try {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) {
-          setError(error.message || t('ErrorLoginFailed'))
+          setError(error.message || 'Login failed. Please check your credentials.')
           setLoading(false)
           return
         }
+        // Refresh server components so the new session cookie is picked up,
+        // then navigate. Without refresh() the server still sees no session.
+        router.refresh()
         const redirect = searchParams.get('redirect')
         router.replace(redirect || '/library')
       } catch (err) {
@@ -56,10 +57,10 @@ export default function LoginForm() {
   }
 
   return (
-    <AuthCard title={t('LabelLogin')} onSubmit={handleSubmit}>
+    <AuthCard title="Login" onSubmit={handleSubmit}>
       <div className="mb-4 flex flex-col gap-4">
-        <TextInput label={t('LabelEmail')} value={email} type="email" autocomplete="email" onChange={setEmail} />
-        <TextInput label={t('LabelPassword')} value={password} type="password" autocomplete="current-password" onChange={setPassword} />
+        <TextInput label="Email" value={email} type="email" autocomplete="email" onChange={setEmail} />
+        <TextInput label="Password" value={password} type="password" autocomplete="current-password" onChange={setPassword} />
       </div>
 
       <div className="mb-4 flex justify-end">
@@ -72,7 +73,7 @@ export default function LoginForm() {
 
       <div className="flex flex-col gap-4">
         <Btn type="submit" loading={loading} className="w-full">
-          {t('LabelSubmit')}
+          Sign in
         </Btn>
 
         <div className="relative my-2">

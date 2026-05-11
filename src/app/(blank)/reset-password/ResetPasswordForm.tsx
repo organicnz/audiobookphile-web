@@ -4,9 +4,11 @@ import { resetPassword } from '@/app/actions/authActions'
 import AuthCard from '@/components/auth/AuthCard'
 import Btn from '@/components/ui/Btn'
 import TextInput from '@/components/ui/TextInput'
+import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 
 export default function ResetPasswordForm() {
+  const router = useRouter()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
@@ -31,10 +33,13 @@ export default function ResetPasswordForm() {
       if (result?.error) {
         setError(result.error)
         setLoading(false)
+        return
       }
-      // On success, resetPassword() redirects to /library server-side
+      // Success — refresh server state then navigate
+      router.refresh()
+      router.replace('/library')
     },
-    [password, confirmPassword]
+    [password, confirmPassword, router]
   )
 
   return (

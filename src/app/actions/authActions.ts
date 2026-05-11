@@ -84,7 +84,7 @@ export async function resetPassword(password: string) {
     return { error: error.message }
   }
 
-  redirect('/library')
+  return { success: true }
 }
 
 export async function signOut() {
