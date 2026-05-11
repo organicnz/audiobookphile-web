@@ -6,13 +6,12 @@ import Btn from '@/components/ui/Btn'
 import TextInput from '@/components/ui/TextInput'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
 
 const supabase = createClient()
 
 export default function LoginForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -32,11 +31,11 @@ export default function LoginForm() {
           setLoading(false)
           return
         }
-        // Refresh server components so the new session cookie is picked up,
-        // then navigate. Without refresh() the server still sees no session.
-        router.refresh()
+        // Full navigation forces a new server request with the session cookie
+        // that supabase-js just wrote to the browser. router.replace() alone
+        // can race against cookie propagation and land on an unauthenticated page.
         const redirect = searchParams.get('redirect')
-        router.replace(redirect || '/library')
+        window.location.href = redirect || '/library'
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'
         console.error('[LoginForm] Network error:', message)
@@ -44,7 +43,7 @@ export default function LoginForm() {
         setLoading(false)
       }
     },
-    [email, password, router, searchParams]
+    [email, password, searchParams]
   )
 
   const handleGoogleSignIn = async () => {
