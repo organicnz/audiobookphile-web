@@ -31,7 +31,7 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocations=(), interest-cohort=()'
+            value: 'camera=(), microphone=(), geolocation=()'
           }
         ]
       }

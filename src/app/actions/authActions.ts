@@ -3,11 +3,29 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
-// NEXT_PUBLIC_SITE_URL must be set in your deployment environment (e.g. Vercel).
-// Falls back to localhost:3000 for local dev only.
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+/**
+ * Resolves the canonical site URL at request time.
+ *
+ * Priority:
+ *  1. NEXT_PUBLIC_SITE_URL  – explicitly set in Vercel env vars (production)
+ *  2. NEXT_PUBLIC_VERCEL_URL – automatically injected by Vercel for every deployment
+ *  3. localhost:3000         – local dev fallback
+ *
+ * NEXT_PUBLIC_ vars are inlined at build time, so we read them inside the
+ * function to pick up the value that was present when the build ran.
+ */
+function getSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL
+  if (explicit) return explicit
+
+  const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+  if (vercelUrl) return `https://${vercelUrl}`
+
+  return 'http://localhost:3000'
+}
 
 export async function signInWithGoogle() {
+  const siteUrl = getSiteUrl()
   const supabase = await createClient()
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
@@ -27,6 +45,7 @@ export async function signInWithGoogle() {
 }
 
 export async function signUp(email: string, password: string) {
+  const siteUrl = getSiteUrl()
   const supabase = await createClient()
   const { error } = await supabase.auth.signUp({
     email,
@@ -44,6 +63,7 @@ export async function signUp(email: string, password: string) {
 }
 
 export async function forgotPassword(email: string) {
+  const siteUrl = getSiteUrl()
   const supabase = await createClient()
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${siteUrl}/auth/callback?next=/reset-password`,
