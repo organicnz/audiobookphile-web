@@ -4,12 +4,9 @@ import { signInWithGoogle } from '@/app/actions/authActions'
 import AuthCard from '@/components/auth/AuthCard'
 import Btn from '@/components/ui/Btn'
 import TextInput from '@/components/ui/TextInput'
-import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
-
-const supabase = createClient()
 
 export default function LoginForm() {
   const searchParams = useSearchParams()
@@ -25,6 +22,7 @@ export default function LoginForm() {
       setError('')
       setLoading(true)
       try {
+        const supabase = createClient()
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) {
           setError(error.message || 'Login failed. Please check your credentials.')
