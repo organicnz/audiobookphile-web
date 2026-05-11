@@ -3,7 +3,9 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'
+// NEXT_PUBLIC_SITE_URL must be set in your deployment environment (e.g. Vercel).
+// Falls back to localhost:3000 for local dev only.
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
 export async function signInWithGoogle() {
   const supabase = await createClient()
