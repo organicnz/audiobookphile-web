@@ -1,39 +1,65 @@
 'use server'
 
-import * as api from '@/lib/api'
-import { GetFilesystemPathsResponse, Library, SaveLibraryOrderApiResponse } from '@/types/api'
+import { getLibraries } from '@/lib/supabase-api'
+import type { GetFilesystemPathsResponse, Library, SaveLibraryOrderApiResponse } from '@/types/api'
+import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function createLibrary(newLibrary: Library): Promise<Library> {
-  const result = await api.createLibrary(newLibrary)
+  const supabase = await createClient()
+  const { data, error } = await (supabase as any)
+    .from('libraries')
+    .insert({
+      name: newLibrary.name,
+      media_type: newLibrary.mediaType,
+      icon: newLibrary.icon,
+    })
+    .select()
+    .single()
+  if (error) throw new Error(error.message)
   revalidatePath('/settings/libraries')
-  return result
+  return data as unknown as Library
 }
 
 export async function editLibrary(libraryId: string, updatedLibrary: Library): Promise<Library> {
-  const result = await api.updateLibrary(libraryId, updatedLibrary)
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('libraries')
+    .update({ name: updatedLibrary.name, icon: updatedLibrary.icon } as any)
+    .eq('id', libraryId)
+    .select()
+    .single()
+  if (error) throw new Error(error.message)
   revalidatePath('/settings/libraries')
-  return result
+  return data as unknown as Library
 }
 
 export async function deleteLibrary(libraryId: string): Promise<Library> {
-  const result = await api.deleteLibrary(libraryId)
+  const supabase = await createClient()
+  const { data, error } = await supabase.from('libraries').delete().eq('id', libraryId).select().single()
+  if (error) throw new Error(error.message)
   revalidatePath('/settings/libraries')
-  return result
+  return data as unknown as Library
 }
 
 export async function saveLibraryOrder(reorderObjects: { id: string; newOrder: number }[]): Promise<SaveLibraryOrderApiResponse> {
-  return api.saveLibraryOrder(reorderObjects)
+  const supabase = await createClient()
+  for (const item of reorderObjects) {
+    await supabase.from('libraries').update({ display_order: item.newOrder }).eq('id', item.id)
+  }
+  const response = await getLibraries()
+  return { libraries: response.libraries } as unknown as SaveLibraryOrderApiResponse
 }
 
-export async function requestScanLibrary(libraryId: string): Promise<void> {
-  return api.scanLibrary(libraryId)
+export async function requestScanLibrary(_libraryId: string): Promise<void> {
+  console.warn('[libraries/actions] requestScanLibrary is not available in the Supabase-backed version')
 }
 
-export async function matchAll(libraryId: string): Promise<void> {
-  return api.matchAll(libraryId)
+export async function matchAll(_libraryId: string): Promise<void> {
+  console.warn('[libraries/actions] matchAll is not available in the Supabase-backed version')
 }
 
-export async function getFilesystemPaths(path: string, level: number): Promise<GetFilesystemPathsResponse> {
-  return api.getFilesystemPaths(path, level)
+export async function getFilesystemPaths(_path: string, _level: number): Promise<GetFilesystemPathsResponse> {
+  console.warn('[libraries/actions] getFilesystemPaths is not available in the Supabase-backed version')
+  return { directories: [] } as unknown as GetFilesystemPathsResponse
 }

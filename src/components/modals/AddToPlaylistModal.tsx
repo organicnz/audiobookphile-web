@@ -74,7 +74,7 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
     void (async () => {
       try {
         const res = await fetchPlaylistsAction(libraryId, '')
-        if (!cancelled) setPlaylists(res.results)
+        if (!cancelled) setPlaylists(res.results as any)
       } catch (error) {
         if (!cancelled) {
           console.error('Failed to load playlists', error)

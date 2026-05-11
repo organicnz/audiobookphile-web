@@ -1,20 +1,30 @@
 'use server'
 
-import * as api from '@/lib/api'
+import { getLibraries } from '@/lib/supabase-api'
 import { Library } from '@/types/api'
+import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function deleteUser(userId: string): Promise<void> {
-  await api.deleteUser(userId)
+  const { createServiceRoleClient } = await import('@/utils/supabase/service-role')
+  const adminClient = createServiceRoleClient()
+  const { error } = await adminClient.auth.admin.deleteUser(userId)
+  if (error) throw new Error(error.message)
   revalidatePath('/settings/users')
 }
 
 export async function fetchLibraries(): Promise<Library[]> {
-  const response = await api.getLibraries()
+  const response = await getLibraries()
   return response.libraries
 }
 
 export async function fetchTags(): Promise<string[]> {
-  const response = await api.getTags()
-  return response.tags
+  // Tags are stored in books.tags (JSONB array); aggregate distinct values
+  const supabase = await createClient()
+  const { data } = await supabase.from('books').select('tags')
+  const tagsSet = new Set<string>()
+  data?.forEach((row) => {
+    if (Array.isArray(row.tags)) row.tags.forEach((t) => tagsSet.add(String(t)))
+  })
+  return Array.from(tagsSet).sort()
 }

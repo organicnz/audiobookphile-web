@@ -1,20 +1,20 @@
 'use server'
 
-import * as api from '@/lib/api'
-import { BookSearchResult, PodcastSearchResult } from '@/types/api'
+import type { BookSearchResult, PodcastSearchResult } from '@/types/api'
 import { cookies } from 'next/headers'
 
-export async function fetchBookMetadata(title: string, author: string, provider: string): Promise<BookSearchResult[]> {
-  console.error('Fetching book metadata for:', { title, author, provider })
-  return api.searchBooks(provider, title, author)
+export async function fetchBookMetadata(_title: string, _author: string, _provider: string): Promise<BookSearchResult[]> {
+  console.warn('[upload/actions] fetchBookMetadata is not available in the Supabase-backed version')
+  return []
 }
 
-export async function fetchPodcastMetadata(title: string): Promise<PodcastSearchResult[]> {
-  return api.searchPodcasts(title)
+export async function fetchPodcastMetadata(_title: string): Promise<PodcastSearchResult[]> {
+  console.warn('[upload/actions] fetchPodcastMetadata is not available in the Supabase-backed version')
+  return []
 }
 
 export async function getCookie(): Promise<string> {
-  // This is a workaround to get cookies in a server action because next cannot handle files or formdata in server actions (see uploadHelper.ts for upload imple)
+  // Returns empty string — ABS access_token cookie is no longer used
   const cookieStore = await cookies()
   const auth = cookieStore.get('access_token')
   return auth?.value ?? ''

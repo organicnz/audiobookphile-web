@@ -1,10 +1,15 @@
-import { getData, getLibraries } from '@/lib/api'
+import { getLibraries } from '@/lib/supabase-api'
 import UploadClient from './UploadClient'
 
 export const dynamic = 'force-dynamic'
 
 export default async function UploadPage() {
-  const [librariesResponse] = await getData(getLibraries())
-  const libraries = librariesResponse?.libraries || []
+  let libraries: import('@/types/api').Library[] = []
+  try {
+    const response = await getLibraries()
+    libraries = response.libraries
+  } catch {
+    libraries = []
+  }
   return <UploadClient libraries={libraries} />
 }

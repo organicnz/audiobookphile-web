@@ -1,11 +1,17 @@
-import { getAuthor, getData } from '@/lib/api'
-import AuthorClient from './AuthorClient'
+import { getAuthor } from '@/lib/supabase-api';
+import AuthorClient from './AuthorClient';
 
 export default async function AuthorPage({ params }: { params: Promise<{ author: string; library: string }> }) {
   const { author: authorId } = await params
-  const [author] = await getData(getAuthor(authorId, 'include=items,series'))
 
-  // TODO: Handle loading data error?
+  let author
+  try {
+    author = await getAuthor(authorId)
+  } catch (err) {
+    console.error('Error getting author data', err)
+    return null
+  }
+
   if (!author) {
     console.error('Error getting author data')
     return null
@@ -13,7 +19,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ author:
 
   return (
     <div className="w-full p-8">
-      <AuthorClient author={author} />
+      <AuthorClient author={author as any} />
     </div>
   )
 }

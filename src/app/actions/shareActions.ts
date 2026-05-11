@@ -1,17 +1,17 @@
 'use server'
 
-import * as api from '@/lib/api'
-import type { OpenMediaItemSharePayload } from '@/types/api'
-import { revalidatePath } from 'next/cache'
-
-export async function openMediaItemShareAction(payload: OpenMediaItemSharePayload) {
-  const result = await api.openMediaItemShare(payload)
-  revalidatePath('/library', 'layout')
-  return result
+/**
+ * ABS-specific — not available in the Supabase-backed version.
+ */
+export async function openMediaItemShareAction(_payload: unknown) {
+  console.warn('[shareActions] openMediaItemShare is not available in the Supabase-backed version')
+  return null
 }
 
-export async function closeMediaItemShareAction(shareId: string) {
-  const result = await api.closeMediaItemShare(shareId)
-  revalidatePath('/library', 'layout')
-  return result
+/**
+ * ABS-specific — not available in the Supabase-backed version.
+ */
+export async function closeMediaItemShareAction(_shareId: string) {
+  console.warn('[shareActions] closeMediaItemShare is not available in the Supabase-backed version')
+  return null
 }

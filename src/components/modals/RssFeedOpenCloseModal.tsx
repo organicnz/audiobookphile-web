@@ -85,8 +85,10 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
           ownerEmail: metadataDetails.ownerEmail || ''
         }
       })
-      setCurrentFeed(res.feed)
-      onFeedChange?.(res.feed)
+      if (res) {
+        setCurrentFeed((res as any).feed)
+        onFeedChange?.((res as any).feed)
+      }
     } catch (error: unknown) {
       console.error('Failed to open RSS feed', error)
       const msg = error && typeof error === 'object' && 'message' in error ? String((error as { message: string }).message) : null

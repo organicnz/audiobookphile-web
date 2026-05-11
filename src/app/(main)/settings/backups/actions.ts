@@ -1,36 +1,22 @@
 'use server'
 
-import * as api from '@/lib/api'
-import { revalidatePath } from 'next/cache'
+/**
+ * ABS-specific backup actions — not available in the Supabase-backed version.
+ */
 
 export async function createBackup(): Promise<void> {
-  await api.createBackup()
-  revalidatePath('/settings/backups')
+  console.warn('[backups/actions] createBackup is not available in the Supabase-backed version')
 }
 
-export async function deleteBackup(backupId: string): Promise<void> {
-  await api.deleteBackup(backupId)
-  revalidatePath('/settings/backups')
+export async function deleteBackup(_backupId: string): Promise<void> {
+  console.warn('[backups/actions] deleteBackup is not available in the Supabase-backed version')
 }
 
-export async function applyBackup(backupId: string): Promise<void> {
-  await api.applyBackup(backupId)
-  revalidatePath('/settings/backups')
+export async function applyBackup(_backupId: string): Promise<void> {
+  console.warn('[backups/actions] applyBackup is not available in the Supabase-backed version')
 }
 
-// Server Action to update the backup path
-export async function updateBackupPath(path: string): Promise<boolean> {
-  try {
-    await api.apiRequest<void>('/api/backups/path', {
-      method: 'PATCH',
-      body: JSON.stringify({ path })
-    })
-
-    revalidatePath('/settings/backups')
-
-    return true
-  } catch (error) {
-    console.error('Error updating backup path:', error)
-    return false
-  }
+export async function updateBackupPath(_path: string): Promise<boolean> {
+  console.warn('[backups/actions] updateBackupPath is not available in the Supabase-backed version')
+  return false
 }

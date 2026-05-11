@@ -1,17 +1,20 @@
-'use server'
-
-import * as api from '@/lib/api'
+import type { Task } from '@/types/api'
 
 /**
- * Server Action: Quick embed metadata into audio files for a library item
+ * ABS-specific — not available in the Supabase-backed version.
  */
-export async function embedMetadataQuickAction(libraryItemId: string) {
-  return api.embedMetadataQuick(libraryItemId)
+export async function embedMetadataQuickAction(_libraryItemId: string) {
+  console.warn('[toolsActions] embedMetadataQuick is not available in the Supabase-backed version')
+  return null
 }
 
 /**
- * Server Action: Get all tasks with queue data
+ * ABS-specific — not available in the Supabase-backed version.
  */
-export async function getTasksAction() {
-  return api.getTasks()
+export async function getTasksAction(): Promise<{
+  tasks: Task[]
+  queuedTaskData?: { embedMetadata: { libraryItemId: string }[] }
+}> {
+  console.warn('[toolsActions] getTasks is not available in the Supabase-backed version')
+  return { tasks: [] }
 }

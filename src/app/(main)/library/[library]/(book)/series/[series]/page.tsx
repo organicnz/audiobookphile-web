@@ -1,12 +1,16 @@
-import { getData, getLibraryItems, getSeries } from '@/lib/api'
-import SeriesClient from './SeriesClient'
+import { getLibraryItems, getSeries } from '@/lib/supabase-api';
+import SeriesClient from './SeriesClient';
 
 export default async function SeriesPage({ params }: { params: Promise<{ series: string; library: string }> }) {
   const { series: seriesId, library: libraryId } = await params
-  const [series, libraryItems] = await getData(
-    getSeries(libraryId, seriesId),
-    getLibraryItems(libraryId, `filter=series.${encodeURIComponent(Buffer.from(seriesId).toString('base64'))}`)
-  )
+
+  let series, libraryItems
+  try {
+    ;[series, libraryItems] = await Promise.all([getSeries(seriesId), getLibraryItems(libraryId)])
+  } catch (err) {
+    console.error('Error getting series or library items data', err)
+    return null
+  }
 
   if (!series || !libraryItems) {
     console.error('Error getting series or library items data')
@@ -15,7 +19,7 @@ export default async function SeriesPage({ params }: { params: Promise<{ series:
 
   return (
     <div className="w-full p-8">
-      <SeriesClient series={series} libraryItems={libraryItems} />
+      <SeriesClient series={series as any} libraryItems={libraryItems as any} />
     </div>
   )
 }

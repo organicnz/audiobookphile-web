@@ -1,10 +1,16 @@
-import { getData, getLibraryPersonalized } from '@/lib/api'
+import { getLibraryPersonalized } from '@/lib/supabase-api'
 import LibraryClient from './LibraryClient'
 
 export default async function LibraryPage({ params }: { params: Promise<{ library: string }> }) {
   const { library: libraryId } = await params
 
-  const [personalized] = await getData(getLibraryPersonalized(libraryId))
+  let personalized
+  try {
+    personalized = await getLibraryPersonalized(libraryId)
+  } catch (err) {
+    console.error('Error getting personalized data', err)
+    return null
+  }
 
   if (!personalized) {
     console.error('Error getting personalized data')

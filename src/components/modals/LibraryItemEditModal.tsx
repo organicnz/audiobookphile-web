@@ -176,7 +176,14 @@ function LibraryItemEditModalContent({ isOpen, startSaveTransition, isSavePendin
             metadata: details.updatePayload.metadata,
             tags: details.updatePayload.tags
           })
-          const next = updatedItem.libraryItem as BookLibraryItem | PodcastLibraryItem
+          if (!updatedItem) {
+            showToast(t('ToastItemUpdateSuccess'), { type: 'success' })
+            if (saveAndCloseRef.current) {
+              onClose()
+            }
+            return
+          }
+          const next = (updatedItem as any).libraryItem as BookLibraryItem | PodcastLibraryItem
           showToast(t('ToastItemUpdateSuccess'), { type: 'success' })
           syncResolvedItem(next)
           onSaved?.(next)

@@ -1,8 +1,8 @@
 import { SettingsDrawerProvider } from '@/contexts/SettingsDrawerContext'
+import { getCurrentUser } from '@/lib/supabase-api'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import '../../../assets/globals.css'
-import { getCurrentUser, getData } from '../../../lib/api'
 import AppBar from '../AppBar'
 import SettingsLayoutWrapper from './SettingsLayoutWrapper'
 
@@ -12,14 +12,19 @@ export const metadata: Metadata = {
 }
 
 export default async function SettingsLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [currentUser] = await getData(getCurrentUser())
-  if (!currentUser?.user) {
-    console.error('Error getting user data')
-    redirect(`/login`)
+  let currentUser
+  try {
+    currentUser = await getCurrentUser()
+  } catch {
+    redirect('/login')
+  }
+
+  if (!currentUser) {
+    redirect('/login')
   }
 
   // Redirect to library page if user is not admin or root
-  if (!['admin', 'root'].includes(currentUser.user.type)) {
+  if (!['admin', 'root'].includes(currentUser.userType)) {
     return redirect('/library')
   }
 

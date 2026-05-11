@@ -1,12 +1,7 @@
-import { getApiKeys, getData, getUsers } from '@/lib/api'
-import ApiKeysClient from './ApiKeysClient'
-
-export const dynamic = 'force-dynamic'
-
-export default async function ApiKeysPage() {
-  const [apiKeysResponse, usersResponse] = await getData(getApiKeys(), getUsers())
-  const apiKeys = apiKeysResponse?.apiKeys || []
-  const users = usersResponse?.users || []
-
-  return <ApiKeysClient apiKeys={apiKeys} users={users} />
+export default function Page() {
+  return (
+    <div className="p-6 text-center text-fg-muted">
+      <p>This feature is not available in the Supabase-backed version.</p>
+    </div>
+  )
 }

@@ -1,28 +1,35 @@
 'use server'
 
-import * as api from '@/lib/api'
-import { BookSearchResult, PodcastSearchResult, UpdateLibraryItemMediaPayload, UpdateLibraryItemMediaResponse } from '@/types/api'
-import { revalidatePath } from 'next/cache'
+import type { BookSearchResult, PodcastSearchResult, UpdateLibraryItemMediaPayload, UpdateLibraryItemMediaResponse } from '@/types/api'
 
 /**
- * Server Action: Search for books using a metadata provider
+ * ABS-specific — not available in the Supabase-backed version.
  */
-export async function searchBooksAction(provider: string, title: string, author?: string, libraryItemId?: string): Promise<BookSearchResult[]> {
-  return api.searchBooks(provider, title, author, libraryItemId)
+export async function searchBooksAction(
+  _provider: string,
+  _title: string,
+  _author?: string,
+  _libraryItemId?: string,
+): Promise<BookSearchResult[]> {
+  console.warn('[matchActions] searchBooks is not available in the Supabase-backed version')
+  return []
 }
 
 /**
- * Server Action: Search for podcasts
+ * ABS-specific — not available in the Supabase-backed version.
  */
-export async function searchPodcastsAction(term: string): Promise<PodcastSearchResult[]> {
-  return api.searchPodcasts(term)
+export async function searchPodcastsAction(_term: string): Promise<PodcastSearchResult[]> {
+  console.warn('[matchActions] searchPodcasts is not available in the Supabase-backed version')
+  return []
 }
 
 /**
- * Server Action: Apply match updates to a library item
+ * ABS-specific — not available in the Supabase-backed version.
  */
-export async function applyMatchAction(libraryItemId: string, updatePayload: UpdateLibraryItemMediaPayload): Promise<UpdateLibraryItemMediaResponse> {
-  const result = await api.updateLibraryItemMedia(libraryItemId, updatePayload)
-  revalidatePath('/library', 'layout')
-  return result
+export async function applyMatchAction(
+  _libraryItemId: string,
+  _updatePayload: UpdateLibraryItemMediaPayload,
+): Promise<UpdateLibraryItemMediaResponse> {
+  console.warn('[matchActions] applyMatch is not available in the Supabase-backed version')
+  return {} as UpdateLibraryItemMediaResponse
 }

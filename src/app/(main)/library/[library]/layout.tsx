@@ -1,7 +1,7 @@
 import { LibraryProvider } from '@/contexts/LibraryContext'
+import { getLibraries } from '@/lib/supabase-api'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { getData, getLibraries } from '../../../../lib/api'
 import AppBar from '../../AppBar'
 import LibraryLayoutWrapper from './LibraryLayoutWrapper'
 
@@ -19,13 +19,19 @@ export default async function LibraryLayout({
 }>) {
   const { library: currentLibraryId } = await params
 
-  const [librariesResponse] = await getData(getLibraries())
+  let libraries: import('@/types/api').Library[] = []
+  try {
+    const response = await getLibraries()
+    libraries = response.libraries
+  } catch (err) {
+    console.error('Error getting library data', err)
+    redirect('/')
+  }
 
-  const libraries = librariesResponse?.libraries || []
   const currentLibrary = libraries.find((library) => library.id === currentLibraryId)
   if (!currentLibrary) {
     console.error('Error getting library data')
-    redirect(`/`)
+    redirect('/')
   }
 
   return (

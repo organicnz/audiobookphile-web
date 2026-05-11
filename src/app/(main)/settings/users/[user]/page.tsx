@@ -1,6 +1,6 @@
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
+import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
-import { getData, getUser } from '../../../../../lib/api'
 import UserClient from './UserClient'
 
 export const dynamic = 'force-dynamic'
@@ -9,7 +9,8 @@ export default async function UserPage({ params }: { params: Promise<{ user: str
   const t = await getTypeSafeTranslations()
   const { user: userId } = await params
 
-  const [user] = await getData(getUser(userId))
+  const supabase = await createClient()
+  const { data: user } = await supabase.from('profiles').select('*').eq('id', userId).single()
 
   if (!user) {
     return null
@@ -22,7 +23,7 @@ export default async function UserPage({ params }: { params: Promise<{ user: str
           <span className="material-symbols text-xl">arrow_back</span>
           <span>{t('LabelBackToUsers')}</span>
         </Link>
-        <UserClient user={user} />
+        <UserClient user={user as any} />
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
+import { getLibraries } from '@/lib/supabase-api'
 import type { Metadata } from 'next'
 import '../../../assets/globals.css'
 import { ComponentsCatalogProvider } from '../../../contexts/ComponentsCatalogContext'
-import { getData, getLibraries } from '../../../lib/api'
 import AppBar from '../AppBar'
 
 export const metadata: Metadata = {
@@ -10,12 +10,18 @@ export const metadata: Metadata = {
 }
 
 export default async function ComponentsCatalogLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [librariesRes] = await getData(getLibraries())
+  let libraries: import('@/types/api').Library[] = []
+  try {
+    const res = await getLibraries()
+    libraries = res.libraries
+  } catch {
+    libraries = []
+  }
 
   return (
     <>
-      <AppBar libraries={librariesRes?.libraries} />
-      <ComponentsCatalogProvider libraries={librariesRes?.libraries || []}>
+      <AppBar libraries={libraries} />
+      <ComponentsCatalogProvider libraries={libraries}>
         <div className="h-full max-h-screen w-full overflow-x-hidden overflow-y-auto">{children}</div>
       </ComponentsCatalogProvider>
     </>

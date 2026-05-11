@@ -1,78 +1,90 @@
 'use server'
 
-import * as api from '@/lib/api'
-import { RssPodcastEpisode, UpdateLibraryItemMediaPayload } from '@/types/api'
+import { getLibraryItem, updateMediaProgress } from '@/lib/supabase-api';
+import type { UpdateLibraryItemMediaPayload } from '@/types/api';
 
-export async function toggleFinishedAction(libraryItemId: string, params: { isFinished: boolean; episodeId?: string }) {
-  const result = await api.updateMediaFinished(libraryItemId, params)
-  
-  // Sync to Supabase
-  try {
-    const { syncProgressToSupabase } = await import('@/utils/supabase/progress')
-    await syncProgressToSupabase({
-      library_item_id: libraryItemId,
-      episode_id: params.episodeId,
-      is_finished: params.isFinished,
-      current_time_pos: params.isFinished ? 0 : 0 // Simplified for toggle
-    })
-  } catch (err) {
-    console.error('[mediaActions] Supabase sync failed for toggleFinished', err)
-  }
-
-  return result
+export async function toggleFinishedAction(
+  libraryItemId: string,
+  params: { isFinished: boolean; episodeId?: string },
+) {
+  await updateMediaProgress(libraryItemId, {
+    currentTime: 0,
+    isFinished: params.isFinished,
+    episodeId: params.episodeId,
+  })
 }
 
-export async function batchUpdateMediaFinishedAction(payload: { libraryItemId: string; episodeId?: string; isFinished: boolean }[]) {
-  return api.batchUpdateMediaFinished(payload)
+export async function batchUpdateMediaFinishedAction(
+  payload: { libraryItemId: string; episodeId?: string; isFinished: boolean }[],
+) {
+  await Promise.all(
+    payload.map((item) =>
+      updateMediaProgress(item.libraryItemId, {
+        currentTime: 0,
+        isFinished: item.isFinished,
+        episodeId: item.episodeId,
+      }),
+    ),
+  )
 }
 
-export async function updateLibraryItemMediaAction(libraryItemId: string, payload: UpdateLibraryItemMediaPayload) {
-  return api.updateLibraryItemMedia(libraryItemId, payload)
+export async function updateLibraryItemMediaAction(
+  _libraryItemId: string,
+  _payload: UpdateLibraryItemMediaPayload,
+) {
+  console.warn('[mediaActions] updateLibraryItemMedia is not available in the Supabase-backed version')
+  return null
 }
 
-export async function rescanLibraryItemAction(libraryItemId: string) {
-  return api.rescanLibraryItem(libraryItemId)
+export async function rescanLibraryItemAction(_libraryItemId: string) {
+  console.warn('[mediaActions] rescanLibraryItem is not available in the Supabase-backed version')
+  return null
 }
 
-export async function sendEbookToDeviceAction(payload: { libraryItemId: string; deviceName: string }) {
-  return api.sendEbookToDevice(payload)
+export async function sendEbookToDeviceAction(_payload: { libraryItemId: string; deviceName: string }) {
+  console.warn('[mediaActions] sendEbookToDevice is not available in the Supabase-backed version')
+  return null
 }
 
-export async function removeSeriesFromContinueListeningAction(seriesId: string) {
-  return api.removeSeriesFromContinueListening(seriesId)
+export async function removeSeriesFromContinueListeningAction(_seriesId: string) {
+  console.warn('[mediaActions] removeSeriesFromContinueListening is not available in the Supabase-backed version')
+  return null
 }
 
-export async function removeFromContinueListeningAction(progressId: string) {
-  const result = await api.removeFromContinueListening(progressId)
-  
-  // Sync to Supabase - we need the user ID and library item ID
-  // Since we only have progressId (legacy), we might need to fetch the item ID or just try to match.
-  // For now, let's keep it simple and just do legacy.
-  // TODO: Implement Supabase-native removal if needed.
-  
-  return result
+export async function removeFromContinueListeningAction(_progressId: string) {
+  console.warn('[mediaActions] removeFromContinueListening is not available in the Supabase-backed version')
+  return null
 }
 
-export async function deleteLibraryItemAction(libraryItemId: string, hardDelete: boolean) {
-  return api.deleteLibraryItem(libraryItemId, hardDelete)
+export async function deleteLibraryItemAction(_libraryItemId: string, _hardDelete: boolean) {
+  console.warn('[mediaActions] deleteLibraryItem is not available in the Supabase-backed version')
+  return null
 }
 
 export async function getExpandedLibraryItemAction(libraryItemId: string) {
-  return api.getLibraryItem(libraryItemId, true)
+  return getLibraryItem(libraryItemId)
 }
 
-export async function deleteLibraryItemMediaEpisodeAction(libraryItemId: string, episodeId: string, hardDelete = false) {
-  return api.deleteLibraryItemMediaEpisode(libraryItemId, episodeId, hardDelete)
+export async function deleteLibraryItemMediaEpisodeAction(
+  _libraryItemId: string,
+  _episodeId: string,
+  _hardDelete = false,
+) {
+  console.warn('[mediaActions] deleteLibraryItemMediaEpisode is not available in the Supabase-backed version')
+  return null
 }
 
-export async function fetchPodcastFeedAction(rssFeed: string) {
-  return api.fetchPodcastFeed(rssFeed)
+export async function fetchPodcastFeedAction(_rssFeed: string) {
+  console.warn('[mediaActions] fetchPodcastFeed is not available in the Supabase-backed version')
+  return null
 }
 
-export async function downloadPodcastEpisodesAction(libraryItemId: string, episodes: RssPodcastEpisode[]) {
-  return api.downloadPodcastEpisodes(libraryItemId, episodes)
+export async function downloadPodcastEpisodesAction(_libraryItemId: string, _episodes: unknown[]) {
+  console.warn('[mediaActions] downloadPodcastEpisodes is not available in the Supabase-backed version')
+  return null
 }
 
-export async function clearPodcastDownloadQueueAction(libraryItemId: string) {
-  return api.clearPodcastDownloadQueue(libraryItemId)
+export async function clearPodcastDownloadQueueAction(_libraryItemId: string) {
+  console.warn('[mediaActions] clearPodcastDownloadQueue is not available in the Supabase-backed version')
+  return null
 }

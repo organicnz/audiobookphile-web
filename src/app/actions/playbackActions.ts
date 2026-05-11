@@ -1,9 +1,7 @@
 'use server'
 
-import * as api from '@/lib/api'
+import { updateMediaProgress } from '@/lib/supabase-api'
 import type { PlaybackSession, StartSessionPayload } from '@/types/api'
-import { headers } from 'next/headers'
-import { syncProgressToSupabase } from '@/utils/supabase/progress'
 
 interface SessionSyncData {
   currentTime: number
@@ -13,92 +11,46 @@ interface SessionSyncData {
 }
 
 /**
- * Start a playback session for a library item
- * @param libraryItemId
- * @param payload - Session configuration
- * @param episodeId - Optional episode ID for podcasts
+ * Start a playback session — ABS-specific, not available in Supabase-backed version.
+ * Returns a minimal stub so call sites don't crash.
  */
-export async function startPlaybackSession(libraryItemId: string, payload: StartSessionPayload, episodeId?: string): Promise<PlaybackSession> {
-  const path = episodeId ? `/api/items/${libraryItemId}/play/${episodeId}` : `/api/items/${libraryItemId}/play`
-
-  const headersList = await headers()
-  const userAgent = headersList.get('user-agent') || ''
-
-  return api.apiRequest<PlaybackSession>(path, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: {
-      'User-Agent': userAgent
-    }
-  })
+export async function startPlaybackSession(
+  _libraryItemId: string,
+  _payload: StartSessionPayload,
+  _episodeId?: string,
+): Promise<PlaybackSession> {
+  console.warn('[playbackActions] startPlaybackSession is not available in the Supabase-backed version')
+  return {} as PlaybackSession
 }
 
 /**
- * Sync playback progress with the server
- * @param sessionId
- * @param syncData - Current time and listening time data
+ * Sync playback progress to Supabase.
  */
-export async function syncPlaybackSession(sessionId: string, syncData: SessionSyncData): Promise<void> {
-  const headersList = await headers()
-  const userAgent = headersList.get('user-agent') || ''
-
-  // Mirror to Supabase if IDs are provided
+export async function syncPlaybackSession(_sessionId: string, syncData: SessionSyncData): Promise<void> {
   if (syncData.libraryItemId) {
     try {
-      await syncProgressToSupabase({
-        library_item_id: syncData.libraryItemId,
-        episode_id: syncData.episodeId,
-        current_time_pos: syncData.currentTime
+      await updateMediaProgress(syncData.libraryItemId, {
+        currentTime: syncData.currentTime,
+        episodeId: syncData.episodeId ?? undefined,
       })
     } catch (err) {
-      console.error('[Supabase] Mirroring failed:', err)
+      console.error('[playbackActions] syncPlaybackSession failed:', err)
     }
   }
-
-  await api.apiRequest<void>(`/api/session/${sessionId}/sync`, {
-    method: 'POST',
-    body: JSON.stringify({
-      currentTime: syncData.currentTime,
-      timeListened: syncData.timeListened
-    }),
-    headers: {
-      'User-Agent': userAgent
-    }
-  })
 }
 
 /**
- * Close a playback session
- * @param sessionId
- * @param syncData - Optional final sync data (null if no progress to save)
+ * Close a playback session — persists final progress to Supabase.
  */
-export async function closePlaybackSession(sessionId: string, syncData: SessionSyncData | null): Promise<void> {
-  const headersList = await headers()
-  const userAgent = headersList.get('user-agent') || ''
-
-  // Mirror final progress to Supabase
+export async function closePlaybackSession(_sessionId: string, syncData: SessionSyncData | null): Promise<void> {
   if (syncData?.libraryItemId) {
     try {
-      await syncProgressToSupabase({
-        library_item_id: syncData.libraryItemId,
-        episode_id: syncData.episodeId,
-        current_time_pos: syncData.currentTime
+      await updateMediaProgress(syncData.libraryItemId, {
+        currentTime: syncData.currentTime,
+        episodeId: syncData.episodeId ?? undefined,
       })
     } catch (err) {
-      console.error('[Supabase] Mirroring final progress failed:', err)
+      console.error('[playbackActions] closePlaybackSession failed:', err)
     }
   }
-
-  await api.apiRequest<void>(`/api/session/${sessionId}/close`, {
-    method: 'POST',
-    body: syncData
-      ? JSON.stringify({
-          currentTime: syncData.currentTime,
-          timeListened: syncData.timeListened
-        })
-      : undefined,
-    headers: {
-      'User-Agent': userAgent
-    }
-  })
 }

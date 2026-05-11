@@ -1,8 +1,4 @@
-import { getCurrentUser, getData } from '@/lib/api'
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import { ServerSettings } from '@/types/api'
-import { updateServerSettings, updateSortingPrefixes } from './actions'
-import SettingsClient from './SettingsClient'
 import SettingsContent from './SettingsContent'
 import SettingsFooter from './SettingsFooter'
 
@@ -10,23 +6,13 @@ export const dynamic = 'force-dynamic'
 
 export default async function SettingsPage() {
   const t = await getTypeSafeTranslations()
-  const [currentUser] = await getData(getCurrentUser())
-
-  const serverSettings = currentUser?.serverSettings
-
-  // TODO: Handle loading data error?
-  if (!serverSettings) {
-    return <div>Placeholder error</div>
-  }
 
   return (
     <>
       <SettingsContent title={t('HeaderSettings')}>
-        <SettingsClient
-          serverSettings={serverSettings as ServerSettings}
-          updateServerSettings={updateServerSettings}
-          updateSortingPrefixes={updateSortingPrefixes}
-        />
+        <div className="p-6 text-center text-fg-muted">
+          <p>Server settings are not available in the Supabase-backed version.</p>
+        </div>
       </SettingsContent>
       <SettingsFooter />
     </>

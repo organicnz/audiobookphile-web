@@ -1,13 +1,7 @@
-import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import SettingsContent from '../SettingsContent'
-
-export const dynamic = 'force-dynamic'
-
-export default async function NotificationsPage() {
-  const t = await getTypeSafeTranslations()
+export default function Page() {
   return (
-    <SettingsContent title={t('HeaderNotifications')}>
-      <div></div>
-    </SettingsContent>
+    <div className="p-6 text-center text-fg-muted">
+      <p>This feature is not available in the Supabase-backed version.</p>
+    </div>
   )
 }

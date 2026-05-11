@@ -1,7 +1,7 @@
 import TextInput from '@/components/ui/TextInput'
 
-import { getCurrentUser } from '@/lib/api'
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
+import { getCurrentUser } from '@/lib/supabase-api'
 
 import Btn from '@/components/ui/Btn'
 import { getTheme } from '@/lib/theme'
@@ -13,9 +13,14 @@ import UserLanguageSelector from './UserLanguageSelector'
 export const dynamic = 'force-dynamic'
 
 export default async function AccountPage() {
-  const currentUser = await getCurrentUser()
+  let currentUser
+  try {
+    currentUser = await getCurrentUser()
+  } catch {
+    return null
+  }
+
   const t = await getTypeSafeTranslations()
-  const user = currentUser?.user
 
   // Get current language from cookies (userLanguage takes precedence over language)
   const cookieStore = await cookies()
@@ -24,7 +29,7 @@ export default async function AccountPage() {
   // Get current theme
   const currentTheme = await getTheme()
 
-  if (!user) {
+  if (!currentUser) {
     return null
   }
 
@@ -35,10 +40,10 @@ export default async function AccountPage() {
       <div className="mt-8 flex flex-col items-start gap-4">
         <div className="flex w-full items-center gap-2">
           <div className="flex-2">
-            <TextInput value={user.username} label={t('LabelUsername')} readOnly />
+            <TextInput value={currentUser.username ?? ''} label={t('LabelUsername')} readOnly />
           </div>
           <div className="flex-1">
-            <TextInput value={user.type} label={t('LabelAccountType')} readOnly />
+            <TextInput value={currentUser.userType} label={t('LabelAccountType')} readOnly />
           </div>
         </div>
         <div className="w-full">

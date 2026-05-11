@@ -15,5 +15,6 @@
   "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
 
   "eslint.workingDirectories": [{ "mode": "auto" }],
-  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "typescript.autoClosingTags": false
 }

@@ -1,21 +1,20 @@
 'use server'
 
-import * as api from '@/lib/api'
-import type { OpenRssFeedPayload, OpenRssFeedResponse } from '@/types/api'
-import { revalidatePath } from 'next/cache'
-
-export async function closeRssFeed(feedId: string): Promise<void> {
-  const result = await api.closeRssFeed(feedId)
-  revalidatePath('/library', 'layout')
-  return result
+/**
+ * ABS-specific — not available in the Supabase-backed version.
+ */
+export async function closeRssFeed(_feedId: string): Promise<void> {
+  console.warn('[rssFeedActions] closeRssFeed is not available in the Supabase-backed version')
 }
 
+/**
+ * ABS-specific — not available in the Supabase-backed version.
+ */
 export async function openEntityRssFeed(
-  entityType: 'item' | 'collection' | 'series',
-  entityId: string,
-  payload: OpenRssFeedPayload
-): Promise<OpenRssFeedResponse> {
-  const result = await api.openEntityRssFeed(entityType, entityId, payload)
-  revalidatePath('/library', 'layout')
-  return result
+  _entityType: 'item' | 'collection' | 'series',
+  _entityId: string,
+  _payload: unknown,
+) {
+  console.warn('[rssFeedActions] openEntityRssFeed is not available in the Supabase-backed version')
+  return null
 }

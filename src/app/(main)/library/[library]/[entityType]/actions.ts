@@ -1,34 +1,42 @@
 'use server'
 
-import { deleteAuthor, quickMatchAuthor, removeAuthorImage, submitAuthorImage, updateAuthor } from '@/lib/api'
-import { Author, AuthorQuickMatchPayload } from '@/types/api'
+import type { Author, AuthorQuickMatchPayload } from '@/types/api';
+import { createClient } from '@/utils/supabase/server';
 
-////////////////
-// Author Actions
-////////////////
-
-export async function quickMatchAuthorAction(authorId: string, payload: AuthorQuickMatchPayload) {
-  return quickMatchAuthor(authorId, payload).catch((error) => {
-    // 404 returned when author is not found
-    if (error?.status === 404) {
-      return null
-    }
-    throw error
-  })
+export async function quickMatchAuthorAction(_authorId: string, _payload: AuthorQuickMatchPayload): Promise<{ updated: boolean; author: Author } | null> {
+  console.warn('[entityType/actions] quickMatchAuthor is not available in the Supabase-backed version')
+  return null
 }
 
-export async function updateAuthorAction(authorId: string, editedAuthor: Partial<Author>) {
-  return updateAuthor(authorId, editedAuthor)
+export async function updateAuthorAction(authorId: string, editedAuthor: Partial<Author>): Promise<{ updated: boolean; merged?: boolean; author: Author } | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('authors')
+    .update({
+      name: editedAuthor.name,
+      description: (editedAuthor as any).description,
+      image_path: (editedAuthor as any).imagePath,
+    })
+    .eq('id', authorId)
+    .select()
+    .single()
+  if (error) throw new Error(error.message)
+  return { updated: true, author: data as unknown as Author }
 }
 
 export async function deleteAuthorAction(authorId: string) {
-  return deleteAuthor(authorId)
+  const supabase = await createClient()
+  const { error } = await supabase.from('authors').delete().eq('id', authorId)
+  if (error) throw new Error(error.message)
 }
 
-export async function submitAuthorImageAction(authorId: string, url: string) {
-  return await submitAuthorImage(authorId, { url })
+export async function submitAuthorImageAction(_authorId: string, _url: string) {
+  console.warn('[entityType/actions] submitAuthorImage is not available in the Supabase-backed version')
+  return null
 }
 
 export async function removeAuthorImageAction(authorId: string) {
-  return await removeAuthorImage(authorId)
+  const supabase = await createClient()
+  const { error } = await supabase.from('authors').update({ image_path: null }).eq('id', authorId)
+  if (error) throw new Error(error.message)
 }

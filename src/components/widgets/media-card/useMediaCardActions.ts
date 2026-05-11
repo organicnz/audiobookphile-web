@@ -1,12 +1,12 @@
 'use client'
 
 import {
-  deleteLibraryItemAction,
-  getExpandedLibraryItemAction,
-  removeFromContinueListeningAction,
-  rescanLibraryItemAction,
-  sendEbookToDeviceAction,
-  toggleFinishedAction
+    deleteLibraryItemAction,
+    getExpandedLibraryItemAction,
+    removeFromContinueListeningAction,
+    rescanLibraryItemAction,
+    sendEbookToDeviceAction,
+    toggleFinishedAction
 } from '@/app/actions/mediaActions'
 import type { ConfirmState } from '@/components/widgets/ConfirmDialog'
 import { useMediaContext } from '@/contexts/MediaContext'
@@ -257,7 +257,7 @@ export function useMediaCardActions({
           try {
             setProcessing(true)
             const result = await rescanLibraryItemAction(libraryItem.id)
-            const outcome = result?.result
+            const outcome = (result as any)?.result
             if (!outcome) {
               showToast('Rescan failed.', { type: 'error' })
             } else if (outcome === 'UPDATED') {

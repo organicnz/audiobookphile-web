@@ -1,11 +1,7 @@
-import { getData, getRssFeeds } from '@/lib/api'
-import RssFeedsClient from './RssFeedsClient'
-
-export const dynamic = 'force-dynamic'
-
-export default async function RssFeedsPage() {
-  const [rssFeedsResponse] = await getData(getRssFeeds())
-  const rssFeeds = rssFeedsResponse?.feeds || []
-
-  return <RssFeedsClient rssFeeds={rssFeeds} />
+export default function Page() {
+  return (
+    <div className="p-6 text-center text-fg-muted">
+      <p>This feature is not available in the Supabase-backed version.</p>
+    </div>
+  )
 }

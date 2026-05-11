@@ -1,22 +1,18 @@
 'use server'
 
-import { deleteLibraryFile, getAudioFileFFProbeData } from '@/lib/api'
-import { FFProbeData } from '@/types/api'
+import type { FFProbeData } from '@/types/api'
 
 /**
- * Server action to get FFProbe data for an audio file
- * @param itemId - Library item ID
- * @param fileIno - Audio file inode
+ * ABS-specific — not available in the Supabase-backed version.
  */
-export async function getAudioFileFFProbeDataAction(itemId: string, fileIno: string): Promise<FFProbeData> {
-  return getAudioFileFFProbeData(itemId, fileIno)
+export async function getAudioFileFFProbeDataAction(_itemId: string, _fileIno: string): Promise<FFProbeData> {
+  console.warn('[audioFileActions] getAudioFileFFProbeData is not available in the Supabase-backed version')
+  return {} as FFProbeData
 }
 
 /**
- * Server action to delete a library file
- * @param itemId - Library item ID
- * @param fileIno - File inode
+ * ABS-specific — not available in the Supabase-backed version.
  */
-export async function deleteLibraryFileAction(itemId: string, fileIno: string): Promise<void> {
-  return deleteLibraryFile(itemId, fileIno)
+export async function deleteLibraryFileAction(_itemId: string, _fileIno: string): Promise<void> {
+  console.warn('[audioFileActions] deleteLibraryFile is not available in the Supabase-backed version')
 }

@@ -1,11 +1,17 @@
 'use server'
 
-import * as api from '@/lib/api'
-import { MetadataProvidersResponse } from '@/types/api'
-
 /**
- * Server Action: Get all available metadata search providers
+ * ABS-specific — not available in the Supabase-backed version.
  */
-export async function getMetadataProvidersAction(): Promise<MetadataProvidersResponse> {
-  return api.getMetadataProviders()
+import type { MetadataProvider as MetadataProviderType } from '@/types/api'
+
+export async function getMetadataProvidersAction() {
+  console.warn('[providerActions] getMetadataProviders is not available in the Supabase-backed version')
+  return {
+    providers: {
+      books: [] as MetadataProviderType[],
+      podcasts: [] as MetadataProviderType[],
+      booksCovers: [] as MetadataProviderType[],
+    },
+  }
 }

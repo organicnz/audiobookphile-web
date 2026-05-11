@@ -1,8 +1,15 @@
-import { getCurrentUser, getData, getLibraryItem } from '@/lib/api'
+import { getCurrentUser, getLibraryItem } from '@/lib/supabase-api';
 
 export default async function TracksPage({ params }: { params: Promise<{ item: string; library: string }> }) {
   const { item: itemId } = await params
-  const [libraryItem, currentUser] = await getData(getLibraryItem(itemId), getCurrentUser())
+
+  let libraryItem, currentUser
+  try {
+    ;[libraryItem, currentUser] = await Promise.all([getLibraryItem(itemId), getCurrentUser()])
+  } catch (err) {
+    console.error('Error getting library item or user data', err)
+    return null
+  }
 
   if (!libraryItem || !currentUser) {
     console.error('Error getting library item or user data')

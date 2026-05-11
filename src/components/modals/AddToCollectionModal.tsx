@@ -73,7 +73,7 @@ export default function AddToCollectionModal({ isOpen, onClose, libraryId, libra
       try {
         // TODO: This matches the legacy Vue implement, but we should be using pagination
         const res = await fetchCollectionsAction(libraryId, '')
-        if (!cancelled) setCollections(res.results)
+        if (!cancelled) setCollections(res.results as any)
       } catch (error) {
         if (!cancelled) {
           console.error('Failed to load collections', error)

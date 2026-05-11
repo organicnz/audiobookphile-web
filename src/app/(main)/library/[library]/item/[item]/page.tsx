@@ -1,12 +1,18 @@
-import { getData, getLibraryItem } from '@/lib/api'
-import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
-import LibraryItemClient from './LibraryItemClient'
+import { getLibraryItem } from '@/lib/supabase-api';
+import { BookLibraryItem, PodcastLibraryItem } from '@/types/api';
+import LibraryItemClient from './LibraryItemClient';
 
 export default async function ItemPage({ params }: { params: Promise<{ item: string; library: string }> }) {
   const { item: itemId } = await params
-  const [libraryItem] = await getData(getLibraryItem(itemId, true, 'rssfeed,share'))
 
-  // TODO: Handle loading data error?
+  let libraryItem
+  try {
+    libraryItem = await getLibraryItem(itemId)
+  } catch (err) {
+    console.error('Error getting library item', err)
+    return null
+  }
+
   if (!libraryItem) {
     console.error('Error getting library item')
     return null

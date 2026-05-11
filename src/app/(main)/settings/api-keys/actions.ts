@@ -1,22 +1,21 @@
 'use server'
 
-import * as api from '@/lib/api'
-import { CreateApiKeyPayload, CreateUpdateApiKeyResponse } from '@/types/api'
-import { revalidatePath } from 'next/cache'
+import type { CreateApiKeyPayload, CreateUpdateApiKeyResponse } from '@/types/api'
 
-export async function deleteApiKey(apiKeyId: string): Promise<void> {
-  await api.deleteApiKey(apiKeyId)
-  revalidatePath('/settings/api-keys')
+/**
+ * ABS-specific API key actions — not available in the Supabase-backed version.
+ */
+
+export async function deleteApiKey(_apiKeyId: string): Promise<void> {
+  console.warn('[api-keys/actions] deleteApiKey is not available in the Supabase-backed version')
 }
 
-export async function createApiKey(payload: CreateApiKeyPayload): Promise<CreateUpdateApiKeyResponse> {
-  const result = await api.createApiKey(payload)
-  revalidatePath('/settings/api-keys')
-  return result
+export async function createApiKey(_payload: CreateApiKeyPayload): Promise<CreateUpdateApiKeyResponse> {
+  console.warn('[api-keys/actions] createApiKey is not available in the Supabase-backed version')
+  return {} as CreateUpdateApiKeyResponse
 }
 
-export async function updateApiKey(apiKeyId: string, payload: CreateApiKeyPayload): Promise<CreateUpdateApiKeyResponse> {
-  const result = await api.updateApiKey(apiKeyId, payload)
-  revalidatePath('/settings/api-keys')
-  return result
+export async function updateApiKey(_apiKeyId: string, _payload: CreateApiKeyPayload): Promise<CreateUpdateApiKeyResponse> {
+  console.warn('[api-keys/actions] updateApiKey is not available in the Supabase-backed version')
+  return {} as CreateUpdateApiKeyResponse
 }

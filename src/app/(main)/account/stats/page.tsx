@@ -1,13 +1,19 @@
-import { getCurrentUser } from '@/lib/api'
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
+import { getCurrentUser } from '@/lib/supabase-api'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AccountStatsPage() {
   const t = await getTypeSafeTranslations()
-  const currentUser = await getCurrentUser()
 
-  if (!currentUser?.user) {
+  let currentUser
+  try {
+    currentUser = await getCurrentUser()
+  } catch {
+    return null
+  }
+
+  if (!currentUser) {
     return null
   }
 
