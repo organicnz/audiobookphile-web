@@ -44,7 +44,7 @@ export default function LoginForm() {
         setLoading(false)
       }
     },
-    [email, password, t, router, searchParams]
+    [email, password, router, searchParams]
   )
 
   const handleGoogleSignIn = async () => {
