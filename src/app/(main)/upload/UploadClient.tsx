@@ -52,7 +52,6 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
   }, [ensureProvidersLoaded])
 
   const [selectedLibrary, setSelectedLibrary] = useState<string>()
-  const [selectedFolder, setSelectedFolder] = useState<string>()
   const [autoFetch, setAutoFetch] = useState<boolean>(false)
   const [selectedProvider, setSelectedProvider] = useState<string>()
   const [uploadProcessing, setUploadProcessing] = useState<boolean>(false)
@@ -67,12 +66,6 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
     text: lib.name
   }))
 
-  const folderItems = libraries
-    .find((lib) => lib.id === selectedLibrary)
-    ?.folders?.map((folder) => ({
-      value: folder.id,
-      text: folder.fullPath
-    }))
   const currentLibraryMediaType = libraries.find((lib) => lib.id === selectedLibrary)?.mediaType
 
   const { lastCurrentLibraryId } = useMediaContext()
@@ -97,7 +90,6 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
     }
 
     setSelectedLibrary(defaultLibrary.id)
-    setSelectedFolder(defaultLibrary.folders?.[0]?.id)
     setSelectedProvider(defaultLibrary.provider)
   }, [libraries, lastCurrentLibraryId, userDefaultLibraryId, selectedLibrary])
 
@@ -110,9 +102,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
   }, [])
 
   function handleFilesDropped(files: File[]): void {
-    console.log('Files dropped:', files)
     const itemResults = getItemsFromFilelist(files as unknown as FileList, currentLibraryMediaType || 'book')
-    console.log('Selected files:', itemResults)
     setUploadItems(itemResults.items)
     setIgnoredFiles(itemResults.ignoredFiles)
     if (itemResults.items.length === 0) {
@@ -127,9 +117,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
   }
 
   function handleDialogFileSelected(files: FileList): void {
-    console.log('Files selected:', files)
     const itemResults = getItemsFromFilelist(files, currentLibraryMediaType || 'book')
-    console.log('Selected files:', itemResults)
     setUploadItems(itemResults.items)
     setIgnoredFiles(itemResults.ignoredFiles)
     if (itemResults.items.length === 0) {
@@ -248,29 +236,36 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
     setUploadProcessing(true)
     setUploadFinished(false)
     const cookie = await getCookie()
-    for (const item of uploadItems) {
+
+    // Work on a fresh copy so React sees the state changes
+    const items = uploadItems.map((item) => ({ ...item }))
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i]
       item.isUploading = true
       item.uploadProgress = 0
       item.uploadBytesLoaded = 0
       item.uploadBytesTotal = item.itemFiles.reduce((sum, file) => sum + file.size, 0)
+      setUploadItems([...items])
 
       try {
-        await upload(item, selectedLibrary!, selectedFolder!, currentLibraryMediaType!, cookie, (progress: UploadProgressInfo) => {
+        await upload(item, selectedLibrary!, '', currentLibraryMediaType!, cookie, (progress: UploadProgressInfo) => {
           item.uploadProgress = progress.percent
           item.uploadBytesLoaded = progress.loaded
           item.uploadBytesTotal = progress.total
-          const updatedItemsForProgress = [...uploadItems]
-          setUploadItems(updatedItemsForProgress)
+          setUploadItems([...items])
         })
+        item.uploadFailed = false
       } catch (error) {
         console.error('Upload failed:', error)
         item.uploadFailed = true
       } finally {
         item.isUploading = false
         item.uploadComplete = !item.uploadFailed
+        setUploadItems([...items])
       }
     }
-    setUploadItems([...uploadItems])
+
     setUploadProcessing(false)
     setUploadFinished(true)
   }
@@ -294,18 +289,9 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
             items={libraryItems}
             value={selectedLibrary}
             onChange={(value) => {
-              const lib = libraries.find((l) => l.id === value)
               setSelectedLibrary(value as string)
-              setSelectedFolder(lib?.folders?.[0]?.id)
             }}
           />
-        </div>
-
-        <div className="w-full min-w-[200px] md:flex-3">
-          <label htmlFor="folder" className="mb-1 block px-1 text-sm font-medium">
-            {t('LabelFolder')}
-          </label>
-          <Dropdown items={folderItems} value={selectedFolder} onChange={(value) => setSelectedFolder(value as string)} />
         </div>
 
         <div className="w-32 min-w-32">

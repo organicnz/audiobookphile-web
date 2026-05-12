@@ -149,7 +149,9 @@ export async function POST(request: NextRequest) {
 
   if (itemError) {
     console.error('[upload] library_items insert failed:', itemError)
+    // Clean up book row and orphaned storage files
     await db.from('books').delete().eq('id', bookId)
+    await db.storage.from('audio-files').remove(files.map((f) => f.storagePath))
     return NextResponse.json({ error: `Failed to create library item: ${itemError.message}` }, { status: 500 })
   }
 
