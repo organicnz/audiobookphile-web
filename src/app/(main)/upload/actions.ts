@@ -2,13 +2,89 @@
 
 import type { BookSearchResult, PodcastSearchResult } from '@/types/api'
 
-export async function fetchBookMetadata(_title: string, _author: string, _provider: string): Promise<BookSearchResult[]> {
-  console.warn('[upload/actions] fetchBookMetadata is not available in the Supabase-backed version')
-  return []
+/**
+ * Fetch book metadata from Open Library and Google Books.
+ */
+export async function fetchBookMetadata(title: string, author: string, _provider: string): Promise<BookSearchResult[]> {
+  try {
+    const results: BookSearchResult[] = []
+
+    // Open Library search
+    const query = new URLSearchParams({ title, limit: '5' })
+    if (author) query.set('author', author)
+    const olRes = await fetch(`https://openlibrary.org/search.json?${query.toString()}`, {
+      signal: AbortSignal.timeout(8000),
+    })
+    if (olRes.ok) {
+      const data = await olRes.json()
+      const docs = (data?.docs as any[]) || []
+      for (const doc of docs.slice(0, 5)) {
+        const authorNames: string[] = doc.author_name || []
+        results.push({
+          title: doc.title || title,
+          author: authorNames[0] || author || '',
+          description: doc.first_sentence?.value || '',
+          cover: doc.cover_i
+            ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`
+            : null,
+          series: [],
+          genres: doc.subject?.slice(0, 3) || [],
+          tags: [],
+          isbn: doc.isbn?.[0] || null,
+          asin: null,
+          language: doc.language?.[0] || null,
+          publisher: doc.publisher?.[0] || null,
+          publishedYear: doc.first_publish_year ? String(doc.first_publish_year) : null,
+          narratorName: null,
+          explicit: false,
+          abridged: false,
+        })
+      }
+    }
+
+    // Google Books search (if Open Library returned nothing)
+    if (results.length === 0) {
+      const q = author ? `intitle:${title}+inauthor:${author}` : `intitle:${title}`
+      const gbRes = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=5&printType=books`,
+        { signal: AbortSignal.timeout(8000) }
+      )
+      if (gbRes.ok) {
+        const data = await gbRes.json()
+        const items = (data?.items as any[]) || []
+        for (const item of items.slice(0, 5)) {
+          const info = item.volumeInfo || {}
+          const thumbnail = info.imageLinks?.thumbnail?.replace('http://', 'https://') || null
+          results.push({
+            title: info.title || title,
+            author: info.authors?.[0] || author || '',
+            description: info.description || '',
+            cover: thumbnail,
+            series: [],
+            genres: info.categories?.slice(0, 3) || [],
+            tags: [],
+            isbn: info.industryIdentifiers?.find((i: any) => i.type === 'ISBN_13')?.identifier || null,
+            asin: null,
+            language: info.language || null,
+            publisher: info.publisher || null,
+            publishedYear: info.publishedDate?.slice(0, 4) || null,
+            narratorName: null,
+            explicit: false,
+            abridged: false,
+          })
+        }
+      }
+    }
+
+    return results
+  } catch (err) {
+    console.error('[upload/actions] fetchBookMetadata failed:', err)
+    return []
+  }
 }
 
 export async function fetchPodcastMetadata(_title: string): Promise<PodcastSearchResult[]> {
-  console.warn('[upload/actions] fetchPodcastMetadata is not available in the Supabase-backed version')
+  // Podcast metadata fetching not implemented yet
   return []
 }
 

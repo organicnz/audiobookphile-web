@@ -198,5 +198,25 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // ── 9. Auto-fetch cover art (non-blocking) ────────────────────────────────
+  // Fire and forget — don't await so the upload response is immediate.
+  // The cover will appear after a few seconds once fetched and stored.
+  if (mediaType === 'book' && title) {
+    fetchBookCover(title, author || undefined)
+      .then(async (imageBuffer) => {
+        if (!imageBuffer) return
+        const storagePath = `${libraryItemId}/cover.jpg`
+        const { error: coverErr } = await db.storage
+          .from('covers')
+          .upload(storagePath, imageBuffer, { upsert: true, contentType: 'image/jpeg' })
+        if (coverErr) {
+          console.warn('[upload] cover fetch storage failed:', coverErr.message)
+          return
+        }
+        await db.from('library_items').update({ cover_path: storagePath }).eq('id', libraryItemId)
+      })
+      .catch((err) => console.warn('[upload] cover fetch failed:', err?.message))
+  }
+
   return NextResponse.json({ success: true, libraryItemId, bookId })
 }

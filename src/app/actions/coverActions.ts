@@ -1,5 +1,6 @@
 'use server'
 
+import { fetchBookCover } from '@/lib/coverFetch'
 import { removeCover, uploadCover } from '@/lib/supabase-api'
 
 /**
@@ -19,11 +20,37 @@ export async function removeCoverAction(libraryItemId: string) {
 }
 
 /**
- * Server Action: Update cover from a URL — not available in Supabase-backed version
+ * Server Action: Update cover from a URL — fetches the image and stores it in Supabase Storage
  */
-export async function updateCoverFromUrlAction(_libraryItemId: string, _coverUrl: string) {
-  console.warn('[coverActions] updateCoverFromUrl is not available in the Supabase-backed version')
-  return null
+export async function updateCoverFromUrlAction(libraryItemId: string, coverUrl: string) {
+  try {
+    const res = await fetch(coverUrl, { signal: AbortSignal.timeout(10000) })
+    if (!res.ok) throw new Error(`Failed to fetch cover: ${res.status}`)
+    const buffer = await res.arrayBuffer()
+    if (buffer.byteLength < 1000) throw new Error('Cover image too small')
+    return uploadCover(libraryItemId, buffer)
+  } catch (err) {
+    console.error('[coverActions] updateCoverFromUrl failed:', err)
+    return null
+  }
+}
+
+/**
+ * Server Action: Auto-fetch cover from metadata providers (Open Library, Google Books)
+ */
+export async function autoFetchCoverAction(
+  libraryItemId: string,
+  title: string,
+  author?: string
+): Promise<string | null> {
+  try {
+    const imageBuffer = await fetchBookCover(title, author)
+    if (!imageBuffer) return null
+    return uploadCover(libraryItemId, imageBuffer)
+  } catch (err) {
+    console.error('[coverActions] autoFetchCover failed:', err)
+    return null
+  }
 }
 
 /**
