@@ -230,19 +230,13 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
       if (!session) return
 
       try {
-        // Prepare sync data if enough time has passed
-        const timeListened = Math.max(0, Math.floor(listeningTimeSinceSync.current))
-        let syncData = null
-
-        // When opening player and quickly closing, dont save progress
-        if (timeListened > FIRST_SYNC_DELAY && getCurrentTime) {
-          syncData = {
-            currentTime: getCurrentTime(),
-            timeListened,
-            libraryItemId: session.libraryItemId,
-            episodeId: session.episodeId
-          }
-        }
+        // Always save progress on close, regardless of how long was listened
+        const syncData = getCurrentTime ? {
+          currentTime: getCurrentTime(),
+          timeListened: Math.max(0, Math.floor(listeningTimeSinceSync.current)),
+          libraryItemId: session.libraryItemId,
+          episodeId: session.episodeId
+        } : null
 
         await closePlaybackSession(session.id, syncData)
       } catch (error) {

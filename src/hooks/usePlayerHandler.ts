@@ -105,6 +105,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
   const playerRef = useRef<LocalAudioPlayer | null>(null)
   const audioTracksRef = useRef<AudioTrack[]>([])
   const libraryItemRef = useRef<LibraryItem | null>(null)
+  const sessionIdRef = useRef<string | null>(null)
 
   // Refs for values needed in callbacks (to avoid stale closures)
   const playbackRateRef = useRef(settings.playbackRate)
@@ -123,6 +124,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
 
   const handleSessionReady = useCallback((session: PlaybackSession, audioTracks: AudioTrack[], hlsTranscode: boolean) => {
     setSessionId(session.id)
+    sessionIdRef.current = session.id
     setDisplayTitle(session.displayTitle)
     setDisplayAuthor(session.displayAuthor)
     setChapters(
@@ -243,10 +245,11 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
 
   const load = useCallback(
     async (libraryItem: LibraryItem, episodeId?: string | null, startTimeOverride?: number) => {
-      // Close existing session if any
-      if (sessionId) {
+      // Close existing session if any (use ref to avoid stale closure)
+      if (sessionIdRef.current) {
         stopSyncInterval()
         await closeSession(() => playerRef.current?.getCurrentTime() ?? 0)
+        sessionIdRef.current = null
       }
 
       // Store reference to library item
@@ -262,7 +265,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
       // Start session - this will trigger handleSessionReady which starts playback
       await startSession(libraryItem, playerRef.current.playableMimeTypes, episodeId ?? undefined, startTimeOverride)
     },
-    [sessionId, closeSession, stopSyncInterval, setupPlayerListeners, startSession]
+    [closeSession, stopSyncInterval, setupPlayerListeners, startSession]
   )
 
   const play = useCallback(() => {
@@ -288,7 +291,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
   )
 
   const jumpForward = useCallback(() => {
-    if (!playerRef.current) return
+    if (!playerRef.current || !duration) return
     const newTime = Math.min(currentTime + settings.jumpForwardAmount, duration)
     seek(newTime)
   }, [currentTime, duration, seek, settings.jumpForwardAmount])
@@ -346,6 +349,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
     setDuration(0)
     setBufferedTime(0)
     setSessionId(null)
+    sessionIdRef.current = null
     setDisplayTitle(null)
     setDisplayAuthor(null)
     setChapters([])

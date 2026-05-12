@@ -81,8 +81,6 @@ export class LocalAudioPlayer {
         this.playableMimeTypes.push(mimeType)
       }
     }
-
-    console.log('[LocalAudioPlayer] Initialized with supported MIME types:', this.playableMimeTypes)
   }
 
   // Event emitter methods
@@ -119,14 +117,10 @@ export class LocalAudioPlayer {
 
   private handleEnded = (): void => {
     if (this.currentTrackIndex < this.audioTracks.length - 1) {
-      // Has next track - load it
-      console.log(`[LocalAudioPlayer] Track ended - loading next track ${this.currentTrackIndex + 1}`)
       this.currentTrackIndex++
-      this.startTime = this.currentTrack?.startOffset ?? 0
+      this.startTime = 0 // start next track from beginning
       this.loadCurrentTrack()
     } else {
-      // Finished all tracks
-      console.log('[LocalAudioPlayer] Playback finished')
       this.emit('stateChange', PlayerState.FINISHED)
       this.emit('finished', undefined)
     }
@@ -280,8 +274,6 @@ export class LocalAudioPlayer {
     // Calculate time offset within the track
     this.trackStartTime = Math.max(0, this.startTime - track.startOffset)
     this.player.src = track.relativeContentUrl
-
-    console.log(`[LocalAudioPlayer] Loading track: ${track.relativeContentUrl}`)
     this.player.load()
   }
 
