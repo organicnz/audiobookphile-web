@@ -30,11 +30,28 @@ export default function LoginForm() {
           setLoading(false)
           return
         }
-        // Full navigation forces a new server request with the session cookie
-        // that supabase-js just wrote to the browser. router.replace() alone
-        // can race against cookie propagation and land on an unauthenticated page.
+        // After successful login, fetch the user's profile to get their default
+        // library, then navigate directly to it — bypassing the /library route
+        // handler which does server-side session validation that can race.
         const redirect = searchParams.get('redirect')
-        window.location.href = redirect || '/library'
+        if (redirect) {
+          window.location.href = redirect
+          return
+        }
+        const supabaseForProfile = createClient()
+        const { data: { user: loggedInUser } } = await supabaseForProfile.auth.getUser()
+        if (loggedInUser) {
+          const { data: profile } = await supabaseForProfile
+            .from('profiles')
+            .select('default_library_id')
+            .eq('id', loggedInUser.id)
+            .single()
+          if (profile?.default_library_id) {
+            window.location.href = `/library/${profile.default_library_id}`
+            return
+          }
+        }
+        window.location.href = '/library'
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'
         console.error('[LoginForm] Network error:', message)
