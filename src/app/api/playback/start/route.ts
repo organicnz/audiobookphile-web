@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Library item not found' }, { status: 404 })
   }
 
-  const book = item.books as any
+  const book = Array.isArray(item.books) ? item.books[0] : item.books as any
   let audioFiles = (book?.audio_files as any[]) || []
 
   // Requirement 9.5: Filter by episode_id when provided (for podcasts)
@@ -70,13 +70,16 @@ export async function POST(request: NextRequest) {
   // Requirement 9.2: Generate signed URLs (3600s expiry) for each audio file
   const tracksWithUrls = await Promise.all(
     audioFiles.map(async (audioFile, idx) => {
+      // Storage path is stored in audioFile.metadata.path (set during upload)
+      const storagePath = audioFile.metadata?.path ?? audioFile.storage_path ?? ''
+
       const { data: signedData, error: signedError } = await supabase.storage
-        .from('audio')
-        .createSignedUrl(audioFile.storage_path, 3600)
+        .from('audio-files')
+        .createSignedUrl(storagePath, 3600)
 
       if (signedError || !signedData?.signedUrl) {
         throw new Error(
-          `Failed to generate signed URL for audio file ${audioFile.id}: ${signedError?.message ?? 'unknown error'}`
+          `Failed to generate signed URL for ${storagePath}: ${signedError?.message ?? 'unknown error'}`
         )
       }
 
