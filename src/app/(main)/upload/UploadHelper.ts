@@ -204,6 +204,7 @@ export async function upload(
   }
   form.set('library', libraryId)
   form.set('folder', folderId)
+  form.set('mediaType', mediaType || 'book')
 
   let index = 0
   item.itemFiles.forEach((file) => {

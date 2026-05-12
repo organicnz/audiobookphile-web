@@ -1,31 +1,51 @@
 import { createClient } from '@/utils/supabase/server'
+import { createClient as createBrowserClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+
 
 /**
  * POST /api/upload
  *
  * Accepts a multipart form with audio/ebook files and metadata, uploads
- * each file to Supabase Storage under `audio-files/{libraryId}/{title}/`,
- * then creates a library_item row and associated book/audio_file rows.
+ * each file to Supabase Storage under `audio-files/{bookId}/{filename}`,
+ * then creates a book row, library_item row (with media_id → book.id),
+ * and optional author/series associations.
+ *
+ * Auth: reads the Supabase JWT from the Authorization: Bearer header
+ * (sent by the XHR in UploadHelper.ts via getCookie() → session.access_token).
  *
  * Form fields:
  *   title    - item title
  *   author   - author name (books only)
  *   series   - series name (books only)
  *   library  - library UUID
- *   folder   - folder ID (ignored — Supabase uses storage paths)
+ *   folder   - ignored (Supabase uses storage paths)
  *   0, 1, 2… - audio/ebook files
  */
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
+  // Verify the JWT from the Authorization header
+  const authHeader = request.headers.get('authorization')
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
+  if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  // Use the anon client with the user's JWT to get their identity
+  const anonClient = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { headers: { Authorization: `Bearer ${token}` } } }
+  )
+
+  const { data: { user }, error: userError } = await anonClient.auth.getUser(token)
+
+  if (userError || !user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Use the server client (cookie-based) for DB operations — it has RLS context
+  const supabase = await createClient()
 
   // Only admins/root can upload
   const { data: profile } = await supabase
@@ -45,10 +65,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid form data' }, { status: 400 })
   }
 
-  const title = formData.get('title') as string
-  const author = (formData.get('author') as string) || ''
-  const series = (formData.get('series') as string) || ''
+  const title = (formData.get('title') as string)?.trim()
+  const author = (formData.get('author') as string)?.trim() || ''
+  const series = (formData.get('series') as string)?.trim() || ''
   const libraryId = formData.get('library') as string
+  const mediaType = (formData.get('mediaType') as string) || 'book'
 
   if (!title || !libraryId) {
     return NextResponse.json({ error: 'Missing title or library' }, { status: 400 })
@@ -57,7 +78,7 @@ export async function POST(request: NextRequest) {
   // Collect all numbered file entries
   const files: File[] = []
   for (const [key, value] of formData.entries()) {
-    if (/^\d+$/.test(key) && value instanceof File) {
+    if (/^\d+$/.test(key) && value instanceof File && value.size > 0) {
       files.push(value)
     }
   }
@@ -66,80 +87,152 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'No files provided' }, { status: 400 })
   }
 
-  // Create the library_item row first
-  const { data: libraryItem, error: itemError } = await supabase
-    .from('library_items')
-    .insert({
-      library_id: libraryId,
-      media_type: 'book',
-      path: `${libraryId}/${title}`,
-    })
-    .select('id')
-    .single()
+  const bookId = crypto.randomUUID()
+  const libraryItemId = crypto.randomUUID()
+  const totalSize = files.reduce((sum, f) => sum + f.size, 0)
 
-  if (itemError || !libraryItem) {
-    console.error('[upload] Failed to create library_item:', itemError)
-    return NextResponse.json({ error: 'Failed to create library item' }, { status: 500 })
-  }
+  // Build audio_files JSONB from the uploaded files
+  const audioFilesJson = files.map((file, i) => ({
+    index: i,
+    ino: crypto.randomUUID(),
+    metadata: {
+      filename: file.name,
+      ext: '.' + (file.name.split('.').pop() || ''),
+      path: `audio-files/${bookId}/${file.name}`,
+      relPath: file.name,
+      size: file.size,
+      mtimeMs: Date.now(),
+      ctimeMs: Date.now(),
+      birthtimeMs: Date.now(),
+    },
+    addedAt: Date.now(),
+    updatedAt: Date.now(),
+    trackNumFromMeta: null,
+    discNumFromMeta: null,
+    trackNumFromFilename: null,
+    discNumFromFilename: null,
+    manuallyVerified: false,
+    invalid: false,
+    exclude: false,
+    error: null,
+    format: null,
+    duration: null,
+    bitRate: null,
+    language: null,
+    codec: null,
+    timeBase: null,
+    channels: null,
+    channelLayout: null,
+    chapters: [],
+    embeddedCoverArt: null,
+    metaTags: {},
+    mimeType: file.type || 'audio/mpeg',
+  }))
 
-  const libraryItemId = libraryItem.id
-
-  // Create the book row
-  const { data: book, error: bookError } = await supabase
+  // 1. Create the book row first (library_items.media_id → books.id)
+  const { error: bookError } = await supabase
     .from('books')
     .insert({
-      library_item_id: libraryItemId,
+      id: bookId,
       title,
+      audio_files: audioFilesJson,
     })
-    .select('id')
-    .single()
 
-  if (bookError || !book) {
+  if (bookError) {
     console.error('[upload] Failed to create book:', bookError)
-    // Clean up library_item
-    await supabase.from('library_items').delete().eq('id', libraryItemId)
-    return NextResponse.json({ error: 'Failed to create book record' }, { status: 500 })
+    return NextResponse.json({ error: `Failed to create book: ${bookError.message}` }, { status: 500 })
   }
 
-  // Handle author
+  // 2. Create the library_item row pointing to the book
+  const { error: itemError } = await supabase
+    .from('library_items')
+    .insert({
+      id: libraryItemId,
+      library_id: libraryId,
+      media_type: mediaType,
+      media_id: bookId,
+      path: `${libraryId}/${title}`,
+      rel_path: title,
+      title,
+      size: totalSize,
+      library_files: audioFilesJson.map((af) => ({
+        ino: af.ino,
+        metadata: af.metadata,
+        addedAt: af.addedAt,
+        updatedAt: af.updatedAt,
+        isSupplementary: false,
+      })),
+    })
+
+  if (itemError) {
+    console.error('[upload] Failed to create library_item:', itemError)
+    await supabase.from('books').delete().eq('id', bookId)
+    return NextResponse.json({ error: `Failed to create library item: ${itemError.message}` }, { status: 500 })
+  }
+
+  // 3. Handle author
   if (author) {
-    const { data: authorRow } = await supabase
+    const authorId = crypto.randomUUID()
+    const { data: existingAuthor } = await supabase
       .from('authors')
-      .upsert({ name: author, library_id: libraryId }, { onConflict: 'name,library_id' })
       .select('id')
-      .single()
+      .eq('name', author)
+      .eq('library_id', libraryId)
+      .maybeSingle()
 
-    if (authorRow) {
-      await supabase.from('book_authors').insert({
-        book_id: book.id,
-        author_id: authorRow.id,
+    const resolvedAuthorId = existingAuthor?.id ?? authorId
+
+    if (!existingAuthor) {
+      await supabase.from('authors').insert({
+        id: authorId,
+        name: author,
+        library_id: libraryId,
       })
     }
+
+    await supabase.from('book_authors').insert({
+      book_id: bookId,
+      author_id: resolvedAuthorId,
+    })
+
+    // Denormalize author name onto library_item for search
+    await supabase
+      .from('library_items')
+      .update({ author_names_first_last: author })
+      .eq('id', libraryItemId)
   }
 
-  // Handle series
+  // 4. Handle series
   if (series) {
-    const { data: seriesRow } = await supabase
+    const seriesId = crypto.randomUUID()
+    const { data: existingSeries } = await supabase
       .from('series')
-      .upsert({ name: series, library_id: libraryId }, { onConflict: 'name,library_id' })
       .select('id')
-      .single()
+      .eq('name', series)
+      .eq('library_id', libraryId)
+      .maybeSingle()
 
-    if (seriesRow) {
-      await supabase.from('book_series').insert({
-        book_id: book.id,
-        series_id: seriesRow.id,
+    const resolvedSeriesId = existingSeries?.id ?? seriesId
+
+    if (!existingSeries) {
+      await supabase.from('series').insert({
+        id: seriesId,
+        name: series,
+        library_id: libraryId,
       })
     }
+
+    await supabase.from('book_series').insert({
+      book_id: bookId,
+      series_id: resolvedSeriesId,
+    })
   }
 
-  // Upload files to Supabase Storage and create audio_file rows
+  // 5. Upload files to Supabase Storage
   const uploadErrors: string[] = []
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i]
-    const storagePath = `${libraryItemId}/${file.name}`
-
+  for (const file of files) {
+    const storagePath = `${bookId}/${file.name}`
     const { error: storageError } = await supabase.storage
       .from('audio-files')
       .upload(storagePath, file, { upsert: true })
@@ -147,28 +240,22 @@ export async function POST(request: NextRequest) {
     if (storageError) {
       console.error(`[upload] Storage error for ${file.name}:`, storageError)
       uploadErrors.push(file.name)
-      continue
     }
-
-    await supabase.from('audio_files').insert({
-      library_item_id: libraryItemId,
-      metadata_filename: file.name,
-      metadata_ext: file.name.split('.').pop() || '',
-      metadata_size: file.size,
-      index: i,
-    })
   }
 
   if (uploadErrors.length === files.length) {
-    // All files failed — clean up
+    // All storage uploads failed — clean up DB rows
     await supabase.from('library_items').delete().eq('id', libraryItemId)
-    return NextResponse.json({ error: 'All file uploads failed' }, { status: 500 })
+    await supabase.from('books').delete().eq('id', bookId)
+    return NextResponse.json({ error: 'All file uploads to storage failed' }, { status: 500 })
   }
 
   return NextResponse.json({
     success: true,
     libraryItemId,
+    bookId,
     filesUploaded: files.length - uploadErrors.length,
     filesFailed: uploadErrors.length,
+    failedFiles: uploadErrors,
   })
 }
