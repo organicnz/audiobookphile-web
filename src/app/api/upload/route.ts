@@ -1,29 +1,28 @@
-import { createClient } from '@/utils/supabase/server'
-import { createClient as createBrowserClient } from '@supabase/supabase-js'
+import { createServiceRoleClient } from '@/utils/supabase/service-role'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
-
 
 /**
  * POST /api/upload
  *
  * Accepts a multipart form with audio/ebook files and metadata, uploads
- * each file to Supabase Storage under `audio-files/{bookId}/{filename}`,
- * then creates a book row, library_item row (with media_id → book.id),
- * and optional author/series associations.
+ * each file to Supabase Storage (audio-files bucket), then creates:
+ *   books row → library_items row (media_id → books.id) → book_authors/book_series
  *
- * Auth: reads the Supabase JWT from the Authorization: Bearer header
- * (sent by the XHR in UploadHelper.ts via getCookie() → session.access_token).
+ * Auth: JWT from Authorization: Bearer header (sent by XHR via getCookie()).
+ * DB writes: service role client (bypasses RLS; user is verified as admin/root first).
  *
  * Form fields:
- *   title    - item title
- *   author   - author name (books only)
- *   series   - series name (books only)
- *   library  - library UUID
- *   folder   - ignored (Supabase uses storage paths)
- *   0, 1, 2… - audio/ebook files
+ *   title     - item title (required)
+ *   author    - author name (books only, optional)
+ *   series    - series name (books only, optional)
+ *   library   - library UUID (required)
+ *   mediaType - 'book' | 'podcast' (default: 'book')
+ *   folder    - ignored (Supabase uses storage paths)
+ *   0, 1, 2…  - audio/ebook File objects
  */
 export async function POST(request: NextRequest) {
-  // Verify the JWT from the Authorization header
+  // ── 1. Verify the JWT from Authorization header ──────────────────────────
   const authHeader = request.headers.get('authorization')
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
 
@@ -31,33 +30,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Use the anon client with the user's JWT to get their identity
-  const anonClient = createBrowserClient(
+  // Verify the token against Supabase Auth
+  const anonClient = createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { global: { headers: { Authorization: `Bearer ${token}` } } }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-
   const { data: { user }, error: userError } = await anonClient.auth.getUser(token)
 
   if (userError || !user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Use the server client (cookie-based) for DB operations — it has RLS context
-  const supabase = await createClient()
+  // ── 2. Check admin/root role (service role bypasses RLS for this query) ──
+  const db = createServiceRoleClient()
 
-  // Only admins/root can upload
-  const { data: profile } = await supabase
+  const { data: profile } = await db
     .from('profiles')
     .select('user_type')
     .eq('id', user.id)
     .single()
 
   if (!profile || !['admin', 'root'].includes(profile.user_type)) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'Forbidden — admin or root required' }, { status: 403 })
   }
 
+  // ── 3. Parse form data ────────────────────────────────────────────────────
   let formData: FormData
   try {
     formData = await request.formData()
@@ -65,17 +62,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid form data' }, { status: 400 })
   }
 
-  const title = (formData.get('title') as string)?.trim()
-  const author = (formData.get('author') as string)?.trim() || ''
-  const series = (formData.get('series') as string)?.trim() || ''
-  const libraryId = formData.get('library') as string
-  const mediaType = (formData.get('mediaType') as string) || 'book'
+  const title = (formData.get('title') as string | null)?.trim() ?? ''
+  const author = (formData.get('author') as string | null)?.trim() ?? ''
+  const series = (formData.get('series') as string | null)?.trim() ?? ''
+  const libraryId = (formData.get('library') as string | null)?.trim() ?? ''
+  const mediaType = (formData.get('mediaType') as string | null)?.trim() || 'book'
 
-  if (!title || !libraryId) {
-    return NextResponse.json({ error: 'Missing title or library' }, { status: 400 })
-  }
+  if (!title) return NextResponse.json({ error: 'Missing title' }, { status: 400 })
+  if (!libraryId) return NextResponse.json({ error: 'Missing library' }, { status: 400 })
 
-  // Collect all numbered file entries
+  // Collect numbered file entries (0, 1, 2, …)
   const files: File[] = []
   for (const [key, value] of formData.entries()) {
     if (/^\d+$/.test(key) && value instanceof File && value.size > 0) {
@@ -87,17 +83,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'No files provided' }, { status: 400 })
   }
 
+  // ── 4. Generate IDs ───────────────────────────────────────────────────────
   const bookId = crypto.randomUUID()
   const libraryItemId = crypto.randomUUID()
   const totalSize = files.reduce((sum, f) => sum + f.size, 0)
 
-  // Build audio_files JSONB from the uploaded files
+  // ── 5. Build audio_files JSONB (stored on books row) ─────────────────────
   const audioFilesJson = files.map((file, i) => ({
     index: i,
     ino: crypto.randomUUID(),
     metadata: {
       filename: file.name,
-      ext: '.' + (file.name.split('.').pop() || ''),
+      ext: '.' + (file.name.split('.').pop()?.toLowerCase() ?? ''),
       path: `audio-files/${bookId}/${file.name}`,
       relPath: file.name,
       size: file.size,
@@ -129,22 +126,18 @@ export async function POST(request: NextRequest) {
     mimeType: file.type || 'audio/mpeg',
   }))
 
-  // 1. Create the book row first (library_items.media_id → books.id)
-  const { error: bookError } = await supabase
+  // ── 6. Create book row first (library_items.media_id → books.id) ─────────
+  const { error: bookError } = await db
     .from('books')
-    .insert({
-      id: bookId,
-      title,
-      audio_files: audioFilesJson,
-    })
+    .insert({ id: bookId, title, audio_files: audioFilesJson })
 
   if (bookError) {
-    console.error('[upload] Failed to create book:', bookError)
+    console.error('[upload] books insert failed:', bookError)
     return NextResponse.json({ error: `Failed to create book: ${bookError.message}` }, { status: 500 })
   }
 
-  // 2. Create the library_item row pointing to the book
-  const { error: itemError } = await supabase
+  // ── 7. Create library_item row ────────────────────────────────────────────
+  const { error: itemError } = await db
     .from('library_items')
     .insert({
       id: libraryItemId,
@@ -165,89 +158,84 @@ export async function POST(request: NextRequest) {
     })
 
   if (itemError) {
-    console.error('[upload] Failed to create library_item:', itemError)
-    await supabase.from('books').delete().eq('id', bookId)
+    console.error('[upload] library_items insert failed:', itemError)
+    await db.from('books').delete().eq('id', bookId)
     return NextResponse.json({ error: `Failed to create library item: ${itemError.message}` }, { status: 500 })
   }
 
-  // 3. Handle author
+  // ── 8. Author ─────────────────────────────────────────────────────────────
   if (author) {
-    const authorId = crypto.randomUUID()
-    const { data: existingAuthor } = await supabase
+    const { data: existingAuthor } = await db
       .from('authors')
       .select('id')
       .eq('name', author)
       .eq('library_id', libraryId)
       .maybeSingle()
 
-    const resolvedAuthorId = existingAuthor?.id ?? authorId
-
-    if (!existingAuthor) {
-      await supabase.from('authors').insert({
-        id: authorId,
-        name: author,
-        library_id: libraryId,
-      })
+    let authorId = existingAuthor?.id
+    if (!authorId) {
+      authorId = crypto.randomUUID()
+      const { error: authorError } = await db
+        .from('authors')
+        .insert({ id: authorId, name: author, library_id: libraryId })
+      if (authorError) {
+        console.warn('[upload] author insert failed (non-fatal):', authorError.message)
+        authorId = undefined
+      }
     }
 
-    await supabase.from('book_authors').insert({
-      book_id: bookId,
-      author_id: resolvedAuthorId,
-    })
-
-    // Denormalize author name onto library_item for search
-    await supabase
-      .from('library_items')
-      .update({ author_names_first_last: author })
-      .eq('id', libraryItemId)
+    if (authorId) {
+      await db.from('book_authors').insert({ book_id: bookId, author_id: authorId })
+      await db.from('library_items').update({ author_names_first_last: author }).eq('id', libraryItemId)
+    }
   }
 
-  // 4. Handle series
+  // ── 9. Series ─────────────────────────────────────────────────────────────
   if (series) {
-    const seriesId = crypto.randomUUID()
-    const { data: existingSeries } = await supabase
+    const { data: existingSeries } = await db
       .from('series')
       .select('id')
       .eq('name', series)
       .eq('library_id', libraryId)
       .maybeSingle()
 
-    const resolvedSeriesId = existingSeries?.id ?? seriesId
-
-    if (!existingSeries) {
-      await supabase.from('series').insert({
-        id: seriesId,
-        name: series,
-        library_id: libraryId,
-      })
+    let seriesId = existingSeries?.id
+    if (!seriesId) {
+      seriesId = crypto.randomUUID()
+      const { error: seriesError } = await db
+        .from('series')
+        .insert({ id: seriesId, name: series, library_id: libraryId })
+      if (seriesError) {
+        console.warn('[upload] series insert failed (non-fatal):', seriesError.message)
+        seriesId = undefined
+      }
     }
 
-    await supabase.from('book_series').insert({
-      book_id: bookId,
-      series_id: resolvedSeriesId,
-    })
+    if (seriesId) {
+      await db.from('book_series').insert({ book_id: bookId, series_id: seriesId })
+    }
   }
 
-  // 5. Upload files to Supabase Storage
+  // ── 10. Upload files to Supabase Storage ──────────────────────────────────
   const uploadErrors: string[] = []
 
   for (const file of files) {
     const storagePath = `${bookId}/${file.name}`
-    const { error: storageError } = await supabase.storage
+    const { error: storageError } = await db.storage
       .from('audio-files')
       .upload(storagePath, file, { upsert: true })
 
     if (storageError) {
-      console.error(`[upload] Storage error for ${file.name}:`, storageError)
+      console.error(`[upload] storage upload failed for ${file.name}:`, storageError.message)
       uploadErrors.push(file.name)
     }
   }
 
+  // If every file failed storage, roll back DB rows
   if (uploadErrors.length === files.length) {
-    // All storage uploads failed — clean up DB rows
-    await supabase.from('library_items').delete().eq('id', libraryItemId)
-    await supabase.from('books').delete().eq('id', bookId)
-    return NextResponse.json({ error: 'All file uploads to storage failed' }, { status: 500 })
+    await db.from('library_items').delete().eq('id', libraryItemId)
+    await db.from('books').delete().eq('id', bookId)
+    return NextResponse.json({ error: 'All file uploads to storage failed', files: uploadErrors }, { status: 500 })
   }
 
   return NextResponse.json({
