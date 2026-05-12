@@ -41,8 +41,6 @@ export async function startPlaybackSession(
     throw new Error('No audio files found for this item')
   }
 
-  console.log('[startPlaybackSession] Found', audioFiles.length, 'audio files for item', libraryItemId)
-
   // Sort audio files by index to ensure correct startOffset accumulation
   const sortedAudioFiles = [...audioFiles].sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
 
@@ -56,11 +54,8 @@ export async function startPlaybackSession(
       .createSignedUrl(storagePath, 3600)
 
     if (signedError || !signed?.signedUrl) {
-      console.error('[startPlaybackSession] signedUrl failed for path:', storagePath, 'error:', signedError?.message)
       throw new Error(`Failed to sign URL for ${storagePath}: ${signedError?.message}`)
     }
-
-    console.log('[startPlaybackSession] signed URL ok for:', storagePath.slice(0, 50))
 
     const trackDuration = af.duration ?? 0
     const startOffset = cumulativeOffset
