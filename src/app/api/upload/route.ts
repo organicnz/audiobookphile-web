@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     .eq('id', user.id)
     .single()
 
-  if (!profile || !['admin', 'root'].includes(profile.user_type)) {
+  if (!profile || !['admin', 'root'].includes(profile.user_type ?? '')) {
     return NextResponse.json({ error: 'Forbidden — admin or root required' }, { status: 403 })
   }
 
