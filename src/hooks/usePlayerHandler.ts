@@ -172,7 +172,10 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
 
         if (state === PlayerState.PLAYING) {
           // Start sync interval when playing
-          startSyncInterval(() => playerRef.current?.getCurrentTime() ?? 0)
+          startSyncInterval(
+            () => playerRef.current?.getCurrentTime() ?? 0,
+            () => playerRef.current?.getDuration() ?? 0
+          )
           // Apply playback rate and volume from refs to avoid stale closures
           player.setPlaybackRate(playbackRateRef.current)
           player.setVolume(volumeRef.current)
@@ -248,7 +251,10 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
       // Close existing session if any (use ref to avoid stale closure)
       if (sessionIdRef.current) {
         stopSyncInterval()
-        await closeSession(() => playerRef.current?.getCurrentTime() ?? 0)
+        await closeSession(
+          () => playerRef.current?.getCurrentTime() ?? 0,
+          () => playerRef.current?.getDuration() ?? 0
+        )
         sessionIdRef.current = null
       }
 
@@ -335,7 +341,10 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
 
   const closePlayer = useCallback(async () => {
     stopSyncInterval()
-    await closeSession(() => playerRef.current?.getCurrentTime() ?? 0)
+    await closeSession(
+      () => playerRef.current?.getCurrentTime() ?? 0,
+      () => playerRef.current?.getDuration() ?? 0
+    )
 
     // Destroy player
     if (playerRef.current) {

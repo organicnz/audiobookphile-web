@@ -135,7 +135,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
    * Sync progress to server (debounced by minimum diff)
    */
   const syncProgress = useCallback(
-    async (currentTime: number) => {
+    async (currentTime: number, duration?: number) => {
       const session = sessionRef.current
       if (!session) return
 
@@ -150,6 +150,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
       try {
         await syncPlaybackSession(session.id, {
           currentTime,
+          duration,
           timeListened,
           libraryItemId: session.libraryItemId,
           episodeId: session.episodeId
@@ -179,7 +180,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
    * Start the sync interval
    */
   const startSyncInterval = useCallback(
-    (getCurrentTime: () => number) => {
+    (getCurrentTime: () => number, getDuration?: () => number) => {
       // Clear any existing interval
       if (syncIntervalRef.current) {
         clearInterval(syncIntervalRef.current)
@@ -202,7 +203,8 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
 
         if (listeningTimeSinceSync.current >= syncThreshold) {
           const currentTime = getCurrentTime()
-          syncProgress(currentTime)
+          const duration = getDuration?.() ?? undefined
+          syncProgress(currentTime, duration)
         }
       }, 1000)
     },
@@ -223,7 +225,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
    * Close the current session
    */
   const closeSession = useCallback(
-    async (getCurrentTime?: () => number) => {
+    async (getCurrentTime?: () => number, getDuration?: () => number) => {
       stopSyncInterval()
 
       const session = sessionRef.current
@@ -233,6 +235,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
         // Always save progress on close, regardless of how long was listened
         const syncData = getCurrentTime ? {
           currentTime: getCurrentTime(),
+          duration: getDuration?.() || undefined,
           timeListened: Math.max(0, Math.floor(listeningTimeSinceSync.current)),
           libraryItemId: session.libraryItemId,
           episodeId: session.episodeId

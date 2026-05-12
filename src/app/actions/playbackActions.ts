@@ -7,6 +7,7 @@ import { createClient } from '@/utils/supabase/server'
 
 interface SessionSyncData {
   currentTime: number
+  duration?: number
   timeListened: number
   libraryItemId?: string
   episodeId?: string | null
@@ -136,6 +137,7 @@ export async function syncPlaybackSession(_sessionId: string, syncData: SessionS
     try {
       await updateMediaProgress(syncData.libraryItemId, {
         currentTime: syncData.currentTime,
+        duration: syncData.duration,
         episodeId: syncData.episodeId ?? undefined,
       })
     } catch (err) {
@@ -152,6 +154,7 @@ export async function closePlaybackSession(_sessionId: string, syncData: Session
     try {
       await updateMediaProgress(syncData.libraryItemId, {
         currentTime: syncData.currentTime,
+        duration: syncData.duration,
         episodeId: syncData.episodeId ?? undefined,
       })
     } catch (err) {
