@@ -198,36 +198,53 @@ export async function upload(
   cookie: string,
   onProgress?: (progress: UploadProgressInfo) => void
 ): Promise<void> {
-  const { createClient } = await import('@/utils/supabase/client')
-  const supabase = createClient()
-
   const bookId = crypto.randomUUID()
   const totalSize = item.itemFiles.reduce((sum, f) => sum + f.size, 0)
   let uploadedBytes = 0
 
-  // 1. Upload each file directly to Supabase Storage from the browser
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+
+  // 1. Upload each file directly to Supabase Storage via XHR for progress tracking
   const uploadedPaths: string[] = []
 
   for (const file of item.itemFiles) {
     const storagePath = `${bookId}/${file.name}`
-    const { error } = await supabase.storage
-      .from('audio-files')
-      .upload(storagePath, file, { upsert: true })
+    const uploadUrl = `${supabaseUrl}/storage/v1/object/audio-files/${storagePath}`
 
-    if (error) {
-      throw new Error(`Failed to upload ${file.name}: ${error.message}`)
-    }
+    await new Promise<void>((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', uploadUrl, true)
+      xhr.setRequestHeader('Authorization', `Bearer ${cookie}`)
+      xhr.setRequestHeader('x-upsert', 'true')
+      // Content-Type is set automatically by the browser for File objects
 
-    uploadedPaths.push(storagePath)
-    uploadedBytes += file.size
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable && onProgress) {
+          const chunkLoaded = uploadedBytes + event.loaded
+          onProgress({
+            percent: Math.round((chunkLoaded / totalSize) * 100),
+            loaded: chunkLoaded,
+            total: totalSize,
+          })
+        }
+      }
 
-    if (onProgress) {
-      onProgress({
-        percent: Math.round((uploadedBytes / totalSize) * 100),
-        loaded: uploadedBytes,
-        total: totalSize,
-      })
-    }
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          uploadedBytes += file.size
+          uploadedPaths.push(storagePath)
+          resolve()
+        } else {
+          let msg = `Storage upload failed (${xhr.status})`
+          try { msg = JSON.parse(xhr.responseText)?.error ?? msg } catch { /* ignore */ }
+          reject(new Error(`Failed to upload ${file.name}: ${msg}`))
+        }
+      }
+
+      xhr.onerror = () => reject(new Error(`Network error uploading ${file.name}`))
+
+      xhr.send(file)
+    })
   }
 
   // 2. Call /api/upload with metadata only (no files — tiny payload)

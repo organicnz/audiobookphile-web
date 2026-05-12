@@ -259,6 +259,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
       } catch (error) {
         console.error('Upload failed:', error)
         item.uploadFailed = true
+        item.uploadError = error instanceof Error ? error.message : 'Upload failed'
       } finally {
         item.isUploading = false
         item.uploadComplete = !item.uploadFailed
@@ -519,6 +520,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
                 {item.uploadFailed && (
                   <Alert type="error" autoFocus={false}>
                     <p>{t('MessageUploaderItemFailed')}</p>
+                    {item.uploadError && <p className="mt-1 text-xs opacity-75">{item.uploadError}</p>}
                   </Alert>
                 )}
               </>
