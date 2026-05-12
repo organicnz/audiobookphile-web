@@ -394,30 +394,35 @@ export class LocalAudioPlayer {
     this.playWhenReady = playWhenReady
 
     if (this.isHlsTranscode) {
-      // HLS: just seek within the stream
       const offsetTime = time - (this.currentTrack?.startOffset ?? 0)
       this.player.currentTime = Math.max(0, offsetTime)
     } else {
-      // Direct play: may need to switch tracks
       const currentTrack = this.currentTrack
       if (!currentTrack) return
 
-      if (time < currentTrack.startOffset || time > currentTrack.startOffset + currentTrack.duration) {
+      // If track durations are unknown (0), seek directly within the current track
+      const trackDuration = currentTrack.duration || this.player.duration || 0
+      const trackEnd = currentTrack.startOffset + trackDuration
+
+      if (trackDuration === 0 || (time >= currentTrack.startOffset && time <= trackEnd)) {
+        // Seek within current track
+        const offsetTime = time - currentTrack.startOffset
+        this.player.currentTime = Math.max(0, offsetTime)
+      } else {
         // Need to change track
         const trackIndex = this.audioTracks.findIndex((t) => t.containsTime(time))
         if (trackIndex >= 0) {
           this.startTime = time
           this.currentTrackIndex = trackIndex
-
           if (!this.player.paused) {
             this.playWhenReady = true
           }
           this.loadCurrentTrack()
+        } else {
+          // Fallback: seek within current track
+          const offsetTime = time - currentTrack.startOffset
+          this.player.currentTime = Math.max(0, offsetTime)
         }
-      } else {
-        // Seek within current track
-        const offsetTime = time - currentTrack.startOffset
-        this.player.currentTime = Math.max(0, offsetTime)
       }
     }
   }
