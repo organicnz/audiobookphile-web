@@ -55,8 +55,41 @@ export async function requestScanLibrary(_libraryId: string): Promise<void> {
   console.warn('[libraries/actions] requestScanLibrary is not available in the Supabase-backed version')
 }
 
-export async function matchAll(_libraryId: string): Promise<void> {
-  console.warn('[libraries/actions] matchAll is not available in the Supabase-backed version')
+export async function matchAll(libraryId: string): Promise<void> {
+  // Batch fetch covers for all items in this library that are missing cover art
+  const { fetchBookCover } = await import('@/lib/coverFetch')
+  const { createServiceRoleClient } = await import('@/utils/supabase/service-role')
+  const db = createServiceRoleClient()
+
+  const { data: items } = await db
+    .from('library_items')
+    .select('id, title, author_names_first_last')
+    .eq('library_id', libraryId)
+    .is('cover_path', null)
+    .not('title', 'is', null)
+
+  if (!items?.length) return
+
+  for (const item of items) {
+    const title = item.title?.trim()
+    if (!title || title.length < 3) continue
+
+    const author = item.author_names_first_last?.split('/')[0]?.trim() || undefined
+    const buf = await fetchBookCover(title, author)
+    if (!buf) continue
+
+    const storagePath = `${item.id}/cover.jpg`
+    const { error: uploadErr } = await db.storage
+      .from('covers')
+      .upload(storagePath, buf, { upsert: true, contentType: 'image/jpeg' })
+    if (uploadErr) continue
+
+    await db.from('library_items').update({ cover_path: storagePath }).eq('id', item.id)
+    // Small delay to be polite to external APIs
+    await new Promise(r => setTimeout(r, 300))
+  }
+
+  revalidatePath(`/library/${libraryId}`)
 }
 
 export async function getFilesystemPaths(_path: string, _level: number): Promise<GetFilesystemPathsResponse> {
