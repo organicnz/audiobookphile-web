@@ -26,7 +26,9 @@ export class AudioTrack {
 
     this.sessionId = sessionId
 
-    if (this.contentUrl?.startsWith('/hls') || !sessionId) {
+    // If the contentUrl is an absolute URL (e.g. Supabase signed URL) or an HLS path,
+    // use it directly. Only build the ABS session track URL for relative paths.
+    if (this.contentUrl?.startsWith('http') || this.contentUrl?.startsWith('/hls') || !sessionId) {
       this.sessionTrackUrl = this.contentUrl
     } else {
       this.sessionTrackUrl = `/public/session/${sessionId}/track/${this.index}`

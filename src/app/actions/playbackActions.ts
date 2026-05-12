@@ -41,36 +41,43 @@ export async function startPlaybackSession(
     throw new Error('No audio files found for this item')
   }
 
+  // Sort audio files by index to ensure correct startOffset accumulation
+  const sortedAudioFiles = [...audioFiles].sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+
   // Generate signed URLs for each audio file
-  const audioTracks = await Promise.all(
-    audioFiles.map(async (af: any, idx: number) => {
-      const storagePath = af.metadata?.path ?? af.storage_path ?? ''
-      const { data: signed, error: signedError } = await supabase.storage
-        .from('audio-files')
-        .createSignedUrl(storagePath, 3600)
+  let cumulativeOffset = 0
+  const audioTracks: any[] = []
+  for (const [idx, af] of sortedAudioFiles.entries()) {
+    const storagePath = af.metadata?.path ?? af.storage_path ?? ''
+    const { data: signed, error: signedError } = await supabase.storage
+      .from('audio-files')
+      .createSignedUrl(storagePath, 3600)
 
-      if (signedError || !signed?.signedUrl) {
-        throw new Error(`Failed to sign URL for ${storagePath}: ${signedError?.message}`)
-      }
+    if (signedError || !signed?.signedUrl) {
+      throw new Error(`Failed to sign URL for ${storagePath}: ${signedError?.message}`)
+    }
 
-      return {
-        index: af.index ?? idx,
-        startOffset: 0,
-        duration: af.duration ?? 0,
-        title: af.metadata?.filename ?? `Track ${idx + 1}`,
-        contentUrl: signed.signedUrl,
-        mimeType: af.mimeType ?? 'audio/mpeg',
-        codec: af.codec ?? '',
-        timeBase: af.timeBase ?? '1/1000',
-        channels: af.channels ?? 2,
-        channelLayout: af.channelLayout ?? 'stereo',
-        chapters: af.chapters ?? [],
-        embeddedCoverArt: af.embeddedCoverArt ?? null,
-        metaTags: af.metaTags ?? {},
-        isDirectPlaySupported: true,
-      }
+    const trackDuration = af.duration ?? 0
+    const startOffset = cumulativeOffset
+    cumulativeOffset += trackDuration
+
+    audioTracks.push({
+      index: af.index ?? idx,
+      startOffset,
+      duration: trackDuration,
+      title: af.metadata?.filename ?? `Track ${idx + 1}`,
+      contentUrl: signed.signedUrl,
+      mimeType: af.mimeType ?? 'audio/mpeg',
+      codec: af.codec ?? '',
+      timeBase: af.timeBase ?? '1/1000',
+      channels: af.channels ?? 2,
+      channelLayout: af.channelLayout ?? 'stereo',
+      chapters: af.chapters ?? [],
+      embeddedCoverArt: af.embeddedCoverArt ?? null,
+      metaTags: af.metaTags ?? {},
+      isDirectPlaySupported: true,
     })
-  )
+  }
 
   // Fetch current progress
   const { data: { user } } = await supabase.auth.getUser()
