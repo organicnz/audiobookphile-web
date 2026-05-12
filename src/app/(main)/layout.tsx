@@ -14,6 +14,8 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     data: { user },
   } = await supabase.auth.getUser()
 
+  console.log('[MainLayout] getUser result:', user?.id ?? 'null — redirecting to login')
+
   if (!user) {
     redirect('/login')
   }
@@ -24,6 +26,8 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     .select('*')
     .eq('id', user.id)
     .single()
+
+  console.log('[MainLayout] profile:', profile?.id ?? 'null — redirecting to login')
 
   if (!profile) {
     // Profile missing — sign out and redirect so the user can re-authenticate
