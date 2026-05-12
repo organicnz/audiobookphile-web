@@ -35,32 +35,26 @@ export default function LoginForm() {
         // createBrowserClient finishes persisting the session to cookies.
         const redirect = searchParams.get('redirect')
         const supabaseForNav = createClient()
-        console.log('[Login] signInWithPassword succeeded, waiting for SIGNED_IN event...')
         await new Promise<void>((resolve) => {
           const { data: { subscription } } = supabaseForNav.auth.onAuthStateChange((event) => {
-            console.log('[Login] auth state change:', event)
             if (event === 'SIGNED_IN') {
               subscription.unsubscribe()
               resolve()
             }
           })
-          // Fallback: resolve after 1s even if event doesn't fire
-          setTimeout(() => { console.log('[Login] fallback timeout fired'); resolve() }, 1000)
+          setTimeout(resolve, 1000)
         })
-        console.log('[Login] navigating...')
         if (redirect) {
           window.location.href = redirect
           return
         }
         const { data: { user: loggedInUser } } = await supabaseForNav.auth.getUser()
-        console.log('[Login] getUser result:', loggedInUser?.id)
         if (loggedInUser) {
           const { data: profile } = await supabaseForNav
             .from('profiles')
             .select('default_library_id')
             .eq('id', loggedInUser.id)
             .single()
-          console.log('[Login] profile default_library_id:', profile?.default_library_id)
           if (profile?.default_library_id) {
             window.location.href = `/library/${profile.default_library_id}`
             return
