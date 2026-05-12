@@ -8,8 +8,8 @@
  */
 
 import { ApiError, NetworkError, UnauthorizedError } from '@/lib/apiErrors'
-import { createClient } from '@/utils/supabase/server'
 import { mapLibrary, mapLibraryItem } from '@/utils/mappers'
+import { createClient } from '@/utils/supabase/server'
 
 export { ApiError, NetworkError, UnauthorizedError }
 
@@ -133,7 +133,7 @@ export async function getLibraryItems(
 
   const { data, error, count } = await supabase
     .from('library_items')
-    .select('*, books(*, book_authors(authors(*)))', { count: 'exact' })
+    .select('*, books!media_id(*, book_authors(authors(*)))', { count: 'exact' })
     .eq('library_id', libraryId)
     .order(sortBy, { ascending })
     .range(page * limit, (page + 1) * limit - 1)
@@ -159,7 +159,7 @@ export async function getLibraryItem(itemId: string) {
     .from('library_items')
     .select(
       `*,
-      books(*, book_authors(authors(*)), book_series(series(*))),
+      books!media_id(*, book_authors(authors(*)), book_series(series(*))),
       podcast_episodes(*)`
     )
     .eq('id', itemId)
@@ -621,7 +621,7 @@ export async function getLibraryPersonalized(libraryId: string): Promise<import(
   // 1. Recently Added
   const { data: recentlyAdded } = await supabase
     .from('library_items')
-    .select('*, books(*, book_authors(authors(*)))')
+    .select('*, books!media_id(*, book_authors(authors(*)))')
     .eq('library_id', libraryId)
     .order('created_at', { ascending: false })
     .limit(12)
@@ -642,7 +642,7 @@ export async function getLibraryPersonalized(libraryId: string): Promise<import(
     const { user } = await requireUser()
     const { data: inProgress } = await supabase
       .from('media_progress')
-      .select('*, library_items(*, book_authors(authors(*)))')
+      .select('*, library_items(*, books!media_id(*, book_authors(authors(*))))')
       .eq('user_id', user.id)
       .eq('is_finished', false)
       .order('last_update', { ascending: false })

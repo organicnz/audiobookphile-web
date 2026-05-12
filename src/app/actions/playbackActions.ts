@@ -26,7 +26,7 @@ export async function startPlaybackSession(
   // Fetch library item with book audio_files
   const { data: item, error: itemError } = await supabase
     .from('library_items')
-    .select('*, books(audio_files, chapters)')
+    .select('*, books!media_id(audio_files, chapters)')
     .eq('id', libraryItemId)
     .single()
 
