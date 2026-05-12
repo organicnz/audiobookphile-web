@@ -179,14 +179,16 @@ export function getItemsFromFilelist(filelist: FileList, mediaType: Library['med
 
 /**
  *
- * Note that this cannot be in a 'server' function module because it uses FormData, and next
- * does not seem to handle FormData in server actions very well.
+ * Uploads files directly to Supabase Storage from the browser (bypasses
+ * the Next.js API route body limit), then calls /api/upload with just the
+ * metadata to create the DB records.
+ *
  * @param item
  * @param libraryId
  * @param folderId
  * @param mediaType
+ * @param cookie  - Supabase session access_token for /api/upload auth
  * @param onProgress
- * @returns
  */
 export async function upload(
   item: ItemToUpload,
@@ -196,60 +198,72 @@ export async function upload(
   cookie: string,
   onProgress?: (progress: UploadProgressInfo) => void
 ): Promise<void> {
-  const form = new FormData()
-  form.set('title', item.title)
-  if (mediaType !== 'podcast') {
-    form.set('author', item.author || '')
-    form.set('series', item.series || '')
+  const { createClient } = await import('@/utils/supabase/client')
+  const supabase = createClient()
+
+  const bookId = crypto.randomUUID()
+  const totalSize = item.itemFiles.reduce((sum, f) => sum + f.size, 0)
+  let uploadedBytes = 0
+
+  // 1. Upload each file directly to Supabase Storage from the browser
+  const uploadedPaths: string[] = []
+
+  for (const file of item.itemFiles) {
+    const storagePath = `${bookId}/${file.name}`
+    const { error } = await supabase.storage
+      .from('audio-files')
+      .upload(storagePath, file, { upsert: true })
+
+    if (error) {
+      throw new Error(`Failed to upload ${file.name}: ${error.message}`)
+    }
+
+    uploadedPaths.push(storagePath)
+    uploadedBytes += file.size
+
+    if (onProgress) {
+      onProgress({
+        percent: Math.round((uploadedBytes / totalSize) * 100),
+        loaded: uploadedBytes,
+        total: totalSize,
+      })
+    }
   }
-  form.set('library', libraryId)
-  form.set('folder', folderId)
-  form.set('mediaType', mediaType || 'book')
 
-  let index = 0
-  item.itemFiles.forEach((file) => {
-    form.set(`${index++}`, file)
+  // 2. Call /api/upload with metadata only (no files — tiny payload)
+  const body = JSON.stringify({
+    bookId,
+    title: item.title,
+    author: mediaType !== 'podcast' ? (item.author || '') : '',
+    series: mediaType !== 'podcast' ? (item.series || '') : '',
+    library: libraryId,
+    mediaType: mediaType || 'book',
+    uploadedPaths,
+    files: item.itemFiles.map((f) => ({
+      name: f.name,
+      size: f.size,
+      type: f.type,
+      storagePath: `${bookId}/${f.name}`,
+    })),
   })
 
-  // Use XMLHttpRequest for upload progress tracking
-  await new Promise<void>((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open('POST', '/api/upload', true)
-    xhr.setRequestHeader('Authorization', `Bearer ${cookie}`)
-
-    // Track upload progress
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable && onProgress) {
-        onProgress({
-          percent: Math.round((event.loaded / event.total) * 100),
-          loaded: event.loaded,
-          total: event.total
-        })
-      }
-    }
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        if (onProgress) {
-          const totalSize = item.itemFiles.reduce((sum, file) => sum + file.size, 0)
-          onProgress({
-            percent: 100,
-            loaded: totalSize,
-            total: totalSize
-          })
-        }
-        resolve()
-      } else {
-        reject(new Error(`Upload failed with status ${xhr.status}`))
-      }
-    }
-
-    xhr.onerror = () => {
-      reject(new Error('Upload failed due to network error'))
-    }
-
-    xhr.send(form)
+  const response = await fetch('/api/upload', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${cookie}`,
+    },
+    body,
   })
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: `HTTP ${response.status}` }))
+    throw new Error(err.error || `Upload failed with status ${response.status}`)
+  }
+
+  if (onProgress) {
+    onProgress({ percent: 100, loaded: totalSize, total: totalSize })
+  }
 }
 
 /**
