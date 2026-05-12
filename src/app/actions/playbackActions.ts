@@ -138,6 +138,7 @@ export async function syncPlaybackSession(_sessionId: string, syncData: SessionS
         currentTime: syncData.currentTime,
         episodeId: syncData.episodeId ?? undefined,
       })
+      console.log('[sync] Progress saved:', syncData.libraryItemId, syncData.currentTime)
     } catch (err) {
       console.error('[playbackActions] syncPlaybackSession failed:', err)
     }
