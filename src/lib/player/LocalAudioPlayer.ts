@@ -145,6 +145,7 @@ export class LocalAudioPlayer {
     }
 
     this.emit('stateChange', PlayerState.LOADED)
+    // Emit the real duration from the audio element (stored duration may be 0 if not extracted)
     this.emit('durationChange', this.getDuration())
 
     if (this.playWhenReady) {
@@ -264,6 +265,7 @@ export class LocalAudioPlayer {
     // Find the track that contains the start time
     const trackIndex = this.audioTracks.findIndex((track) => track.containsTime(this.startTime))
 
+    // If no track contains the start time (e.g. duration is 0/unknown), use first track
     this.currentTrackIndex = trackIndex >= 0 ? trackIndex : 0
     this.loadCurrentTrack()
   }
@@ -358,12 +360,17 @@ export class LocalAudioPlayer {
   }
 
   /**
-   * Get total duration (sum of all tracks)
+   * Get total duration (sum of all tracks, or audio element duration as fallback)
    */
   getDuration(): number {
     if (!this.audioTracks.length) return 0
     const lastTrack = this.audioTracks[this.audioTracks.length - 1]
-    return lastTrack.startOffset + lastTrack.duration
+    const sumDuration = lastTrack.startOffset + lastTrack.duration
+    // If stored duration is 0 (not extracted during upload), use the audio element's actual duration
+    if (sumDuration === 0 && this.player && !isNaN(this.player.duration) && this.player.duration !== Infinity) {
+      return this.player.duration
+    }
+    return sumDuration
   }
 
   setPlaybackRate(rate: number): void {
