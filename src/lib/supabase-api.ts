@@ -159,8 +159,7 @@ export async function getLibraryItem(itemId: string) {
     .from('library_items')
     .select(
       `*,
-      books!media_id(*, book_authors(authors(*)), book_series(series(*))),
-      podcast_episodes(*)`
+      books!media_id(*, book_authors(authors(*)), book_series(series(*)))`
     )
     .eq('id', itemId)
     .single()
@@ -642,21 +641,34 @@ export async function getLibraryPersonalized(libraryId: string): Promise<import(
     const { user } = await requireUser()
     const { data: inProgress } = await supabase
       .from('media_progress')
-      .select('*, library_items(*, books!media_id(*, book_authors(authors(*))))')
+      .select('library_item_id, current_time_pos, last_update')
       .eq('user_id', user.id)
       .eq('is_finished', false)
       .order('last_update', { ascending: false })
       .limit(12)
 
     if (inProgress && inProgress.length > 0) {
-      shelves.unshift({
-        id: 'continue-listening',
-        label: 'Continue Listening',
-        labelStringKey: 'ContinueListening',
-        type: 'book',
-        entities: inProgress.map((p) => mapLibraryItem(p.library_items)),
-        total: inProgress.length,
-      })
+      const itemIds = inProgress.map((p) => p.library_item_id).filter(Boolean)
+      const { data: continueItems } = await supabase
+        .from('library_items')
+        .select('*, books!media_id(*, book_authors(authors(*)))')
+        .in('id', itemIds)
+
+      if (continueItems && continueItems.length > 0) {
+        // Preserve the order from media_progress
+        const ordered = itemIds
+          .map((id) => continueItems.find((li) => li.id === id))
+          .filter(Boolean)
+
+        shelves.unshift({
+          id: 'continue-listening',
+          label: 'Continue Listening',
+          labelStringKey: 'ContinueListening',
+          type: 'book',
+          entities: ordered.map((li) => mapLibraryItem(li)),
+          total: ordered.length,
+        })
+      }
     }
   } catch {
     // Ignore unauthorized — just don't show the Continue Listening shelf
