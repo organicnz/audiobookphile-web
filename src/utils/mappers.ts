@@ -1,4 +1,4 @@
-import { Library, LibrarySettings, LibraryItem, BookMedia, PodcastMedia } from '@/types/api'
+import { BookMedia, Library, LibraryItem, LibrarySettings, PodcastMedia } from '@/types/api'
 
 /**
  * Maps a raw Supabase library row (snake_case) to the canonical Library interface (camelCase).
@@ -49,7 +49,12 @@ export function mapLibraryItem(row: any): LibraryItem {
     lastScan: row.last_scan ? new Date(row.last_scan).getTime() : undefined,
     scanVersion: row.scan_version,
     // Add nested joins if they exist
-    media: row.books?.length ? mapBook(row.books[0]) : row.podcast_episodes?.length ? mapPodcast(row.podcast_episodes[0]) : createSkeletonBook(row),
+    // Supabase returns a single object (not array) for FK joins via media_id → books.id
+    media: row.books
+      ? mapBook(Array.isArray(row.books) ? row.books[0] : row.books)
+      : row.podcast_episodes?.length
+        ? mapPodcast(row.podcast_episodes[0])
+        : createSkeletonBook(row),
   }
 }
 
@@ -71,12 +76,36 @@ function createSkeletonBook(row: any): BookMedia {
 
 function mapBook(book: any): BookMedia {
   if (!book) return createSkeletonBook({})
-  
+
+  const audioFiles = book.audio_files || []
+
+  // Map raw audio_files JSONB to AudioTrack shape for the tracks table
+  const tracks = audioFiles.map((af: any, i: number) => ({
+    index: af.index ?? i,
+    startOffset: 0,
+    duration: af.duration ?? 0,
+    title: af.metadata?.filename ?? `Track ${i + 1}`,
+    contentUrl: af.metadata?.path ?? '',
+    mimeType: af.mimeType ?? 'audio/mpeg',
+    codec: af.codec ?? '',
+    timeBase: af.timeBase ?? '1/1000',
+    channels: af.channels ?? 2,
+    channelLayout: af.channelLayout ?? 'stereo',
+    chapters: af.chapters ?? [],
+    embeddedCoverArt: af.embeddedCoverArt ?? null,
+    metaTags: af.metaTags ?? {},
+    isDirectPlaySupported: true,
+  }))
+
   return {
-    libraryItemId: book.library_item_id,
+    id: book.id,
+    libraryItemId: book.library_item_id ?? book.id,
     coverPath: book.cover_path,
     tags: book.tags || [],
-    audioFiles: book.audio_files || [],
+    audioFiles,
+    tracks,
+    numTracks: tracks.length,
+    numAudioFiles: audioFiles.length,
     chapters: book.chapters || [],
     metadata: {
       title: book.title || 'Unknown',
