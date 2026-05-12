@@ -30,18 +30,28 @@ export default function LoginForm() {
           setLoading(false)
           return
         }
-        // After successful login, fetch the user's profile to get their default
-        // library, then navigate directly to it — bypassing the /library route
-        // handler which does server-side session validation that can race.
+        // Wait for the auth state change to confirm the session cookie is
+        // written before navigating. signInWithPassword resolves before
+        // createBrowserClient finishes persisting the session to cookies.
         const redirect = searchParams.get('redirect')
+        const supabaseForNav = createClient()
+        await new Promise<void>((resolve) => {
+          const { data: { subscription } } = supabaseForNav.auth.onAuthStateChange((event) => {
+            if (event === 'SIGNED_IN') {
+              subscription.unsubscribe()
+              resolve()
+            }
+          })
+          // Fallback: resolve after 1s even if event doesn't fire
+          setTimeout(resolve, 1000)
+        })
         if (redirect) {
           window.location.href = redirect
           return
         }
-        const supabaseForProfile = createClient()
-        const { data: { user: loggedInUser } } = await supabaseForProfile.auth.getUser()
+        const { data: { user: loggedInUser } } = await supabaseForNav.auth.getUser()
         if (loggedInUser) {
-          const { data: profile } = await supabaseForProfile
+          const { data: profile } = await supabaseForNav
             .from('profiles')
             .select('default_library_id')
             .eq('id', loggedInUser.id)
