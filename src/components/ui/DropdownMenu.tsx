@@ -1,3 +1,4 @@
+'use client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, Check } from 'lucide-react'
 import { useModalRef } from '@/contexts/ModalContext'

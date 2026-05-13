@@ -1,3 +1,4 @@
+'use client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, EyeOff, Copy, Check, X } from 'lucide-react'
 import { useMergedRef } from '@/hooks/useMergedRef'

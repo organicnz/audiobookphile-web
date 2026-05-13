@@ -1,3 +1,4 @@
+'use client'
 import { motion } from 'framer-motion'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/lib/merge-classes'

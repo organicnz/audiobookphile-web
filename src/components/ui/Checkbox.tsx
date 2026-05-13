@@ -1,3 +1,4 @@
+'use client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Minus } from 'lucide-react'
 import { mergeClasses } from '@/lib/merge-classes'

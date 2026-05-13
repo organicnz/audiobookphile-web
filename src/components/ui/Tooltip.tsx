@@ -1,3 +1,4 @@
+'use client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useModalRef } from '@/contexts/ModalContext'
 import { mergeClasses } from '@/lib/merge-classes'

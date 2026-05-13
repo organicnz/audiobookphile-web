@@ -1,3 +1,4 @@
+'use client'
 import { Search, X } from 'lucide-react'
 import InputWrapper from '@/components/ui/InputWrapper'
 import LoadingSpinner from '@/components/widgets/LoadingSpinner'

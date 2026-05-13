@@ -1,3 +1,4 @@
+'use client'
 import { mergeClasses } from '@/lib/merge-classes'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
