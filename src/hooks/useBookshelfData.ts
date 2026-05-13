@@ -43,6 +43,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
 
   const [totalEntities, setTotalEntities] = useState(0)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
   const itemsPerPageRef = useRef(itemsPerPage)
 
   useEffect(() => {
@@ -77,13 +78,12 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
 
       setTotalEntities(total)
       setIsInitialized(true)
+      setError(null)
       
       setSparseItems(prev => {
         let next = [...prev]
         if (next.length !== total) {
           next = new Array(total).fill(null)
-          // Try to preserve existing items if possible (only if total hasn't changed drastically)
-          // But usually a total change means the list is different, so we clear it.
         }
         
         const startIndex = page * limit
@@ -96,6 +96,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
       })
     } catch (err) {
       console.error('Failed to load bookshelf page', page, err)
+      setError(err instanceof Error ? err : new Error('An unknown error occurred'))
     }
   }, [baseQueryKey, entityType, libraryId, query, queryClient])
 
@@ -159,7 +160,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
     totalEntities,
     isInitialized,
     isLoading: !isInitialized,
-    error: null,
+    error,
     loadPage,
     reconcilePagesAfterUpdate: async () => null // Placeholder for now
   }
