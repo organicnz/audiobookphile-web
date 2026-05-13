@@ -8,7 +8,7 @@ import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '
 
 export function ToastNotificationExamples() {
   const { showToast, removeToast } = useGlobalToast()
-  const [togglePersistentId, setTogglePersistentId] = useState<string | null>(null)
+  const [togglePersistentId, setTogglePersistentId] = useState<string | number | null>(null)
 
   return (
     <ComponentExamples title="Toasts">
