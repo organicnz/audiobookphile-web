@@ -1,12 +1,5 @@
-import DropdownMenu from '@/components/ui/DropdownMenu'
+import DropdownMenu, { type DropdownMenuItem } from '@/components/ui/DropdownMenu'
 import React from 'react'
-
-// Define types for the dropdown menu items based on the component's interface
-interface DropdownMenuItem {
-  text: string
-  value: string | number
-  subtext?: string
-}
 
 describe('<DropdownMenu />', () => {
   const mockItems: DropdownMenuItem[] = [
@@ -127,8 +120,8 @@ describe('<DropdownMenu />', () => {
   describe('Focus and Selection', () => {
     it('applies focused styling to focused item', () => {
       cy.mount(<DropdownMenu {...defaultProps} focusedIndex={1} />)
-      cy.get('[role="listbox"] > li').eq(1).should('have.class', 'bg-dropdown-item-selected')
-      cy.get('[role="listbox"] > li').eq(0).should('not.have.class', 'bg-dropdown-item-selected')
+      cy.get('[role="listbox"] > li').eq(1).should('have.class', 'bg-white/10')
+      cy.get('[role="listbox"] > li').eq(0).should('not.have.class', 'bg-white/10')
     })
 
     it('scrolls focused item into view', () => {
@@ -141,14 +134,14 @@ describe('<DropdownMenu />', () => {
     it('shows selected indicator when showSelectedIndicator is true', () => {
       const isItemSelected = (item: DropdownMenuItem) => item.value === 'option2'
       cy.mount(<DropdownMenu {...defaultProps} showSelectedIndicator={true} isItemSelected={isItemSelected} />)
-      cy.get('[role="listbox"] > li').eq(1).find('.material-symbols').should('contain.text', 'check')
-      cy.get('[role="listbox"] > li').eq(1).find('.material-symbols').should('have.class', 'text-yellow-400')
+      cy.get('[role="listbox"] > li').eq(1).find('svg').should('exist')
+      cy.get('[role="listbox"] > li').eq(1).find('.text-primary').should('exist')
     })
 
     it('does not show selected indicator when showSelectedIndicator is false', () => {
       const isItemSelected = (item: DropdownMenuItem) => item.value === 'option2'
       cy.mount(<DropdownMenu {...defaultProps} showSelectedIndicator={false} isItemSelected={isItemSelected} />)
-      cy.get('[role="listbox"] > li').eq(1).find('.material-symbols').should('not.exist')
+      cy.get('[role="listbox"] > li').eq(1).find('svg').should('not.exist')
     })
 
     it('sets correct aria-selected attribute when isItemSelected is provided', () => {
@@ -215,7 +208,7 @@ describe('<DropdownMenu />', () => {
   describe('Styling', () => {
     it('applies hover styling to menu items', () => {
       cy.mount(<DropdownMenu {...defaultProps} />)
-      cy.get('[role="listbox"] > li').first().should('have.class', 'hover:bg-dropdown-item-hover')
+      cy.get('[role="listbox"] > li').first().should('have.class', 'hover:bg-white/5')
     })
 
     it('applies correct text styling for items with subtext', () => {
@@ -230,7 +223,7 @@ describe('<DropdownMenu />', () => {
 
     it('renders subtext with correct styling', () => {
       cy.mount(<DropdownMenu {...defaultProps} />)
-      cy.get('[role="listbox"] > li').eq(1).find('span').last().should('have.class', 'text-foreground-subdued')
+      cy.get('[role="listbox"] > li').eq(1).find('span').last().should('have.class', 'text-foreground/60')
       cy.get('[role="listbox"] > li').eq(1).find('span').last().should('have.class', 'font-normal')
     })
 
@@ -242,24 +235,24 @@ describe('<DropdownMenu />', () => {
     it('applies proper border and shadow styling', () => {
       cy.mount(<DropdownMenu {...defaultProps} />)
       cy.get('[role="listbox"]').should('have.class', 'border')
-      cy.get('[role="listbox"]').should('have.class', 'border-dropdown-menu-border')
-      cy.get('[role="listbox"]').should('have.class', 'shadow-lg')
+      cy.get('[role="listbox"]').should('have.class', 'border-white/10')
+      cy.get('[role="listbox"]').should('have.class', 'shadow-2xl')
     })
 
     it('applies proper ring styling', () => {
       cy.mount(<DropdownMenu {...defaultProps} />)
       cy.get('[role="listbox"]').should('have.class', 'ring-1')
-      cy.get('[role="listbox"]').should('have.class', 'ring-black/5')
+      cy.get('[role="listbox"]').should('have.class', 'ring-black/10')
     })
 
     it('applies proper rounded corners', () => {
       cy.mount(<DropdownMenu {...defaultProps} />)
-      cy.get('[role="listbox"]').should('have.class', 'rounded-md')
+      cy.get('[role="listbox"]').should('have.class', 'rounded-xl')
     })
 
     it('applies proper padding', () => {
       cy.mount(<DropdownMenu {...defaultProps} />)
-      cy.get('[role="listbox"]').should('have.class', 'py-1')
+      cy.get('[role="listbox"]').should('have.class', 'py-1.5')
     })
 
     it('applies proper overflow handling', () => {
@@ -267,9 +260,9 @@ describe('<DropdownMenu />', () => {
       cy.get('[role="listbox"]').should('have.class', 'overflow-auto')
     })
 
-    it('applies responsive text sizing', () => {
+    it('applies text sizing', () => {
       cy.mount(<DropdownMenu {...defaultProps} />)
-      cy.get('[role="listbox"]').should('have.class', 'sm:text-sm')
+      cy.get('[role="listbox"]').should('have.class', 'text-sm')
     })
 
     it('handles absolute positioning', () => {

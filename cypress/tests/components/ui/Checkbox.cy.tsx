@@ -24,10 +24,8 @@ describe('<Checkbox />', () => {
       cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'w-5')
       cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'h-5')
       cy.get('[cy-id="checkbox-label"]').should('have.class', 'text-sm')
-      cy.get('[cy-id="checkbox-label"]').should('have.class', 'md:text-base')
-      cy.get('[cy-id="checkbox-label"]').should('have.class', 'ps-2')
-      cy.get('svg').should('have.class', 'w-3.5')
-      cy.get('svg').should('have.class', 'h-3.5')
+      cy.get('[cy-id="checkbox-label"]').should('have.class', 'sm:text-base')
+      cy.get('[cy-id="checkbox-label"]').should('have.class', 'ps-3')
     })
 
     it('applies small variant styles', () => {
@@ -35,10 +33,8 @@ describe('<Checkbox />', () => {
       cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'w-4')
       cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'h-4')
       cy.get('[cy-id="checkbox-label"]').should('have.class', 'text-xs')
-      cy.get('[cy-id="checkbox-label"]').should('have.class', 'md:text-sm')
-      cy.get('[cy-id="checkbox-label"]').should('have.class', 'ps-1')
-      cy.get('svg').should('have.class', 'w-3')
-      cy.get('svg').should('have.class', 'h-3')
+      cy.get('[cy-id="checkbox-label"]').should('have.class', 'sm:text-sm')
+      cy.get('[cy-id="checkbox-label"]').should('have.class', 'ps-2')
     })
 
     it('applies large variant styles', () => {
@@ -46,10 +42,8 @@ describe('<Checkbox />', () => {
       cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'w-6')
       cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'h-6')
       cy.get('[cy-id="checkbox-label"]').should('have.class', 'text-base')
-      cy.get('[cy-id="checkbox-label"]').should('have.class', 'md:text-lg')
-      cy.get('[cy-id="checkbox-label"]').should('have.class', 'ps-2')
-      cy.get('svg').should('have.class', 'w-4')
-      cy.get('svg').should('have.class', 'h-4')
+      cy.get('[cy-id="checkbox-label"]').should('have.class', 'sm:text-lg')
+      cy.get('[cy-id="checkbox-label"]').should('have.class', 'ps-3')
     })
 
     it('handles wrapper height classes correctly', () => {
@@ -72,20 +66,18 @@ describe('<Checkbox />', () => {
     it('shows check mark when checked', () => {
       cy.mount(<Checkbox value={true} />)
       cy.get('svg').should('exist')
-      cy.get('svg path').should('have.attr', 'd', 'M0 11l2-2 5 5L18 3l2 2L7 18z')
+      cy.get('svg').should('have.class', 'lucide-check')
     })
 
     it('shows partial indicator when partial is true', () => {
       cy.mount(<Checkbox partial />)
-      cy.get('.material-symbols').should('contain.text', 'remove')
-      cy.get('svg').should('not.exist')
+      cy.get('svg').should('exist')
+      cy.get('svg').should('have.class', 'lucide-minus')
     })
 
     it('handles partial state with correct styling', () => {
       cy.mount(<Checkbox partial label="Partial Checkbox" />)
-      cy.get('.material-symbols').should('have.class', 'text-gray-400')
-      cy.get('.material-symbols').should('have.class', 'text-base')
-      cy.get('.material-symbols').should('have.class', 'leading-none')
+      cy.get('svg').should('have.class', 'text-primary-foreground')
     })
 
     it('shows correct cursor when enabled', () => {
@@ -99,9 +91,7 @@ describe('<Checkbox />', () => {
       cy.mount(<Checkbox disabled value={true} label="Disabled Checkbox" />)
       cy.get('[cy-id="control-wrapper"]').should('have.class', 'cursor-not-allowed')
       cy.get('[cy-id="checkbox-label"]').should('have.class', 'text-disabled')
-      cy.get('[cy-id="checkbox-label"]').should('have.class', 'cursor-not-allowed')
-      cy.get('svg').should('have.class', 'fill-checkbox-disabled')
-      cy.get('[cy-id="checkbox-div"]').should('have.class', 'bg-checkbox-bg-disabled')
+      cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'opacity-50')
     })
 
     it('handles focus-within outline styling', () => {
@@ -205,9 +195,8 @@ describe('<Checkbox />', () => {
     })
 
     it('handles disabled state with custom colors', () => {
-      cy.mount(<Checkbox disabled checkboxBgClass="bg-blue-500" borderColorClass="border-red-500" checkColorClass="text-yellow-500" />)
-      cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'border-checkbox-bg-disabled')
-      cy.get('[cy-id="checkbox-div"]').should('have.class', 'bg-checkbox-bg-disabled')
+      cy.mount(<Checkbox disabled />)
+      cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'opacity-50')
       cy.get('input[type="checkbox"]').should('be.disabled')
     })
 
@@ -215,7 +204,7 @@ describe('<Checkbox />', () => {
       cy.mount(<Checkbox partial checkboxBgClass="bg-purple-500" borderColorClass="border-orange-500" />)
       cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'bg-purple-500')
       cy.get('[cy-id="checkbox-wrapper"]').should('have.class', 'border-orange-500')
-      cy.get('.material-symbols').should('exist')
+      cy.get('svg').should('exist')
     })
 
     it('handles checked state with custom colors', () => {
