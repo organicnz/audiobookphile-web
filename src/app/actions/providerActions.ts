@@ -1,17 +1,22 @@
 'use server'
 
-/**
- * ABS-specific — not available in the Supabase-backed version.
- */
 import type { MetadataProvider as MetadataProviderType } from '@/types/api'
 
+/**
+ * Returns the available metadata providers for this Supabase-backed version.
+ * We support Open Library and Google Books directly.
+ */
 export async function getMetadataProvidersAction() {
-  console.warn('[providerActions] getMetadataProviders is not available in the Supabase-backed version')
+  const books: MetadataProviderType[] = [
+    { id: 'openlibrary', name: 'Open Library', official: true },
+    { id: 'google', name: 'Google Books', official: true },
+  ]
+
   return {
     providers: {
-      books: [] as MetadataProviderType[],
+      books,
       podcasts: [] as MetadataProviderType[],
-      booksCovers: [] as MetadataProviderType[],
+      booksCovers: books,
     },
   }
 }

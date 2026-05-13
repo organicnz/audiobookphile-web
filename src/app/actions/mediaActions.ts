@@ -1,7 +1,10 @@
 'use server'
 
-import { getLibraryItem, updateMediaProgress } from '@/lib/supabase-api';
-import type { UpdateLibraryItemMediaPayload } from '@/types/api';
+import { getLibraryItem, updateMediaProgress } from '@/lib/supabase-api'
+import type { UpdateLibraryItemMediaPayload } from '@/types/api'
+import { createClient } from '@/utils/supabase/server'
+import { createServiceRoleClient } from '@/utils/supabase/service-role'
+import { revalidatePath } from 'next/cache'
 
 export async function toggleFinishedAction(
   libraryItemId: string,
@@ -28,36 +31,134 @@ export async function batchUpdateMediaFinishedAction(
   )
 }
 
+/**
+ * Update library item metadata (title, author, description, etc.)
+ * Delegates to applyMatchAction logic.
+ */
 export async function updateLibraryItemMediaAction(
-  _libraryItemId: string,
-  _payload: UpdateLibraryItemMediaPayload,
+  libraryItemId: string,
+  payload: UpdateLibraryItemMediaPayload,
 ) {
-  console.warn('[mediaActions] updateLibraryItemMedia is not available in the Supabase-backed version')
-  return null
+  const { applyMatchAction } = await import('@/app/actions/matchActions')
+  return applyMatchAction(libraryItemId, payload)
 }
 
-export async function rescanLibraryItemAction(_libraryItemId: string) {
-  console.warn('[mediaActions] rescanLibraryItem is not available in the Supabase-backed version')
-  return null
+/**
+ * Rescan a library item — re-fetches metadata and cover from providers.
+ */
+export async function rescanLibraryItemAction(libraryItemId: string) {
+  const db = createServiceRoleClient()
+  const { data: item } = await db
+    .from('library_items')
+    .select('title, author_names_first_last')
+    .eq('id', libraryItemId)
+    .single()
+
+  if (!item?.title) return { result: 'UPTODATE' }
+
+  const { fetchBookCover } = await import('@/lib/coverFetch')
+  const author = item.author_names_first_last?.split('/')[0]?.trim() || undefined
+  const buf = await fetchBookCover(item.title, author)
+
+  if (buf) {
+    const storagePath = `${libraryItemId}/cover.jpg`
+    const { error } = await db.storage
+      .from('covers')
+      .upload(storagePath, buf, { upsert: true, contentType: 'image/jpeg' })
+    if (!error) {
+      await db.from('library_items').update({ cover_path: storagePath }).eq('id', libraryItemId)
+      return { result: 'UPDATED' }
+    }
+  }
+
+  return { result: 'UPTODATE' }
 }
 
 export async function sendEbookToDeviceAction(_payload: { libraryItemId: string; deviceName: string }) {
-  console.warn('[mediaActions] sendEbookToDevice is not available in the Supabase-backed version')
+  // Not applicable in Supabase-backed version (no local filesystem)
   return null
 }
 
-export async function removeSeriesFromContinueListeningAction(_seriesId: string) {
-  console.warn('[mediaActions] removeSeriesFromContinueListening is not available in the Supabase-backed version')
+/**
+ * Remove a series from the Continue Listening shelf by marking all
+ * in-progress items in that series as finished.
+ */
+export async function removeSeriesFromContinueListeningAction(seriesId: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+
+  // Get all library items in this series
+  const { data: bookSeries } = await supabase
+    .from('book_series')
+    .select('book_id, books!book_id(library_items!media_id(id))')
+    .eq('series_id', seriesId)
+
+  if (!bookSeries?.length) return null
+
+  const itemIds = bookSeries
+    .flatMap((bs: any) => bs.books?.library_items || [])
+    .map((li: any) => li.id)
+    .filter(Boolean)
+
+  if (!itemIds.length) return null
+
+  await Promise.all(
+    itemIds.map((id: string) =>
+      updateMediaProgress(id, { currentTime: 0, isFinished: true })
+    )
+  )
   return null
 }
 
-export async function removeFromContinueListeningAction(_progressId: string) {
-  console.warn('[mediaActions] removeFromContinueListening is not available in the Supabase-backed version')
+/**
+ * Remove a single item from Continue Listening by marking it finished.
+ */
+export async function removeFromContinueListeningAction(progressId: string) {
+  const db = createServiceRoleClient()
+  await db
+    .from('media_progress')
+    .update({ is_finished: true })
+    .eq('id', progressId)
   return null
 }
 
-export async function deleteLibraryItemAction(_libraryItemId: string, _hardDelete: boolean) {
-  console.warn('[mediaActions] deleteLibraryItem is not available in the Supabase-backed version')
+/**
+ * Delete a library item and its associated book, audio files from storage.
+ */
+export async function deleteLibraryItemAction(libraryItemId: string, _hardDelete: boolean) {
+  const db = createServiceRoleClient()
+
+  // Get the book ID before deleting
+  const { data: item } = await db
+    .from('library_items')
+    .select('media_id')
+    .eq('id', libraryItemId)
+    .single()
+
+  // Delete storage files
+  const { data: storageFiles } = await db.storage
+    .from('audio-files')
+    .list(item?.media_id || libraryItemId)
+
+  if (storageFiles?.length) {
+    const paths = storageFiles.map((f) => `${item?.media_id || libraryItemId}/${f.name}`)
+    await db.storage.from('audio-files').remove(paths)
+  }
+
+  // Delete cover
+  await db.storage.from('covers').remove([`${libraryItemId}/cover.jpg`])
+
+  // Delete DB records (cascade handles related tables if FK constraints exist)
+  if (item?.media_id) {
+    await db.from('book_authors').delete().eq('book_id', item.media_id)
+    await db.from('book_series').delete().eq('book_id', item.media_id)
+    await db.from('books').delete().eq('id', item.media_id)
+  }
+  await db.from('media_progress').delete().eq('library_item_id', libraryItemId)
+  await db.from('library_items').delete().eq('id', libraryItemId)
+
+  revalidatePath('/library')
   return null
 }
 
@@ -70,21 +171,18 @@ export async function deleteLibraryItemMediaEpisodeAction(
   _episodeId: string,
   _hardDelete = false,
 ) {
-  console.warn('[mediaActions] deleteLibraryItemMediaEpisode is not available in the Supabase-backed version')
+  // Podcast episodes not yet supported
   return null
 }
 
 export async function fetchPodcastFeedAction(_rssFeed: string) {
-  console.warn('[mediaActions] fetchPodcastFeed is not available in the Supabase-backed version')
   return null
 }
 
 export async function downloadPodcastEpisodesAction(_libraryItemId: string, _episodes: unknown[]) {
-  console.warn('[mediaActions] downloadPodcastEpisodes is not available in the Supabase-backed version')
   return null
 }
 
 export async function clearPodcastDownloadQueueAction(_libraryItemId: string) {
-  console.warn('[mediaActions] clearPodcastDownloadQueue is not available in the Supabase-backed version')
   return null
 }
