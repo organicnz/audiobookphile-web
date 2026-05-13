@@ -2,6 +2,8 @@
 
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/lib/merge-classes'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface BookShelfRowProps {
@@ -67,38 +69,44 @@ export default function BookShelfRow({ title, children, className }: BookShelfRo
       </div>
 
       <div className="relative">
-        <div className="categoryPlacard left-4e md:left-8e w-44e relative top-0 z-30 transform rounded-md text-center">
-          <div className="shinyBlack px-2e flex h-full w-full items-center justify-center rounded-xs border">
-            <h2 style={{ fontSize: '0.9em' }}>{title}</h2>
+        <div className="categoryPlacard left-4e md:left-8e w-44e relative top-0 z-30 transform">
+          <div className="bg-primary/95 backdrop-blur-xl px-4 py-1.5 flex h-full w-full items-center justify-center rounded-lg border border-white/10 shadow-lg">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/90">{title}</h2>
           </div>
         </div>
 
-        <div className="bookshelfDividerCategorized h-6e absolute top-0 right-0 left-0 z-5 w-full"></div>
+        <div className="h-px bg-white/5 absolute top-0 right-0 left-0 z-5 w-full"></div>
       </div>
 
-      {canScrollLeft && !isScrolling && (
-        <button
-          className="book-shelf-arrow-left absolute top-0 left-0 z-40 hidden w-32 cursor-pointer items-center justify-center bg-black pr-8 opacity-0 transition-opacity hover:opacity-100 sm:flex"
-          onClick={scrollLeft}
-          aria-label={t('ButtonScrollLeft')}
-        >
-          <span className="material-symbols text-white" style={{ fontSize: '3.75em' }}>
-            chevron_left
-          </span>
-        </button>
-      )}
+      <AnimatePresence>
+        {canScrollLeft && !isScrolling && (
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="absolute top-0 left-0 z-40 hidden h-[calc(100%-24px)] w-24 cursor-pointer items-center justify-start bg-gradient-to-r from-black/80 to-transparent pl-4 transition-all hover:pl-6 sm:flex"
+            onClick={scrollLeft}
+            aria-label={t('ButtonScrollLeft')}
+          >
+            <ChevronLeft size={48} strokeWidth={2.5} className="text-white drop-shadow-lg" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-      {canScrollRight && !isScrolling && (
-        <button
-          className="book-shelf-arrow-right absolute top-0 right-0 z-40 hidden w-32 cursor-pointer items-center justify-center bg-black pl-8 opacity-0 transition-opacity hover:opacity-100 sm:flex"
-          onClick={scrollRight}
-          aria-label={t('ButtonScrollRight')}
-        >
-          <span className="material-symbols text-white" style={{ fontSize: '3.75em' }}>
-            chevron_right
-          </span>
-        </button>
-      )}
+      <AnimatePresence>
+        {canScrollRight && !isScrolling && (
+          <motion.button
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="absolute top-0 right-0 z-40 hidden h-[calc(100%-24px)] w-24 cursor-pointer items-center justify-end bg-gradient-to-l from-black/80 to-transparent pr-4 transition-all hover:pr-6 sm:flex"
+            onClick={scrollRight}
+            aria-label={t('ButtonScrollRight')}
+          >
+            <ChevronRight size={48} strokeWidth={2.5} className="text-white drop-shadow-lg" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

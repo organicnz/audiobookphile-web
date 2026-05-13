@@ -1,6 +1,8 @@
 'use client'
 
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 
 interface ExpandableHtmlProps {
@@ -25,29 +27,21 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
     }
 
     if (!isExpanded) {
-      // If it's already clamped by React, just measure it
       setIsClampedIfOverflowing()
     } else {
-      // If it's expanded, we have to "fake" the clamp to see if it SHOULD be clampable
       const { webkitLineClamp, overflow } = element.style
-
       element.style.webkitLineClamp = lineClamp.toString()
       element.style.overflow = 'hidden'
-
       setIsClampedIfOverflowing()
-
-      // Restore
       element.style.webkitLineClamp = webkitLineClamp
       element.style.overflow = overflow
     }
   }, [lineClamp, isExpanded])
 
-  // Handle content changes
   useLayoutEffect(() => {
     checkClamping()
   }, [html, checkClamping])
 
-  // Handle resize changes (e.g., window width narrowing)
   useLayoutEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
       checkClamping()
@@ -69,29 +63,41 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
 
   return (
     <div className={className}>
-      <div
-        ref={contentRef}
-        className="default-style less-spacing max-w-none overflow-hidden transition-all duration-300"
-        dir="auto"
-        style={{
-          display: '-webkit-box',
-          WebkitBoxOrient: 'vertical',
-          WebkitLineClamp: isExpanded ? 'unset' : lineClamp,
-          overflow: isExpanded ? 'visible' : 'hidden',
-          cursor: isClamped ? 'pointer' : 'auto'
+      <motion.div
+        layout
+        initial={false}
+        animate={{ 
+          height: isExpanded ? 'auto' : 'auto' // Motion handles the layout change
         }}
-        onClick={handleContentClick}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+        className="relative"
+      >
+        <div
+          ref={contentRef}
+          className="default-style less-spacing max-w-none overflow-hidden transition-all duration-300"
+          dir="auto"
+          style={{
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: isExpanded ? 'unset' : lineClamp,
+            overflow: isExpanded ? 'visible' : 'hidden',
+            cursor: isClamped ? 'pointer' : 'auto'
+          }}
+          onClick={handleContentClick}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      </motion.div>
 
       {isClamped && (
         <button
           type="button"
-          className="text-foreground-muted hover:text-foreground focus-visible:outline-foreground mt-2 flex items-center gap-1 rounded ps-1 text-[0.875em] font-semibold select-none focus-visible:outline-1 focus-visible:outline-offset-1"
+          className="group text-foreground/40 hover:text-primary mt-2 flex items-center gap-1.5 rounded-lg py-1 px-2 text-[0.8em] font-black uppercase tracking-widest select-none transition-all duration-300 hover:bg-white/5 active:scale-95"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? t('ButtonReadLess') : t('ButtonReadMore')}
-          <span className={`material-symbols text-[1.125em] transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>expand_more</span>
+          <ChevronDown 
+            size={14} 
+            className={`transition-transform duration-500 ease-out ${isExpanded ? 'rotate-180' : ''}`} 
+          />
         </button>
       )}
     </div>

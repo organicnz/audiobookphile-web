@@ -1,5 +1,4 @@
-'use client'
-
+import { motion } from 'framer-motion'
 import { mergeClasses } from '@/lib/merge-classes'
 import React, { useId, useRef } from 'react'
 import InputWrapper from './InputWrapper'
@@ -37,32 +36,23 @@ export default function ToggleSwitch({
   const labelId = `${id}-label`
 
   const colorMap: Record<string, string> = {
-    success: 'bg-success',
-    primary: 'bg-primary',
+    success: 'bg-primary',
+    primary: 'bg-white/10',
     warning: 'bg-warning',
     error: 'bg-error'
   }
-  const bgColorClasses = colorMap[value ? onColor : offColor] || 'bg-primary'
+  const bgColorClasses = value ? colorMap[onColor] : colorMap[offColor]
 
-  const widthClasses = size === 'small' ? 'w-6' : size === 'medium' ? 'w-8' : 'w-10'
+  const widthClasses = size === 'small' ? 'w-8 h-4.5' : size === 'medium' ? 'w-10 h-6' : 'w-12 h-7.5'
   const buttonClassName = mergeClasses(
-    'border rounded-full border-border flex items-center cursor-pointer justify-start outline-none',
+    'relative inline-flex shrink-0 items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
     bgColorClasses,
-    disabled ? 'cursor-not-allowed bg-checkbox-bg-disabled border-checkbox-bg-disabled' : '',
+    disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer group',
     widthClasses
   )
 
-  const sizeClasses = size === 'small' ? 'w-3 h-3' : size === 'medium' ? 'w-4 h-4' : 'w-5 h-5'
-  const translateClass = size === 'small' ? 'translate-x-3' : size === 'medium' ? 'translate-x-4' : 'translate-x-5'
-  const switchClassName = mergeClasses(
-    'rounded-full border border-black-50 shadow-sm transform transition-transform duration-100',
-    disabled ? 'bg-disabled' : 'bg-white',
-    value ? translateClass : '',
-    sizeClasses
-  )
-
-  const labelSizeClass = size === 'small' ? 'text-xs md:text-sm' : size === 'medium' ? 'text-sm md:text-base' : 'text-base md:text-lg'
-  const labelClassName = mergeClasses('ps-2', labelSizeClass, disabled ? 'cursor-not-allowed text-disabled' : 'cursor-pointer text-foreground')
+  const knobSize = size === 'small' ? 'h-3.5 w-3.5' : size === 'medium' ? 'h-5 w-5' : 'h-6.5 w-6.5'
+  const knobTranslate = size === 'small' ? 16 : size === 'medium' ? 16 : 18 // These are just used in the x: value below
 
   const triggerChange = () => {
     if (!disabled) {
@@ -82,12 +72,6 @@ export default function ToggleSwitch({
     }
   }
 
-  const handleWrapperClick = () => {
-    if (buttonRef.current && !disabled) {
-      buttonRef.current.focus()
-    }
-  }
-
   const derivedAriaLabel = label ? undefined : ariaLabel
   const derivedAriaLabelledBy = label ? labelId : ariaLabelledBy
 
@@ -96,9 +80,7 @@ export default function ToggleSwitch({
       <div
         cy-id="toggle-and-label-wrapper"
         ref={wrapperRef}
-        className="flex items-center justify-start px-1 py-1"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={handleWrapperClick}
+        className="flex items-center justify-start py-1.5 px-1"
       >
         <button
           ref={buttonRef}
@@ -110,14 +92,32 @@ export default function ToggleSwitch({
           aria-labelledby={derivedAriaLabelledBy}
           disabled={disabled}
           className={buttonClassName}
-          onMouseDown={(e) => e.preventDefault()}
           onClick={handleToggle}
           onKeyDown={handleKeyDown}
         >
-          <span cy-id="toggle-switch" className={switchClassName} />
+          <motion.span
+            animate={{ 
+              x: value ? (size === 'small' ? 16 : size === 'medium' ? 18 : 20) : 2,
+              scale: value ? 1.05 : 1
+            }}
+            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            className={mergeClasses(
+              'pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform',
+              knobSize
+            )}
+          />
         </button>
         {label && (
-          <label cy-id="toggle-label" id={labelId} className={labelClassName} htmlFor={toggleId} onMouseDown={(e) => e.preventDefault()}>
+          <label 
+            cy-id="toggle-label" 
+            id={labelId} 
+            className={mergeClasses(
+              'ps-3 select-none font-medium transition-colors cursor-pointer',
+              size === 'small' ? 'text-xs sm:text-sm' : size === 'medium' ? 'text-sm sm:text-base' : 'text-base sm:text-lg',
+              disabled ? 'text-disabled' : 'text-foreground/80 hover:text-foreground'
+            )} 
+            htmlFor={toggleId}
+          >
             {label}
           </label>
         )}
@@ -125,3 +125,4 @@ export default function ToggleSwitch({
     </InputWrapper>
   )
 }
+

@@ -1,5 +1,5 @@
-'use client'
-
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/lib/merge-classes'
 import { KeyboardEvent, ReactNode, useCallback, useId, useMemo } from 'react'
@@ -38,8 +38,6 @@ export default function CollapsibleTable({
   const t = useTypeSafeTranslations()
   const id = useId()
 
-  // Note: Click events from headerActions buttons should call e.stopPropagation()
-  // to prevent toggling the table when clicking action buttons
   const handleClickBar = useCallback(() => {
     if (!keepOpen) {
       onExpandedChange(!expanded)
@@ -57,81 +55,89 @@ export default function CollapsibleTable({
   )
 
   const isExpanded = keepOpen || expanded
-
   const hasHeaderActions = Boolean(headerActions)
-
-  const headerClasses = useMemo(
-    () => mergeClasses('w-full bg-primary py-2 flex items-center px-2 md:px-6 flex-wrap gap-1 md:gap-2', keepOpen ? '' : 'cursor-pointer'),
-    [keepOpen]
-  )
-
-  const iconClasses = useMemo(
-    () =>
-      mergeClasses(
-        'cursor-pointer h-8 w-8 md:h-10 md:w-10 rounded-full hover:bg-bg-hover flex justify-center items-center duration-500 flex-shrink-0',
-        isExpanded ? 'transform rotate-180' : ''
-      ),
-    [isExpanded]
-  )
-
-  const countBadgeClasses = 'h-5 md:h-7 w-5 md:w-7 rounded-full bg-white/10 flex items-center justify-center'
-
   const countAriaLabel = useMemo(() => t('LabelItemsPlural', { count }), [count, t])
 
-  const tableClasses = mergeClasses('text-sm w-full border-collapse border border-border', tableClassName)
-
-  const contentId = useMemo(() => `${id}-content`, [id])
-  const ariaControls = useMemo(() => (keepOpen ? undefined : contentId), [keepOpen, contentId])
-  const ariaExpanded = useMemo(() => (keepOpen ? undefined : isExpanded), [keepOpen, isExpanded])
-  const role = useMemo(() => (keepOpen ? undefined : 'button'), [keepOpen])
-  const tabIndex = useMemo(() => (keepOpen ? undefined : 0), [keepOpen])
-
   return (
-    <div className="my-2 w-full">
+    <div className="my-4 w-full overflow-hidden rounded-2xl border border-white/10 bg-primary/5 shadow-lg">
       <div
-        className={headerClasses}
+        className={mergeClasses(
+          'w-full bg-white/5 backdrop-blur-md py-4 px-6 flex items-center gap-4 transition-colors',
+          !keepOpen ? 'cursor-pointer hover:bg-white/10' : ''
+        )}
         onClick={handleClickBar}
         onKeyDown={handleKeyDownBar}
-        role={role}
-        tabIndex={tabIndex}
-        aria-expanded={ariaExpanded}
-        aria-controls={ariaControls}
+        role={!keepOpen ? 'button' : undefined}
+        tabIndex={!keepOpen ? 0 : undefined}
+        aria-expanded={!keepOpen ? isExpanded : undefined}
+        aria-controls={!keepOpen ? `${id}-content` : undefined}
       >
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 md:gap-2">
-          <div className="flex min-w-0 flex-shrink-0 items-center">
-            <p className="min-w-0 overflow-hidden pe-2 text-ellipsis whitespace-nowrap md:pe-4">{title}</p>
-            <div className={`${countBadgeClasses} flex-shrink-0`} aria-label={countAriaLabel} role="status">
-              <span className="font-mono text-sm" aria-hidden="true">
-                {count}
-              </span>
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/80 truncate">
+            {title}
+          </h3>
+          <div 
+            className="flex h-6 w-8 items-center justify-center rounded-full bg-primary/20 text-[10px] font-black text-primary shadow-inner" 
+            aria-label={countAriaLabel} 
+            role="status"
+          >
+            {count}
+          </div>
+          <div className="grow" />
+          {hasHeaderActions && (
+            <div className="flex flex-shrink-0 items-center gap-2" onClick={e => e.stopPropagation()}>
+              {headerActions}
             </div>
-          </div>
-          <div className={hasHeaderActions ? 'min-w-0 grow' : 'grow'} />
-          {hasHeaderActions && <div className="flex flex-shrink-0 items-center gap-2">{headerActions}</div>}
+          )}
         </div>
+        
         {!keepOpen && (
-          <div className={iconClasses} aria-hidden="true">
-            <span className="material-symbols text-2xl md:text-4xl">keyboard_arrow_down</span>
-          </div>
+          <motion.div
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className="text-foreground/40"
+          >
+            <ChevronDown size={20} strokeWidth={3} />
+          </motion.div>
         )}
       </div>
-      {isExpanded && (
-        <div ref={containerRef} id={`${id}-content`} role="region" aria-label={title}>
-          <table className={tableClasses}>
-            <caption className="sr-only">{title}</caption>
-            <thead>
-              <tr>
-                {tableHeaders.map((header, index) => (
-                  <th key={index} className={mergeClasses('py-1 text-start text-xs', header.className)} scope={header.scope ?? 'col'}>
-                    {header.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>{children}</tbody>
-          </table>
-        </div>
-      )}
+
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            key="content"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+          >
+            <div ref={containerRef} id={`${id}-content`} role="region" aria-label={title} className="p-4 pt-0">
+              <div className="overflow-x-auto">
+                <table className={mergeClasses('w-full border-collapse text-sm', tableClassName)}>
+                  <caption className="sr-only">{title}</caption>
+                  <thead>
+                    <tr className="border-b border-white/5">
+                      {tableHeaders.map((header, index) => (
+                        <th 
+                          key={index} 
+                          className={mergeClasses('py-3 text-start text-[10px] font-black uppercase tracking-widest text-foreground/30', header.className)} 
+                          scope={header.scope ?? 'col'}
+                        >
+                          {header.label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {children}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
+

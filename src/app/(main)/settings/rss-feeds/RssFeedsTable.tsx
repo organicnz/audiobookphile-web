@@ -11,6 +11,7 @@ import { useUser } from '@/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { formatJsDate, formatJsDatetime } from '@/lib/datefns'
 import { RssFeed } from '@/types/api'
+import { Check, X } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
 interface RssFeedsTableProps {
@@ -152,9 +153,7 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
       accessor: (rssFeed) =>
         rssFeed.meta.preventIndexing && (
           <div className="flex items-center justify-center">
-            <span className="material-symbols text-xl leading-none" aria-hidden="true">
-              check
-            </span>
+            <Check size={18} className="text-success" />
           </div>
         ),
       headerClassName: 'text-center',
@@ -183,7 +182,7 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
             loading={closingFeedId === rssFeed.id}
             onClick={() => handleCloseClick(rssFeed)}
           >
-            close
+            <X size={18} />
           </IconBtn>
         </div>
       )

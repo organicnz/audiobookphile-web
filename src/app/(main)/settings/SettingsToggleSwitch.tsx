@@ -1,5 +1,6 @@
 import ToggleSwitch from '@/components/ui/ToggleSwitch'
 import Tooltip from '@/components/ui/Tooltip'
+import { Info } from 'lucide-react'
 
 interface SettingsToggleSwitchProps {
   label: string
@@ -15,9 +16,9 @@ export default function SettingsToggleSwitch(props: SettingsToggleSwitchProps) {
       <ToggleSwitch label={props.label} className="pr-0" value={props.value} onChange={props.onChange} disabled={props.disabled ?? false} />
       {props.tooltip && (
         <Tooltip text={props.tooltip} position="right" maxWidth={300} addTabIndex={true}>
-          <span className="material-symbols cursor-default text-lg" aria-hidden="true">
-            info
-          </span>
+          <div className="flex items-center justify-center text-foreground/40 hover:text-white transition-colors cursor-default">
+            <Info size={16} strokeWidth={2.5} />
+          </div>
         </Tooltip>
       )}
     </div>

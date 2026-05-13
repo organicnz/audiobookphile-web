@@ -1,10 +1,9 @@
 'use client'
 
-import { ToastMessage } from '@/components/widgets/ToastContainer'
-import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react'
+import { toast } from 'sonner'
+import React, { createContext, ReactNode, useCallback, useContext } from 'react'
 
 interface ToastContextType {
-  toasts: ToastMessage[]
   showToast: (
     message: string,
     options?: {
@@ -13,21 +12,17 @@ interface ToastContextType {
       duration?: number
       onDismiss?: () => void
     }
-  ) => string
-  removeToast: (id: string) => void
+  ) => string | number
+  removeToast: (id: string | number) => void
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
-
-let toastIdCounter = 0
 
 interface ToastProviderProps {
   children: ReactNode
 }
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
-  const [toasts, setToasts] = useState<ToastMessage[]>([])
-
   const showToast = useCallback(
     (
       message: string,
@@ -38,41 +33,41 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
         onDismiss?: () => void
       }
     ) => {
-      const id = `toast-${++toastIdCounter}`
-      const newToast: ToastMessage = {
-        id,
-        message,
-        type: options?.type || 'info',
-        title: options?.title,
-        duration: options?.duration ?? 5000,
-        onDismiss: options?.onDismiss
+      const toastOptions = {
+        description: options?.title,
+        duration: options?.duration,
+        onAutoClose: options?.onDismiss,
+        onDismiss: options?.onDismiss,
       }
 
-      setToasts((prev) => [...prev, newToast])
-      return id
+      switch (options?.type) {
+        case 'success':
+          return toast.success(message, toastOptions)
+        case 'error':
+          return toast.error(message, toastOptions)
+        case 'warning':
+          return toast.warning(message, toastOptions)
+        case 'info':
+        default:
+          return toast.info(message, toastOptions)
+      }
     },
     []
   )
 
-  const removeToast = useCallback((id: string) => {
-    setToasts((prev) => {
-      const removed = prev.find((t) => t.id === id)
-      if (removed?.onDismiss) {
-        // Defer so consumers are not setState'd during ToastProvider's setState (React warning)
-        queueMicrotask(removed.onDismiss)
-      }
-      return prev.filter((toast) => toast.id !== id)
-    })
+  const removeToast = useCallback((id: string | number) => {
+    toast.dismiss(id)
   }, [])
 
   const value: ToastContextType = {
-    toasts,
     showToast,
     removeToast
   }
 
   return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>
 }
+
+
 
 export const useGlobalToast = (): ToastContextType => {
   const context = useContext(ToastContext)

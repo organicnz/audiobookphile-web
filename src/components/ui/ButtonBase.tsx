@@ -1,8 +1,9 @@
-'use client'
-
 import { mergeClasses } from '@/lib/merge-classes'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import React from 'react'
+
+const MotionLink = motion(Link)
 
 interface ButtonBaseProps {
   id?: string
@@ -18,7 +19,9 @@ interface ButtonBaseProps {
   ariaLabel?: string
   className?: string
   ref?: React.Ref<HTMLButtonElement>
-  // Allow any additional HTML attributes
+  whileHover?: any
+  whileTap?: any
+  transition?: any
   [key: string]: unknown
 }
 
@@ -36,31 +39,26 @@ const ButtonBase = ({
   type = 'button',
   ariaLabel,
   ref,
+  whileHover,
+  whileTap,
+  transition,
   ...props
 }: ButtonBaseProps) => {
   const buttonClass = mergeClasses(
-    // Base styles
-    'relative shadow-md border border-border rounded-md bg-primary flex items-center justify-center overflow-hidden',
-
-    // Focus styles
-    'focus-visible:outline-1 focus-visible:outline-foreground-muted focus-visible:outline-offset-0',
-
-    // Size-based height (identical to InputWrapper)
-    size === 'small' ? 'h-9' : size === 'large' ? 'h-11' : size === 'auto' ? 'min-h-10 h-auto' : size === 'custom' ? '' : 'h-10',
-
-    // Disabled styles
-    'disabled:bg-bg-disabled disabled:cursor-not-allowed disabled:border-none disabled:text-disabled',
-
-    // Borderless styles
-    borderless ? 'border-0 bg-transparent shadow-none text-button-foreground-muted' : 'border',
-
-    // Before pseudo-element (replacing abs-btn::before)
-    'before:content-[""] before:absolute before:inset-0 before:bg-transparent before:pointer-events-none',
-
-    // Hover styles
-    borderless ? 'hover:not-disabled:text-button-foreground' : 'hover:not-disabled:before:bg-bg-hover',
-
-    // Custom className
+    'relative flex items-center justify-center overflow-hidden transition-all duration-200 select-none font-sans font-semibold',
+    'rounded-xl border shadow-sm',
+    !borderless && 'bg-primary/80 backdrop-blur-md border-white/10 hover:border-white/20',
+    borderless && 'border-transparent bg-transparent shadow-none text-foreground/60 hover:text-foreground',
+    
+    // Focus states
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black',
+    
+    // Sizing
+    size === 'small' ? 'h-9 px-4 text-sm' : size === 'large' ? 'h-12 px-10 text-lg' : size === 'auto' ? 'min-h-10 h-auto px-6' : size === 'custom' ? '' : 'h-10 px-8 text-base',
+    
+    // Disabled states
+    'disabled:opacity-40 disabled:cursor-not-allowed disabled:grayscale',
+    
     className
   )
 
@@ -70,29 +68,34 @@ const ButtonBase = ({
     }
   }
 
-  const isDisabled = disabled
+  const animationProps = !disabled ? {
+    whileHover: whileHover ?? { scale: 1.02, y: -1 },
+    whileTap: whileTap ?? { scale: 0.97 },
+    transition: transition ?? { type: 'spring', stiffness: 500, damping: 25 }
+  } : {}
 
   if (to) {
     return (
-      <Link
+      <MotionLink
         href={to}
         className={buttonClass}
         onClick={handleClick}
         onMouseDown={onMouseDown}
         onKeyDown={onKeyDown}
-        style={{ pointerEvents: isDisabled ? 'none' : 'auto' }}
-        tabIndex={isDisabled ? -1 : 0}
-        aria-disabled={isDisabled}
+        style={{ pointerEvents: disabled ? 'none' : 'auto' }}
+        tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled}
         aria-label={ariaLabel}
+        {...animationProps}
         {...props}
       >
         {children}
-      </Link>
+      </MotionLink>
     )
   }
 
   return (
-    <button
+    <motion.button
       id={id}
       ref={ref}
       type={type}
@@ -102,10 +105,11 @@ const ButtonBase = ({
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       aria-label={ariaLabel}
+      {...animationProps}
       {...props}
     >
       {children}
-    </button>
+    </motion.button>
   )
 }
 

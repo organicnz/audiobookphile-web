@@ -1,5 +1,3 @@
-'use client'
-
 import { mergeClasses } from '@/lib/merge-classes'
 
 export interface LabelProps {
@@ -16,7 +14,11 @@ export interface LabelProps {
  * Consolidates common label styling patterns across UI components
  */
 export default function Label({ children, id, htmlFor, disabled = false, className, onClick }: LabelProps) {
-  const labelClass = mergeClasses('w-fit text-sm font-semibold px-1 block mb-1', disabled ? 'text-disabled' : '', className)
+  const labelClass = mergeClasses(
+    'w-fit text-[10px] font-black uppercase tracking-[0.1em] px-1 block mb-1.5 transition-colors',
+    disabled ? 'text-foreground/20' : 'text-foreground/60 group-focus-within:text-primary',
+    className
+  )
   const handleClick = disabled || !onClick ? undefined : onClick
 
   return (
@@ -25,3 +27,4 @@ export default function Label({ children, id, htmlFor, disabled = false, classNa
     </label>
   )
 }
+

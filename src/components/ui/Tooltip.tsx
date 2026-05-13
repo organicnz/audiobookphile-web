@@ -1,5 +1,4 @@
-'use client'
-
+import { motion, AnimatePresence } from 'framer-motion'
 import { useModalRef } from '@/contexts/ModalContext'
 import { mergeClasses } from '@/lib/merge-classes'
 import { type Placement, arrow as arrowMw, autoUpdate, flip, offset, shift, size, useFloating } from '@floating-ui/react-dom'
@@ -36,7 +35,7 @@ const Tooltip = ({
   position = 'right',
   usePortal: usePortalProp = false,
   className,
-  offsetPx = 8,
+  offsetPx = 10,
   edgePadding = 8,
   maxWidth,
   withArrow = true,
@@ -57,12 +56,10 @@ const Tooltip = ({
 
   const placement = placementMap[position]
 
-  // Ensure component is mounted before rendering tooltip
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  // Positioning middleware (see https://floating-ui.com/docs/useFloating#middleware)
   const middleware = useMemo(() => {
     const mw = [
       offset(offsetPx),
@@ -84,7 +81,7 @@ const Tooltip = ({
 
   const {
     update,
-    refs, // { setReference, setFloating, reference, floating }
+    refs,
     elements,
     floatingStyles,
     placement: resolvedPlacement,
@@ -103,7 +100,6 @@ const Tooltip = ({
     }
   }, [open, elements.floating, elements.reference, update])
 
-  // Tiny hide delay so moving between ref/tooltip doesn't flicker
   const hideTimeoutRef = useRef<number | null>(null)
   const clearHideTimeout = useCallback(() => {
     if (hideTimeoutRef.current != null) {
@@ -120,35 +116,22 @@ const Tooltip = ({
 
   const closeSoon = useCallback(() => {
     clearHideTimeout()
-    hideTimeoutRef.current = window.setTimeout(() => setOpen(false), 100)
+    hideTimeoutRef.current = window.setTimeout(() => setOpen(false), 150)
   }, [clearHideTimeout])
 
   const onMouseEnter = () => {
     if (!disabled) openNow()
   }
 
-  const onMouseLeave = () => {
-    closeSoon()
-  }
+  const onMouseLeave = () => closeSoon()
+  const onFocus = () => { if (!disabled) openNow() }
+  const onBlur = () => setOpen(false)
 
-  // Focus/blur (keyboard a11y)
-  const onFocus = () => {
-    if (!disabled) openNow()
-  }
-
-  const onBlur = () => {
-    setOpen(false)
-  }
-
-  // Handle click to close (used when child opens an external link)
   const onClick = () => {
     if (closeOnClick) {
       closeSoon()
-
-      // Blur any focused child elements to prevent tooltip from re-opening
       const activeElement = document.activeElement as HTMLElement
       if (activeElement && activeElement !== document.body) {
-        // Check if the active element is a child of our reference element
         if (refs.reference.current instanceof HTMLElement && refs.reference.current.contains(activeElement)) {
           activeElement.blur()
         }
@@ -162,7 +145,6 @@ const Tooltip = ({
     }
   }
 
-  // Add aria-describedby to the first element child of the container
   useEffect(() => {
     if (refs.reference.current instanceof Element) {
       const firstChild = refs.reference.current.firstElementChild as HTMLElement
@@ -172,17 +154,13 @@ const Tooltip = ({
     }
   }, [tooltipId, refs.reference])
 
-  // Escape to dismiss
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
     window.addEventListener('keydown', onKey)
-    return () => {
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [open, refs.reference, refs.floating])
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
 
-  // If reference goes offscreen entirely, hide tooltip
   useEffect(() => {
     if (!open) return
     const io = new IntersectionObserver(
@@ -196,7 +174,6 @@ const Tooltip = ({
     return () => io.disconnect()
   }, [open, refs.reference])
 
-  // Position the arrow
   const arrowStyles = useMemo<React.CSSProperties>(() => {
     if (!withArrow) return {}
     const { x, y } = middlewareData.arrow ?? {}
@@ -213,37 +190,40 @@ const Tooltip = ({
     } as React.CSSProperties
   }, [middlewareData.arrow, resolvedPlacement, withArrow])
 
-  const tooltipClass = mergeClasses(
-    'inline-block whitespace-normal break-words text-center',
-    'rounded-sm bg-primary text-foreground text-xs px-2 py-1 shadow-lg z-[1000]',
-    'transition-opacity duration-300',
-    open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
-    tooltipClassName
-  )
-
-  const referenceClass = mergeClasses('inline-flex', className)
-
   const tooltipElement = (
-    <div
-      ref={refs.setFloating}
-      id={tooltipId}
-      role="tooltip"
-      aria-hidden={!open}
-      style={floatingStyles}
-      className={tooltipClass}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      {text}
-      {withArrow && <div ref={arrowRef} style={arrowStyles} className="bg-primary absolute h-2 w-2 rotate-45" />}
-    </div>
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          key={tooltipId}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+          ref={refs.setFloating}
+          id={tooltipId}
+          role="tooltip"
+          aria-hidden={!open}
+          style={{ ...floatingStyles, zIndex: 10000 }}
+          className={mergeClasses(
+            'inline-block whitespace-normal break-words text-center px-3 py-1.5',
+            'rounded-lg bg-primary/95 backdrop-blur-xl border border-white/10 shadow-2xl text-foreground text-xs font-semibold',
+            tooltipClassName
+          )}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        >
+          {text}
+          {withArrow && <div ref={arrowRef} style={arrowStyles} className="bg-primary border-r border-b border-white/10 absolute h-2 w-2 rotate-45" />}
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 
   return (
     <div
       tabIndex={addTabIndex ? 0 : undefined}
       ref={refs.setReference}
-      className={referenceClass}
+      className={mergeClasses('inline-flex', className)}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onFocus={onFocus}
@@ -252,14 +232,13 @@ const Tooltip = ({
       aria-describedby={tooltipId}
     >
       {children}
-      {mounted &&
-        (usePortal
-          ? portalRoot
-            ? createPortal(tooltipElement, portalRoot)
-            : typeof document !== 'undefined'
-              ? createPortal(tooltipElement, document.body)
-              : null
-          : tooltipElement)}
+      {mounted && (usePortal
+        ? portalRoot
+          ? createPortal(tooltipElement, portalRoot)
+          : typeof document !== 'undefined'
+            ? createPortal(tooltipElement, document.body)
+            : null
+        : tooltipElement)}
     </div>
   )
 }

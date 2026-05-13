@@ -1,5 +1,4 @@
-'use client'
-
+import { Search, X } from 'lucide-react'
 import InputWrapper from '@/components/ui/InputWrapper'
 import LoadingSpinner from '@/components/widgets/LoadingSpinner'
 import { useClickOutside } from '@/hooks/useClickOutside'
@@ -150,11 +149,11 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
 
   return (
     <div className="relative w-full" ref={containerRef}>
-      <InputWrapper size="small" className="w-full" inputRef={inputRef}>
+      <InputWrapper size="small" className="w-full bg-white/5 border-white/10 group-focus-within:bg-white/10 group-focus-within:border-primary/50 transition-all duration-300" inputRef={inputRef}>
         <input
           ref={inputRef}
           type="text"
-          className="h-full w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+          className="h-full w-full bg-transparent text-sm font-medium outline-none placeholder:text-foreground/30 text-foreground"
           placeholder={t('PlaceholderSearch')}
           value={searchQuery}
           onInput={(e) => setSearchQuery(e.currentTarget.value)}
@@ -176,19 +175,19 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
       </InputWrapper>
 
       {/* Search Icon, Spinner or Clear Button */}
-      <div className="absolute end-0 top-0 flex h-full items-center pe-2">
+      <div className="absolute end-0 top-0 flex h-full items-center pe-3">
         {isSearching || isTyping ? (
-          <LoadingSpinner size="la-sm" className="scale-50 text-gray-400" />
+          <LoadingSpinner size="la-sm" className="scale-75 text-primary opacity-80" />
         ) : searchQuery ? (
-          <button onClick={handleClear} className="cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" aria-label="Clear search">
-            <span className="material-symbols text-lg" aria-hidden="true">
-              close
-            </span>
+          <button 
+            onClick={handleClear} 
+            className="cursor-pointer text-foreground/40 hover:text-foreground hover:bg-white/10 p-1 rounded-md transition-all" 
+            aria-label="Clear search"
+          >
+            <X size={16} strokeWidth={3} aria-hidden="true" />
           </button>
         ) : (
-          <span className="material-symbols pointer-events-none text-lg text-gray-400" aria-hidden="true">
-            search
-          </span>
+          <Search size={16} strokeWidth={2.5} className="pointer-events-none text-foreground/30 group-focus-within:text-primary transition-colors duration-300" aria-hidden="true" />
         )}
       </div>
 
@@ -208,3 +207,4 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
     </div>
   )
 }
+

@@ -2,6 +2,7 @@
 
 import Dropdown, { DropdownItem } from '@/components/ui/Dropdown'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react'
 import { useMemo } from 'react'
 
 interface EpisodesSortSelectProps {
@@ -26,16 +27,18 @@ export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disable
     [t]
   )
 
-  // Process items to add the sort arrow to the selected one
   const displayItems = useMemo(() => {
     return sortItems.map((item) => {
       if (item.value === sortBy) {
+        const Icon = sortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
         return {
           ...item,
           rightIcon: (
-            <span className="material-symbols text-xl text-yellow-400" aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}>
-              {sortDesc ? 'expand_more' : 'expand_less'}
-            </span>
+            <Icon 
+              size={16} 
+              className="text-primary opacity-80" 
+              aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
+            />
           )
         }
       }
@@ -46,19 +49,20 @@ export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disable
   const handleSortChange = (newSortBy: string | number) => {
     const val = String(newSortBy)
     if (val === sortBy) {
-      // Toggle direction
       onChange(val, !sortDesc)
     } else {
-      // Default to descending for publishedAt, ascending for others
       const defaultDesc = val === 'publishedAt'
       onChange(val, defaultDesc)
     }
   }
 
+  const Icon = sortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
   const rightIcon = (
-    <span className="material-symbols text-lg text-yellow-400" aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}>
-      {sortDesc ? 'expand_more' : 'expand_less'}
-    </span>
+    <Icon 
+      size={16} 
+      className="text-primary" 
+      aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
+    />
   )
 
   return (
@@ -69,7 +73,7 @@ export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disable
         onChange={handleSortChange}
         size="auto"
         rightIcon={rightIcon}
-        className="h-9 text-xs"
+        className="h-9 text-[11px] font-black uppercase tracking-widest"
         highlightSelected={true}
         menuMaxHeight="none"
         disabled={disabled}

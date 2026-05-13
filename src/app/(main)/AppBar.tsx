@@ -1,5 +1,6 @@
 'use client'
 
+import { motion, AnimatePresence } from 'framer-motion'
 import IconBtn from '@/components/ui/IconBtn'
 import Tooltip from '@/components/ui/Tooltip'
 import NotificationWidget from '@/components/widgets/NotificationWidget'
@@ -7,6 +8,7 @@ import { useMediaContext } from '@/contexts/MediaContext'
 import { useUser } from '@/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { Library } from '@/types/api'
+import { Search, Upload, Settings, Library as LibraryIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
@@ -24,7 +26,6 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
   const { user, userDefaultLibraryId } = useUser()
   const userCanUpload = user.permissions.upload
   const [isSearchMode, setIsSearchMode] = useState(false)
-  // When not on a library page, use the last current library id when navigating home
   const { lastCurrentLibraryId } = useMediaContext()
 
   const handleSearchModeToggle = useCallback(() => {
@@ -36,93 +37,107 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
   }, [])
 
   const isAdmin = ['admin', 'root'].includes(user.type)
-
   const currentLibrary = libraries?.find((lib) => lib.id === currentLibraryId)
   const redirectLibraryId = currentLibraryId || lastCurrentLibraryId || userDefaultLibraryId
-  // New installs have no libraries, so redirect to settings
   const redirectUrl = redirectLibraryId ? `/library/${redirectLibraryId}` : '/settings'
 
   return (
-    <div className="bg-primary relative h-16 w-full">
+    <div className="sticky top-0 z-50 h-16 w-full">
       <header
         cy-id="appbar"
-        className="box-shadow-appbar absolute start-0 top-0 bottom-0 z-60 flex h-full w-full items-center justify-start gap-2 px-2 py-1 md:gap-4 md:px-6"
+        className="absolute inset-0 flex items-center justify-between gap-4 px-4 py-2 bg-primary/95 backdrop-blur-xl border-b border-white/5 shadow-2xl md:px-8"
       >
-        <Link
-          href={redirectUrl}
-          aria-label={`audiobookshelf - ${t('ButtonHome')}`}
-          className="text-foreground hover:text-foreground/80 flex items-center justify-start gap-2 text-sm md:gap-4"
-        >
-          <Image src="/images/icon.svg" alt="" width={40} height={40} priority className="h-8 w-8 min-w-8 sm:h-10 sm:w-10 sm:min-w-10" />
-          <span className="hidden text-xl hover:underline md:block">audiobookshelf</span>
-        </Link>
-
-        {/* Libraries Dropdown or Library Books Button */}
-        {libraries && currentLibraryId && !isSearchMode && <LibrariesDropdown currentLibraryId={currentLibraryId} libraries={libraries} />}
-
-        {/* In search mode: show libraries dropdown on desktop, library_books button on mobile */}
-        {isSearchMode && currentLibrary && (
-          <>
-            {/* Desktop: show libraries dropdown */}
-            <div className="hidden md:block">
-              <LibrariesDropdown currentLibraryId={currentLibraryId!} libraries={libraries!} />
+        <div className="flex items-center gap-4 min-w-0 flex-shrink-0">
+          <Link
+            href={redirectUrl}
+            aria-label={`audiobookshelf - ${t('ButtonHome')}`}
+            className="group flex items-center gap-3"
+          >
+            <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white/5 p-1 shadow-inner transition-transform group-hover:scale-105 group-active:scale-95">
+              <Image 
+                src="/images/icon.svg" 
+                alt="" 
+                width={40} 
+                height={40} 
+                priority 
+                className="h-full w-full object-contain" 
+              />
             </div>
-            {/* Mobile: show library_books button */}
-            <div className="md:hidden">
-              <Tooltip text={currentLibrary.name} position="bottom">
-                <IconBtn borderless ariaLabel={t('ButtonLibrary')} onClick={handleSearchModeToggle} className="text-foreground hover:text-foreground/80">
-                  library_books
-                </IconBtn>
-              </Tooltip>
-            </div>
-          </>
-        )}
+            <span className="hidden text-lg font-black tracking-tight text-foreground/90 transition-colors group-hover:text-foreground md:block">
+              audiobookshelf
+            </span>
+          </Link>
 
-        {/* Search Input mobile and desktop */}
-        {currentLibrary && (
-          <div className="min-w-24 flex-1">
-            {isSearchMode ? (
-              <GlobalSearchInput autoFocus onSubmit={handleSearchSubmit} libraryId={currentLibraryId} />
-            ) : (
-              <div className="hidden md:block">
-                <GlobalSearchInput onSubmit={handleSearchSubmit} libraryId={currentLibraryId} />
-              </div>
+          <AnimatePresence mode="wait">
+            {!isSearchMode && libraries && currentLibraryId && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="hidden sm:block"
+              >
+                <LibrariesDropdown currentLibraryId={currentLibraryId} libraries={libraries} />
+              </motion.div>
             )}
-          </div>
-        )}
+          </AnimatePresence>
+        </div>
 
-        <div className="flex-grow" />
+        <div className="flex flex-1 items-center justify-center min-w-0 max-w-2xl px-2">
+          <AnimatePresence mode="wait">
+            {isSearchMode || !currentLibrary ? (
+              <motion.div
+                key="search-mode"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="w-full"
+              >
+                <GlobalSearchInput autoFocus onSubmit={handleSearchSubmit} libraryId={currentLibraryId} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="default-mode"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="hidden w-full md:block"
+              >
+                <GlobalSearchInput onSubmit={handleSearchSubmit} libraryId={currentLibraryId} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-        {!isSearchMode && currentLibrary && (
-          <>
-            {/* Mobile only - Search Icon toggles search mode */}
-            <IconBtn borderless ariaLabel={t('ButtonSearch')} onClick={handleSearchModeToggle} className="md:hidden">
-              search
-            </IconBtn>
-          </>
-        )}
-
-        <div className="flex min-w-0 items-center gap-1">
-          <NotificationWidget />
-
-          {isAdmin && (
-            <div className="hidden items-center gap-1 md:flex">
-              <Tooltip text={t('ButtonUpload')} position="bottom">
-                <IconBtn borderless ariaLabel={t('ButtonUpload')} to="/upload">
-                  upload
-                </IconBtn>
-              </Tooltip>
-              <Tooltip text={t('HeaderSettings')} position="bottom">
-                <IconBtn borderless ariaLabel={t('HeaderSettings')} to="/settings">
-                  settings
-                </IconBtn>
-              </Tooltip>
-            </div>
+        <div className="flex items-center gap-2 md:gap-4">
+          {!isSearchMode && currentLibrary && (
+            <IconBtn 
+              borderless 
+              ariaLabel={t('ButtonSearch')} 
+              onClick={handleSearchModeToggle} 
+              className="md:hidden" 
+              icon={Search} 
+            />
           )}
 
-          <AppBarNav userCanUpload={userCanUpload} isAdmin={isAdmin} username={user.username} />
+          <div className="flex items-center gap-1.5 border-s border-white/10 ps-2 md:ps-4">
+            <NotificationWidget />
+
+            {isAdmin && (
+              <div className="hidden items-center gap-1.5 lg:flex">
+                <Tooltip text={t('ButtonUpload')} position="bottom">
+                  <IconBtn borderless ariaLabel={t('ButtonUpload')} to="/upload" icon={Upload} />
+                </Tooltip>
+                <Tooltip text={t('HeaderSettings')} position="bottom">
+                  <IconBtn borderless ariaLabel={t('HeaderSettings')} to="/settings" icon={Settings} />
+                </Tooltip>
+              </div>
+            )}
+
+            <AppBarNav userCanUpload={userCanUpload} isAdmin={isAdmin} username={user.username} />
+          </div>
         </div>
       </header>
     </div>
   )
 }
+

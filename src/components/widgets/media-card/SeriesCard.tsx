@@ -182,29 +182,25 @@ function SeriesCard(props: SeriesCardProps) {
           {/* Books count badge */}
           <div
             cy-id="seriesLengthMarker"
-            className="shadow-modal-content absolute z-20 rounded-lg"
-            style={{
-              top: '0.375em',
-              right: '0.375em',
-              padding: '0.1em 0.25em',
-              backgroundColor: '#cd9d49dd'
-            }}
+            className="absolute z-20 top-2 end-2 px-2 py-0.5 rounded-lg bg-primary/90 backdrop-blur-md border border-white/10 shadow-2xl"
           >
-            <p style={{ fontSize: '0.8em' }} role="status" aria-label={t('LabelNumberOfBooks')}>
+            <p className="text-[10px] font-black tracking-tighter text-white" role="status" aria-label={t('LabelNumberOfBooks')}>
               {books.length}
             </p>
           </div>
 
           {/* Progress bar */}
           {seriesProgressPercent > 0 && (
-            <div
-              cy-id="seriesProgressBar"
-              className={mergeClasses(
-                'box-shadow-progressbar absolute start-0 bottom-0 z-10 h-1 max-w-full rounded-b',
-                isSeriesFinished ? 'bg-success' : 'bg-yellow-400'
-              )}
-              style={{ width: `${seriesProgressPercent * 100}%` }}
-            />
+            <div className="absolute bottom-0 start-0 w-full h-1 bg-white/10 z-10 overflow-hidden rounded-b">
+              <div
+                cy-id="seriesProgressBar"
+                className={mergeClasses(
+                  'h-full transition-all duration-500 shadow-[0_0_8px_rgba(251,191,36,0.5)]',
+                  isSeriesFinished ? 'bg-success' : 'bg-primary'
+                )}
+                style={{ width: `${seriesProgressPercent * 100}%` }}
+              />
+            </div>
           )}
 
           {/* Hover/Selection overlay with display title */}
@@ -213,11 +209,17 @@ function SeriesCard(props: SeriesCardProps) {
             selected={selected}
             cyId="hoveringDisplayTitle"
             className={mergeClasses(
-              'z-20 flex items-center justify-center bg-black/60 text-center transition-opacity',
+              'z-20 flex items-center justify-center bg-primary/40 backdrop-blur-md text-center transition-opacity duration-300',
               isHovering || isSelectionMode ? 'opacity-100' : 'opacity-0'
             )}
           >
-            <div style={{ padding: '1em' }}>{hasValidCovers && isHovering && <p style={{ fontSize: '1.2em' }}>{displayTitle}</p>}</div>
+            <div className="p-4">
+              {hasValidCovers && isHovering && (
+                <p className="text-sm font-black uppercase tracking-wider text-white drop-shadow-lg">
+                  {displayTitle}
+                </p>
+              )}
+            </div>
 
             {/* Selection button */}
             {showSelectedButton && (isSelectionMode || isHovering) && (
@@ -236,11 +238,14 @@ function SeriesCard(props: SeriesCardProps) {
           {series.rssFeed && !isSelectionMode && !isHovering && (
             <div
               cy-id="rssFeed"
-              className={mergeClasses('absolute start-[0.375em] top-[0.375em] z-10', 'flex items-center justify-center rounded-full bg-black/40 shadow-sm')}
-              style={{ width: '1.5em', height: '1.5em' }}
+              className={mergeClasses(
+                'absolute start-2 top-2 z-10',
+                'flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg'
+              )}
+              style={{ width: '1.5rem', height: '1.5rem' }}
             >
-              <span className="material-symbols text-orange-500" aria-hidden="true" style={{ fontSize: '1em' }}>
-                rss_feed
+              <span className="text-orange-500">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M4 11a9 9 0 0 1 9 9" /><path d="M4 4a16 16 0 0 1 16 16" /><circle cx="5" cy="19" r="1" /></svg>
               </span>
             </div>
           )}

@@ -15,7 +15,9 @@ import { useMediaCardActions } from '@/components/widgets/media-card/useMediaCar
 import { useMediaContext } from '@/contexts/MediaContext'
 import { useUser } from '@/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/lib/merge-classes'
 import { PlayerState, type BookLibraryItem, type PodcastLibraryItem, type RssFeed } from '@/types/api'
+import { Play, Pause, AlertCircle, BookOpen, ListPlus, CheckSquare, Edit } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 
 interface LibraryItemActionButtonsProps {
@@ -166,79 +168,101 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-start gap-1 pt-4">
+      <div className="flex flex-wrap items-center justify-start gap-3 pt-6">
         {showPlayButton && (
           <Btn
             onClick={handlePlay}
             loading={playerHandler.state.playerState === PlayerState.LOADING}
-            color="bg-success"
+            color={isItemPlaying ? 'bg-primary' : 'bg-success'}
             size="small"
-            className="mr-2 flex h-9 items-center px-4"
+            className="flex h-10 items-center px-6 rounded-xl shadow-lg shadow-success/20 uppercase font-black tracking-widest text-[11px]"
           >
-            <span className="material-symbols fill -ml-2 pr-1 text-2xl text-white">{isItemPlaying ? 'pause' : 'play_arrow'}</span>
+            {isItemPlaying ? (
+              <Pause size={18} className="mr-2 fill-current" />
+            ) : (
+              <Play size={18} className="mr-2 fill-current" />
+            )}
             {isItemPlaying ? t('ButtonPause') : t('ButtonPlay')}
           </Btn>
         )}
 
         {!showPlayButton && (libraryItem.isMissing || libraryItem.isInvalid) && (
-          <Btn color="bg-error" size="small" className="mr-2 flex h-9 items-center px-4" disabled>
-            <span className="material-symbols -ml-2 pr-1 text-2xl text-white">error</span>
+          <Btn 
+            color="bg-error" 
+            size="small" 
+            className="flex h-10 items-center px-6 rounded-xl opacity-80 uppercase font-black tracking-widest text-[11px]" 
+            disabled
+          >
+            <AlertCircle size={18} className="mr-2" />
             {libraryItem.isMissing ? t('LabelMissing') : t('LabelIncomplete')}
           </Btn>
         )}
 
         {showReadButton && (
-          <Btn onClick={handleReadEBook} color="bg-info" size="small" className="mr-2 flex h-9 items-center px-4">
-            <span className="material-symbols -ml-2 pr-2 text-2xl text-white" aria-hidden>
-              auto_stories
-            </span>
+          <Btn 
+            onClick={handleReadEBook} 
+            color="bg-info" 
+            size="small" 
+            className="flex h-10 items-center px-6 rounded-xl shadow-lg shadow-info/20 uppercase font-black tracking-widest text-[11px]"
+          >
+            <BookOpen size={18} className="mr-2" />
             {t('ButtonRead')}
           </Btn>
         )}
 
-        {showQueueBtn && (
-          <Tooltip text={isQueued ? t('ButtonQueueRemoveItem') : t('ButtonQueueAddItem')} position="top">
-            <span className="inline-flex">
-              <IconBtn
-                ariaLabel={isQueued ? t('ButtonQueueRemoveItem') : t('ButtonQueueAddItem')}
-                onClick={handleQueueClick}
-                outlined={!isQueued}
-                className={isQueued ? 'bg-primary text-success mx-0.5' : 'bg-success/60 mx-0.5'}
-                size="small"
-              >
-                {isQueued ? 'playlist_add_check' : 'playlist_play'}
-              </IconBtn>
-            </span>
-          </Tooltip>
-        )}
+        <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10">
+          {showQueueBtn && (
+            <Tooltip text={isQueued ? t('ButtonQueueRemoveItem') : t('ButtonQueueAddItem')} position="top">
+              <span className="inline-flex">
+                <IconBtn
+                  ariaLabel={isQueued ? t('ButtonQueueRemoveItem') : t('ButtonQueueAddItem')}
+                  onClick={handleQueueClick}
+                  borderless
+                  className={mergeClasses(
+                    'transition-all duration-300',
+                    isQueued ? 'text-success scale-110' : 'text-foreground/60 hover:text-white'
+                  )}
+                  size="small"
+                  icon={isQueued ? CheckSquare : ListPlus}
+                />
+              </span>
+            </Tooltip>
+          )}
 
-        {userCanUpdate && (
-          <Tooltip text={t('LabelEdit')} position="top">
-            <span className="inline-flex">
-              <IconBtn ariaLabel={t('LabelEdit')} onClick={onEdit} outlined className="mx-0.5" size="small">
-                edit
-              </IconBtn>
-            </span>
-          </Tooltip>
-        )}
+          {userCanUpdate && (
+            <Tooltip text={t('LabelEdit')} position="top">
+              <span className="inline-flex">
+                <IconBtn 
+                  ariaLabel={t('LabelEdit')} 
+                  onClick={onEdit} 
+                  borderless 
+                  className="text-foreground/60 hover:text-white" 
+                  size="small"
+                  icon={Edit}
+                />
+              </span>
+            </Tooltip>
+          )}
 
-        {!isPodcast && (
-          <Tooltip text={isRead ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')} position="top">
-            <span className="inline-flex">
-              <ReadIconBtn isRead={isRead} disabled={processing} onClick={handleToggleFinished} className="mx-0.5" size="small" />
-            </span>
-          </Tooltip>
-        )}
+          {!isPodcast && (
+            <Tooltip text={isRead ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')} position="top">
+              <span className="inline-flex">
+                <ReadIconBtn isRead={isRead} disabled={processing} onClick={handleToggleFinished} borderless size="small" />
+              </span>
+            </Tooltip>
+          )}
 
-        {hasContextMenu && (
-          <ContextMenuDropdown
-            items={contextMenuItems}
-            menuWidth={148}
-            onAction={handleContextMenuAction}
-            size="small"
-            className="bg-primary mx-0.5 h-9 w-9 border border-gray-600"
-          />
-        )}
+          {hasContextMenu && (
+            <ContextMenuDropdown
+              items={contextMenuItems}
+              menuWidth={180}
+              onAction={handleContextMenuAction}
+              size="small"
+              borderless
+              className="text-foreground/60 hover:text-white"
+            />
+          )}
+        </div>
       </div>
 
       {confirmState && (

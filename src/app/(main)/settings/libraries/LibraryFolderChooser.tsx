@@ -6,6 +6,7 @@ import LoadingSpinner from '@/components/widgets/LoadingSpinner'
 import { useGlobalToast } from '@/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/lib/merge-classes'
+import { ArrowLeft, Folder, ChevronRight, ExternalLink } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
 interface DirectoryEntry {
@@ -87,7 +88,7 @@ export default function LibraryFolderChooser({ paths, onSelect, onBack }: Librar
     const isUsed = paths.some((p) => p.endsWith(d.path))
     const isSelected = d.path === selectedPath
     const classes: string[] = []
-    if (isSelected) classes.push('bg-bg-hover')
+    if (isSelected) classes.push('bg-white/10')
     if (isUsed) classes.push('bg-error/20')
     return { ...d, isUsed, isSelected, className: classes.join(' ') }
   })
@@ -174,33 +175,31 @@ export default function LibraryFolderChooser({ paths, onSelect, onBack }: Librar
   }, [selectedPath, paths, onSelect, showToast])
 
   return (
-    <div className="bg-bg absolute inset-0 z-10 flex flex-col px-4 py-4">
+    <div className="bg-bg/80 backdrop-blur-xl absolute inset-0 z-10 flex flex-col px-4 py-4 rounded-2xl border border-white/10 shadow-2xl">
       {/* Header */}
-      <div className="mb-2 flex items-center py-1">
-        <button type="button" onClick={onBack} className="material-symbols hover:text-foreground-muted cursor-pointer text-3xl transition-colors">
-          arrow_back
+      <div className="mb-4 flex items-center py-2 px-2">
+        <button type="button" onClick={onBack} className="text-white/40 hover:text-white cursor-pointer transition-colors p-2 rounded-xl hover:bg-white/5">
+          <ArrowLeft size={28} />
         </button>
-        <p className="px-4 text-xl">{t('HeaderChooseAFolder')}</p>
+        <p className="px-4 text-xl font-bold uppercase tracking-widest text-white/90">{t('HeaderChooseAFolder')}</p>
       </div>
 
       {/* Selected path display */}
       {rootDirs.length > 0 && (
-        <div className="bg-primary/70 mb-2 w-full rounded px-4 py-1">
-          <p className="truncate font-mono">{selectedPath || '/'}</p>
+        <div className="bg-white/5 border border-white/5 mb-2 w-full rounded-lg px-4 py-2">
+          <p className="truncate font-mono text-sm text-white/70">{selectedPath || '/'}</p>
         </div>
       )}
 
       {/* Directory browser */}
       {rootDirs.length > 0 ? (
-        <div className="bg-primary/50 relative flex min-h-0 flex-1 rounded p-4">
+        <div className="bg-black/20 border border-white/5 relative flex min-h-0 flex-1 rounded-xl p-4 gap-4">
           {/* Left column: current directories */}
-          <div className="border-bg h-full w-1/2 overflow-y-auto border-r">
+          <div className="border-white/10 h-full w-1/2 overflow-y-auto border-r pr-4">
             {level > 0 && (
-              <button type="button" className="hover:bg-bg-hover flex w-full cursor-pointer items-center p-1 text-start" onClick={goBack}>
-                <span className="material-symbols fill text-yellow-200" style={{ fontSize: '1.2rem' }}>
-                  folder
-                </span>
-                <p className="px-2 font-mono text-base">..</p>
+              <button type="button" className="hover:bg-white/10 flex w-full cursor-pointer items-center p-2 rounded-lg text-start transition-colors" onClick={goBack}>
+                <Folder size={18} className="text-amber-400/80" />
+                <p className="px-3 font-mono text-sm text-white/60">..</p>
               </button>
             )}
             {displayDirectories.map((dir) => (
@@ -208,21 +207,17 @@ export default function LibraryFolderChooser({ paths, onSelect, onBack }: Librar
                 type="button"
                 key={dir.path}
                 className={mergeClasses(
-                  'hover:text-foreground text-foreground-muted hover:bg-bg-hover flex w-full cursor-pointer items-center p-1 text-start',
+                  'hover:text-white text-white/60 hover:bg-white/10 flex w-full cursor-pointer items-center p-2 rounded-lg text-start transition-all',
                   dir.className,
-                  dir.isUsed && 'cursor-not-allowed opacity-50'
+                  dir.isUsed && 'cursor-not-allowed opacity-30 grayscale'
                 )}
                 onClick={() => selectDir(dir)}
                 disabled={dir.isUsed}
               >
-                <span className="material-symbols fill shrink-0 text-yellow-200" style={{ fontSize: '1.2rem' }}>
-                  folder
-                </span>
-                <p className="truncate px-2 font-mono text-base">{dir.dirname}</p>
+                <Folder size={18} className="text-amber-400/80 shrink-0" />
+                <p className="truncate px-3 font-mono text-sm">{dir.dirname}</p>
                 {dir.isSelected && (
-                  <span className="material-symbols shrink-0" style={{ fontSize: '1.1rem' }}>
-                    arrow_right
-                  </span>
+                  <ChevronRight size={16} className="text-white shrink-0 ml-auto" />
                 )}
               </button>
             ))}
@@ -235,17 +230,15 @@ export default function LibraryFolderChooser({ paths, onSelect, onBack }: Librar
                 type="button"
                 key={dir.path}
                 className={mergeClasses(
-                  'hover:text-foreground text-foreground-muted hover:bg-bg-hover flex w-full cursor-pointer items-center p-1 text-start',
+                  'hover:text-white text-white/60 hover:bg-white/10 flex w-full cursor-pointer items-center p-2 rounded-lg text-start transition-all',
                   dir.className,
-                  dir.isUsed && 'cursor-not-allowed opacity-50'
+                  dir.isUsed && 'cursor-not-allowed opacity-30 grayscale'
                 )}
                 onClick={() => selectSubDir(dir)}
                 disabled={dir.isUsed}
               >
-                <span className="material-symbols fill shrink-0 text-yellow-200" style={{ fontSize: '1.2rem' }}>
-                  folder
-                </span>
-                <p className="truncate px-2 font-mono text-base">{dir.dirname}</p>
+                <Folder size={18} className="text-amber-400/80 fill-amber-400/20 shrink-0" />
+                <p className="truncate px-3 font-mono text-sm">{dir.dirname}</p>
               </button>
             ))}
           </div>

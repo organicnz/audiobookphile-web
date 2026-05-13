@@ -138,8 +138,8 @@ function PlaylistCard(props: PlaylistCardProps) {
                   <div
                     cy-id="moreButton"
                     className={mergeClasses(
-                      'absolute end-[0.375em] bottom-[0.375em] cursor-pointer md:block',
-                      'hover:scale-125 hover:[&_.material-symbols]:!text-yellow-300'
+                      'absolute end-2 bottom-2 cursor-pointer md:block transition-transform duration-300',
+                      'hover:scale-125'
                     )}
                   >
                     <MediaCardMoreMenu items={moreMenuItems} processing={processing} onAction={handleMoreAction} onOpenChange={handleMoreMenuOpenChange} />

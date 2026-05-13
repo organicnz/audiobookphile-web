@@ -9,6 +9,7 @@ import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { Library } from '@/types/api'
 import Link from 'next/link'
 import { useCallback, useMemo } from 'react'
+import { GripVertical } from 'lucide-react'
 import { matchAll, requestScanLibrary } from './actions'
 
 interface LibrariesListRowProps {
@@ -74,22 +75,22 @@ export default function LibrariesListRow({ item, handleDeleteLibrary, handleEdit
   )
 
   return (
-    <div className="hover:bg-primary/20 text-foreground/50 hover:text-foreground flex items-center gap-4 px-4 py-1">
-      {isLibraryTaskRunning ? <LoadingSpinner /> : <LibraryIcon icon={item.icon} />}
-      <Link className="text-foreground py-2 hover:underline" href={`/library/${item.id}`}>
+    <div className="hover:bg-white/5 border-white/5 border-b text-foreground/50 hover:text-foreground flex items-center gap-4 px-4 py-2 transition-all duration-200">
+      {isLibraryTaskRunning ? <LoadingSpinner size="la-sm" /> : <LibraryIcon icon={item.icon} className="opacity-80" />}
+      <Link className="text-foreground text-[13px] font-bold py-2 hover:text-primary transition-colors" href={`/library/${item.id}`}>
         {item.name}
       </Link>
       <div className="grow" />
       {!isLibraryTaskRunning && (
-        <>
-          <Btn color="bg-bg" className="h-auto px-3 text-xs" size="small" onClick={handleScanLibrary} disabled={isLibraryTaskRunning}>
+        <div className="flex items-center gap-2">
+          <Btn color="bg-white/5" className="h-auto px-4 py-1.5 text-[11px] font-black uppercase tracking-widest border border-white/10" size="small" onClick={handleScanLibrary} disabled={isLibraryTaskRunning}>
             {t('ButtonScan')}
           </Btn>
           <ContextMenuDropdown usePortal borderless size="small" items={contextMenuItems} onAction={handleContextMenuActions} />
-        </>
+        </div>
       )}
-      <div className="drag-handle cursor-n-resize">
-        <span className="material-symbols text-foreground/50 hover:text-foreground text-xl">reorder</span>
+      <div className="drag-handle cursor-grab active:cursor-grabbing p-1 hover:bg-white/10 rounded-md transition-colors">
+        <GripVertical size={18} className="opacity-30" />
       </div>
     </div>
   )

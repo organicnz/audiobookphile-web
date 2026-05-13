@@ -1,5 +1,6 @@
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
 import { createClient } from '@/utils/supabase/server'
+import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import UserClient from './UserClient'
 
@@ -18,10 +19,12 @@ export default async function UserPage({ params }: { params: Promise<{ user: str
 
   return (
     <div className="mx-auto w-full max-w-4xl p-2 md:p-6">
-      <div className="bg-bg mb-8 rounded-md border border-white/5 p-2 shadow-lg sm:p-4">
-        <Link href="/settings/users" className="text-foreground-muted hover:text-foreground mb-4 flex items-center gap-2">
-          <span className="material-symbols text-xl">arrow_back</span>
-          <span>{t('LabelBackToUsers')}</span>
+      <div className="bg-white/5 backdrop-blur-xl mb-8 rounded-3xl border border-white/10 p-6 shadow-2xl sm:p-8">
+        <Link href="/settings/users" className="text-white/40 hover:text-white mb-6 flex items-center gap-3 transition-colors group">
+          <div className="bg-white/5 p-2 rounded-xl group-hover:bg-white/10 transition-colors">
+            <ArrowLeft size={20} />
+          </div>
+          <span className="text-sm font-black uppercase tracking-widest">{t('LabelBackToUsers')}</span>
         </Link>
         <UserClient user={user as any} />
       </div>

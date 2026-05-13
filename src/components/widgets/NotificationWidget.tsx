@@ -4,6 +4,8 @@ import { Task } from '@/types/api'
 import Link from 'next/link'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
+import { Bell } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTasks } from '@/contexts/TasksContext'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
@@ -45,7 +47,7 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
   }, [tasks])
 
   const tasksToShow = useMemo(() => {
-    return [...tasks].sort((a, b) => (b.startedAt ?? 0) - (a.startedAt ?? 0))
+    return [...tasks].sort((a, b) => (b.startedAt ?? 0) - (a.startedAt ?? 0)).slice(0, 50)
   }, [tasks])
 
   const showUnseenSuccessIndicator = useMemo(() => {
@@ -89,7 +91,7 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
       <button
         ref={triggerRef}
         type="button"
-        className="text-foreground hover:text-foreground/80 relative flex h-10 w-10 cursor-pointer items-center justify-center"
+        className="text-foreground/70 hover:text-white relative flex h-10 w-10 cursor-pointer items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
         aria-haspopup="listbox"
         aria-expanded={showMenu}
         onClick={clickShowMenu}
@@ -98,50 +100,72 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
           <Tooltip text={t('LabelTasks')} position="bottom" className="flex items-center">
             <span className="relative">
               <LoadingSpinner className="scale-110 !cursor-pointer" />
-              {showUnseenSuccessIndicator && <span className="bg-success pointer-events-none absolute -top-1 -right-0.5 h-2 w-2 rounded-full" />}
+              {showUnseenSuccessIndicator && (
+                <motion.span 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="bg-success pointer-events-none absolute -top-1 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-background" 
+                />
+              )}
             </span>
           </Tooltip>
         ) : (
           <Tooltip text={t('LabelActivities')} position="bottom" className="flex items-center">
             <span className="relative">
-              <span className="material-symbols text-xl" aria-label={t('LabelActivities')} role="button">
-                notifications
-              </span>
-              {showUnseenSuccessIndicator && <span className="bg-success pointer-events-none absolute -top-1 -right-0.5 h-2 w-2 rounded-full" />}
+              <Bell size={20} className={showMenu ? 'text-white' : ''} aria-label={t('LabelActivities')} />
+              {showUnseenSuccessIndicator && (
+                <motion.span 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: [0, 1.2, 1] }}
+                  className="bg-success pointer-events-none absolute -top-1 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-background shadow-[0_0_12px_rgba(34,197,94,0.6)]" 
+                />
+              )}
             </span>
           </Tooltip>
         )}
       </button>
 
-      {showMenu && (
-        <div
-          ref={menuRef}
-          className="bg-bg border-border fixed top-16 right-4 left-auto z-[70] mt-0 w-auto max-w-[24rem] min-w-[16rem] overflow-x-hidden overflow-y-auto rounded-md border text-base shadow-lg ring-1 ring-black/5 focus:outline-none md:mt-1.5"
-          style={{ maxHeight: '80vh' }}
-        >
-          <ul className="h-full w-full" role="listbox" aria-label={t('LabelTasks')}>
-            {tasksToShow.map((task) => {
-              const actionLink = getActionLink(task)
+      <AnimatePresence>
+        {showMenu && (
+          <motion.div
+            ref={menuRef}
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            className="bg-primary/95 backdrop-blur-2xl border-white/10 fixed top-16 right-4 left-auto z-[100] mt-0 w-auto max-w-[24rem] min-w-[20rem] overflow-hidden rounded-2xl border text-base shadow-2xl ring-1 ring-black/20 focus:outline-none md:mt-1.5"
+            style={{ maxHeight: '80vh' }}
+          >
+            <div className="border-white/10 flex items-center justify-between border-b px-4 py-3 bg-white/5">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">{t('LabelActivities')}</h3>
+              <button onClick={closeMenu} className="text-white/30 hover:text-white transition-colors">
+                <Bell size={14} className="opacity-50" />
+              </button>
+            </div>
+            <ul className="h-full w-full overflow-y-auto max-h-[calc(80vh-3rem)] scrollbar-hide py-2" role="listbox" aria-label={t('LabelTasks')}>
+              {tasksToShow.map((task) => {
+                const actionLink = getActionLink(task)
 
-              if (actionLink) {
+                if (actionLink) {
+                  return (
+                    <li key={task.id} className="relative select-none">
+                      <Link href={actionLink} onClick={closeMenu} className="hover:bg-white/5 block cursor-pointer px-1 py-0.5 transition-colors">
+                        <ItemTaskRunningCard task={task} />
+                      </Link>
+                    </li>
+                  )
+                }
+
                 return (
-                  <li key={task.id} className="text-foreground hover:bg-primary/40 relative py-1 select-none">
-                    <Link href={actionLink} onClick={closeMenu} className="block cursor-pointer">
-                      <ItemTaskRunningCard task={task} />
-                    </Link>
+                  <li key={task.id} className="hover:bg-white/5 relative px-1 py-0.5 select-none transition-colors">
+                    <ItemTaskRunningCard task={task} />
                   </li>
                 )
-              }
-
-              return (
-                <li key={task.id} className="text-foreground hover:bg-primary/40 relative py-1 select-none">
-                  <ItemTaskRunningCard task={task} />
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      )}
+              })}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

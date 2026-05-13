@@ -24,6 +24,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from
 import { UpdateServerSettingsApiResponse } from '../actions'
 import SettingsContent from '../SettingsContent'
 import SettingsToggleSwitch from '../SettingsToggleSwitch'
+import { AlertCircle, Info } from 'lucide-react'
 import { applyBackup, createBackup, deleteBackup } from './actions'
 import BackupLocation from './BackupLocation'
 import BackupScheduleModal from './BackupScheduleModal'
@@ -284,9 +285,9 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
             />
             <label htmlFor="backups-to-keep-input">{t('LabelBackupsNumberToKeep')}</label>
             <Tooltip text={t('LabelBackupsNumberToKeepHelp')} maxWidth={300}>
-              <span className="material-symbols text-lg" aria-hidden="true">
-                info
-              </span>
+              <div className="flex items-center justify-center text-foreground/40 hover:text-white transition-colors cursor-default">
+                <Info size={16} strokeWidth={2.5} />
+              </div>
             </Tooltip>
           </div>
           <div className="flex items-center gap-2">
@@ -302,9 +303,9 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
             />
             <label htmlFor="max-backup-size-input">{t('LabelBackupsMaxBackupSize')}</label>
             <Tooltip text={t('LabelBackupsMaxBackupSizeHelp')} maxWidth={300}>
-              <span className="material-symbols text-lg" aria-hidden="true">
-                info
-              </span>
+              <div className="flex items-center justify-center text-foreground/40 hover:text-white transition-colors cursor-default">
+                <Info size={16} strokeWidth={2.5} />
+              </div>
             </Tooltip>
           </div>
         </div>
@@ -419,9 +420,9 @@ function BackupsTable({ backups, dateFormat, timeFormat, onRestore, onDownload, 
               </Btn>
             ) : (
               <Tooltip text={LEGACY_BACKUP_UNSUPPORTED_HINT} position="bottom" maxWidth={320}>
-                <span className="material-symbols text-error text-2xl" role="img" aria-label={LEGACY_BACKUP_UNSUPPORTED_HINT}>
-                  error_outline
-                </span>
+                <div className="flex items-center justify-center text-error opacity-60 hover:opacity-100 transition-opacity">
+                  <AlertCircle size={20} strokeWidth={2.5} role="img" aria-label={LEGACY_BACKUP_UNSUPPORTED_HINT} />
+                </div>
               </Tooltip>
             )}
             <IconBtn ariaLabel={t('LabelDownload')} borderless size="small" onClick={() => onDownload?.(backup)}>

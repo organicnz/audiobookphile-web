@@ -8,6 +8,7 @@ import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { formatDuration } from '@/lib/formatDuration'
 import { bytesPretty } from '@/lib/string'
 import { PodcastEpisodeDownload, PodcastLibraryItem, RssPodcastEpisode } from '@/types/api'
+import { Search, ChevronDown, ChevronUp, CheckCircle, Download } from 'lucide-react'
 import { useFormatter } from 'next-intl'
 import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 
@@ -237,6 +238,7 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
     <Modal
       isOpen={isOpen}
       onClose={onClose}
+      className="bg-background/90 backdrop-blur-xl border border-white/10"
       outerContent={
         <div className="pointer-events-none absolute top-0 left-0 w-2/3 overflow-hidden p-5">
           <p className="truncate text-3xl text-white drop-shadow-md">{libraryItem.media.metadata.title}</p>
@@ -253,15 +255,13 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
                 onChange={setSearch}
                 type="search"
                 placeholder={t('PlaceholderSearchEpisode')}
-                className="mr-2 grow text-sm md:text-base"
+                className="mr-2 grow text-sm md:text-base bg-white/5 border-white/10"
               />
             </form>
-            <Btn className="px-4" onClick={() => setSortDescending(!sortDescending)}>
-              <span className="pr-4">{t('LabelSortPubDate')}</span>
-              <span className="absolute inset-y-0 right-0 flex items-center pr-2 text-yellow-400">
-                <span className="material-symbols text-xl" aria-label={sortDescending ? t('LabelSortDescending') : t('LabelSortAscending')}>
-                  {sortDescending ? 'expand_more' : 'expand_less'}
-                </span>
+            <Btn className="px-4 bg-white/5 border-white/10 hover:bg-white/10" onClick={() => setSortDescending(!sortDescending)}>
+              <span className="pr-4 font-black uppercase tracking-widest text-[11px]">{t('LabelSortPubDate')}</span>
+              <span className="absolute inset-y-0 right-0 flex items-center pr-2 text-primary">
+                {sortDescending ? <ChevronDown size={18} strokeWidth={3} /> : <ChevronUp size={18} strokeWidth={3} />}
               </span>
             </Btn>
           </div>
@@ -293,9 +293,9 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
               >
                 <div className="flex w-12 flex-none items-center justify-center p-3 sm:w-16">
                   {episode.isDownloaded ? (
-                    <span className="material-symbols text-success text-xl">download_done</span>
+                    <CheckCircle size={20} className="text-success drop-shadow-[0_0_8px_rgba(var(--success-rgb),0.4)]" />
                   ) : episode.isDownloading ? (
-                    <span className="material-symbols text-warning text-xl">download</span>
+                    <Download size={20} className="text-primary animate-pulse" />
                   ) : (
                     <div
                       onClick={(e) => {

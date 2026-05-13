@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale } from 'next-intl/server'
 
+import { Providers } from '../components/Providers'
 import { Analytics } from '@vercel/analytics/react'
-import GlobalToastContainer from '../components/widgets/GlobalToastContainer'
 import { CardSizeProvider } from '../contexts/CardSizeContext'
 import { ToastProvider } from '../contexts/ToastContext'
 import { getTheme } from '../lib/theme'
@@ -37,8 +37,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <NextIntlClientProvider>
           <ToastProvider>
             <CardSizeProvider>
-              {children}
-              <GlobalToastContainer />
+              <Providers>
+                {children}
+              </Providers>
               <Analytics />
             </CardSizeProvider>
           </ToastProvider>

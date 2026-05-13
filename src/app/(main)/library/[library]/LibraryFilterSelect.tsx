@@ -5,6 +5,7 @@ import { useLibrary } from '@/contexts/LibraryContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { filterDecode, filterEncode } from '@/lib/filterUtils'
 import { EntityType, User } from '@/types/api'
+import { X, Filter } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 
 interface LibraryFilterSelectProps {
@@ -448,20 +449,21 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
         items={filterItems}
         onChange={handleFilterChange}
         size="auto"
-        className="h-full text-xs"
+        leftIcon={<Filter size={14} className="text-primary" />}
+        className="h-full text-[11px] font-black uppercase tracking-widest"
         displayText={getSelectedText()}
         menuMaxHeight="calc(100vh - 120px)"
       />
       {showClear && (
         <button
-          className="absolute inset-y-0 right-8 z-10 flex items-center text-gray-400 hover:text-white"
+          className="absolute inset-y-0 right-8 z-10 flex items-center text-gray-400 hover:text-white transition-colors duration-200"
           onClick={(e) => {
             e.stopPropagation()
             updateSetting(isSeries ? 'seriesFilterBy' : 'filterBy', 'all')
           }}
           title={t('ButtonClearFilter')}
         >
-          <span className="material-symbols text-base">close</span>
+          <X size={14} strokeWidth={3} />
         </button>
       )}
     </div>

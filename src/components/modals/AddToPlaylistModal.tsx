@@ -12,6 +12,7 @@ import { useGlobalToast } from '@/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { ApiError } from '@/lib/apiErrors'
 import type { Playlist } from '@/types/api'
+import { HelpCircle, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -173,12 +174,12 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
   const controlsDisabled = loadingInitial || isMutating
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} processing={loadingInitial} outerContent={outerContent} className="max-w-lg sm:max-w-lg md:max-w-lg lg:max-w-lg">
+    <Modal isOpen={isOpen} onClose={onClose} processing={loadingInitial} outerContent={outerContent} className="max-w-lg sm:max-w-lg md:max-w-lg lg:max-w-lg bg-white/5 backdrop-blur-md">
       <div className="max-h-[80vh] w-full overflow-x-hidden overflow-y-auto rounded-lg">
         {isOpen && (
           <>
             <div className="px-4 pt-4 pb-2">
-              <h1 className="text-lg font-semibold">{t('LabelAddToPlaylist')}</h1>
+              <h1 className="text-lg font-semibold tracking-tight">{t('LabelAddToPlaylist')}</h1>
             </div>
 
             <div className="max-h-96 w-full overflow-x-hidden overflow-y-auto pt-4 pb-2">
@@ -187,7 +188,7 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
                   const included = playlist.isItemIncluded
                   const playlistItems = playlist.items ?? []
                   return (
-                    <div key={playlist.id} className="hover:bg-dropdown-item-hover relative flex items-center justify-start px-4 py-2">
+                    <div key={playlist.id} className="hover:bg-white/10 relative flex items-center justify-start px-4 py-2 transition-colors">
                       {included && <div className="bg-success absolute start-0 top-0 z-10 h-full w-1" aria-hidden />}
                       <div className="w-20 max-w-20 shrink-0 text-center">
                         <PlaylistGroupCover items={playlistItems} width={coverWidth} height={coverHeight} />
@@ -207,18 +208,18 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
                             ariaLabel={t('ButtonRemove')}
                             size="auto"
                             outlined={false}
-                            className="bg-error text-white h-9 min-w-10 px-3"
+                            className="bg-error/80 text-white h-9 min-w-10 px-3 hover:bg-error"
                             disabled={controlsDisabled}
                             onClick={() => handleRemove(playlist)}
                           >
-                            remove
+                            <Trash2 size={18} />
                           </IconBtn>
                         ) : (
                           <IconBtn
                             ariaLabel={t('ButtonAdd')}
                             size="auto"
                             outlined={false}
-                            className="bg-success text-white h-9 min-w-10 px-3"
+                            className="bg-success/80 text-white h-9 min-w-10 px-3 hover:bg-success"
                             disabled={controlsDisabled}
                             onClick={() => handleAdd(playlist)}
                           >
@@ -239,8 +240,8 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
                   <div className="text-foreground-muted flex items-center justify-center text-sm">
                     <p>{t('MessageNoUserPlaylistsHelp')}</p>
                     <Tooltip text={t('LabelClickForMoreInfo')} className="ms-2 inline-flex">
-                      <a href="https://www.audiobookshelf.org/guides/collections" target="_blank" rel="noreferrer" className="inline-flex">
-                        <span className="material-symbols text-xl">help_outline</span>
+                      <a href="https://www.audiobookshelf.org/guides/collections" target="_blank" rel="noreferrer" className="text-white/40 hover:text-primary transition-colors inline-flex">
+                        <HelpCircle size={18} strokeWidth={2.5} />
                       </a>
                     </Tooltip>
                   </div>

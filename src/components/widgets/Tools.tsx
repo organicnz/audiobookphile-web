@@ -9,6 +9,7 @@ import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/lib/merge-classes'
 import { LibraryItem, isBookLibraryItem } from '@/types/api'
 import { TranslationKey } from '@/types/translations'
+import { ExternalLink } from 'lucide-react'
 import { useCallback, useId, useMemo, useState, useTransition } from 'react'
 
 interface ToolsProps {
@@ -128,9 +129,7 @@ export default function Tools({ libraryItem, className }: ToolsProps) {
                   aria-describedby={elementIds.m4bDescription}
                 >
                   {t('ButtonOpenManager')}
-                  <span className="material-symbols ms-2 text-lg" aria-hidden="true">
-                    launch
-                  </span>
+                  <ExternalLink size={16} className="ms-2" />
                 </Btn>
               </div>
             </div>
@@ -155,9 +154,7 @@ export default function Tools({ libraryItem, className }: ToolsProps) {
                     aria-describedby={elementIds.embedDescription}
                   >
                     {t('ButtonOpenManager')}
-                    <span className="material-symbols ms-2 text-lg" aria-hidden="true">
-                      launch
-                    </span>
+                    <ExternalLink size={16} className="ms-2" />
                   </Btn>
                 </div>
 

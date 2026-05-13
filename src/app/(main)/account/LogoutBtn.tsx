@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { LogOut } from 'lucide-react'
 
 export default function LogoutBtn() {
   const t = useTranslations()
@@ -34,9 +35,9 @@ export default function LogoutBtn() {
   }
 
   return (
-    <Btn onClick={handleLogout} loading={loading} className="items-center justify-between gap-2 ps-6">
-      <span className="material-symbols text-lg">logout</span>
-      {t('LabelLogout')}
+    <Btn onClick={handleLogout} loading={loading} className="items-center justify-between gap-2 ps-6 py-2 h-auto group">
+      <LogOut size={18} className="text-foreground/40 group-hover:text-primary transition-colors" />
+      <span className="font-bold uppercase tracking-widest text-[11px]">{t('LabelLogout')}</span>
     </Btn>
   )
 }

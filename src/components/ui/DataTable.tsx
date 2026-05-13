@@ -1,5 +1,5 @@
-'use client'
-
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from 'lucide-react'
 import { mergeClasses } from '@/lib/merge-classes'
 import { ReactNode, useEffect, useId, useMemo, useRef, useState } from 'react'
 import Checkbox from './Checkbox'
@@ -131,20 +131,20 @@ function DataTablePagination({
   const pageIndicator = pageLabel || `Page ${currentPage} of ${totalPages}`
 
   return (
-    <div className="flex items-center justify-end gap-4 px-4 py-3">
-      <div className="flex items-center gap-2">
-        <span className="text-foreground text-sm">{rowsPerPageLabel}</span>
-        <div className="w-20">
+    <div className="flex items-center justify-end gap-4 px-6 py-4 bg-white/5 border-t border-white/5 backdrop-blur-sm rounded-b-xl">
+      <div className="flex items-center gap-3">
+        <span className="text-foreground/60 text-xs font-bold uppercase tracking-wider">{rowsPerPageLabel}</span>
+        <div className="w-24">
           <Dropdown value={rowsPerPage} items={dropdownItems} onChange={(value) => onRowsPerPageChange(value as number)} size="small" />
         </div>
       </div>
-      <span className="text-foreground text-sm">{pageIndicator}</span>
-      <div className="flex items-center gap-1">
+      <span className="text-foreground/80 text-sm font-medium">{pageIndicator}</span>
+      <div className="flex items-center gap-2 ms-2">
         <IconBtn ariaLabel="Previous page" size="small" disabled={currentPage <= 1} onClick={() => onPageChange(currentPage - 1)}>
-          chevron_left
+          <ChevronLeft size={16} />
         </IconBtn>
         <IconBtn ariaLabel="Next page" size="small" disabled={currentPage >= totalPages} onClick={() => onPageChange(currentPage + 1)}>
-          chevron_right
+          <ChevronRight size={16} />
         </IconBtn>
       </div>
     </div>
@@ -197,9 +197,6 @@ export default function DataTable<T>({
   const visibleColumns = useMemo(() => {
     return columns.filter((col) => {
       if (col.minTableWidth === undefined) return true
-      // If tableWidth is not yet measured (null), default to showing all columns
-      // or specific logic. Here we show all to avoid hydration mismatch/flicker if wide enough.
-      // Alternatively, could hide if we want to be conservative.
       if (tableWidth === null) return true
       return tableWidth >= col.minTableWidth
     })
@@ -283,15 +280,20 @@ export default function DataTable<T>({
   }
 
   const renderDefaultRow = (row: T, index: number) => (
-    <tr
+    <motion.tr
+      layout
       key={getRowKeyValue(row, index)}
-      className={mergeClasses('border-border even:bg-table-row-bg-even hover:bg-table-row-bg-hover border-b', getRowClassName(row, index))}
+      className={mergeClasses(
+        'border-white/5 even:bg-white/[0.02] hover:bg-white/[0.05] border-b transition-colors group',
+        isRowSelected(row, index) ? 'bg-primary/10 hover:bg-primary/15' : '',
+        getRowClassName(row, index)
+      )}
       onClick={onRowClick ? () => onRowClick(row, index) : undefined}
     >
       {selection && (
         <td
           className={mergeClasses(
-            'h-11 w-12 min-w-12 px-0 text-center align-middle',
+            'h-12 w-14 min-w-[3.5rem] px-0 text-center align-middle',
             getResponsiveHiddenClass(selection.hideCheckboxBelow),
             selection.checkboxColumnClassName
           )}
@@ -301,7 +303,6 @@ export default function DataTable<T>({
             <Checkbox
               value={isRowSelected(row, index)}
               size="small"
-              checkboxBgClass="bg-bg"
               ariaLabel={'Select row'}
               onChange={(nextSelected) => selection.onToggleRow(row, index, nextSelected)}
             />
@@ -309,11 +310,11 @@ export default function DataTable<T>({
         </td>
       )}
       {visibleColumns.map((column, colIndex) => (
-        <td key={`${id}-cell-${index}-${colIndex}`} className={mergeClasses('px-2 py-2', getResponsiveHiddenClass(column.hiddenBelow), column.cellClassName)}>
+        <td key={`${id}-cell-${index}-${colIndex}`} className={mergeClasses('px-4 py-3 text-foreground/80 font-medium', getResponsiveHiddenClass(column.hiddenBelow), column.cellClassName)}>
           {renderCellContent(row, column, index)}
         </td>
       ))}
-    </tr>
+    </motion.tr>
   )
 
   const renderHeaderCell = (column: DataTableColumn<T>, index: number) => {
@@ -326,7 +327,7 @@ export default function DataTable<T>({
         <th
           key={`${id}-header-${index}`}
           className={mergeClasses(
-            'text-foreground-muted px-2 py-2 text-start text-xs font-semibold',
+            'text-foreground/40 px-4 py-3 text-start text-xs font-bold uppercase tracking-wider',
             column.headerClassName,
             getResponsiveHiddenClass(column.hiddenBelow)
           )}
@@ -341,18 +342,18 @@ export default function DataTable<T>({
       <th
         key={`${id}-header-${index}`}
         className={mergeClasses(
-          'text-foreground-muted group cursor-pointer px-2 py-2 text-start text-xs font-semibold select-none',
+          'text-foreground/40 group cursor-pointer px-4 py-3 text-start text-xs font-bold uppercase tracking-wider select-none transition-colors hover:text-foreground/60',
           column.headerClassName,
           getResponsiveHiddenClass(column.hiddenBelow)
         )}
         scope="col"
         onClick={() => sorting.onSortChange(sortKey, isActiveSort ? !sorting.sortDesc : true)}
       >
-        <div className="inline-flex items-center">
+        <div className="inline-flex items-center gap-1.5">
           {column.label}
-          <span className={mergeClasses('material-symbols pl-px text-base', isActiveSort ? '' : 'opacity-0 group-hover:opacity-30')}>
-            {sorting.sortDesc ? 'arrow_drop_down' : 'arrow_drop_up'}
-          </span>
+          <div className={mergeClasses('transition-all duration-200', isActiveSort ? 'text-primary opacity-100' : 'opacity-0 group-hover:opacity-40')}>
+            {sorting.sortDesc ? <ChevronDown size={14} strokeWidth={3} /> : <ChevronUp size={14} strokeWidth={3} />}
+          </div>
         </div>
       </th>
     )
@@ -367,7 +368,7 @@ export default function DataTable<T>({
     return (
       <th
         className={mergeClasses(
-          'h-11 w-12 min-w-12 px-0 text-center align-middle',
+          'h-12 w-14 min-w-[3.5rem] px-0 text-center align-middle',
           getResponsiveHiddenClass(selection.hideCheckboxBelow),
           selection.checkboxColumnClassName
         )}
@@ -379,7 +380,6 @@ export default function DataTable<T>({
             value={isAllRowsSelected}
             partial={isPartiallySelected}
             size="small"
-            checkboxBgClass="bg-bg"
             ariaLabel={'Select all rows'}
             onChange={(selected) => selection.onToggleAllRows(selected, data)}
           />
@@ -389,50 +389,61 @@ export default function DataTable<T>({
   }
 
   return (
-    <div ref={containerRef} className={mergeClasses('w-full', className)}>
-      <div className="border-border relative overflow-x-auto rounded-md border">
+    <div ref={containerRef} className={mergeClasses('w-full group/table', className)}>
+      <div className="bg-primary/5 border border-white/10 relative overflow-x-auto rounded-2xl shadow-xl">
         <table className={mergeClasses('w-full border-collapse text-sm', tableClassName)}>
           {caption && <caption className="sr-only">{caption}</caption>}
-          <thead className="bg-table-header-bg">
-            <tr ref={headerRowRef} className="border-border border-b">
+          <thead className="bg-white/5 backdrop-blur-md sticky top-0 z-10">
+            <tr ref={headerRowRef} className="border-white/10 border-b">
               {renderSelectionHeaderCell()}
               {visibleColumns.map((column, index) => renderHeaderCell(column, index))}
             </tr>
           </thead>
-          <tbody>{data.map((row, index) => (renderRow ? renderRow(row, index) : renderDefaultRow(row, index)))}</tbody>
+          <tbody className="divide-y divide-white/5">
+            {data.map((row, index) => (renderRow ? renderRow(row, index) : renderDefaultRow(row, index)))}
+          </tbody>
         </table>
-        {showBulkHeader && (
-          <div className="border-border bg-table-header-bg absolute inset-x-0 top-0 z-20 border-b" style={{ height: `${headerHeight}px` }}>
-            <div className={mergeClasses('flex h-full items-center', bulkActions?.className)}>
-              {selection && (
-                <div
-                  className={mergeClasses(
-                    'h-full w-12 min-w-12 px-0 text-center align-middle',
-                    getResponsiveHiddenClass(selection.hideCheckboxBelow),
-                    selection.checkboxColumnClassName
-                  )}
-                >
-                  <div className="flex h-full items-center justify-center">
-                    <Checkbox
-                      value={isAllRowsSelected}
-                      partial={isPartiallySelected}
-                      size="small"
-                      checkboxBgClass="bg-bg"
-                      ariaLabel={'Select all rows'}
-                      onChange={(selected) => selection.onToggleAllRows(selected, data)}
-                    />
+        
+        <AnimatePresence>
+          {showBulkHeader && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="bg-primary border-b border-white/20 absolute inset-x-0 top-0 z-20 flex items-center shadow-lg" 
+              style={{ height: `${headerHeight}px` }}
+            >
+              <div className={mergeClasses('flex h-full w-full items-center', bulkActions?.className)}>
+                {selection && (
+                  <div
+                    className={mergeClasses(
+                      'h-full w-14 min-w-[3.5rem] px-0 text-center align-middle',
+                      getResponsiveHiddenClass(selection.hideCheckboxBelow),
+                      selection.checkboxColumnClassName
+                    )}
+                  >
+                    <div className="flex h-full items-center justify-center">
+                      <Checkbox
+                        value={isAllRowsSelected}
+                        partial={isPartiallySelected}
+                        size="small"
+                        ariaLabel={'Select all rows'}
+                        onChange={(selected) => selection.onToggleAllRows(selected, data)}
+                      />
+                    </div>
                   </div>
+                )}
+                <div className="flex min-h-0 min-w-0 flex-1 items-center justify-between gap-4 px-4">
+                  <span className="text-white text-sm font-bold">{bulkSelectedLabel}</span>
+                  <div className="shrink-0 flex items-center gap-2">{bulkActions?.actions}</div>
                 </div>
-              )}
-              <div className="flex min-h-0 min-w-0 flex-1 items-center justify-between gap-2 px-2">
-                <span className="text-foreground text-sm whitespace-nowrap">{bulkSelectedLabel}</span>
-                <div className="shrink-0">{bulkActions?.actions}</div>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       {pagination && <DataTablePagination {...pagination} />}
     </div>
   )
 }
+

@@ -9,6 +9,7 @@ import { useEntityNavigationContext } from '@/hooks/useEntityNavigationContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import type { EntityNavigationContext } from '@/lib/bookshelfNavigationContext'
 import type { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
+import { motion } from 'framer-motion'
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState, useTransition, type ReactNode } from 'react'
 
 export type LibraryItemModalContextValue = {
@@ -124,13 +125,27 @@ export default function LibraryItemModal(props: LibraryItemModalProps) {
   const outerContent = useMemo(() => {
     if (!mediaTitle) return undefined
     return (
-      <div className="absolute start-0 top-0 p-4">
-        <h2 className="max-w-[calc(100vw-4rem)] truncate text-lg text-white" title={mediaTitle}>
-          {mediaTitle}
-        </h2>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="absolute inset-x-0 top-0 z-10 px-6 py-4 pointer-events-none"
+      >
+        <div className="max-w-prose">
+          <h2 
+            className="truncate text-xl font-semibold text-white/90 drop-shadow-md tracking-tight" 
+            title={mediaTitle}
+          >
+            {mediaTitle}
+          </h2>
+          {resolvedItem && 'authors' in resolvedItem.media.metadata && (
+            <p className="text-white/60 text-sm truncate font-medium">
+              {(resolvedItem.media.metadata.authors as any[])?.map(a => a.name).join(', ')}
+            </p>
+          )}
+        </div>
+      </motion.div>
     )
-  }, [mediaTitle])
+  }, [mediaTitle, resolvedItem])
 
   const showRails = navCtxMode && entityIds.length > 1
   const fetchPending = navCtxMode && (navFetchPending || isNavPending)

@@ -4,6 +4,7 @@ import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { formatDuration } from '@/lib/formatDuration'
 import { mergeClasses } from '@/lib/merge-classes'
 import { MatchResult } from '@/types/api'
+import { AlertTriangle, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -200,8 +201,8 @@ export default function MatchCard({ book, isPodcast = false, currentBookDuration
                 {book.series.map((series, index) => (
                   <div key={index} className="mx-1 rounded-full bg-white/10 px-1 py-0.5">
                     <p className="text-foreground-subdued text-xs leading-3">
-                      {series.series}
-                      {series.sequence && <>&nbsp;#{series.sequence}</>}
+                      {t('ButtonOpenManager')}
+                      <ExternalLink size={16} className="ms-2" />
                     </p>
                   </div>
                 ))}
@@ -216,9 +217,9 @@ export default function MatchCard({ book, isPodcast = false, currentBookDuration
         ) : (
           <div className="mt-2 grow pr-2 pl-0 md:mt-0 md:px-4">
             <h1>
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
                 {book.title}
-                {book.explicit && <span className="material-symbols text-error ms-1 text-sm">explicit</span>}
+                {book.explicit && <AlertTriangle size={14} className="text-error" />}
               </div>
             </h1>
             {book.author && <p className="text-foreground-muted truncate text-base whitespace-nowrap">{t('LabelByAuthor', { 0: book.author })}</p>}

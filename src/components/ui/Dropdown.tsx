@@ -1,5 +1,4 @@
-'use client'
-
+import { ChevronDown } from 'lucide-react'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import { mergeClasses } from '@/lib/merge-classes'
 import { useCallback, useId, useMemo, useRef, useState } from 'react'
@@ -19,7 +18,6 @@ export interface DropdownItem {
   keepOpen?: boolean
   rightIcon?: React.ReactNode
   disabled?: boolean
-  /** Subitems for two-level menu support */
   subitems?: DropdownSubitem[]
 }
 
@@ -32,19 +30,13 @@ interface DropdownProps {
   menuMaxHeight?: string
   onChange?: (value: string | number) => void
   className?: string
+  leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
   highlightSelected?: boolean
-  /** Override the display text shown in the dropdown button */
   displayText?: string
-  /** Use portal to render the dropdown menu. Useful for avoiding clipping issues. */
   usePortal?: boolean
 }
 
-/**
- * A dropdown component that displays a list of selectable items.
- * The dropdown shows the selected item and allows users to choose from a list of options.
- * Supports two-level submenus with proper keyboard navigation.
- */
 export default function Dropdown({
   value,
   label = '',
@@ -54,6 +46,7 @@ export default function Dropdown({
   menuMaxHeight = '224px',
   onChange,
   className,
+  leftIcon,
   rightIcon,
   highlightSelected = false,
   displayText,
@@ -63,12 +56,10 @@ export default function Dropdown({
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const [focusedSubIndex, setFocusedSubIndex] = useState(-1)
   const [openSubmenuIndex, setOpenSubmenuIndex] = useState<number | null>(null)
-  // Type-to-filter for submenus
   const [submenuFilterText, setSubmenuFilterText] = useState('')
   const buttonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
 
-  // Generate unique ID for this dropdown instance
   const dropdownId = useId()
 
   const openMenu = (index: number = 0) => {
@@ -78,7 +69,6 @@ export default function Dropdown({
     setOpenSubmenuIndex(null)
   }
 
-  // Keep useCallback for closeMenu since it's used in useClickOutside hook dependency
   const closeMenu = useCallback(() => {
     setShowMenu(false)
     setFocusedIndex(-1)
@@ -100,7 +90,6 @@ export default function Dropdown({
   const openSubMenu = (index: number) => {
     const currentItem = items[index]
     setOpenSubmenuIndex(index)
-    // Only set focusedSubIndex to 0 if there are actual subitems
     if (currentItem?.subitems && currentItem.subitems.length > 0) {
       setFocusedSubIndex(0)
     } else {
@@ -130,7 +119,6 @@ export default function Dropdown({
     closeMenu()
   }
 
-  // Keep useMemo for itemsToShow since it maps an array
   const itemsToShow = useMemo(
     () =>
       items.map((item) => {
@@ -146,7 +134,6 @@ export default function Dropdown({
   )
 
   const selectedItem = itemsToShow.find((item) => item.value === value)
-  // Use displayText if provided, otherwise fall back to selected item text
   const selectedText = displayText || selectedItem?.text || ''
   const selectedSubtext = displayText ? '' : selectedItem?.subtext || ''
 
@@ -161,7 +148,6 @@ export default function Dropdown({
     toggleMenu()
   }
 
-  // Helper to get filtered subitems for the currently open submenu
   const getFilteredSubitems = useCallback(() => {
     if (openSubmenuIndex === null) return []
     const currentItem = items[openSubmenuIndex]
@@ -170,13 +156,11 @@ export default function Dropdown({
     return currentItem.subitems.filter((subitem) => subitem.text.toLowerCase().startsWith(submenuFilterText.toLowerCase()))
   }, [items, openSubmenuIndex, submenuFilterText])
 
-  // Keyboard navigation handlers
   const handleVerticalNavigation = (direction: 'up' | 'down') => {
     if (direction === 'down') {
       if (!showMenu) {
         openMenu()
       } else if (focusedSubIndex !== -1 && openSubmenuIndex !== null) {
-        // Navigating within submenu - use filtered list
         const filteredSubitems = getFilteredSubitems()
         if (filteredSubitems.length > 0) {
           setFocusedSubIndex((prev) => (prev < filteredSubitems.length - 1 ? prev + 1 : prev))
@@ -189,7 +173,6 @@ export default function Dropdown({
       if (!showMenu) {
         openMenu(itemsToShow.length - 1)
       } else if (focusedSubIndex !== -1 && openSubmenuIndex !== null) {
-        // Navigating within submenu - use filtered list
         const filteredSubitems = getFilteredSubitems()
         if (filteredSubitems.length > 0) {
           setFocusedSubIndex((prev) => (prev > 0 ? prev - 1 : prev))
@@ -203,7 +186,6 @@ export default function Dropdown({
 
   const handleHorizontalNavigation = (direction: 'left' | 'right') => {
     if (direction === 'right') {
-      // Open submenu if current item has subitems
       if (showMenu && focusedSubIndex === -1 && focusedIndex >= 0) {
         const currentItem = items[focusedIndex]
         if (currentItem?.subitems) {
@@ -211,7 +193,6 @@ export default function Dropdown({
         }
       }
     } else {
-      // Close submenu
       if (showMenu && openSubmenuIndex !== null) {
         closeSubMenu()
       }
@@ -222,7 +203,6 @@ export default function Dropdown({
     if (!showMenu) {
       openMenu()
     } else if (focusedSubIndex !== -1 && focusedSubIndex >= 0 && openSubmenuIndex !== null) {
-      // Select subitem from filtered list
       const filteredSubitems = getFilteredSubitems()
       if (filteredSubitems.length > 0 && focusedSubIndex < filteredSubitems.length) {
         const subitem = filteredSubitems[focusedSubIndex]
@@ -233,7 +213,6 @@ export default function Dropdown({
     } else if (focusedIndex >= 0 && focusedIndex < itemsToShow.length) {
       const currentItem = items[focusedIndex]
       if (currentItem?.subitems) {
-        // Toggle submenu
         if (openSubmenuIndex === focusedIndex) {
           closeSubMenu()
         } else {
@@ -283,10 +262,8 @@ export default function Dropdown({
     }
   }
 
-  // Handle type-to-filter for submenu
   const handleTypeToFilter = (key: string) => {
     if (openSubmenuIndex !== null) {
-      // Add character to filter and reset focus to first item
       setSubmenuFilterText((prev) => prev + key.toLowerCase())
       setFocusedSubIndex(0)
     }
@@ -353,7 +330,6 @@ export default function Dropdown({
         break
 
       default:
-        // Handle letters and numbers for type-to-filter in submenu (supports Unicode)
         if (e.key.length === 1 && /[\p{L}\p{N}]/u.test(e.key)) {
           e.preventDefault()
           handleTypeToFilter(e.key)
@@ -394,8 +370,8 @@ export default function Dropdown({
           disabled={disabled}
           className={mergeClasses(
             'text-foreground relative w-full cursor-pointer text-left',
-            'flex h-full items-center justify-between border-none bg-transparent ps-1 outline-none',
-            'disabled:text-disabled disabled:cursor-not-allowed',
+            'flex h-full items-center justify-between border-none bg-transparent ps-2 outline-none',
+            'disabled:text-disabled disabled:cursor-not-allowed group transition-all',
             size === 'small' ? 'text-sm' : size === 'large' ? 'text-lg' : size === 'medium' ? 'text-base' : ''
           )}
           aria-haspopup="listbox"
@@ -411,13 +387,14 @@ export default function Dropdown({
           onClick={handleButtonClick}
           onKeyDown={handleKeyDown}
         >
-          <span className="flex min-w-0 flex-1 items-center gap-0">
-            <span className={mergeClasses('block shrink truncate font-sans', selectedSubtext ? 'max-w-[75%] font-semibold' : '')}>{selectedText}</span>
-            {selectedSubtext && <span className="flex-shrink-0">:&nbsp;</span>}
-            {selectedSubtext && <span className="block max-w-[25%] shrink truncate font-sans font-normal text-gray-400">{selectedSubtext}</span>}
+          <span className="flex min-w-0 flex-1 items-center gap-2">
+            {leftIcon && <span className="flex-shrink-0">{leftIcon}</span>}
+            <span className={mergeClasses('block truncate font-sans font-medium', selectedSubtext ? 'opacity-90' : '')}>{selectedText}</span>
+            {selectedSubtext && <span className="opacity-40">/</span>}
+            {selectedSubtext && <span className="block truncate font-sans text-xs font-normal opacity-60">{selectedSubtext}</span>}
           </span>
-          <span className="pointer-events-none ms-3 flex flex-shrink-0 items-center">
-            {rightIcon || <span className="material-symbols text-2xl">expand_more</span>}
+          <span className="pointer-events-none ms-3 flex flex-shrink-0 items-center pe-1">
+            {rightIcon || <ChevronDown size={18} className={mergeClasses('transition-transform duration-200', showMenu ? 'rotate-180' : '')} />}
           </span>
         </button>
       </InputWrapper>
@@ -431,7 +408,6 @@ export default function Dropdown({
         dropdownId={dropdownId}
         onItemClick={(item) => {
           if (item.subitems && item.subitems.length > 0) {
-            // Don't close, toggle submenu
             const idx = dropdownMenuItems.findIndex((i) => i.value === item.value)
             if (idx >= 0) {
               if (openSubmenuIndex === idx) {
@@ -441,10 +417,10 @@ export default function Dropdown({
               }
             }
           } else {
-            handleOptionClick(item.value)
+            handleOptionClick(item.value as string | number)
           }
         }}
-        onSubitemClick={(subitem) => handleSubitemClick(subitem.value)}
+        onSubitemClick={(subitem) => handleSubitemClick(subitem.value as string | number)}
         onOpenSubmenu={(index) => {
           if (openSubmenuIndex !== index) {
             setOpenSubmenuIndex(index)
@@ -467,3 +443,4 @@ export default function Dropdown({
     </div>
   )
 }
+

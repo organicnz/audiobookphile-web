@@ -12,6 +12,7 @@ import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { ApiError } from '@/lib/apiErrors'
 import { formatDuration } from '@/lib/formatDuration'
 import type { MediaItemShare } from '@/types/api'
+import { HelpCircle, Info, Copy, Trash2, Share2 } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -172,15 +173,15 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
   return (
     <Modal isOpen={isOpen} onClose={onClose} outerContent={outerContent} processing={processing} className="sm:max-w-[520px] md:max-w-[560px] lg:max-w-[560px]">
       <div className="max-h-[80vh] overflow-x-hidden overflow-y-auto px-4 py-6 text-sm sm:px-6">
-        <div className="absolute end-0 top-0 p-4">
+        <div className="absolute end-0 top-0 p-6">
           <Tooltip text={t('LabelClickForMoreInfo')} className="inline-flex">
             <a
               href="https://www.audiobookshelf.org/guides/media-item-shares"
               target="_blank"
               rel="noreferrer"
-              className="text-foreground-muted hover:text-foreground inline-flex"
+              className="text-white/40 hover:text-primary transition-colors inline-flex"
             >
-              <span className="material-symbols text-xl">help_outline</span>
+              <HelpCircle size={20} strokeWidth={2.5} />
             </a>
           </Tooltip>
         </div>
@@ -222,12 +223,12 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
               </div>
             </div>
 
-            <div className="mb-4 flex w-full items-center md:w-1/2">
-              <p className="text-foreground-muted px-1 py-1 text-sm">{t('LabelDownloadable')}</p>
+            <div className="mb-4 flex w-full items-center md:w-1/2 gap-3">
+              <p className="text-white/40 px-1 py-1 text-sm font-medium uppercase tracking-wider">{t('LabelDownloadable')}</p>
               <ToggleSwitch size="medium" value={isDownloadable} onChange={setIsDownloadable} />
               <Tooltip text={t('LabelShareDownloadableHelp')} position="right" maxWidth={160} openOnClick addTabIndex>
-                <span className="text-foreground-muted inline-flex h-8 w-8 cursor-pointer items-center justify-center sm:h-auto sm:w-auto">
-                  <span className="material-symbols icon-text text-lg">info</span>
+                <span className="text-white/20 hover:text-primary transition-colors cursor-pointer">
+                  <Info size={18} strokeWidth={2.5} />
                 </span>
               </Tooltip>
             </div>

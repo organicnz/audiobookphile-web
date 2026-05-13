@@ -4,6 +4,7 @@ import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { calculateNextRunDate, getHumanReadableCronExpression, validateCron } from '@/lib/cron'
 import { mergeClasses } from '@/lib/merge-classes'
 import { capitalizeFirstLetter } from '@/lib/string'
+import { Clock, Calendar } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
 interface CronExpressionPreviewProps {
@@ -39,21 +40,25 @@ export default function CronExpressionPreview({ cronExpression, className, isVal
   }
 
   return (
-    <div className={mergeClasses('p-1', className)}>
-      <div className="grid grid-cols-1 gap-x-2 gap-y-1 sm:grid-cols-[auto_1fr] sm:gap-y-2">
-        <div className="flex items-center">
-          <span className="material-symbols text-foreground mr-2">schedule</span>
-          <p className="text-foreground font-medium">{t('LabelSchedule')}:</p>
+    <div className={mergeClasses('p-4 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl', className)}>
+      <div className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-[auto_1fr]">
+        <div className="flex items-center gap-2">
+          <div className="bg-primary/20 p-1.5 rounded-lg border border-primary/20">
+            <Clock size={16} className="text-primary" />
+          </div>
+          <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">{t('LabelSchedule')}</p>
         </div>
-        <p className="text-foreground" cy-id="cron-description">
+        <p className="text-white/90 font-medium py-1" cy-id="cron-description">
           {verbalDescription}
         </p>
 
-        <div className="mt-2 flex items-center sm:mt-0">
-          <span className="material-symbols text-foreground mr-2">event</span>
-          <p className="text-foreground font-medium">{t('LabelNextRun')}:</p>
+        <div className="flex items-center gap-2">
+          <div className="bg-success/20 p-1.5 rounded-lg border border-success/20">
+            <Calendar size={16} className="text-success" />
+          </div>
+          <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">{t('LabelNextRun')}</p>
         </div>
-        <p className="text-foreground">{nextRunDate || t('LabelNotAvailable')}</p>
+        <p className="text-white/90 font-medium py-1">{nextRunDate || t('LabelNotAvailable')}</p>
       </div>
     </div>
   )

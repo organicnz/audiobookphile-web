@@ -21,6 +21,7 @@ import { getPlaceholderCoverUrl } from '@/lib/coverUtils'
 import { computeProgress } from '@/lib/mediaProgress'
 import type { BookMedia, BookshelfEntity, EReaderDevice, LibraryItem, MediaProgress, PodcastEpisode, PodcastMedia, UserPermissions } from '@/types/api'
 import { BookshelfView, isBookMedia, isBookMetadata, isPodcastLibraryItem } from '@/types/api'
+import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { memo, useCallback, useEffect, useId, useMemo, useState, type ReactNode } from 'react'
 
@@ -107,7 +108,6 @@ function MediaCard(props: MediaCardProps) {
   const cardId = useId()
   const t = useTypeSafeTranslations()
 
-  // Use prop to override context value if provided
   const effectiveSizeMultiplier = sizeMultiplier ?? contextSizeMultiplier
 
   const [isHovering, setIsHovering] = useState(false)
@@ -127,7 +127,6 @@ function MediaCard(props: MediaCardProps) {
 
   const handleMoreMenuOpenChange = (isOpen: boolean) => {
     setIsMoreMenuOpen(isOpen)
-    // Clear hovering state when menu closes to prevent overlay from staying open
     if (!isOpen) {
       setIsHovering(false)
     }
@@ -138,7 +137,6 @@ function MediaCard(props: MediaCardProps) {
   const media = libraryItem.media as BookMedia | PodcastMedia
   const originalMetadata = media.metadata
 
-  // Normalize metadata properties once to avoid repeated type checks
   const metadata = useMemo(() => {
     if (isBookMetadata(originalMetadata)) {
       return {
@@ -150,7 +148,6 @@ function MediaCard(props: MediaCardProps) {
         publishedYear: originalMetadata.publishedYear
       }
     }
-    // Podcast metadata
     return {
       authorName: originalMetadata.author,
       authorNameLF: null,
@@ -182,7 +179,6 @@ function MediaCard(props: MediaCardProps) {
   const isMissing = libraryItem.isMissing
   const isInvalid = libraryItem.isInvalid
 
-  // Keep useMemo for computeProgress since it's an actual computation
   const {
     percent: userProgressPercent,
     isFinished: itemIsFinished,
@@ -291,6 +287,19 @@ function MediaCard(props: MediaCardProps) {
 
   return (
     <>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -8, scale: 1.03 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ 
+        type: 'spring',
+        stiffness: 400,
+        damping: 25,
+        delay: entityIndex ? (entityIndex % 20) * 0.02 : 0 
+      }}
+      className="h-full group"
+    >
       <MediaCardFrame
         width={coverWidth}
         height={coverHeight}
@@ -330,6 +339,7 @@ function MediaCard(props: MediaCardProps) {
             isPodcast={isPodcast}
             userProgressPercent={userProgressPercent}
             itemIsFinished={itemIsFinished}
+            isHovering={isHovering}
           />
         }
         overlay={
@@ -362,6 +372,7 @@ function MediaCard(props: MediaCardProps) {
           />
         }
       />
+    </motion.div>
 
       {confirmState && (
         <ConfirmDialog
@@ -422,14 +433,8 @@ function MediaCard(props: MediaCardProps) {
   )
 }
 
-/**
- * Memoized MediaCard component to prevent unnecessary re-renders when parent updates.
- * Only re-renders when props actually change.
- */
 const MemoizedMediaCard = memo(MediaCard)
 
-// Named export for testing
 export { MemoizedMediaCard as MediaCard }
 
-// Default export for compatibility
 export default MemoizedMediaCard

@@ -1,5 +1,5 @@
-'use client'
-
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronRight, Check } from 'lucide-react'
 import { useModalRef } from '@/contexts/ModalContext'
 import { useMenuPosition } from '@/hooks/useMenuPosition'
 import { useScrollToFocused } from '@/hooks/useScrollToFocused'
@@ -15,12 +15,17 @@ export interface DropdownMenuSubitem {
 }
 
 export interface DropdownMenuItem {
-  text: string
-  value: string | number
+  text?: string // Optional only for dividers
+  value?: string | number
+  id?: string
   subtext?: string
   keepOpen?: boolean
   rightIcon?: React.ReactNode
+  icon?: any
+  onClick?: () => void
+  className?: string
   subitems?: DropdownMenuSubitem[]
+  type?: 'item' | 'divider'
 }
 
 /**
@@ -119,15 +124,18 @@ function DropdownSubmenu({
   })
 
   const submenuContent = (
-    <ul
+    <motion.ul
+      initial={{ opacity: 0, scale: 0.95, x: openLeft ? 10 : -10 }}
+      animate={{ opacity: 1, scale: 1, x: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       ref={submenuRef}
       role="menu"
-      className="bg-primary border-dropdown-menu-border absolute z-[9999] overflow-y-auto rounded-md border py-1 shadow-lg"
+      className="bg-primary/95 border-white/10 backdrop-blur-xl absolute z-[9999] overflow-y-auto rounded-xl border py-1.5 shadow-2xl"
       style={{
         ...floatingStyles,
-        width: '192px',
-        maxHeight: maxHeight ? `${maxHeight}px` : '300px', // Dynamic height based on available viewport space
-        // Hide until positioned to prevent flicker at 0,0
+        width: '200px',
+        maxHeight: maxHeight ? `${maxHeight}px` : '300px',
         opacity: isPositioned ? 1 : 0,
         visibility: isPositioned ? 'visible' : 'hidden'
       }}
@@ -136,8 +144,8 @@ function DropdownSubmenu({
       onClick={(e) => e.stopPropagation()}
     >
       {filterText && (
-        <li className="text-foreground-subdued border-dropdown-menu-border relative mb-1 border-b px-3 py-1 text-xs select-none" role="presentation">
-          <span className="font-mono">{filterText}</span>
+        <li className="text-white/40 border-white/5 relative mb-1 border-b px-4 py-1.5 text-xs select-none" role="presentation">
+          <span className="font-mono tracking-wider uppercase">{filterText}</span>
         </li>
       )}
       {filteredSubitems.map((subitem, subitemIndex) => (
@@ -145,8 +153,8 @@ function DropdownSubmenu({
           key={subitem.value}
           id={`${dropdownId}-subitem-${parentIndex}-${subitemIndex}`}
           className={mergeClasses(
-            'text-foreground hover:bg-dropdown-item-hover relative cursor-pointer py-2',
-            focusedSubIndex === subitemIndex ? 'bg-dropdown-item-selected' : ''
+            'text-foreground hover:bg-white/5 relative cursor-pointer px-4 py-2 transition-colors mx-1 rounded-lg',
+            focusedSubIndex === subitemIndex ? 'bg-white/10' : ''
           )}
           role="option"
           tabIndex={-1}
@@ -158,18 +166,18 @@ function DropdownSubmenu({
           onMouseDown={(e) => e.preventDefault()}
         >
           <div className="flex items-center">
-            <span className="ms-3 block truncate font-sans text-sm">{subitem.text}</span>
+            <span className="block truncate font-sans text-sm font-medium">{subitem.text}</span>
           </div>
         </li>
       ))}
       {filteredSubitems.length === 0 && (
-        <li className="text-foreground-subdued relative py-2 select-none" role="option" aria-selected={false}>
+        <li className="text-white/40 relative py-3 select-none" role="option" aria-selected={false}>
           <div className="flex items-center justify-center">
             <span className="text-sm font-normal">{t('LabelNoItems')}</span>
           </div>
         </li>
       )}
-    </ul>
+    </motion.ul>
   )
 
   if (typeof document !== 'undefined') {
@@ -203,10 +211,6 @@ interface DropdownMenuProps {
   submenuFilterText?: string
 }
 
-/**
- * A reusable dropdown menu component that provides consistent styling and behavior
- * for dropdown menus across the application. Supports two-level submenus.
- */
 export default function DropdownMenu({
   showMenu,
   items,
@@ -244,24 +248,14 @@ export default function DropdownMenu({
   })
   const [isMouseOver, setIsMouseOver] = useState(false)
 
-  // Track whether the submenu should open on the left
   const [openSubmenuLeft, setOpenSubmenuLeft] = useState(false)
-  // Track pending submenu closure with timeout
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  // Track hover state for timeout logic
   const isOverSubmenuRef = useRef(false)
-
-  // Store refs to menu items for submenu positioning
   const menuItemRefs = useRef<(HTMLLIElement | null)[]>([])
+  const submenuWidth = 200
 
-  const submenuWidth = 192 // Fixed submenu width
-
-  // Use portal if it is explicitly enabled or if the modalRef is not null
-  // For the portal to work, triggerRef must be provided
   const usePortal: boolean = (usePortalProp || modalRef !== null) && triggerRef !== undefined
 
-  // Use the menu position hook when portal is enabled
   useMenuPosition({
     triggerRef: triggerRef as React.RefObject<HTMLElement>,
     menuRef: menuRef as React.RefObject<HTMLElement>,
@@ -271,7 +265,6 @@ export default function DropdownMenu({
     portalContainerRef
   })
 
-  // Scroll focused item into view
   useScrollToFocused({
     containerRef: menuRef,
     focusedIndex,
@@ -279,7 +272,6 @@ export default function DropdownMenu({
     getElement: useCallback((container, index) => container.querySelector(`#${dropdownId}-item-${index}`) as HTMLElement, [dropdownId])
   })
 
-  // Update submenu position when menu opens
   useEffect(() => {
     if (showMenu && menuRef.current) {
       const boundingRect = menuRef.current.getBoundingClientRect()
@@ -287,7 +279,6 @@ export default function DropdownMenu({
         setOpenSubmenuLeft(window.innerWidth - boundingRect.x < boundingRect.width + submenuWidth + 5)
       }
     } else if (!showMenu) {
-      // Reset internal state when menu closes
       isOverSubmenuRef.current = false
       if (closeTimeoutRef.current) {
         clearTimeout(closeTimeoutRef.current)
@@ -296,31 +287,25 @@ export default function DropdownMenu({
     }
   }, [showMenu, menuRef])
 
-  // Clear timeout on unmount
   useEffect(() => {
     return () => {
       if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
     }
   }, [])
 
-  // Add global wheel event listener for quicker catching of mouse wheel events
   useEffect(() => {
     if (!showMenu || !isMouseOver) return
 
     const handleGlobalWheel = (e: WheelEvent) => {
-      // Check if the mouse is over the dropdown menu
       if (menuRef?.current && menuRef.current.contains(e.target as Node)) {
-        // Check if the target is inside a submenu (role="menu" inside the main menu)
         const target = e.target as HTMLElement
         const submenu = target.closest('[role="menu"]')
 
         if (submenu && submenu !== menuRef.current) {
-          // Target is in a submenu - let the submenu handle scrolling
           e.stopPropagation()
           e.preventDefault()
           submenu.scrollTop += e.deltaY
         } else {
-          // Target is in main menu
           e.stopPropagation()
           e.preventDefault()
           menuRef.current.scrollTop += e.deltaY
@@ -328,53 +313,36 @@ export default function DropdownMenu({
       }
     }
 
-    // Add the listener with capture: true to catch it early
     document.addEventListener('wheel', handleGlobalWheel, { passive: false, capture: true })
-
     return () => {
       document.removeEventListener('wheel', handleGlobalWheel, { capture: true })
     }
   }, [showMenu, isMouseOver, menuRef])
 
-  const handleMouseEnter = () => {
-    setIsMouseOver(true)
-  }
-
-  const handleMouseLeave = () => {
-    setIsMouseOver(false)
-  }
-
-  const handleMenuMouseDown = (e: React.MouseEvent<HTMLUListElement>) => {
-    // Prevent input from losing focus when interacting with the menu
-    // This prevents blur-based menu closing when using scrollbars
-    e.preventDefault()
-  }
+  const handleMouseEnter = () => setIsMouseOver(true)
+  const handleMouseLeave = () => setIsMouseOver(false)
+  const handleMenuMouseDown = (e: React.MouseEvent<HTMLUListElement>) => e.preventDefault()
 
   const handleMouseoverSubmenu = useCallback(() => {
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
-
     isOverSubmenuRef.current = true
   }, [])
 
   const handleMouseleaveSubmenu = useCallback(() => {
     isOverSubmenuRef.current = false
-
-    // Schedule close when leaving submenu
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
     closeTimeoutRef.current = setTimeout(() => {
       onCloseSubmenu?.()
-    }, 150) // Grace period
+    }, 150)
   }, [onCloseSubmenu])
 
   const handleMouseleaveParent = useCallback(() => {
-    // Schedule close when leaving parent item
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current)
     closeTimeoutRef.current = setTimeout(() => {
-      // Only close if we haven't entered the submenu
       if (!isOverSubmenuRef.current) {
         onCloseSubmenu?.()
       }
-    }, 150) // Grace period
+    }, 150)
   }, [onCloseSubmenu])
 
   const handleMouseoverParent = useCallback(
@@ -388,21 +356,29 @@ export default function DropdownMenu({
   const menuItems = useMemo(
     () =>
       items.map((item, index) => {
+        if (item.type === 'divider') {
+          return (
+            <li key={item.id || `divider-${index}`} className="my-1 border-b border-white/5 mx-1" role="presentation" />
+          )
+        }
+
         const hasSubitems = item.subitems && item.subitems.length > 0
         const isSubmenuOpen = openSubmenuIndex === index
+        const Icon = item.icon
 
         return (
           <li
-            key={item.value}
+            key={item.id || item.value || index}
             id={`${dropdownId}-item-${index}`}
             ref={(el) => {
               menuItemRefs.current[index] = el
             }}
             className={mergeClasses(
-              'text-foreground hover:bg-dropdown-item-hover relative cursor-pointer py-2',
-              focusedIndex === index && focusedSubIndex === -1 ? 'bg-dropdown-item-selected' : '',
-              isSubmenuOpen ? 'bg-dropdown-item-hover' : '',
-              highlightSelected && isItemSelected?.(item) ? 'text-yellow-400' : ''
+              'text-foreground hover:bg-white/5 relative cursor-pointer py-2.5 px-4 mx-1 rounded-lg transition-colors',
+              focusedIndex === index && focusedSubIndex === -1 ? 'bg-white/10' : '',
+              isSubmenuOpen ? 'bg-white/10' : '',
+              highlightSelected && isItemSelected?.(item) ? 'text-primary' : '',
+              item.className
             )}
             role={hasSubitems ? 'menuitem' : 'option'}
             tabIndex={-1}
@@ -411,30 +387,33 @@ export default function DropdownMenu({
             aria-expanded={hasSubitems ? isSubmenuOpen : undefined}
             onClick={(e) => {
               e.stopPropagation()
+              item.onClick?.()
               onItemClick?.(item)
             }}
             onMouseDown={(e) => e.preventDefault()}
             onMouseOver={hasSubitems ? () => handleMouseoverParent(index) : undefined}
             onMouseLeave={hasSubitems ? handleMouseleaveParent : undefined}
           >
-            <div className="flex items-center">
-              <span className={mergeClasses('ms-3 block truncate font-sans text-sm', item.subtext ? 'font-semibold' : '')}>{item.text}</span>
-              {item.subtext && <span>:&nbsp;</span>}
-              {item.subtext && <span className="text-foreground-subdued block truncate font-sans text-sm font-normal">{item.subtext}</span>}
+            <div className="flex items-center gap-3">
+              {Icon && <Icon size={16} className="opacity-60" />}
+              <div className="flex flex-1 min-w-0 items-center">
+                <span className={mergeClasses('block truncate font-sans text-sm font-medium', item.subtext ? 'font-semibold' : '')}>{item.text}</span>
+                {item.subtext && <span className="mx-1 opacity-40">:</span>}
+                {item.subtext && <span className="text-foreground/60 block truncate font-sans text-xs font-normal">{item.subtext}</span>}
+              </div>
             </div>
             {hasSubitems && (
               <div className="pointer-events-none absolute inset-y-0 right-2 flex h-full items-center">
-                <span className="material-symbols text-lg">arrow_right</span>
+                <ChevronRight size={16} className="opacity-40" />
               </div>
             )}
             {item.rightIcon && !hasSubitems && <div className="pointer-events-none absolute inset-y-0 right-2 flex h-full items-center">{item.rightIcon}</div>}
             {showSelectedIndicator && isItemSelected && isItemSelected(item) && !hasSubitems && (
-              <span className="absolute inset-y-0 end-0 flex items-center pe-4">
-                <span className="material-symbols text-xl text-yellow-400">check</span>
+              <span className="absolute inset-y-0 end-2 flex items-center">
+                <Check size={18} className="text-primary" />
               </span>
             )}
 
-            {/* Submenu */}
             {hasSubitems && isSubmenuOpen && (
               <DropdownSubmenu
                 subitems={item.subitems!}
@@ -475,52 +454,56 @@ export default function DropdownMenu({
   )
 
   const menuContent = (
-    <ul
-      ref={menuRef}
-      className={mergeClasses(
-        'bg-primary border-dropdown-menu-border absolute z-10 mt-0.5 w-full overflow-auto rounded-md border py-1 shadow-lg ring-1 ring-black/5 sm:text-sm',
-        className
+    <AnimatePresence>
+      {showMenu && (
+        <motion.ul
+          initial={{ opacity: 0, y: -10, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -10, scale: 0.98 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          ref={menuRef}
+          className={mergeClasses(
+            'bg-primary/95 border-white/10 backdrop-blur-xl absolute z-10 mt-1.5 overflow-auto rounded-xl border py-1.5 shadow-2xl ring-1 ring-black/10',
+            className
+          )}
+          role="listbox"
+          id={`${dropdownId}-listbox`}
+          tabIndex={-1}
+          style={{
+            maxHeight: `min(${menuMaxHeight}, calc(100vh - 100px))`,
+            ...(usePortal
+              ? {
+                  position: 'absolute',
+                  top: menuPosition.top,
+                  left: menuPosition.left,
+                  width: menuPosition.width,
+                  zIndex: 9999
+                }
+              : {})
+          }}
+          aria-multiselectable={multiSelect}
+          aria-activedescendant={
+            focusedSubIndex !== -1 && openSubmenuIndex !== null
+              ? `${dropdownId}-subitem-${openSubmenuIndex}-${focusedSubIndex}`
+              : `${dropdownId}-item-${focusedIndex}`
+          }
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onMouseDown={handleMenuMouseDown}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {menuItems}
+          {showNoItemsMessage && !items.length && (
+            <li className="text-foreground relative py-4 px-4 select-none" role="option" aria-selected={false} cy-id="dropdown-menu-no-items">
+              <div className="flex items-center justify-center">
+                <span className="font-normal opacity-40">{defaultNoItemsText}</span>
+              </div>
+            </li>
+          )}
+        </motion.ul>
       )}
-      role="listbox"
-      id={`${dropdownId}-listbox`}
-      tabIndex={-1}
-      style={{
-        maxHeight: `min(${menuMaxHeight}, calc(100vh - 100px))`,
-        ...(usePortal
-          ? {
-              position: 'absolute',
-              top: menuPosition.top,
-              left: menuPosition.left,
-              width: menuPosition.width,
-              zIndex: 9999
-            }
-          : {})
-      }}
-      aria-multiselectable={multiSelect}
-      aria-activedescendant={
-        focusedSubIndex !== -1 && openSubmenuIndex !== null
-          ? `${dropdownId}-subitem-${openSubmenuIndex}-${focusedSubIndex}`
-          : `${dropdownId}-item-${focusedIndex}`
-      }
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onMouseDown={handleMenuMouseDown}
-      onClick={(e) => e.stopPropagation()}
-    >
-      {menuItems}
-      {showNoItemsMessage && !items.length && (
-        <li className="text-foreground relative py-2 pe-9 select-none" role="option" aria-selected={false} cy-id="dropdown-menu-no-items">
-          <div className="flex items-center justify-center">
-            <span className="font-normal">{defaultNoItemsText}</span>
-          </div>
-        </li>
-      )}
-    </ul>
+    </AnimatePresence>
   )
-
-  if (!showMenu) {
-    return null
-  }
 
   if (usePortal && typeof document !== 'undefined') {
     const portalTarget = portalContainerRef?.current || document.body
@@ -529,3 +512,4 @@ export default function DropdownMenu({
 
   return menuContent
 }
+

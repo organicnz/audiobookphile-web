@@ -1,5 +1,3 @@
-'use client'
-
 import IconBtn from '@/components/ui/IconBtn'
 import Tooltip from '@/components/ui/Tooltip'
 import LoadingSpinner from '@/components/widgets/LoadingSpinner'
@@ -9,6 +7,18 @@ import { useUser } from '@/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/lib/merge-classes'
 import type { MediaItemShare, RssFeed } from '@/types/api'
+import { 
+  Pause, 
+  Play, 
+  BookOpen, 
+  CheckCircle2, 
+  Circle, 
+  Edit2, 
+  AlertCircle, 
+  Rss, 
+  Globe 
+} from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useCallback, useMemo, type ReactNode } from 'react'
 
 /**
@@ -103,27 +113,11 @@ export default function MediaCardOverlay({
   const isProcessingOrPending = useMemo(() => processing || isPending, [processing, isPending])
 
   const overlayWrapperClasslist = useMemo(
-    () => mergeClasses(isSelectionMode ? 'bg-black/60' : 'bg-black/40', selected && 'border-2 border-yellow-400'),
+    () => mergeClasses(
+      isSelectionMode ? 'bg-black/60' : 'bg-gradient-to-t from-black/80 via-black/40 to-black/60 backdrop-blur-[2px]', 
+      selected && 'ring-2 ring-primary ring-inset'
+    ),
     [isSelectionMode, selected]
-  )
-
-  const playButtonStyle = useMemo(() => ({ fontSize: `${playIconFontSize}em` }), [playIconFontSize])
-
-  const errorBadgeStyle = useMemo(() => ({ height: `${ICON_SIZE.ERROR_BADGE_HEIGHT}em`, width: `${ICON_SIZE.ERROR_BADGE_WIDTH}em` }), [])
-
-  const errorIconStyle = useMemo(() => ({ fontSize: `${ICON_SIZE.ERROR_ICON}em` }), [])
-
-  const iconBadgeStyle = useMemo(() => ({ width: `${ICON_SIZE.SMALL}em`, height: `${ICON_SIZE.SMALL}em` }), [])
-
-  const iconStyle = useMemo(() => ({ fontSize: `1em` }), [])
-
-  const shareIconStyle = useMemo(
-    () => ({
-      width: `${ICON_SIZE.SMALL}em`,
-      height: `${ICON_SIZE.SMALL}em`,
-      top: rssFeed ? `${SPACING.RSS_SHARE_GAP}em` : `${SPACING.CORNER}em`
-    }),
-    [rssFeed]
   )
 
   const handlePlayClick = useCallback(
@@ -165,91 +159,119 @@ export default function MediaCardOverlay({
   return (
     <>
       {/* Overlay */}
-      {showOverlay && (
-        <div cy-id="overlay" className={mergeClasses('absolute start-0 top-0 z-10 h-full w-full rounded-sm bg-black md:block', overlayWrapperClasslist)}>
-          {/* Play button */}
-          {showPlayButton && (
-            <div cy-id="playButton" className="pointer-events-none flex h-full items-center justify-center">
-              <IconBtn
-                borderless
-                outlined={false}
-                className={mergeClasses('text-gray-200 hover:scale-110 hover:text-white', 'pointer-events-auto h-auto w-auto transform duration-200')}
-                onClick={handlePlayClick}
-                ariaLabel={isItemPlaying ? t('ButtonPlaying') : t('ButtonPlay')}
-                style={playButtonStyle}
+      <AnimatePresence>
+        {showOverlay && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            cy-id="overlay" 
+            className={mergeClasses('absolute start-0 top-0 z-10 h-full w-full rounded-lg md:block overflow-hidden', overlayWrapperClasslist)}
+          >
+            {/* Play/Read center interaction */}
+            {(showPlayButton || showReadButton) && (
+              <div className="pointer-events-none flex h-full items-center justify-center">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  className="pointer-events-auto"
+                >
+                  {showPlayButton ? (
+                    <IconBtn
+                      borderless
+                      outlined={false}
+                      className="text-white drop-shadow-2xl h-auto w-auto"
+                      onClick={handlePlayClick}
+                      ariaLabel={isItemPlaying ? t('ButtonPlaying') : t('ButtonPlay')}
+                      icon={isItemPlaying ? Pause : Play}
+                      style={{ transform: `scale(${playIconFontSize * 0.45})` }}
+                      whileHover={{ scale: 1.1, color: '#fff' }}
+                      whileTap={{ scale: 0.9 }}
+                    />
+                  ) : showReadButton ? (
+                    <IconBtn
+                      borderless
+                      className="text-white drop-shadow-2xl h-auto w-auto"
+                      onClick={handleReadClick}
+                      ariaLabel={t('ButtonRead')}
+                      icon={BookOpen}
+                      style={{ transform: `scale(${playIconFontSize * 0.45})` }}
+                      whileHover={{ scale: 1.1, color: '#fff' }}
+                      whileTap={{ scale: 0.9 }}
+                    />
+                  ) : null}
+                </motion.div>
+              </div>
+            )}
+
+            {/* Select button */}
+            {showSelectRadioButton && (
+              <MediaOverlayIconBtn
+                cyId="selectedRadioButton"
+                position="top-start"
+                icon={selected ? CheckCircle2 : Circle}
+                onClick={handleSelectClick}
+                ariaLabel={selected ? t('ButtonDeselect') : t('ButtonSelect')}
+                selected={selected}
+                className={selected ? '!bg-primary !text-black !border-primary' : ''}
+              />
+            )}
+
+            {/* Edit button */}
+            {showEditButton && userCanUpdate && !isSelectionMode && (
+              <MediaOverlayIconBtn 
+                cyId="editButton" 
+                position="top-end" 
+                icon={Edit2} 
+                onClick={handleEditClick} 
+                ariaLabel={t('ButtonEdit')} 
+              />
+            )}
+
+            {/* More menu icon */}
+            {!isSelectionMode && moreMenuItems.length > 0 && (
+              <motion.div
+                cy-id="moreButton"
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.1 }}
+                className="absolute end-[0.5em] bottom-[0.5em] cursor-pointer md:block"
               >
-                {isItemPlaying ? 'pause' : 'play_arrow'}
-              </IconBtn>
-            </div>
-          )}
+                <MediaCardMoreMenu items={moreMenuItems} processing={isProcessingOrPending} onAction={onMoreAction} onOpenChange={onMoreMenuOpenChange} />
+              </motion.div>
+            )}
 
-          {/* Read button */}
-          {showReadButton && (
-            <div cy-id="readButton" className="pointer-events-none flex h-full items-center justify-center">
-              <IconBtn
-                borderless
-                className={mergeClasses('text-gray-200 hover:scale-110 hover:text-white', 'pointer-events-auto h-auto w-auto transform duration-200')}
-                onClick={handleReadClick}
-                ariaLabel={t('ButtonRead')}
-                style={playButtonStyle}
-              >
-                auto_stories
-              </IconBtn>
-            </div>
-          )}
-
-          {/* Select button */}
-          {showSelectRadioButton && (
-            <MediaOverlayIconBtn
-              cyId="selectedRadioButton"
-              position="top-start"
-              icon={selected ? 'radio_button_checked' : 'radio_button_unchecked'}
-              onClick={handleSelectClick}
-              ariaLabel={selected ? t('ButtonDeselect') : t('ButtonSelect')}
-              selected={selected}
-            />
-          )}
-
-          {/* Edit button */}
-          {showEditButton && userCanUpdate && !isSelectionMode && (
-            <MediaOverlayIconBtn cyId="editButton" position="top-end" icon="edit" onClick={handleEditClick} ariaLabel={t('ButtonEdit')} />
-          )}
-
-          {/* More menu icon */}
-          {!isSelectionMode && moreMenuItems.length > 0 && (
-            <div
-              cy-id="moreButton"
-              className={mergeClasses(
-                'absolute end-[0.375em] bottom-[0.375em] cursor-pointer md:block',
-                'hover:scale-125 hover:[&_.material-symbols]:!text-yellow-300'
-              )}
-            >
-              <MediaCardMoreMenu items={moreMenuItems} processing={isProcessingOrPending} onAction={onMoreAction} onOpenChange={onMoreMenuOpenChange} />
-            </div>
-          )}
-
-          {/* Overlay badges (e.g., ebook format) */}
-          {safeRender(renderOverlayBadges, 'Error rendering overlay badges:')}
-        </div>
-      )}
+            {/* Overlay badges (e.g., ebook format) */}
+            {safeRender(renderOverlayBadges, 'Error rendering overlay badges:')}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Processing overlay */}
-      {processing && (
-        <div cy-id="loadingSpinner" className="absolute start-0 top-0 z-10 flex h-full w-full items-center justify-center rounded-sm bg-black/40">
-          <LoadingSpinner size="la-lg" />
-        </div>
-      )}
+      <AnimatePresence>
+        {processing && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            cy-id="loadingSpinner" 
+            className="absolute start-0 top-0 z-20 flex h-full w-full items-center justify-center rounded-lg bg-black/60 backdrop-blur-md"
+          >
+            <LoadingSpinner size="la-lg" />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Error tooltip */}
       {showError && (
         <Tooltip text={errorText} position="right" usePortal className="absolute start-0 bottom-4 z-10" tooltipClassName="whitespace-nowrap">
           <div
-            className={mergeClasses('bg-error flex items-center justify-end rounded-r-full shadow-md', 'border-r border-b border-red-300')}
-            style={errorBadgeStyle}
+            className={mergeClasses('bg-error/90 backdrop-blur-md flex items-center justify-end rounded-r-full shadow-lg', 'border-y border-r border-white/20')}
+            style={{ height: `${ICON_SIZE.ERROR_BADGE_HEIGHT}em`, width: `${ICON_SIZE.ERROR_BADGE_WIDTH}em` }}
           >
-            <span className="material-symbols pr-1 text-red-100" style={errorIconStyle}>
-              priority_high
-            </span>
+            <AlertCircle size={14} className="pr-1 text-white" />
           </div>
         </Tooltip>
       )}
@@ -258,23 +280,23 @@ export default function MediaCardOverlay({
       {rssFeed && !isSelectionMode && !isHovering && (
         <div
           cy-id="rssFeed"
-          className={mergeClasses('absolute start-[0.375em] top-[0.375em] z-10', 'flex items-center justify-center rounded-full bg-black/40 shadow-sm')}
-          style={iconBadgeStyle}
+          className={mergeClasses('absolute start-[0.5em] top-[0.5em] z-10', 'flex items-center justify-center rounded-lg bg-black/60 backdrop-blur-md border border-white/10 shadow-sm')}
+          style={{ width: `${ICON_SIZE.SMALL}em`, height: `${ICON_SIZE.SMALL}em` }}
         >
-          <span className="material-symbols text-orange-500" aria-hidden="true" style={iconStyle}>
-            rss_feed
-          </span>
+          <Rss size={14} className="text-primary fill-current" aria-hidden="true" />
         </div>
       )}
       {mediaItemShare && !isSelectionMode && !isHovering && (
         <div
           cy-id="mediaItemShare"
-          className={mergeClasses('absolute start-[0.375em] z-10', 'flex items-center justify-center rounded-full bg-black/40 shadow-sm')}
-          style={shareIconStyle}
+          className={mergeClasses('absolute start-[0.5em] z-10', 'flex items-center justify-center rounded-lg bg-black/60 backdrop-blur-md border border-white/10 shadow-sm')}
+          style={{
+            width: `${ICON_SIZE.SMALL}em`,
+            height: `${ICON_SIZE.SMALL}em`,
+            top: rssFeed ? `${SPACING.RSS_SHARE_GAP}em` : `${SPACING.CORNER}em`
+          }}
         >
-          <span className="material-symbols text-green-500" aria-hidden="true" style={iconStyle}>
-            public
-          </span>
+          <Globe size={14} className="text-success" aria-hidden="true" />
         </div>
       )}
 

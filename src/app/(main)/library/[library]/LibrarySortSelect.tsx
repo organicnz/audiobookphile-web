@@ -4,6 +4,7 @@ import Dropdown, { DropdownItem } from '@/components/ui/Dropdown'
 import { useLibrary } from '@/contexts/LibraryContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { EntityType } from '@/types/api'
+import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react'
 import { useCallback, useEffect, useMemo } from 'react'
 
 interface LibrarySortSelectProps {
@@ -55,7 +56,6 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
         if (isSeries) key = 'seriesSortDesc'
         else if (isAuthors) key = 'authorSortDesc'
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         updateSetting(key as any, !currentSortDesc)
       } else {
         // New sort
@@ -69,10 +69,8 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
           descKey = 'authorSortDesc'
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         updateSetting(key as any, val)
         if (defaultsToAsc(val)) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           updateSetting(descKey as any, false)
         }
       }
@@ -172,10 +170,13 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
     if (currentSortBy) {
       const selectedItem = items.find((i) => i.value === currentSortBy)
       if (selectedItem) {
+        const Icon = currentSortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
         selectedItem.rightIcon = (
-          <span className="material-symbols text-xl text-yellow-400" aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}>
-            {currentSortDesc ? 'expand_more' : 'expand_less'}
-          </span>
+          <Icon 
+            size={16} 
+            className="text-primary opacity-80" 
+            aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
+          />
         )
       }
     }
@@ -183,13 +184,14 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
     return items
   }, [t, availableItems, currentSortBy, currentSortDesc])
 
-  const rightIcon = useMemo(() => {
-    return (
-      <span className="material-symbols text-lg text-yellow-400" aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}>
-        {currentSortDesc ? 'expand_more' : 'expand_less'}
-      </span>
-    )
-  }, [currentSortDesc, t])
+  const Icon = currentSortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
+  const rightIcon = (
+    <Icon 
+      size={16} 
+      className="text-primary" 
+      aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
+    />
+  )
 
   return (
     <div className="h-9 w-36 sm:w-44 md:w-48">
@@ -199,7 +201,7 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
         onChange={handleSortChange}
         size="auto"
         rightIcon={rightIcon}
-        className="h-full text-xs"
+        className="h-full text-[11px] font-black uppercase tracking-widest"
         highlightSelected={true}
         menuMaxHeight="none"
       />

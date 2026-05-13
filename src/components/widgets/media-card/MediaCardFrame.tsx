@@ -1,4 +1,5 @@
 import { mergeClasses } from '@/lib/merge-classes'
+import { motion } from 'framer-motion'
 import { type ReactNode } from 'react'
 
 interface MediaCardFrameProps {
@@ -42,9 +43,10 @@ export default function MediaCardFrame({
       onMouseLeave={onMouseLeave}
       onKeyDown={onKeyDown}
       className={mergeClasses(
-        'relative z-30 rounded-xs',
+        'relative z-30 rounded-xl overflow-hidden',
         onClick && 'cursor-pointer',
-        'focus-visible:outline-foreground-muted focus-visible:outline-1 focus-visible:outline-offset-[0.5em]',
+        'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2',
+        'transition-all duration-300',
         className
       )}
       style={{
@@ -53,13 +55,13 @@ export default function MediaCardFrame({
       }}
     >
       <div
-        className="bg-primary box-shadow-book relative start-0 top-0 z-10 w-full overflow-hidden rounded-sm"
+        className="bg-primary/95 backdrop-blur-xl relative start-0 top-0 z-10 w-full overflow-hidden rounded-xl border border-white/10 shadow-2xl transition-transform duration-500 ease-out group-hover:scale-[1.02]"
         style={{
           height: typeof height === 'number' ? `${height}px` : height,
           aspectRatio: aspectRatio ? `${aspectRatio}` : undefined
         }}
       >
-        <div className="absolute start-0 top-0 z-10 h-full w-full overflow-hidden rounded-sm">
+        <div className="absolute start-0 top-0 z-10 h-full w-full overflow-hidden">
           {cover}
           {overlay}
         </div>

@@ -10,6 +10,7 @@ import { AudioTrack } from '@/lib/player/AudioTrack'
 import { LocalAudioPlayer } from '@/lib/player/LocalAudioPlayer'
 import type { AudioTrackData, Chapter, MediaItemShareResponse } from '@/types/api'
 import { PlayerState } from '@/types/api'
+import { Volume2, Volume1, VolumeX, RotateCcw, RotateCw, Play, Pause, Download, AlertCircle } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface SharePlayerProps {
@@ -418,7 +419,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
   // Volume icon
   // ============================================================================
 
-  const volumeIcon = settings.volume === 0 ? 'volume_off' : settings.volume < 0.5 ? 'volume_down' : 'volume_up'
+  const VolumeIcon = settings.volume === 0 ? VolumeX : settings.volume < 0.5 ? Volume1 : Volume2
 
   const toggleMute = useCallback(() => {
     const newVol = playerSettings.toggleMute()
@@ -432,9 +433,9 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
   if (isLoading) {
     return (
       <div className="text-foreground flex h-dvh w-full items-center justify-center bg-neutral-900" role="status" aria-live="polite">
-        <div className="flex flex-col items-center gap-4">
-          <LoadingSpinner size="la-2x" color="rgb(148 163 184)" />
-          <p className="text-lg text-slate-400">Loading...</p>
+        <div className="flex flex-col items-center gap-6">
+          <LoadingSpinner size="la-3x" color="rgb(168 85 247)" />
+          <p className="text-xl font-black uppercase tracking-widest text-white/40">Loading...</p>
         </div>
       </div>
     )
@@ -443,9 +444,9 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
   if (fetchError || !shareData || !playbackSession) {
     return (
       <div className="text-foreground flex h-dvh w-full items-center justify-center bg-neutral-900">
-        <div className="flex flex-col items-center gap-4">
-          <span className="material-symbols text-5xl text-slate-500">error</span>
-          <p className="text-xl text-slate-400">{fetchError || 'Failed to load shared item'}</p>
+        <div className="flex flex-col items-center gap-6 bg-white/5 backdrop-blur-xl p-12 rounded-3xl border border-white/10">
+          <AlertCircle size={64} className="text-error drop-shadow-[0_0_15px_rgba(var(--error-rgb),0.5)]" />
+          <p className="text-2xl font-black uppercase tracking-widest text-white/90">{fetchError || 'Failed to load shared item'}</p>
         </div>
       </div>
     )
@@ -512,15 +513,15 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
             <div className="flex items-center justify-center gap-3 sm:gap-4">
               {/* Volume */}
               <Tooltip text="Volume" position="top">
-                <IconBtn borderless size="custom" className="w-9 text-2xl" onClick={toggleMute}>
-                  {volumeIcon}
+                <IconBtn borderless size="custom" className="w-10 h-10 text-white/60 hover:text-white transition-colors" onClick={toggleMute}>
+                  <VolumeIcon size={24} />
                 </IconBtn>
               </Tooltip>
-
+ 
               {/* Jump backward */}
               <Tooltip text={`Jump back ${settings.jumpBackwardAmount}s`} position="top">
-                <IconBtn borderless size="custom" className="w-10 text-3xl" onClick={jumpBackward}>
-                  replay
+                <IconBtn borderless size="custom" className="w-12 h-12 text-white/60 hover:text-white transition-colors" onClick={jumpBackward}>
+                  <RotateCcw size={28} />
                 </IconBtn>
               </Tooltip>
 
@@ -530,16 +531,16 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
                 size="custom"
                 loading={playerState === PlayerState.LOADING}
                 outlined={false}
-                className="h-12 w-12 rounded-full bg-white text-3xl text-neutral-900 hover:text-neutral-900 hover:not-disabled:text-neutral-900"
+                className="h-16 w-16 rounded-full bg-primary text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] hover:scale-110 active:scale-95 transition-all"
                 onClick={playPause}
               >
-                {isPlaying ? 'pause' : 'play_arrow'}
+                {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
               </IconBtn>
 
               {/* Jump forward */}
               <Tooltip text={`Jump forward ${settings.jumpForwardAmount}s`} position="top">
-                <IconBtn borderless size="custom" className="w-10 text-3xl" onClick={jumpForward}>
-                  forward_media
+                <IconBtn borderless size="custom" className="w-12 h-12 text-white/60 hover:text-white transition-colors" onClick={jumpForward}>
+                  <RotateCw size={28} />
                 </IconBtn>
               </Tooltip>
 
@@ -563,9 +564,9 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
 
           {/* Download button */}
           {shareData.isDownloadable && (
-            <Tooltip text="Download" position="bottom" className="absolute top-0 left-0 m-4">
-              <button aria-label="Download" className="cursor-pointer text-gray-300 hover:text-white" onClick={downloadShareItem}>
-                <span className="material-symbols text-2xl sm:text-3xl">download</span>
+            <Tooltip text="Download" position="bottom" className="absolute top-6 left-6">
+              <button aria-label="Download" className="text-white/40 hover:text-white transition-all hover:scale-110 active:scale-95" onClick={downloadShareItem}>
+                <Download size={32} />
               </button>
             </Tooltip>
           )}

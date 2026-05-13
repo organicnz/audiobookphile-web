@@ -1,3 +1,16 @@
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  Tag, 
+  Layers, 
+  Bookmark, 
+  Music, 
+  Mic, 
+  Book, 
+  Radio, 
+  ChevronRight, 
+  User as UserIcon,
+  Search
+} from 'lucide-react'
 import AuthorImage from '@/components/covers/AuthorImage'
 import { FlatResultItem, SearchResultType } from '@/hooks/useGlobalSearchTransformer'
 import { useMenuPosition } from '@/hooks/useMenuPosition'
@@ -22,7 +35,7 @@ const HighlightMatch = ({ text, query }: { text: string; query: string }) => {
     <>
       {parts.map((part, i) =>
         part.isMatch ? (
-          <span key={i} className="font-bold text-amber-600 dark:text-amber-500">
+          <span key={i} className="font-black text-primary drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]">
             {part.text}
           </span>
         ) : (
@@ -33,18 +46,26 @@ const HighlightMatch = ({ text, query }: { text: string; query: string }) => {
   )
 }
 
-const getMaterialSymbolIcon = (type: SearchResultType): string => {
+const getLucideIcon = (type: SearchResultType) => {
   switch (type) {
     case 'tag':
-      return 'label'
+      return Tag
     case 'genre':
-      return 'category'
+      return Layers
     case 'collection':
-      return 'collections_bookmark'
+      return Bookmark
     case 'playlist':
-      return 'library_music'
+      return Music
+    case 'author':
+      return UserIcon
+    case 'book':
+      return Book
+    case 'podcast':
+      return Mic
+    case 'episode':
+      return Radio
     default:
-      return 'record_voice_over'
+      return Search
   }
 }
 
@@ -72,8 +93,6 @@ export default function GlobalSearchMenu({
   usePortal = false,
   triggerRef
 }: GlobalSearchMenuProps) {
-  // Scroll focused item into view
-  // Scroll focused item into view
   const [menuPosition, setMenuPosition] = useState({ top: '0px', left: '0px', width: 'auto' })
 
   useMenuPosition({
@@ -84,7 +103,6 @@ export default function GlobalSearchMenu({
     disable: !usePortal
   })
 
-  // Scroll focused item into view
   useScrollToFocused({
     containerRef: menuRef,
     focusedIndex,
@@ -92,136 +110,137 @@ export default function GlobalSearchMenu({
   })
 
   const menuContent = (
-    <div
-      ref={menuRef}
-      cy-id="global-search-menu"
-      role="listbox"
-      tabIndex={-1}
-      className="bg-primary border-dropdown-menu-border globalSearchMenu absolute z-50 mt-1 max-h-[calc(100vh-100px)] w-full overflow-y-auto rounded-md border py-1 shadow-lg ring-1 ring-black/5"
-      style={
-        usePortal
-          ? {
-              position: 'absolute',
-              top: menuPosition.top,
-              left: menuPosition.left,
-              width: menuPosition.width,
-              zIndex: 9999
-            }
-          : {}
-      }
-      onMouseDown={(e) => e.preventDefault()} // Prevent blur on scroll click
-    >
-      {results.map((result, index) => {
-        if (result.isPlaceholder) {
-          return (
-            <div key={result.id} className="px-3 py-2 text-sm text-gray-500">
-              {result.placeholderText}
-            </div>
-          )
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: -10, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10, scale: 0.98 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+        ref={menuRef}
+        cy-id="global-search-menu"
+        role="listbox"
+        tabIndex={-1}
+        className="bg-primary/95 border-white/10 backdrop-blur-xl globalSearchMenu absolute z-50 mt-2 max-h-[min(600px,calc(100vh-100px))] w-full overflow-y-auto rounded-2xl border p-1.5 shadow-2xl"
+        style={
+          usePortal
+            ? {
+                position: 'absolute',
+                top: menuPosition.top,
+                left: menuPosition.left,
+                width: menuPosition.width,
+                zIndex: 9999
+              }
+            : {}
         }
+        onMouseDown={(e) => e.preventDefault()}
+      >
+        {results.map((result, index) => {
+          if (result.isPlaceholder) {
+            return (
+              <div key={result.id} className="px-4 py-3 text-sm text-foreground/40 font-medium italic">
+                {result.placeholderText}
+              </div>
+            )
+          }
 
-        if (result.type === 'header') {
-          return (
-            <div key={result.id} className="mt-2 mb-1 px-3 py-1 text-xs font-semibold tracking-wider text-gray-500 uppercase">
-              {result.title}
-            </div>
-          )
-        }
+          if (result.type === 'header') {
+            return (
+              <div key={result.id} className="mt-3 mb-1 px-4 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-foreground/30">
+                {result.title}
+              </div>
+            )
+          }
 
-        const isSelected = focusedIndex === index
-        const isAuthor = result.type === 'author'
-        const shouldHighlightSubtitle = result.type === 'book' || result.type === 'podcast' || result.type === 'episode'
-        const usePortrait = isAuthor // Authors keep the portrait ratio
-        // Books, Series, Podcasts, etc use square
-        const containerClass = usePortrait
-          ? 'w-8 h-12' // Portrait
-          : 'w-12 h-12' // Square
+          const isSelected = focusedIndex === index
+          const isAuthor = result.type === 'author'
+          const Icon = getLucideIcon(result.type)
+          const shouldHighlightSubtitle = result.type === 'book' || result.type === 'podcast' || result.type === 'episode'
+          const containerClass = isAuthor ? 'w-9 h-14' : 'w-11 h-11'
+          const hasImage = !!result.imageSrc || isAuthor
 
-        const hasImage = !!result.imageSrc || isAuthor
-
-        const itemContent = (
-          <div className="flex items-center gap-3">
-            {/* Image / Icon */}
-            {hasImage ? (
+          const itemContent = (
+            <div className="flex items-center gap-3.5">
+              {/* Image / Icon */}
               <div
                 className={mergeClasses(
-                  'bg-bg-secondary relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-sm shadow-sm',
+                  'bg-white/5 relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-lg shadow-inner ring-1 ring-white/5',
                   containerClass
                 )}
               >
-                {result.type === 'author' && result.originalItem ? (
-                  <AuthorImage author={result.originalItem} className="h-full w-full" />
+                {hasImage ? (
+                  result.type === 'author' && result.originalItem ? (
+                    <AuthorImage author={result.originalItem} className="h-full w-full" />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={result.imageSrc} alt="" className="h-full w-full object-cover" loading="lazy" />
+                  )
                 ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={result.imageSrc} alt="" className="h-full w-full object-cover" loading="lazy" />
+                  <Icon size={18} className="text-foreground/20" />
                 )}
               </div>
-            ) : (
-              // Placeholder or Icon for items without images (Tags/Genres)
-              <div className="bg-bg-secondary flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
-                <span className="material-symbols text-lg text-gray-400">{getMaterialSymbolIcon(result.type)}</span>
-              </div>
-            )}
 
-            {/* Text */}
-            <div className="min-w-0 flex-1">
-              <div className="text-foreground truncate text-sm font-medium">
-                <HighlightMatch text={result.title} query={searchQuery} />
+              {/* Text */}
+              <div className="min-w-0 flex-1 py-1">
+                <div className="text-foreground truncate text-sm font-bold tracking-tight">
+                  <HighlightMatch text={result.title} query={searchQuery} />
+                </div>
+                {result.subtitle && (
+                  <div className="text-[10px] text-foreground/40 truncate font-medium mt-0.5">
+                    {shouldHighlightSubtitle ? <HighlightMatch text={result.subtitle} query={searchQuery} /> : <span>{result.subtitle}</span>}
+                  </div>
+                )}
+                {result.author && (
+                  <div className="text-foreground/60 truncate text-xs font-semibold mt-0.5">
+                    <HighlightMatch text={result.author} query={searchQuery} />
+                  </div>
+                )}
               </div>
-              {/* Only show subtitle if it exists */}
-              {result.subtitle && (
-                <div className="text-xxs text-foreground-subdued truncate">
-                  {shouldHighlightSubtitle ? <HighlightMatch text={result.subtitle} query={searchQuery} /> : <span>{result.subtitle}</span>}
+              
+              {isSelected && (
+                <div className="text-primary pr-2">
+                  <ChevronRight size={16} strokeWidth={3} />
                 </div>
               )}
-              {/* Show author if it exists */}
-              {result.author && (
-                <div className="text-foreground truncate text-xs">
-                  <HighlightMatch text={result.author} query={searchQuery} />
-                </div>
-              )}
-            </div>
-          </div>
-        )
-
-        const itemKey = `${result.type}-${result.id}`
-        const commonProps = {
-          id: `result-item-${index}`,
-          'data-index': index,
-          tabIndex: -1,
-          className: mergeClasses(
-            'block px-3 py-2 cursor-pointer no-underline select-none',
-            'hover:bg-dropdown-item-hover',
-            isSelected ? 'bg-dropdown-item-selected' : ''
-          ),
-          role: 'option' as const,
-          'aria-selected': isSelected
-        }
-
-        // If onItemSelect is provided, render as button for selection
-        if (onItemSelect) {
-          return (
-            <div
-              key={itemKey}
-              {...commonProps}
-              onClick={() => {
-                onItemSelect(result)
-                onItemClick()
-              }}
-            >
-              {itemContent}
             </div>
           )
-        }
 
-        // Otherwise render as Link for navigation
-        return (
-          <Link key={itemKey} {...commonProps} href={result.link || '#'} onClick={onItemClick}>
-            {itemContent}
-          </Link>
-        )
-      })}
-    </div>
+          const itemKey = `${result.type}-${result.id}`
+          const commonProps = {
+            id: `result-item-${index}`,
+            'data-index': index,
+            tabIndex: -1,
+            className: mergeClasses(
+              'block px-2 py-2 cursor-pointer no-underline select-none rounded-xl transition-all duration-200',
+              'hover:bg-white/5',
+              isSelected ? 'bg-white/10 shadow-sm' : ''
+            ),
+            role: 'option' as const,
+            'aria-selected': isSelected
+          }
+
+          if (onItemSelect) {
+            return (
+              <div
+                key={itemKey}
+                {...commonProps}
+                onClick={() => {
+                  onItemSelect(result)
+                  onItemClick()
+                }}
+              >
+                {itemContent}
+              </div>
+            )
+          }
+
+          return (
+            <Link key={itemKey} {...commonProps} href={result.link || '#'} onClick={onItemClick}>
+              {itemContent}
+            </Link>
+          )
+        })}
+      </motion.div>
+    </AnimatePresence>
   )
 
   if (usePortal && typeof document !== 'undefined') {
@@ -231,3 +250,4 @@ export default function GlobalSearchMenu({
 
   return menuContent
 }
+

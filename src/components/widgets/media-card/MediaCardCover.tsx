@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { getLibraryItemCoverSrc } from '@/lib/coverUtils'
 import { mergeClasses } from '@/lib/merge-classes'
 import type { LibraryItem } from '@/types/api'
@@ -17,12 +18,13 @@ interface MediaCardCoverProps {
   userProgressPercent: number
   itemIsFinished: boolean
   onImageLoad?: (showBg: boolean) => void
+  isHovering?: boolean
 }
 
 const PLACEHOLDER_COVER_PADDING = 0.8
-const TITLE_FONT_SIZE = 0.75
-const AUTHOR_FONT_SIZE = 0.6
-const AUTHOR_BOTTOM = 0.75
+const TITLE_FONT_SIZE = 0.8
+const AUTHOR_FONT_SIZE = 0.65
+const AUTHOR_BOTTOM = 1
 
 export default function MediaCardCover({
   libraryItem,
@@ -35,7 +37,8 @@ export default function MediaCardCover({
   isPodcast,
   userProgressPercent,
   itemIsFinished,
-  onImageLoad
+  onImageLoad,
+  isHovering = false
 }: MediaCardCoverProps) {
   const [imageReady, setImageReady] = useState(false)
   const [showCoverBg, setShowCoverBg] = useState(false)
@@ -46,8 +49,6 @@ export default function MediaCardCover({
 
   const [prevSrc, setPrevSrc] = useState(bookCoverSrc)
 
-  // Reset image ready state when cover source changes (e.g. libraryItem.updatedAt cache-bust).
-  // Must clear hasHandledLoad too — otherwise onLoad bails out and the cover stays at opacity 0.
   useEffect(() => {
     if (bookCoverSrc !== prevSrc) {
       setPrevSrc(bookCoverSrc)
@@ -77,11 +78,9 @@ export default function MediaCardCover({
     [bookCoverSrc, coverAspect, placeholderUrl, onImageLoad]
   )
 
-  // Check if image is already loaded (e.g., from cache)
   useEffect(() => {
     const img = imgRef.current
     if (img && img.complete && img.naturalWidth > 0) {
-      // Image was loaded from cache before event handler was attached
       handleImageLoaded({ currentTarget: img } as React.SyntheticEvent<HTMLImageElement>)
     }
   }, [bookCoverSrc, handleImageLoaded])
@@ -91,14 +90,18 @@ export default function MediaCardCover({
       {/* Cover background when image does not fill */}
       <div
         cy-id="coverBg"
-        className="bg-primary absolute start-0 top-0 h-full w-full overflow-hidden rounded-xs"
+        className="bg-black/40 absolute start-0 top-0 h-full w-full overflow-hidden"
         style={{ display: showCoverBg ? 'block' : 'none' }}
       >
         {showCoverBg && (
-          <div
-            className="cover-bg absolute"
+          <motion.div
+            animate={{ scale: isHovering ? 1.15 : 1.1, opacity: 0.3 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="cover-bg absolute inset-0 blur-2xl saturate-150"
             style={{
-              backgroundImage: `url("${bookCoverSrc}")`
+              backgroundImage: `url("${bookCoverSrc}")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
             }}
           />
         )}
@@ -109,10 +112,10 @@ export default function MediaCardCover({
         <div
           cy-id="titleImageNotReady"
           aria-hidden="true"
-          className="absolute start-0 top-0 flex h-full w-full items-center justify-center"
-          style={{ padding: `${0.5}em` }}
+          className="absolute start-0 top-0 flex h-full w-full items-center justify-center bg-white/5"
+          style={{ padding: '1rem' }}
         >
-          <p style={{ fontSize: `${0.8}em` }} className="text-center text-gray-300">
+          <p className="text-center text-foreground/20 font-black uppercase tracking-widest text-[10px]">
             {title}
           </p>
         </div>
@@ -120,55 +123,69 @@ export default function MediaCardCover({
 
       {/* Cover image */}
       {libraryItem && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <motion.img
           ref={imgRef}
           cy-id="coverImage"
           alt={`${title}, Cover`}
           aria-hidden="true"
           src={bookCoverSrc}
           onLoad={handleImageLoaded}
-          className={mergeClasses('absolute inset-0 h-full w-full transition-opacity duration-300', showCoverBg ? 'object-contain' : 'object-fill')}
-          style={{ opacity: imageReady ? 1 : 0 }}
+          animate={{ 
+            opacity: imageReady ? 1 : 0,
+            scale: isHovering ? 1.08 : 1
+          }}
+          transition={{ 
+            opacity: { duration: 0.4 },
+            scale: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+          }}
+          className={mergeClasses(
+            'absolute inset-0 h-full w-full transition-shadow duration-500',
+            showCoverBg ? 'object-contain' : 'object-cover',
+            isHovering ? 'shadow-2xl' : 'shadow-none'
+          )}
         />
       )}
 
       {/* Placeholder cover title & author */}
       {!hasCover && (
-        <>
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5 p-4 text-center">
           <div
             cy-id="placeholderTitle"
-            className="absolute start-0 end-0 top-0 bottom-0 flex h-full w-full items-center justify-center"
-            style={{ padding: `${PLACEHOLDER_COVER_PADDING}em` }}
+            className="flex-1 flex items-center justify-center"
           >
-            <div>
-              <p cy-id="placeholderTitleText" aria-hidden="true" className="text-center text-amber-100" style={{ fontSize: `${TITLE_FONT_SIZE}em` }}>
-                {titleCleaned}
-              </p>
-            </div>
+            <p cy-id="placeholderTitleText" aria-hidden="true" className="font-black uppercase tracking-widest text-primary/80 drop-shadow-sm leading-tight" style={{ fontSize: `${TITLE_FONT_SIZE}em` }}>
+              {titleCleaned}
+            </p>
           </div>
           <div
             cy-id="placeholderAuthor"
-            className="absolute start-0 end-0 flex w-full items-center justify-center"
-            style={{ padding: `${PLACEHOLDER_COVER_PADDING}em`, bottom: `${AUTHOR_BOTTOM}em` }}
+            className="w-full pb-2"
           >
-            <p cy-id="placeholderAuthorText" aria-hidden="true" className="text-center text-amber-100 opacity-75" style={{ fontSize: `${AUTHOR_FONT_SIZE}em` }}>
+            <p cy-id="placeholderAuthorText" aria-hidden="true" className="font-bold text-primary/40 uppercase tracking-widest" style={{ fontSize: `${AUTHOR_FONT_SIZE}em` }}>
               {authorCleaned}
             </p>
           </div>
-        </>
+        </div>
       )}
 
       {/* Progress bar */}
       {userProgressPercent > 0 && (!isPodcast || !!libraryItem.recentEpisode) && (
-        <div
-          cy-id="progressBar"
-          className={mergeClasses(
-            'box-shadow-progressbar absolute start-0 bottom-0 z-20 h-1 max-w-full rounded-b',
-            itemIsFinished ? 'bg-success' : 'bg-yellow-400'
-          )}
-          style={{ width: `${userProgressPercent * 100}%` }}
-        />
+        <div className="absolute start-0 bottom-0 z-20 w-full px-2 pb-2">
+          <div className="h-1.5 w-full bg-white/10 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
+            <motion.div
+              cy-id="progressBar"
+              initial={{ width: 0 }}
+              animate={{ width: `${userProgressPercent * 100}%` }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+              className={mergeClasses(
+                'h-full rounded-full transition-all duration-500',
+                itemIsFinished 
+                  ? 'bg-success shadow-[0_0_10px_rgba(var(--success-rgb),0.5)]' 
+                  : 'bg-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]'
+              )}
+            />
+          </div>
+        </div>
       )}
     </>
   )

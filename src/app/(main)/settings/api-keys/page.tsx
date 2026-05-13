@@ -1,4 +1,5 @@
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
+import { ExternalLink, Key } from 'lucide-react'
 import SettingsContent from '../SettingsContent'
 
 export const dynamic = 'force-dynamic'
@@ -7,7 +8,7 @@ export default async function ApiKeysPage() {
   const t = await getTypeSafeTranslations()
 
   return (
-    <SettingsContent title={t('HeaderAPIKeys')}>
+    <SettingsContent title={t('HeaderAPIKeys' as any)}>
       <div className="p-6 space-y-4">
         <p className="text-foreground-muted text-sm">
           API keys for this Supabase-backed deployment are managed in the Supabase dashboard.
@@ -21,15 +22,15 @@ export default async function ApiKeysPage() {
             href="https://supabase.com/dashboard/project/iambzzclljayqdxkeepy/settings/api"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-primary inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+            className="bg-primary/20 border border-primary/30 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-black uppercase tracking-widest text-primary hover:bg-primary/30 transition-all hover:scale-105 active:scale-95"
           >
-            <span className="material-symbols text-base">open_in_new</span>
+            <ExternalLink size={16} />
             Open Supabase API Settings
           </a>
         </div>
-        <div className="bg-bg-light border-border rounded-lg border p-4 space-y-2">
-          <h3 className="text-foreground font-medium">Project Reference</h3>
-          <code className="bg-bg block rounded p-3 text-xs font-mono text-green-400">
+        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 space-y-3">
+          <h3 className="text-white/40 text-[11px] font-black uppercase tracking-widest">Project Reference</h3>
+          <code className="bg-black/40 block rounded-xl p-4 text-xs font-mono text-primary/80 border border-white/5">
             iambzzclljayqdxkeepy
           </code>
         </div>

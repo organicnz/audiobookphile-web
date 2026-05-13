@@ -1,5 +1,5 @@
-'use client'
-
+import { motion, AnimatePresence } from 'framer-motion'
+import { Edit2, X, Check } from 'lucide-react'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/lib/merge-classes'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -61,10 +61,8 @@ export const Pill = <T,>({
   const inputWidthRef = useRef<number>(0)
   const pillContainerRef = useRef<HTMLDivElement>(null)
 
-  // Update input value when entering edit mode
   useEffect(() => {
     if (isEditing) {
-      // itemText is now the editable portion
       setInputValue(itemText)
     }
   }, [isEditing, itemText])
@@ -89,7 +87,6 @@ export const Pill = <T,>({
     }
   }, [])
 
-  // Dynamically calculate and set the max width for the pill container, and update on resize.
   useEffect(() => {
     if (isEditing) {
       const pillContainer = pillContainerRef.current
@@ -105,15 +102,12 @@ export const Pill = <T,>({
     }
   }, [isEditing, updatePillMaxWidth])
 
-  // Focus the edit input when editing starts and input is rendered
   useEffect(() => {
     if (isEditing && editInputRef.current && isInputReady) {
       editInputRef.current.focus()
-      //editInputRef.current.select()
     }
   }, [isEditing, isInputReady])
 
-  // Calculate input width and prepare input for rendering
   useEffect(() => {
     if (isEditing && sizerRef.current && !isInputReady) {
       if (sizerRef.current) {
@@ -129,7 +123,6 @@ export const Pill = <T,>({
     }
   }, [isEditing, inputValue, isInputReady])
 
-  // Update width while typing
   useEffect(() => {
     if (isEditing && sizerRef.current && isInputReady) {
       if (sizerRef.current) {
@@ -141,7 +134,6 @@ export const Pill = <T,>({
     }
   }, [inputValue, isEditing, isInputReady])
 
-  // Start editing when edit button is clicked
   const handleEditButtonClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -150,17 +142,14 @@ export const Pill = <T,>({
     }
   }
 
-  // Handle edit input changes
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value)
   }
 
-  // Save the edit
   const handleSaveEdit = () => {
     const trimmedInput = inputValue.trim()
     const newContent = onMutate ? onMutate(item, trimmedInput) : (trimmedInput as T)
 
-    // Validate the new content
     const error = onValidate?.(newContent)
     setHasValidationError(!!error)
     if (error) {
@@ -174,27 +163,22 @@ export const Pill = <T,>({
       onEdit?.(newContent)
     }
 
-    onEditDone?.(true, false) // Refocus input when explicitly saving
+    onEditDone?.(true, false)
   }
 
   const handleCancelEdit = () => {
-    // Reset to the original itemText
     setInputValue(itemText)
     setHasValidationError(false)
     onEditDone?.(true, true)
   }
 
-  // Handle input blur - only exit edit mode, don't save
   const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const newFocusTarget = e.relatedTarget as HTMLElement
-
-    // Only exit edit mode if focus is moving outside the pill container
     if (!pillContainerRef.current?.contains(newFocusTarget)) {
       onEditDone?.(false, true)
     }
   }
 
-  // Handle edit input key events
   const handleEditInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
@@ -205,145 +189,117 @@ export const Pill = <T,>({
     }
   }
 
-  // Tab trap for edit mode
   const handlePillKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Tab') {
       e.preventDefault()
-
-      // Get all focusable elements in the edit mode
       const focusableElements = [editInputRef.current, cancelButtonRef.current, saveButtonRef.current].filter(Boolean) as HTMLElement[]
-
       const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement)
       const nextIndex = e.shiftKey ? (currentIndex - 1 + focusableElements.length) % focusableElements.length : (currentIndex + 1) % focusableElements.length
-
       focusableElements[nextIndex]?.focus()
     }
   }
 
-  // If editing, show the input field
-  if (isEditing) {
-    return (
-      <div
-        ref={pillContainerRef}
-        id={id}
-        cy-id={id}
-        role="listitem"
-        aria-label={t('LabelEditingItem', { item: readOnlyPrefix ? readOnlyPrefix + itemText : itemText })}
-        className={mergeClasses(
-          'bg-bg relative mx-0.5 my-0.5 flex flex-nowrap items-center justify-center rounded-full px-2 py-1 text-xs break-all',
-          'z-10 ring',
-          hasValidationError && 'ring-2 ring-red-500'
-        )}
-        tabIndex={-1}
-        onMouseDown={(e) => e.preventDefault()}
-        onKeyDown={handlePillKeyDown}
-      >
-        <span ref={sizerRef} className="invisible absolute px-1 text-xs whitespace-pre">
-          {inputValue}
-        </span>
-        <div className="inline" style={{ maxWidth: '85%' }}>
-          {readOnlyPrefix && (
-            <span ref={prefixRef} className="text-disabled text-xs">
-              {readOnlyPrefix}
-            </span>
-          )}
-          {isInputReady && (
-            <input
-              ref={editInputRef}
-              type="text"
-              value={inputValue}
-              onChange={handleEditInputChange}
-              onKeyDown={handleEditInputKeyDown}
-              onBlur={handleInputBlur}
-              className="border-none bg-transparent text-center text-xs outline-none"
-              style={{ minWidth: '0px', width: `${inputWidthRef.current}px`, maxWidth: '100%', marginLeft: '-3px' }}
-              autoComplete="off"
-              aria-label={t('LabelEditItem', { item: readOnlyPrefix ? readOnlyPrefix + itemText : itemText })}
-              aria-describedby={`${id}-edit-instructions`}
-            />
-          )}
-        </div>
-        <div className="ms-1 flex items-center gap-1" role="group" aria-label={t('LabelEditActions')}>
-          <button
-            type="button"
-            aria-label={t('ButtonCancelEdit')}
-            className="material-symbols text-foreground focus:text-error hover:text-error cursor-pointer"
-            style={{ fontSize: '1rem' }}
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={handleCancelEdit}
-            ref={cancelButtonRef}
-          >
-            close
-          </button>
-          <button
-            type="button"
-            aria-label={t('ButtonSaveEdit')}
-            className="material-symbols text-foreground focus:text-success hover:text-success cursor-pointer"
-            style={{ fontSize: '1rem' }}
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={handleSaveEdit}
-            ref={saveButtonRef}
-          >
-            check
-          </button>
-        </div>
-        <div id={`${id}-edit-instructions`} className="sr-only">
-          {readOnlyPrefix ? t('LabelEditInstructionsWithPrefix', { prefix: readOnlyPrefix }) : t('LabelEditInstructions')}
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div
+    <motion.div
+      layout
+      ref={pillContainerRef}
       id={id}
       cy-id={id}
       role="listitem"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
       className={mergeClasses(
-        'group bg-bg relative mx-0.5 my-0.5 flex flex-nowrap items-center justify-center rounded-full px-2 py-1 text-xs break-all',
-        !disabled && isFocused ? 'z-10 ring' : '',
-        hasValidationError && 'ring-error ring-2'
+        'relative mx-1 my-0.5 flex flex-nowrap items-center justify-center rounded-full px-3 py-1 text-xs font-medium transition-all group',
+        isEditing ? 'bg-white/10 ring-1 ring-white/20 shadow-lg z-10' : 'bg-white/5 hover:bg-white/10 text-foreground/80 hover:text-foreground border border-white/5',
+        !disabled && isFocused && !isEditing ? 'ring-2 ring-primary border-primary/50' : '',
+        hasValidationError && 'ring-2 ring-error border-error/50'
       )}
-      style={{ minWidth: showEditButton ? 44 : 22 }}
       tabIndex={-1}
       onMouseDown={(e) => e.preventDefault()}
-      onClick={(e) => {
+      onKeyDown={isEditing ? handlePillKeyDown : undefined}
+      onClick={!isEditing ? (e) => {
         e.preventDefault()
         e.stopPropagation()
         onClick()
-      }}
+      } : undefined}
     >
-      {!disabled && (
-        <div className="absolute -end-1 top-0 z-20 flex -translate-y-1/2 items-center gap-0.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          {showEditButton && (
+      {isEditing ? (
+        <>
+          <span ref={sizerRef} className="invisible absolute px-1 text-xs whitespace-pre">
+            {inputValue}
+          </span>
+          <div className="inline-flex items-center" style={{ maxWidth: '80%' }}>
+            {readOnlyPrefix && (
+              <span ref={prefixRef} className="text-foreground/40 text-xs me-1 select-none">
+                {readOnlyPrefix}
+              </span>
+            )}
+            {isInputReady && (
+              <input
+                ref={editInputRef}
+                type="text"
+                value={inputValue}
+                onChange={handleEditInputChange}
+                onKeyDown={handleEditInputKeyDown}
+                onBlur={handleInputBlur}
+                className="border-none bg-transparent text-center text-xs outline-none font-medium placeholder:text-white/20"
+                style={{ minWidth: '4px', width: `${inputWidthRef.current}px`, maxWidth: '100%' }}
+                autoComplete="off"
+                aria-label={t('LabelEditItem', { item: readOnlyPrefix ? readOnlyPrefix + itemText : itemText })}
+              />
+            )}
+          </div>
+          <div className="ms-2 flex items-center gap-1.5" role="group">
             <button
               type="button"
-              aria-label={t('ButtonEdit')}
-              className="material-symbols bg-bg-alt text-foreground hover:text-warning flex h-3 w-3 cursor-pointer items-center justify-center rounded-full text-sm"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={handleEditButtonClick}
-              tabIndex={-1}
+              className="p-1 text-foreground/40 hover:text-error hover:bg-error/10 rounded-full transition-all outline-none focus:ring-1 focus:ring-error"
+              onClick={handleCancelEdit}
+              ref={cancelButtonRef}
             >
-              edit
+              <X size={14} strokeWidth={3} />
             </button>
+            <button
+              type="button"
+              className="p-1 text-foreground/40 hover:text-success hover:bg-success/10 rounded-full transition-all outline-none focus:ring-1 focus:ring-success"
+              onClick={handleSaveEdit}
+              ref={saveButtonRef}
+            >
+              <Check size={14} strokeWidth={3} />
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <span className="relative z-0 truncate max-w-[150px]">{fullText}</span>
+          {!disabled && (
+            <div className="flex items-center ms-1.5 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {showEditButton && (
+                <button
+                  type="button"
+                  className="p-1 text-foreground/40 hover:text-primary transition-colors outline-none focus:ring-1 focus:ring-primary rounded-full"
+                  onClick={handleEditButtonClick}
+                  tabIndex={-1}
+                >
+                  <Edit2 size={12} strokeWidth={2.5} />
+                </button>
+              )}
+              <button
+                type="button"
+                className="p-1 text-foreground/40 hover:text-error transition-colors outline-none focus:ring-1 focus:ring-error rounded-full"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onRemove(item)
+                }}
+                tabIndex={-1}
+              >
+                <X size={12} strokeWidth={2.5} />
+              </button>
+            </div>
           )}
-          <button
-            type="button"
-            aria-label={t('ButtonRemove')}
-            className="material-symbols bg-bg-alt text-foreground hover:text-error focus:text-error flex h-3 w-3 cursor-pointer items-center justify-center rounded-full text-sm"
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={(e) => {
-              e.stopPropagation()
-              onRemove(item)
-            }}
-            tabIndex={-1}
-          >
-            close
-          </button>
-        </div>
+        </>
       )}
-      <span className="relative transition-opacity duration-300 group-hover:opacity-75">{fullText}</span>
-    </div>
+    </motion.div>
   )
 }
 

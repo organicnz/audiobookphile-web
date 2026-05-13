@@ -12,6 +12,7 @@ import Dropdown from '@/components/ui/Dropdown'
 import IconBtn from '@/components/ui/IconBtn'
 import LoadingIndicator from '@/components/ui/LoadingIndicator'
 import ProgressIndicator from '@/components/ui/ProgressIndicator'
+import { Search, Info, X, Folder, Upload, RefreshCw, Eye, Image as ImageIcon } from 'lucide-react'
 import TableRow from '@/components/ui/TableRow'
 import TextInput from '@/components/ui/TextInput'
 import ToggleSwitch from '@/components/ui/ToggleSwitch'
@@ -308,7 +309,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
           <div className="flex items-center pt-6">
             <ToggleSwitch label={t('LabelAutoFetchMetadata')} value={autoFetch} className="pr-0" onChange={setAutoFetch} />
             <Tooltip maxWidth={300} text={t('LabelAutoFetchMetadataHelp')}>
-              <span className="material-symbols text-lg">info</span>
+              <Info size={18} className="text-white/40 hover:text-primary transition-colors cursor-help" />
             </Tooltip>
           </div>
 
@@ -416,10 +417,10 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
                     {/* floating x on right */}
                     {!uploadProcessing && !item.isUploading && (
                       <IconBtn
-                        className="bg-bg border-border absolute -top-3 -right-3 h-8 w-8 rounded-full border"
+                        className="bg-primary border-white/10 absolute -top-3 -right-3 h-8 w-8 rounded-full border shadow-xl"
                         onClick={() => handleRemoveStagedItem(index)}
                       >
-                        close
+                        <X size={16} />
                       </IconBtn>
                     )}
                     {item.metadataError && (

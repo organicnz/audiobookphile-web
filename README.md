@@ -1,10 +1,10 @@
 # Audiobookshelf Client (React / Next.js)
 
-A Next.js 15 web client for [Audiobookshelf](https://github.com/advplyr/audiobookshelf), built with React, Supabase, and deployed on Vercel. This client is in active development and will replace the existing VueJS web client.
+A Next.js 16 web client for [Audiobookshelf](https://github.com/advplyr/audiobookshelf), built with React, Supabase, and deployed on Vercel. This client is in active development and will replace the existing VueJS web client.
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Auth & Database**: [Supabase](https://supabase.com) (Postgres + Auth + Storage)
 - **Deployment**: [Vercel](https://vercel.com)
 - **Package Manager**: [Bun](https://bun.sh)

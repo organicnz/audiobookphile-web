@@ -5,6 +5,7 @@ import Dropdown, { DropdownItem } from '@/components/ui/Dropdown'
 import MediaIconPicker from '@/components/ui/MediaIconPicker'
 import TextInput from '@/components/ui/TextInput'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { Folder, FolderPlus, X } from 'lucide-react'
 import { LibraryFormData } from './LibraryEditModal'
 import LibraryFolderChooser from './LibraryFolderChooser'
 
@@ -87,45 +88,47 @@ export default function LibraryDetailsTab({
       </div>
 
       {/* Folders Section */}
-      <div className="mt-6">
-        <h3 className="text-foreground-muted mb-2 text-sm font-semibold">{t('LabelFolders')}</h3>
+      <div className="mt-8">
+        <h3 className="text-white/40 mb-3 text-[10px] font-black uppercase tracking-widest">{t('LabelFolders')}</h3>
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           {/* Committed folder paths */}
           {formData.folders.map((folder, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <span className="material-symbols fill text-xl text-yellow-200">folder</span>
-              <TextInput value={folder.fullPath} readOnly className="flex-1 text-sm" />
-              <div className="w-5">
-                <button
-                  type="button"
-                  className="material-symbols text-foreground-muted hover:text-error cursor-pointer text-xl"
-                  onClick={() => onRemoveFolder(index)}
-                  aria-label={t('ButtonRemove')}
-                >
-                  close
-                </button>
+            <div key={index} className="flex items-center gap-3 p-2 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-sm group hover:border-white/20 transition-all">
+              <div className="bg-primary/20 p-2 rounded-xl border border-primary/20">
+                <Folder size={18} className="text-primary fill-current" />
               </div>
+              <TextInput value={folder.fullPath} readOnly borderless className="flex-1 text-sm font-medium text-white/80" />
+              <button
+                type="button"
+                className="p-2 text-white/20 hover:text-error hover:bg-error/10 rounded-xl transition-all"
+                onClick={() => onRemoveFolder(index)}
+                aria-label={t('ButtonRemove')}
+              >
+                <X size={18} strokeWidth={2.5} />
+              </button>
             </div>
           ))}
 
           {/* Always-visible new folder input */}
-          <div className="flex items-center gap-2">
-            <span className="material-symbols fill text-xl text-yellow-200/50">create_new_folder</span>
+          <div className="flex items-center gap-3 p-2 bg-white/5 backdrop-blur-md rounded-2xl border border-dashed border-white/10 hover:border-white/20 transition-all">
+            <div className="bg-success/20 p-2 rounded-xl border border-success/20">
+              <FolderPlus size={18} className="text-success fill-current" />
+            </div>
             <TextInput
               value={newFolderPath}
               placeholder={t('PlaceholderNewFolderPath')}
               onChange={onNewFolderPathChange}
               onBlur={onCommitNewFolder}
               onKeyDown={onNewFolderKeyDown}
+              borderless
               className="flex-1 text-sm"
             />
-            {formData.folders.length > 0 && <div className="w-5"></div>}
           </div>
         </div>
 
         {/* Browse for Folder button */}
-        <Btn color="bg-primary" className="mt-3 w-full" onClick={onShowFolderChooser}>
+        <Btn color="bg-primary" className="mt-4 w-full shadow-lg shadow-primary/10 uppercase font-black tracking-widest text-[11px] h-11" onClick={onShowFolderChooser}>
           {t('ButtonBrowseForFolder')}
         </Btn>
       </div>

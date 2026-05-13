@@ -2,6 +2,8 @@
 
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/lib/merge-classes'
+import { motion } from 'framer-motion'
+import { AlertCircle, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import React, { useEffect, useRef } from 'react'
 
 export interface AlertProps {
@@ -16,8 +18,14 @@ export default function Alert({ type = 'error', autoFocus = true, children, clas
   const alertRef = useRef<HTMLDivElement>(null)
 
   const isAlert = type === 'error' || type === 'warning'
-  const icon = isAlert ? 'report' : 'info'
   const alertRole = isAlert ? 'alert' : 'status'
+
+  const Icon = {
+    error: AlertCircle,
+    warning: AlertTriangle,
+    success: CheckCircle,
+    info: Info
+  }[type]
 
   const prefix =
     type === 'error'
@@ -26,22 +34,16 @@ export default function Alert({ type = 'error', autoFocus = true, children, clas
         ? t('LabelWarning')
         : type === 'success'
           ? t('LabelSuccess')
-          : type === 'info'
-            ? t('LabelInformation')
-            : t('LabelAlert')
+          : t('LabelInformation')
 
   const typeClasses =
     type === 'error'
-      ? 'bg-error/5 border-error/60 text-error'
+      ? 'bg-error/10 border-error/20 text-error shadow-error/5'
       : type === 'warning'
-        ? 'bg-warning/5 border-warning/60 text-warning'
+        ? 'bg-warning/10 border-warning/20 text-warning shadow-warning/5'
         : type === 'success'
-          ? 'bg-success/5 border-success/60 text-success'
-          : type === 'info'
-            ? 'bg-info/5 border-info/60 text-info'
-            : 'bg-primary/5 border-primary/60 text-primary'
-
-  const wrapperClass = mergeClasses('w-full border rounded-lg flex items-center relative py-4 ps-16', typeClasses, className)
+          ? 'bg-success/10 border-success/20 text-success shadow-success/5'
+          : 'bg-info/10 border-info/20 text-info shadow-info/5'
 
   useEffect(() => {
     if (isAlert && alertRef.current && autoFocus) {
@@ -50,16 +52,33 @@ export default function Alert({ type = 'error', autoFocus = true, children, clas
   }, [isAlert, autoFocus])
 
   return (
-    <div cy-id="alert" className={wrapperClass} role={alertRole} tabIndex={isAlert ? -1 : undefined} ref={alertRef}>
-      <div className="absolute start-4 top-0 flex h-full items-center">
-        <span cy-id="alert-icon" className="material-symbols text-2xl" aria-hidden="true">
-          {icon}
-        </span>
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      cy-id="alert"
+      className={mergeClasses(
+        'w-full border rounded-xl flex items-start gap-4 p-4 relative overflow-hidden backdrop-blur-xl shadow-lg',
+        typeClasses,
+        className
+      )}
+      role={alertRole}
+      tabIndex={isAlert ? -1 : undefined}
+      ref={alertRef}
+    >
+      {/* Subtle background glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+      
+      <div className="flex-shrink-0 mt-0.5 relative z-10">
+        <Icon size={22} className="opacity-90" />
       </div>
-      <div>
+      
+      <div className="flex-1 relative z-10 min-w-0">
         <span className="sr-only">{prefix}: </span>
-        {children}
+        <div className="text-sm font-medium leading-relaxed">
+          {children}
+        </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

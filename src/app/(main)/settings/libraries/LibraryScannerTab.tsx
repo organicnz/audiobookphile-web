@@ -6,6 +6,7 @@ import SortableList from '@/components/widgets/SortableList'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { LibrarySettings } from '@/types/api'
 import { useMemo, useState } from 'react'
+import { GripVertical } from 'lucide-react'
 import SettingsMoreInfoIcon from '../SettingsMoreInfoIcon'
 
 interface MetadataSource {
@@ -96,13 +97,15 @@ export default function LibraryScannerTab({ settings, onSettingsChange }: Librar
   }
 
   const renderItem = (source: MetadataSource, index: number) => (
-    <div className={`border-border flex w-full items-center border px-2 ${!source.include ? 'opacity-50' : ''}`}>
-      <span className="material-symbols drag-handle text-foreground-subdued hover:text-foreground mr-2 cursor-grab text-xl md:mr-4">reorder</span>
-      <div className="w-8 min-w-8 py-1 text-center">{source.include ? getSourcePriority(source.id) : ''}</div>
-      <div className="inline-flex grow items-center justify-between px-2 py-3 text-sm sm:px-4 sm:text-base">
+    <div className={`bg-white/5 border-white/10 flex w-full items-center border rounded-xl mb-2 px-3 transition-all duration-200 ${!source.include ? 'opacity-30 grayscale' : 'shadow-lg'}`}>
+      <div className="drag-handle cursor-grab active:cursor-grabbing p-2 hover:bg-white/10 rounded-lg transition-colors mr-2">
+        <GripVertical size={18} className="opacity-30" />
+      </div>
+      <div className="w-8 min-w-8 py-1 text-center font-black text-xs opacity-40">{source.include ? getSourcePriority(source.id) : ''}</div>
+      <div className="inline-flex grow items-center justify-between px-2 py-4 text-sm font-bold uppercase tracking-wider">
         {source.name}
         {source.include && (index === firstActiveIndex || index === lastActiveIndex) && (
-          <span className="text-foreground-subdued hidden px-2 text-xs font-semibold italic sm:inline-block">
+          <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ml-3">
             {index === firstActiveIndex ? t('LabelHighestPriority') : t('LabelLowestPriority')}
           </span>
         )}

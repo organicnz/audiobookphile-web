@@ -43,6 +43,11 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
     },
     images: {
       localPatterns: [{ pathname: '/api/**' }, { pathname: '/images/**' }]
+    },
+    logging: {
+      fetches: {
+        fullUrl: true
+      }
     }
   }
   return withNextIntl(baseConfig)

@@ -161,8 +161,8 @@ function CollectionCard(props: CollectionCardProps) {
                   <div
                     cy-id="moreButton"
                     className={mergeClasses(
-                      'absolute end-[0.375em] bottom-[0.375em] cursor-pointer md:block',
-                      'hover:scale-125 hover:[&_.material-symbols]:!text-yellow-300'
+                      'absolute end-2 bottom-2 cursor-pointer md:block transition-transform duration-300',
+                      'hover:scale-125'
                     )}
                   >
                     <MediaCardMoreMenu items={moreMenuItems} processing={processing} onAction={handleMoreAction} onOpenChange={handleMoreMenuOpenChange} />
@@ -182,11 +182,14 @@ function CollectionCard(props: CollectionCardProps) {
             {rssFeed && !isSelectionMode && !isHovering && (
               <div
                 cy-id="rssFeed"
-                className={mergeClasses('absolute start-[0.375em] top-[0.375em] z-10', 'flex items-center justify-center rounded-full bg-black/40 shadow-sm')}
-                style={{ width: '1.5em', height: '1.5em' }}
+                className={mergeClasses(
+                  'absolute start-2 top-2 z-10',
+                  'flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg'
+                )}
+                style={{ width: '1.5rem', height: '1.5rem' }}
               >
-                <span className="material-symbols text-orange-500" aria-hidden="true" style={{ fontSize: '1em' }}>
-                  rss_feed
+                <span className="text-orange-500">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M4 11a9 9 0 0 1 9 9" /><path d="M4 4a16 16 0 0 1 16 16" /><circle cx="5" cy="19" r="1" /></svg>
                 </span>
               </div>
             )}

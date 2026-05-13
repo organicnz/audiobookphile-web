@@ -1,5 +1,5 @@
-'use client'
-
+import { motion, AnimatePresence } from 'framer-motion'
+import { Check, Minus } from 'lucide-react'
 import { mergeClasses } from '@/lib/merge-classes'
 import React, { useId, useRef } from 'react'
 import InputWrapper from './InputWrapper'
@@ -23,9 +23,9 @@ export default function Checkbox({
   value = false,
   label,
   size = 'medium',
-  checkboxBgClass = 'bg-bg',
-  borderColorClass = 'border-gray-400',
-  checkColorClass = 'text-green-500',
+  checkboxBgClass = 'bg-primary/20',
+  borderColorClass = 'border-white/10 group-hover:border-primary/50',
+  checkColorClass = 'text-primary',
   labelClass = '',
   disabled = false,
   partial = false,
@@ -34,22 +34,26 @@ export default function Checkbox({
   className = ''
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-
   const checkboxId = useId()
 
+  const sizePx = size === 'small' ? 16 : size === 'medium' ? 20 : 24
   const sizeClass = size === 'small' ? 'w-4 h-4' : size === 'medium' ? 'w-5 h-5' : 'w-6 h-6'
+  
   const checkboxWrapperClassName = mergeClasses(
-    'rounded-sm flex shrink-0 justify-center items-center border',
+    'rounded-md flex shrink-0 justify-center items-center border transition-all duration-200',
     checkboxBgClass,
-    disabled ? 'border-checkbox-bg-disabled' : borderColorClass,
+    disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
+    value || partial ? 'bg-primary border-primary' : borderColorClass,
     sizeClass
   )
 
-  const labelSizeClass = size === 'small' ? 'text-xs md:text-sm ps-1' : size === 'medium' ? 'text-sm md:text-base ps-2' : 'text-base md:text-lg ps-2'
-  const checkboxLabelClassName = mergeClasses(labelSizeClass, disabled ? 'cursor-not-allowed text-disabled' : 'cursor-pointer text-foreground', labelClass)
-
-  const svgSizeClass = size === 'small' ? 'w-3 h-3' : size === 'medium' ? 'w-3.5 h-3.5' : 'w-4 h-4'
-  const svgClass = mergeClasses('pointer-events-none', disabled ? 'fill-checkbox-disabled' : 'fill-current', checkColorClass, svgSizeClass)
+  const labelSizeClass = size === 'small' ? 'text-xs sm:text-sm ps-2' : size === 'medium' ? 'text-sm sm:text-base ps-3' : 'text-base sm:text-lg ps-3'
+  const checkboxLabelClassName = mergeClasses(
+    labelSizeClass, 
+    'font-medium select-none transition-colors',
+    disabled ? 'text-disabled' : 'text-foreground/80 group-hover:text-foreground', 
+    labelClass
+  )
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!disabled) {
@@ -57,40 +61,47 @@ export default function Checkbox({
     }
   }
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      if (!disabled) {
-        inputRef.current?.click()
-      }
-    }
-  }
-
   return (
-    <InputWrapper disabled={disabled} borderless size={size} className={mergeClasses('bg-transparent', className)} inputRef={inputRef}>
-      <div cy-id="checkbox-and-label-wrapper" className="flex items-center justify-start px-1 py-1">
+    <InputWrapper 
+      disabled={disabled} 
+      borderless 
+      size={size} 
+      className={mergeClasses('bg-transparent', className)} 
+      inputRef={inputRef}
+    >
+      <div cy-id="checkbox-and-label-wrapper" className="group flex items-center justify-start py-1.5 px-1 relative cursor-pointer">
         <div cy-id="checkbox-wrapper" className={checkboxWrapperClassName}>
-          <div
-            cy-id="checkbox-div"
-            className={mergeClasses('flex h-full w-full items-center justify-center rounded-sm', disabled ? 'bg-checkbox-bg-disabled' : '')}
-          >
+          <AnimatePresence mode="wait">
             {partial ? (
-              <span className="material-symbols text-base leading-none text-gray-400">remove</span>
+              <motion.div
+                key="partial"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              >
+                <Minus size={sizePx - 4} strokeWidth={4} className="text-primary-foreground" />
+              </motion.div>
             ) : value ? (
-              <svg className={svgClass} viewBox="0 0 20 20">
-                <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
-              </svg>
+              <motion.div
+                key="check"
+                initial={{ scale: 0.5, opacity: 0, pathLength: 0 }}
+                animate={{ scale: 1, opacity: 1, pathLength: 1 }}
+                exit={{ scale: 0.5, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              >
+                <Check size={sizePx - 4} strokeWidth={4} className="text-primary-foreground" />
+              </motion.div>
             ) : null}
-          </div>
+          </AnimatePresence>
         </div>
+        
         {label && (
           <span cy-id="checkbox-label" className={checkboxLabelClassName}>
             {label}
           </span>
         )}
-        {/* Input is last in DOM so it sits on top of the visual elements in stacking order.
-            Clicks land directly on the native input, so the browser's :focus-visible
-            heuristic works correctly — no outline on mouse click, outline on keyboard focus. */}
+
         <input
           ref={inputRef}
           id={checkboxId}
@@ -99,10 +110,10 @@ export default function Checkbox({
           disabled={disabled}
           aria-label={ariaLabel}
           onChange={handleChange}
-          onKeyDown={handleInputKeyDown}
-          className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:pointer-events-none disabled:cursor-not-allowed"
+          className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-md"
         />
       </div>
     </InputWrapper>
   )
 }
+

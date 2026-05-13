@@ -1,12 +1,11 @@
-'use client'
-
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchLibraryFilterDataAction } from '@/app/actions/libraryActions'
 import { isBookLibraryItem, isPodcastLibraryItem, LibraryFilterData, LibraryItem } from '@/types/api'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useMemo } from 'react'
+import { useSocketEvent } from '@/contexts/SocketContext'
 
 /**
  * Add unique strings to an array and sort alphabetically.
- * Returns a new sorted array if items were added, otherwise returns the original.
  */
 function addUniqueStrings(
   existing: string[],
@@ -21,7 +20,6 @@ function addUniqueStrings(
 
 /**
  * Add unique objects by id to an array and sort by name.
- * Returns a new sorted array if items were added, otherwise returns the original.
  */
 function addUniqueById<T extends { id: string; name: string }>(existing: T[], newItems: T[] | undefined): T[] {
   if (!newItems?.length) return existing
@@ -31,78 +29,35 @@ function addUniqueById<T extends { id: string; name: string }>(existing: T[], ne
   return [...existing, ...itemsToAdd].sort((a, b) => (a.name || '').localeCompare(b.name || ''))
 }
 
-/**
- * Hook to fetch and manage library filter data.
- * Provides filter data for populating filter dropdown menus,
- * and utility functions for updating filter data based on socket events.
- */
 export function useFilterData(libraryId: string | undefined) {
-  const [filterData, setFilterData] = useState<LibraryFilterData | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
+  const queryClient = useQueryClient()
+  const queryKey = useMemo(() => ['filterData', libraryId], [libraryId])
 
-  // Fetch filter data when library changes
-  useEffect(() => {
-    if (!libraryId) {
-      setFilterData(null)
-      return
-    }
+  const query = useQuery({
+    queryKey,
+    queryFn: () => fetchLibraryFilterDataAction(libraryId!),
+    enabled: !!libraryId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
 
-    let cancelled = false
-
-    async function fetchFilterData() {
-      setIsLoading(true)
-      setError(null)
-      try {
-        const data = await fetchLibraryFilterDataAction(libraryId!)
-        if (!cancelled) {
-          setFilterData(data)
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err : new Error('Failed to fetch filter data'))
-          console.error('Failed to fetch filter data:', err)
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    fetchFilterData()
-
-    return () => {
-      cancelled = true
-    }
-  }, [libraryId])
-
-  /**
-   * Update filter data incrementally when a library item is added or updated.
-   * Adds any new authors/series/genres/etc. that don't already exist.
-   */
   const updateFilterDataWithItem = useCallback(
     (libraryItem: LibraryItem) => {
-      setFilterData((prev) => {
-        if (!prev || libraryItem.libraryId !== libraryId) return prev
+      if (!libraryId || libraryItem.libraryId !== libraryId) return
 
+      queryClient.setQueryData<LibraryFilterData>(queryKey, (prev) => {
+        if (!prev) return prev
         const updated = { ...prev }
 
         if (isBookLibraryItem(libraryItem)) {
           const { metadata, tags } = libraryItem.media
-
-          // Add/update authors and series (objects with id/name)
           updated.authors = addUniqueById(updated.authors, metadata.authors)
           updated.series = addUniqueById(updated.series, metadata.series)
-
-          // Add string arrays
           updated.genres = addUniqueStrings(updated.genres, metadata.genres)
           updated.tags = addUniqueStrings(updated.tags, tags)
           updated.narrators = addUniqueStrings(updated.narrators, metadata.narrators)
           updated.publishers = addUniqueStrings(updated.publishers, metadata.publisher ? [metadata.publisher] : undefined)
           updated.languages = addUniqueStrings(updated.languages, metadata.language ? [metadata.language] : undefined)
 
-          // Add published decade (special sorting)
           if (metadata.publishedYear && !isNaN(parseInt(metadata.publishedYear, 10))) {
             const year = parseInt(metadata.publishedYear, 10)
             const decade = (Math.floor(year / 10) * 10).toString()
@@ -110,8 +65,6 @@ export function useFilterData(libraryId: string | undefined) {
           }
         } else if (isPodcastLibraryItem(libraryItem)) {
           const { metadata, tags } = libraryItem.media
-
-          // Add string arrays
           updated.genres = addUniqueStrings(updated.genres, metadata.genres)
           updated.tags = addUniqueStrings(updated.tags, tags)
           updated.languages = addUniqueStrings(updated.languages, metadata.language ? [metadata.language] : undefined)
@@ -120,26 +73,34 @@ export function useFilterData(libraryId: string | undefined) {
         return updated
       })
     },
-    [libraryId]
+    [libraryId, queryClient, queryKey]
   )
 
-  /**
-   * Remove a series from filter data when it's deleted.
-   */
   const removeSeriesFromFilterData = useCallback((seriesId: string) => {
-    setFilterData((prev) => {
+    queryClient.setQueryData<LibraryFilterData>(queryKey, (prev) => {
       if (!prev) return prev
       return {
         ...prev,
         series: prev.series.filter((s) => s.id !== seriesId)
       }
     })
-  }, [])
+  }, [queryClient, queryKey])
+
+  // Register socket listeners for real-time updates directly in the hook
+  useSocketEvent<LibraryItem>('item_added', updateFilterDataWithItem)
+  useSocketEvent<LibraryItem>('item_updated', updateFilterDataWithItem)
+  useSocketEvent<LibraryItem[]>('items_added', (items) => items.forEach(updateFilterDataWithItem))
+  useSocketEvent<LibraryItem[]>('items_updated', (items) => items.forEach(updateFilterDataWithItem))
+  useSocketEvent<{ id: string; libraryId: string }>('series_removed', (data) => {
+    if (data.libraryId === libraryId) {
+      removeSeriesFromFilterData(data.id)
+    }
+  })
 
   return {
-    filterData,
-    isLoading,
-    error,
+    filterData: query.data ?? null,
+    isLoading: query.isLoading,
+    error: query.error,
     updateFilterDataWithItem,
     removeSeriesFromFilterData
   }

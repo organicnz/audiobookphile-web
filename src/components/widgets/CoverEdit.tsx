@@ -17,6 +17,7 @@ import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { getLibraryFileUrl, getLibraryItemCoverUrl, getPlaceholderCoverUrl } from '@/lib/coverUtils'
 import { mergeClasses } from '@/lib/merge-classes'
 import { BookLibraryItem, LibraryFile, PodcastLibraryItem } from '@/types/api'
+import { Trash2, Upload, X, Search, RefreshCw, Eye, Image as ImageIcon } from 'lucide-react'
 import React, { useEffect, useMemo, useState, useTransition } from 'react'
 
 interface LocalCover extends LibraryFile {
@@ -253,7 +254,7 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
                   onClick={isPendingUpdate ? undefined : handleRemoveCover}
                 >
                   <Tooltip text={t('LabelRemoveCover')} position="top">
-                    <span className="material-symbols text-2xl">delete</span>
+                    <Trash2 size={24} strokeWidth={2.5} />
                   </Tooltip>
                 </div>
               )}
@@ -266,8 +267,8 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
             {userCanUpload && (
               <div className="w-10 pe-2 md:w-40 md:min-w-32">
                 <FileInput onChange={fileUploadSelected}>
-                  <span className="hidden md:inline-block">{t('ButtonUploadCover')}</span>
-                  <span className="material-symbols inline-block text-2xl md:!hidden">upload</span>
+                  <span className="hidden md:inline-block font-black uppercase tracking-widest text-[11px]">{t('ButtonUploadCover')}</span>
+                  <Upload size={22} className="md:hidden" />
                 </FileInput>
               </div>
             )}
@@ -377,11 +378,11 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
       )}
 
       {previewUpload && (
-        <div className="bg-bg absolute top-0 left-0 z-10 h-full w-full p-8">
-          <p className="text-lg">{t('HeaderPreviewCover')}</p>
-          <span className="material-symbols absolute top-4 right-4 cursor-pointer text-2xl" onClick={resetCoverPreview}>
-            close
-          </span>
+        <div className="bg-primary/95 backdrop-blur-3xl absolute top-0 left-0 z-20 h-full w-full p-8 flex flex-col items-center">
+          <p className="text-xl font-black uppercase tracking-widest text-white/90 mb-8">{t('HeaderPreviewCover')}</p>
+          <button className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors" onClick={resetCoverPreview} type="button">
+            <X size={32} />
+          </button>
           <div className="flex justify-center py-4">
             <PreviewCover src={previewUpload} width={240} />
           </div>

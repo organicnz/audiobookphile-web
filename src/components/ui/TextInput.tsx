@@ -1,5 +1,5 @@
-'use client'
-
+import { motion, AnimatePresence } from 'framer-motion'
+import { Eye, EyeOff, Copy, Check, X } from 'lucide-react'
 import { useMergedRef } from '@/hooks/useMergedRef'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { copyToClipboard } from '@/lib/clipboard'
@@ -32,6 +32,7 @@ export interface TextInputProps {
   ref?: React.Ref<HTMLInputElement>
   error?: string
   autocomplete?: 'off' | 'username' | 'current-password' | 'new-password' | 'email' | 'tel' | string
+  borderless?: boolean
 }
 
 export default function TextInput({
@@ -57,7 +58,8 @@ export default function TextInput({
   className,
   ref,
   error,
-  autocomplete = 'off'
+  autocomplete = 'off',
+  borderless = false
 }: TextInputProps) {
   const t = useTypeSafeTranslations()
   const generatedId = useId()
@@ -75,13 +77,12 @@ export default function TextInput({
   const ariaInvalid = isInvalidDate
 
   const inputClass = mergeClasses(
-    'w-full bg-transparent px-1 outline-none border-none h-full',
+    'w-full bg-transparent px-2 outline-none border-none h-full text-sm sm:text-base font-medium tracking-tight',
     'disabled:cursor-not-allowed disabled:text-disabled read-only:text-read-only',
-    // type="search" adds a native clear control in Blink/WebKit; hide it because we show our own
     actualType === 'search' &&
       '[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden',
-    '[&::-webkit-calendar-picker-indicator]:invert',
-    showCopy ? 'ps-1 pe-8' : 'px-1',
+    '[&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer',
+    (showCopy || clearable || type === 'password') ? 'pe-10' : 'pe-2',
     customInputClass
   )
 
@@ -132,18 +133,23 @@ export default function TextInput({
     setShowPassword((prev) => !prev)
   }
 
-  // Show password toggle when it is a password field
   const shouldShowPasswordToggle = type === 'password'
 
   return (
-    <div className={mergeClasses('w-full', className)} cy-id="text-input">
+    <div className={mergeClasses('w-full group', className)} cy-id="text-input">
       {label && (
         <Label htmlFor={inputId} disabled={disabled}>
           {label}
         </Label>
       )}
 
-      <InputWrapper disabled={disabled} readOnly={readOnly} error={error || isInvalidDate} inputRef={readInputRef} className="group">
+      <InputWrapper 
+        disabled={disabled} 
+        readOnly={readOnly} 
+        error={error || isInvalidDate} 
+        inputRef={readInputRef} 
+        className={mergeClasses('relative', borderless ? 'border-none bg-transparent shadow-none' : '')}
+      >
         <input
           ref={writeInputRef}
           id={inputId}
@@ -164,68 +170,78 @@ export default function TextInput({
           onKeyDown={onKeyDown}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          // Accessibility attributes
           aria-invalid={ariaInvalid}
           aria-label={ariaLabel}
           cy-id="text-input-field"
         />
 
-        {clearable && value && (
-          <div className="absolute end-0 top-0 flex h-full items-center justify-center px-2">
-            <button
-              type="button"
-              className="material-symbols text-foreground-muted hover:text-foreground focus:ring-foreground-muted cursor-pointer rounded focus:ring-2 focus:ring-offset-1 focus:outline-none"
-              style={{ fontSize: '1.1rem' }}
-              onClick={handleClear}
-              aria-label={t('ButtonClearInput')}
-              cy-id="text-input-clear"
-            >
-              close
-            </button>
-          </div>
-        )}
+        <div className="absolute end-1 top-0 flex h-full items-center gap-1 px-1">
+          <AnimatePresence>
+            {clearable && !!value && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                type="button"
+                className="p-1.5 text-foreground/40 hover:text-foreground hover:bg-white/5 rounded-lg transition-colors outline-none focus-visible:ring-1 focus-visible:ring-primary"
+                onClick={handleClear}
+                aria-label={t('ButtonClearInput')}
+                cy-id="text-input-clear"
+              >
+                <X size={14} strokeWidth={3} />
+              </motion.button>
+            )}
 
-        {shouldShowPasswordToggle && (
-          // password visibility toggle button only show on hover and focus
-          <div className="pointer-events-none absolute end-0 top-0 flex h-full items-center justify-center px-4 opacity-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100">
-            <button
-              type="button"
-              className="text-foreground-muted hover:text-foreground focus:ring-foreground-muted flex cursor-pointer rounded text-lg focus:ring-2 focus:ring-offset-1 focus:outline-none"
-              onClick={togglePasswordVisibility}
-              aria-label={showPassword ? t('ButtonHidePassword') : t('ButtonShowPassword')}
-              aria-controls={inputId}
-              cy-id="text-input-password-toggle"
-            >
-              {!showPassword ? (
-                <span className="material-symbols" aria-hidden="true">
-                  visibility
-                </span>
-              ) : (
-                <span className="material-symbols" aria-hidden="true">
-                  visibility_off
-                </span>
-              )}
-            </button>
-          </div>
-        )}
+            {shouldShowPasswordToggle && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                type="button"
+                className="p-1.5 text-foreground/40 hover:text-foreground hover:bg-white/5 rounded-lg transition-colors outline-none focus-visible:ring-1 focus-visible:ring-primary"
+                onClick={togglePasswordVisibility}
+                aria-label={showPassword ? t('ButtonHidePassword') : t('ButtonShowPassword')}
+                aria-controls={inputId}
+                cy-id="text-input-password-toggle"
+              >
+                {showPassword ? (
+                  <EyeOff size={14} strokeWidth={2.5} />
+                ) : (
+                  <Eye size={14} strokeWidth={2.5} />
+                )}
+              </motion.button>
+            )}
 
-        {showCopy && type !== 'password' && (
-          <div className="absolute end-0 top-0 flex h-full items-center justify-center px-2">
-            <button
-              type="button"
-              className={mergeClasses(
-                'material-symbols focus:ring-foreground-muted cursor-pointer rounded text-lg focus:ring-2 focus:ring-offset-1 focus:outline-none',
-                hasCopied ? 'text-success' : 'text-foreground-muted hover:text-foreground'
-              )}
-              onClick={handleCopyToClipboard}
-              aria-label={hasCopied ? t('ButtonCopiedToClipboard') : t('ButtonCopyToClipboard')}
-              cy-id="text-input-copy"
-            >
-              {!hasCopied ? 'content_copy' : 'done'}
-            </button>
-          </div>
-        )}
+            {showCopy && type !== 'password' && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                type="button"
+                className={mergeClasses(
+                  'p-1.5 rounded-lg transition-all outline-none focus-visible:ring-1 focus-visible:ring-primary',
+                  hasCopied ? 'text-success bg-success/10' : 'text-foreground/40 hover:text-foreground hover:bg-white/5'
+                )}
+                onClick={handleCopyToClipboard}
+                aria-label={hasCopied ? t('ButtonCopiedToClipboard') : t('ButtonCopyToClipboard')}
+                cy-id="text-input-copy"
+              >
+                {hasCopied ? (
+                  <Check size={14} strokeWidth={3} />
+                ) : (
+                  <Copy size={14} strokeWidth={2.5} />
+                )}
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
       </InputWrapper>
     </div>
   )
 }
+
+

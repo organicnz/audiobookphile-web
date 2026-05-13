@@ -108,52 +108,7 @@ export function LibraryProvider({ children, library }: { children: React.ReactNo
   const bookshelfView = (serverSettings?.bookshelfView ?? 0) as BookshelfView
 
   // Filter data hook
-  const { filterData, isLoading: filterDataLoading, updateFilterDataWithItem, removeSeriesFromFilterData } = useFilterData(library.id)
-
-  // Socket listeners for real-time filter data updates
-  const handleItemAdded = useCallback(
-    (item: LibraryItem) => {
-      updateFilterDataWithItem(item)
-    },
-    [updateFilterDataWithItem]
-  )
-
-  const handleItemUpdated = useCallback(
-    (item: LibraryItem) => {
-      updateFilterDataWithItem(item)
-    },
-    [updateFilterDataWithItem]
-  )
-
-  const handleItemsAdded = useCallback(
-    (items: LibraryItem[]) => {
-      items.forEach(updateFilterDataWithItem)
-    },
-    [updateFilterDataWithItem]
-  )
-
-  const handleItemsUpdated = useCallback(
-    (items: LibraryItem[]) => {
-      items.forEach(updateFilterDataWithItem)
-    },
-    [updateFilterDataWithItem]
-  )
-
-  const handleSeriesRemoved = useCallback(
-    (data: { id: string; libraryId: string }) => {
-      if (data.libraryId === library.id) {
-        removeSeriesFromFilterData(data.id)
-      }
-    },
-    [library.id, removeSeriesFromFilterData]
-  )
-
-  // Register socket listeners
-  useSocketEvent<LibraryItem>('item_added', handleItemAdded)
-  useSocketEvent<LibraryItem>('item_updated', handleItemUpdated)
-  useSocketEvent<LibraryItem[]>('items_added', handleItemsAdded)
-  useSocketEvent<LibraryItem[]>('items_updated', handleItemsUpdated)
-  useSocketEvent<{ id: string; libraryId: string }>('series_removed', handleSeriesRemoved)
+  const { filterData, isLoading: filterDataLoading } = useFilterData(library.id)
 
   // Load settings from localStorage when library changes
   useEffect(() => {

@@ -15,6 +15,7 @@ import { useUser } from '@/contexts/UserContext'
 import { useItemPageSocket } from '@/hooks/useItemPageSocket'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { BookLibraryItem, BookMetadata, PodcastLibraryItem, PodcastMetadata } from '@/types/api'
+import { X, Folder } from 'lucide-react'
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import LibraryItemActionButtons from './LibraryItemActionButtons'
 import LibraryItemCover from './LibraryItemCover'
@@ -137,17 +138,20 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
 
             {/* Podcast episode downloads queue */}
             {episodeDownloadsQueued.length > 0 && (
-              <div className="bg-info/40 relative mx-auto mt-4 max-w-max rounded-md px-4 py-2 text-sm font-semibold text-gray-100 md:mx-0">
-                <div className="flex items-center">
-                  <p className="py-1 text-sm">{t('MessageEpisodesQueuedForDownload', { count: episodeDownloadsQueued.length })}</p>
+              <div className="bg-black/20 border border-white/5 backdrop-blur-md rounded-xl mx-auto mt-4 max-w-max px-5 py-3 md:mx-0">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Folder size={18} className="text-primary" />
+                    <p className="text-sm font-medium text-white/90">{t('MessageEpisodesQueuedForDownload', { count: episodeDownloadsQueued.length })}</p>
+                  </div>
                   {userIsAdminOrUp && (
                     <button
                       type="button"
                       aria-label="Clear episode download queue"
-                      className="material-symbols hover:text-error ml-3 cursor-pointer text-xl"
+                      className="bg-white/5 hover:bg-error/20 hover:text-error p-1.5 rounded-lg transition-colors"
                       onClick={() => setIsClearQueueDialogOpen(true)}
                     >
-                      close
+                      <X size={16} />
                     </button>
                   )}
                 </div>

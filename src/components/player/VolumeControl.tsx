@@ -3,6 +3,8 @@
 import type { UsePlayerHandlerReturn } from '@/hooks/usePlayerHandler'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { VolumeX, Volume1, Volume2 } from 'lucide-react'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -25,10 +27,10 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
   const hideTimeoutRef = useRef<number | null>(null)
 
   // Get the appropriate volume icon based on current level
-  const getVolumeIcon = useCallback(() => {
-    if (volume === 0) return 'volume_off'
-    if (volume < 0.5) return 'volume_down'
-    return 'volume_up'
+  const VolumeIcon = useMemo(() => {
+    if (volume === 0) return VolumeX
+    if (volume < 0.5) return Volume1
+    return Volume2
   }, [volume])
 
   // Ensure component is mounted before rendering popover
@@ -143,67 +145,67 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
   const trackHeight = 128
   const filledHeight = trackHeight * volume
 
-  const popoverContent = isOpen ? (
-    <div
-      ref={popoverRef}
-      id={`${widgetId}-popover`}
-      role="dialog"
-      style={{
-        ...floatingStyles,
-        visibility: isPositioned ? 'visible' : 'hidden'
-      }}
-      className="z-70 flex flex-col items-center"
-      onMouseEnter={openPopover}
-      onMouseLeave={closePopoverSoon}
-    >
-      {/* Main popover content with background */}
-      <div className="bg-background flex flex-col items-center rounded-lg px-1 py-3 shadow-lg" style={{ marginBottom: -8 }}>
-        {/* Custom volume slider using div-based track */}
-        <div
-          ref={trackRef}
-          role="slider"
-          tabIndex={0}
-          aria-label={t('LabelVolume')}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={volumePercentage}
-          aria-valuetext={`${volumePercentage}%`}
-          className="relative flex cursor-pointer items-center justify-center select-none"
-          style={{ height: trackHeight, width: 24 }}
-          onMouseDown={handleMouseDown}
+  const popoverContent = (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          ref={popoverRef}
+          id={`${widgetId}-popover`}
+          role="dialog"
+          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          style={{
+            ...floatingStyles,
+            visibility: isPositioned ? 'visible' : 'hidden'
+          }}
+          className="z-[100] flex flex-col items-center"
+          onMouseEnter={openPopover}
+          onMouseLeave={closePopoverSoon}
         >
-          {/* Track background */}
-          <div
-            className="bg-foreground-muted pointer-events-none absolute rounded-full"
-            style={{
-              width: 6,
-              height: trackHeight,
-              opacity: 0.3
-            }}
-          />
-          {/* Track filled portion (from bottom) */}
-          <div
-            className="bg-foreground pointer-events-none absolute rounded-full"
-            style={{
-              width: 6,
-              height: filledHeight,
-              bottom: 0
-            }}
-          />
-          {/* Thumb */}
-          <div
-            className="bg-foreground pointer-events-none absolute rounded-full"
-            style={{
-              width: 14,
-              height: 14,
-              bottom: filledHeight - 7,
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)'
-            }}
-          />
-        </div>
-      </div>
-    </div>
-  ) : null
+          <div 
+            className="bg-primary/95 backdrop-blur-xl flex flex-col items-center rounded-2xl p-4 shadow-2xl border border-white/10" 
+            style={{ marginBottom: -8 }}
+          >
+            <div
+              ref={trackRef}
+              role="slider"
+              tabIndex={0}
+              aria-label={t('LabelVolume')}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={volumePercentage}
+              aria-valuetext={`${volumePercentage}%`}
+              className="relative flex cursor-pointer items-center justify-center select-none group"
+              style={{ height: trackHeight, width: 24 }}
+              onMouseDown={handleMouseDown}
+            >
+              <div
+                className="bg-white/10 pointer-events-none absolute rounded-full transition-colors group-hover:bg-white/20"
+                style={{ width: 6, height: trackHeight }}
+              />
+              <div
+                className="bg-primary pointer-events-none absolute rounded-full shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.5)]"
+                style={{ width: 6, height: filledHeight, bottom: 0 }}
+              />
+              <motion.div
+                className="bg-white pointer-events-none absolute rounded-full shadow-lg"
+                animate={{ scale: isDraggingRef.current ? 1.2 : 1 }}
+                style={{
+                  width: 14,
+                  height: 14,
+                  bottom: filledHeight - 7,
+                  border: '2px solid rgb(var(--color-primary-rgb))'
+                }}
+              />
+            </div>
+            <span className="mt-2 text-[10px] font-black font-mono text-white/40">{volumePercentage}%</span>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
 
   return (
     <>
@@ -217,11 +219,9 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
         aria-label={t('LabelVolume')}
         aria-expanded={isOpen}
         aria-controls={`${widgetId}-popover`}
-        className="text-foreground-muted hover:text-foreground flex h-10 w-10 cursor-pointer items-center justify-center text-2xl transition-colors"
+        className="text-foreground/60 hover:text-white flex h-10 w-10 cursor-pointer items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
       >
-        <span className="material-symbols" aria-hidden="true">
-          {getVolumeIcon()}
-        </span>
+        <VolumeIcon size={24} strokeWidth={2} />
       </button>
 
       {/* Popover rendered via portal */}
