@@ -3,6 +3,7 @@
 import { fetchBookCover } from '@/lib/coverFetch'
 import { uploadCover } from '@/lib/supabase-api'
 import type { BookSearchResult, PodcastSearchResult, UpdateLibraryItemMediaPayload, UpdateLibraryItemMediaResponse } from '@/types/api'
+import type { Database } from '@/types/supabase'
 import { createServiceRoleClient } from '@/utils/supabase/service-role'
 
 /**
@@ -30,16 +31,16 @@ export async function searchBooksAction(
           title: doc.title || title,
           author: doc.author_name?.[0] || author || '',
           description: doc.first_sentence?.value || '',
-          cover: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : null,
+          cover: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : undefined,
           series: [],
           genres: doc.subject?.slice(0, 3) || [],
           tags: [],
-          isbn: doc.isbn?.[0] || null,
-          asin: null,
-          language: doc.language?.[0] || null,
-          publisher: doc.publisher?.[0] || null,
-          publishedYear: doc.first_publish_year ? String(doc.first_publish_year) : null,
-          narratorName: null,
+          isbn: doc.isbn?.[0] || undefined,
+          asin: undefined,
+          language: doc.language?.[0] || undefined,
+          publisher: doc.publisher?.[0] || undefined,
+          publishedYear: doc.first_publish_year ? String(doc.first_publish_year) : undefined,
+          narrator: undefined,
           explicit: false,
           abridged: false,
         })
@@ -66,16 +67,16 @@ export async function searchBooksAction(
             title: info.title || title,
             author: info.authors?.[0] || author || '',
             description: info.description || '',
-            cover: thumbnail,
+            cover: thumbnail || undefined,
             series: [],
             genres: info.categories?.slice(0, 3) || [],
             tags: [],
-            isbn: info.industryIdentifiers?.find((i: any) => i.type === 'ISBN_13')?.identifier || null,
-            asin: null,
-            language: info.language || null,
-            publisher: info.publisher || null,
-            publishedYear: info.publishedDate?.slice(0, 4) || null,
-            narratorName: null,
+            isbn: info.industryIdentifiers?.find((i: any) => i.type === 'ISBN_13')?.identifier || undefined,
+            asin: undefined,
+            language: info.language || undefined,
+            publisher: info.publisher || undefined,
+            publishedYear: info.publishedDate?.slice(0, 4) || undefined,
+            narrator: undefined,
             explicit: false,
             abridged: false,
           })
@@ -116,7 +117,7 @@ export async function applyMatchAction(
     const metadata = updatePayload.metadata || {}
 
     // Update books table
-    const bookUpdate: Record<string, any> = {}
+    const bookUpdate: Database['public']['Tables']['books']['Update'] = {}
     if (metadata.title) bookUpdate.title = metadata.title
     if (metadata.subtitle) bookUpdate.subtitle = metadata.subtitle
     if (metadata.description) bookUpdate.description = metadata.description
@@ -144,7 +145,10 @@ export async function applyMatchAction(
       // Remove existing book_authors
       await db.from('book_authors').delete().eq('book_id', bookId)
 
-      for (const authorName of metadata.authors.map((a: any) => a.name || a).filter(Boolean)) {
+      for (const authorData of metadata.authors) {
+        const authorName = (typeof authorData === 'string' ? authorData : authorData.name) || ''
+        if (!authorName) continue
+
         const { data: existing } = await db
           .from('authors')
           .select('id')
@@ -159,7 +163,7 @@ export async function applyMatchAction(
         await db.from('book_authors').insert({ book_id: bookId, author_id: authorId })
       }
 
-      const authorNames = metadata.authors.map((a: any) => a.name || a).join(', ')
+      const authorNames = metadata.authors.map((a: any) => (typeof a === 'string' ? a : a.name)).filter(Boolean).join(', ')
       await db.from('library_items').update({ author_names_first_last: authorNames }).eq('id', libraryItemId)
     }
 
@@ -171,14 +175,14 @@ export async function applyMatchAction(
       const libraryId = libItem?.library_id
 
       for (const s of metadata.series) {
-        const seriesName = s.name || s
+        const seriesName = (typeof s === 'string' ? s : s.name) || ''
         if (!seriesName) continue
 
         const { data: existing } = await db
           .from('series')
           .select('id')
           .eq('name', seriesName)
-          .eq('library_id', libraryId)
+          .eq('library_id', libraryId ?? '')
           .maybeSingle()
 
         let seriesId = existing?.id
@@ -205,7 +209,8 @@ export async function applyMatchAction(
       }
     } else if (metadata.title) {
       // Auto-fetch cover if none provided
-      const authorName = metadata.authors?.[0]?.name || metadata.authors?.[0] || undefined
+      const authorData = metadata.authors?.[0]
+      const authorName = (typeof authorData === 'string' ? authorData : authorData?.name) || undefined
       const buf = await fetchBookCover(metadata.title, authorName)
       if (buf) await uploadCover(libraryItemId, buf)
     }

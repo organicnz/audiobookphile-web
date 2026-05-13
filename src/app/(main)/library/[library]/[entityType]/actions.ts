@@ -1,6 +1,7 @@
 'use server'
 
 import type { Author, AuthorQuickMatchPayload } from '@/types/api';
+import type { Database } from '@/types/supabase';
 import { createClient } from '@/utils/supabase/server';
 import { createServiceRoleClient } from '@/utils/supabase/service-role';
 
@@ -27,7 +28,7 @@ export async function quickMatchAuthorAction(
     const doc = data?.docs?.[0]
     if (!doc) return null
 
-    const updates: Record<string, any> = {}
+    const updates: Database['public']['Tables']['authors']['Update'] = {}
 
     // Get author description from Open Library author page
     if (doc.key) {

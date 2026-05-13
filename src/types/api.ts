@@ -1145,6 +1145,7 @@ export interface UpdateLibraryItemMediaPayload {
   }
   tags?: string[]
   url?: string
+  cover?: string
 }
 
 export interface UpdateLibraryItemMediaResponse {
