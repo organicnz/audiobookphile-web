@@ -41,7 +41,7 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
           name="q"
           type="search"
           defaultValue={initialQuery}
-          placeholder={t('LabelSearch')}
+          placeholder={t('ButtonSearch')}
           className="bg-bg-light border-border flex-1 rounded-md border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           autoFocus
         />
@@ -50,7 +50,7 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
           disabled={isPending}
           className="bg-primary rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
-          {isPending ? '...' : t('LabelSearch')}
+          {isPending ? '...' : t('ButtonSearch')}
         </button>
       </form>
 
