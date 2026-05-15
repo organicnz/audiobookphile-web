@@ -37,8 +37,13 @@ async function fetchFromOpenLibrary(
   author?: string
 ): Promise<ArrayBuffer | null> {
   try {
-    const query = new URLSearchParams({ title, limit: '5' })
-    if (author) query.set('author', author)
+    // Clean the title by removing common filename artifacts like (Unabridged), [Audiobook], etc.
+    const cleanTitle = title.replace(/\([^)]*\)/g, '').replace(/\[[^\]]*\]/g, '').trim()
+    
+    // Use a general query 'q' instead of strict 'title' to allow fuzzy matching
+    // especially helpful when titles contain author names or messy metadata
+    const queryTerm = author ? `${cleanTitle} ${author}` : cleanTitle
+    const query = new URLSearchParams({ q: queryTerm, limit: '5' })
 
     const searchRes = await fetch(
       `https://openlibrary.org/search.json?${query.toString()}`,
@@ -85,7 +90,11 @@ async function fetchFromGoogleBooks(
   author?: string
 ): Promise<ArrayBuffer | null> {
   try {
-    const q = author ? `intitle:${title}+inauthor:${author}` : `intitle:${title}`
+    const cleanTitle = title.replace(/\([^)]*\)/g, '').replace(/\[[^\]]*\]/g, '').trim()
+    
+    // Drop the strict 'intitle:' and 'inauthor:' prefixes so Google's search engine 
+    // can intelligently parse messy filenames like "Sagan, Carl -- The Demon-Haunted..."
+    const q = author ? `${cleanTitle} ${author}` : cleanTitle
     const searchRes = await fetch(
       `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=5&printType=books`,
       { signal: AbortSignal.timeout(8000) }
