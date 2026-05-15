@@ -193,7 +193,7 @@ export function getItemsFromFilelist(filelist: FileList, mediaType: Library['med
 export async function upload(
   item: ItemToUpload,
   libraryId: string,
-  folderId: string,
+  _folderId: string,
   mediaType: Library['mediaType'],
   cookie: string,
   onProgress?: (progress: UploadProgressInfo) => void
@@ -204,10 +204,11 @@ export async function upload(
   const totalSize = item.itemFiles.reduce((sum, f) => sum + f.size, 0)
   let uploadedBytes = 0
 
-  // Extract the project ID from the Supabase URL for the direct storage hostname
+  // Use the direct storage hostname to bypass the Kong API gateway size limits
+  // Ref: https://supabase.com/docs/guides/storage/uploads/resumable-uploads
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
   const projectId = new URL(supabaseUrl).hostname.split('.')[0]
-  const tusEndpoint = `https://${projectId}.supabase.co/storage/v1/upload/resumable`
+  const tusEndpoint = `https://${projectId}.storage.supabase.co/storage/v1/upload/resumable`
 
   // 1. Upload each file via TUS resumable protocol (required for files > 6MB)
   const uploadedPaths: string[] = []
@@ -258,6 +259,9 @@ export async function upload(
         if (previousUploads.length) {
           tusUpload.resumeFromPreviousUpload(previousUploads[0])
         }
+        tusUpload.start()
+      }).catch(() => {
+        // If fingerprint lookup fails, just start fresh
         tusUpload.start()
       })
     })
