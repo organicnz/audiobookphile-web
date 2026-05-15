@@ -16,28 +16,51 @@ export interface FetchedCover {
 }
 
 /**
- * Extracts author and title from messy strings like "Author -- Title (Unabridged)"
+ * Aggressively cleans up messy titles/authors for better API matching.
+ * Handles patterns like:
+ *   - [AB].Isaac.Asimov.Foundation.Audio.Books...
+ *   - Author -- Title (Unabridged)
+ *   - Title_With_Underscores
  */
-function parseRawTitle(rawTitle: string): { cleanTitle: string; extractedAuthor?: string } {
-  let cleanTitle = rawTitle.replace(/\([^)]*\)/g, '').replace(/\[[^\]]*\]/g, '').trim()
-  let extractedAuthor: string | undefined = undefined
+function normalizeString(str: string): string {
+  if (!str) return ''
+  
+  let cleaned = str
+    // 1. Split CamelCase/PascalCase (e.g. TheThreeBody -> The Three Body)
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    // 2. Remove bracketed content [AB], [Unabridged], etc.
+    .replace(/\[[^\]]*\]/g, ' ')
+    // 3. Remove parenthesized content (Unabridged), (Part 1), etc.
+    .replace(/\([^)]*\)/g, ' ')
+    // 4. Replace dots, underscores, and dashes with spaces
+    .replace(/[\._-]/g, ' ')
+    // 5. Remove common audiobook suffixes that confuse search APIs
+    .replace(/\b(audiobook|unabridged|abridged|collection|series|vol|volume|book|complete|part|chapter|of|v\d+)\b/gi, ' ')
+    // 6. Clean up extra whitespace
+    .replace(/\s+/g, ' ')
+    .trim()
 
-  // If there's a strong delimiter, split it
-  if (cleanTitle.includes(' -- ')) {
-    const parts = cleanTitle.split(' -- ')
-    if (parts.length === 2) {
-      extractedAuthor = parts[0].trim()
-      cleanTitle = parts[1].trim()
-    }
-  } else if (cleanTitle.includes(' - ')) {
-    const parts = cleanTitle.split(' - ')
-    if (parts.length === 2) {
-      extractedAuthor = parts[0].trim()
-      cleanTitle = parts[1].trim()
-    }
+  return cleaned
+}
+
+function parseRawTitle(rawTitle: string): { cleanTitle: string; extractedAuthor?: string } {
+  let title = rawTitle
+  let author: string | undefined = undefined
+
+  // Split by common delimiters if present
+  if (title.includes(' -- ')) {
+    const parts = title.split(' -- ')
+    author = normalizeString(parts[0])
+    title = normalizeString(parts[1])
+  } else if (title.includes(' - ')) {
+    const parts = title.split(' - ')
+    author = normalizeString(parts[0])
+    title = normalizeString(parts[1])
+  } else {
+    title = normalizeString(title)
   }
 
-  return { cleanTitle, extractedAuthor }
+  return { cleanTitle: title, extractedAuthor: author }
 }
 
 function getExtensionFromType(contentType: string): string {
@@ -49,25 +72,41 @@ function getExtensionFromType(contentType: string): string {
 
 /**
  * Fetch a cover image for a book by title and/or author.
+ * Uses a multi-pass strategy to maximize match chances.
  */
 export async function fetchBookCover(
   title: string,
   author?: string
 ): Promise<FetchedCover | null> {
   const { cleanTitle, extractedAuthor } = parseRawTitle(title)
-  const searchAuthor = author || extractedAuthor
+  const cleanAuthor = author ? normalizeString(author) : extractedAuthor
 
-  // Try iTunes first
-  const itunesCover = await fetchFromITunes(cleanTitle, searchAuthor)
-  if (itunesCover) return itunesCover
+  // List of search strategies in order of specificity
+  const strategies = [
+    { title: cleanTitle, author: cleanAuthor }, // Most specific
+    { title: cleanTitle }, // Title only (good for distinct titles)
+  ]
 
-  // Try Open Library next
-  const olCover = await fetchFromOpenLibrary(cleanTitle, searchAuthor)
-  if (olCover) return olCover
+  // If title is very long, add a truncated strategy
+  const words = cleanTitle.split(' ')
+  if (words.length > 5) {
+    strategies.push({ title: words.slice(0, 4).join(' ') })
+  }
 
-  // Fall back to Google Books
-  const gbCover = await fetchFromGoogleBooks(cleanTitle, searchAuthor)
-  if (gbCover) return gbCover
+  const providers = [fetchFromITunes, fetchFromOpenLibrary, fetchFromGoogleBooks]
+
+  for (const strategy of strategies) {
+    if (!strategy.title) continue
+    
+    for (const provider of providers) {
+      try {
+        const result = await provider(strategy.title, strategy.author)
+        if (result) return result
+      } catch (err) {
+        console.warn(`[coverFetch] Provider failed for "${strategy.title}":`, err)
+      }
+    }
+  }
 
   return null
 }
@@ -82,7 +121,11 @@ async function fetchFromITunes(title: string, author?: string): Promise<FetchedC
     if (!searchRes.ok) return null
 
     const data = await searchRes.json()
-    if (!data?.results?.length) return null
+    if (!data?.results?.length) {
+      // If we used author and failed, try title only as a sub-fallback within this provider
+      if (author) return fetchFromITunes(title)
+      return null
+    }
 
     const item = data.results[0]
     if (!item.artworkUrl100) return null
@@ -94,7 +137,7 @@ async function fetchFromITunes(title: string, author?: string): Promise<FetchedC
 
     const contentType = imgRes.headers.get('content-type') || 'image/jpeg'
     const buffer = await imgRes.arrayBuffer()
-    if (buffer.byteLength < 5000) return null
+    if (buffer.byteLength < 3000) return null
 
     return { buffer, contentType, extension: getExtensionFromType(contentType) }
   } catch {
@@ -105,7 +148,7 @@ async function fetchFromITunes(title: string, author?: string): Promise<FetchedC
 async function fetchFromOpenLibrary(title: string, author?: string): Promise<FetchedCover | null> {
   try {
     const queryTerm = author ? `${title} ${author}` : title
-    const query = new URLSearchParams({ q: queryTerm, limit: '5' })
+    const query = new URLSearchParams({ q: queryTerm, limit: '3' })
 
     const searchRes = await fetch(
       `https://openlibrary.org/search.json?${query.toString()}`,
@@ -128,10 +171,11 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
     if (!imgRes.ok) return null
 
     const contentType = imgRes.headers.get('content-type') || 'image/jpeg'
-    if (!contentType.includes('jpeg') && !contentType.includes('jpg') && !contentType.includes('png')) return null
+    // Skip small/invalid response
+    if (contentType.includes('text/html')) return null
 
     const buffer = await imgRes.arrayBuffer()
-    if (buffer.byteLength < 5000) return null
+    if (buffer.byteLength < 3000) return null
 
     return { buffer, contentType, extension: getExtensionFromType(contentType) }
   } catch {
@@ -143,7 +187,7 @@ async function fetchFromGoogleBooks(title: string, author?: string): Promise<Fet
   try {
     const queryTerm = author ? `${title} ${author}` : title
     const searchRes = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(queryTerm)}&maxResults=5&printType=books`,
+      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(queryTerm)}&maxResults=3&printType=books`,
       { signal: AbortSignal.timeout(8000) }
     )
     if (!searchRes.ok) return null
@@ -167,7 +211,7 @@ async function fetchFromGoogleBooks(title: string, author?: string): Promise<Fet
 
     const contentType = imgRes.headers.get('content-type') || 'image/jpeg'
     const buffer = await imgRes.arrayBuffer()
-    if (buffer.byteLength < 5000) return null
+    if (buffer.byteLength < 3000) return null
 
     return { buffer, contentType, extension: getExtensionFromType(contentType) }
   } catch {
