@@ -216,54 +216,119 @@ export async function upload(
   for (const file of item.itemFiles) {
     const storagePath = `${bookId}/${file.name}`
 
-    await new Promise<void>((resolve, reject) => {
-      const tusUpload = new Upload(file, {
-        endpoint: tusEndpoint,
-        retryDelays: [0, 3000, 5000, 10000, 20000],
+    // Attempt to get a presigned URL for B2
+    let b2Url = ''
+    try {
+      const presignRes = await fetch('/api/upload/presign', {
+        method: 'POST',
         headers: {
-          authorization: `Bearer ${cookie}`,
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-          'x-upsert': 'true',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${cookie}`,
         },
-        uploadDataDuringCreation: true,
-        removeFingerprintOnSuccess: true,
-        metadata: {
-          bucketName: 'audio-files',
-          objectName: storagePath,
+        body: JSON.stringify({
+          filename: storagePath,
           contentType: file.type || 'application/octet-stream',
-          cacheControl: '3600',
-        },
-        chunkSize: 6 * 1024 * 1024, // 6MB chunks — required by Supabase
-        onError: (error) => {
-          reject(new Error(`Failed to upload ${file.name}: ${error.message}`))
-        },
-        onProgress: (bytesUploaded, bytesTotal) => {
-          if (onProgress) {
-            const chunkLoaded = uploadedBytes + bytesUploaded
+        }),
+      })
+
+      if (presignRes.status === 200) {
+        const data = await presignRes.json()
+        b2Url = data.url
+      } else if (presignRes.status !== 501) {
+        throw new Error(`Presign failed: ${presignRes.status}`)
+      }
+    } catch (e) {
+      console.warn('Failed to get B2 presigned URL, falling back to TUS:', e)
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      if (b2Url) {
+        // --- B2 DIRECT S3 UPLOAD VIA XHR ---
+        const xhr = new XMLHttpRequest()
+        xhr.open('PUT', b2Url, true)
+        
+        // Explicitly set Content-Type for the audio file (must match presign)
+        const contentType = file.type || 'application/octet-stream'
+        xhr.setRequestHeader('Content-Type', contentType)
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable && onProgress) {
+            const chunkLoaded = uploadedBytes + event.loaded
             onProgress({
               percent: Math.round((chunkLoaded / totalSize) * 100),
               loaded: chunkLoaded,
               total: totalSize,
             })
           }
-        },
-        onSuccess: () => {
-          uploadedBytes += file.size
-          uploadedPaths.push(storagePath)
-          resolve()
-        },
-      })
-
-      // Resume previous uploads if any, then start
-      tusUpload.findPreviousUploads().then((previousUploads) => {
-        if (previousUploads.length) {
-          tusUpload.resumeFromPreviousUpload(previousUploads[0])
         }
-        tusUpload.start()
-      }).catch(() => {
-        // If fingerprint lookup fails, just start fresh
-        tusUpload.start()
-      })
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            uploadedBytes += file.size
+            uploadedPaths.push(storagePath)
+            resolve()
+          } else {
+            reject(new Error(`Failed to upload ${file.name} to B2: HTTP ${xhr.status}`))
+          }
+        }
+
+        xhr.onerror = () => reject(new Error(`Network error uploading ${file.name} to B2`))
+        xhr.ontimeout = () => reject(new Error(`Upload timed out for ${file.name}`))
+
+        // Generous timeout for large files
+        xhr.timeout = 3600000
+        xhr.send(file)
+
+      } else {
+        // --- FALLBACK TO SUPABASE TUS ---
+        const tusUpload = new Upload(file, {
+          endpoint: tusEndpoint,
+          retryDelays: [0, 3000, 5000, 10000, 20000],
+          headers: {
+            authorization: `Bearer ${cookie}`,
+            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            'x-upsert': 'true',
+          },
+          uploadDataDuringCreation: true,
+          removeFingerprintOnSuccess: true,
+          metadata: {
+            bucketName: 'audio-files',
+            objectName: storagePath,
+            contentType: file.type || 'application/octet-stream',
+            cacheControl: '3600',
+          },
+          chunkSize: 6 * 1024 * 1024, // 6MB chunks — required by Supabase
+          onError: (error) => {
+            reject(new Error(`Failed to upload ${file.name}: ${error.message}`))
+          },
+          onProgress: (bytesUploaded, bytesTotal) => {
+            if (onProgress) {
+              const chunkLoaded = uploadedBytes + bytesUploaded
+              onProgress({
+                percent: Math.round((chunkLoaded / totalSize) * 100),
+                loaded: chunkLoaded,
+                total: totalSize,
+              })
+            }
+          },
+          onSuccess: () => {
+            uploadedBytes += file.size
+            uploadedPaths.push(storagePath)
+            resolve()
+          },
+        })
+
+        // Resume previous uploads if any, then start
+        tusUpload.findPreviousUploads().then((previousUploads) => {
+          if (previousUploads.length) {
+            tusUpload.resumeFromPreviousUpload(previousUploads[0])
+          }
+          tusUpload.start()
+        }).catch(() => {
+          // If fingerprint lookup fails, just start fresh
+          tusUpload.start()
+        })
+      }
     })
   }
 

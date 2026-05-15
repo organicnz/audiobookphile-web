@@ -18,6 +18,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1047.0",
+    "@aws-sdk/s3-request-presigner": "^3.1047.0",
     "@floating-ui/react-dom": "^2.1.6",
     "@formkit/drag-and-drop": "^0.5.3",
     "@supabase/ssr": "^0.10.2",

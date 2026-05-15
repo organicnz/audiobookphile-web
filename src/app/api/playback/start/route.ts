@@ -10,6 +10,8 @@
 import type { Chapter } from '@/types/api'
 import { createClient } from '@/utils/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 interface PlaybackTrack {
   index: number
@@ -73,20 +75,40 @@ export async function POST(request: NextRequest) {
       // Storage path is stored in audioFile.metadata.path (set during upload)
       const storagePath = audioFile.metadata?.path ?? audioFile.storage_path ?? ''
 
-      const { data: signedData, error: signedError } = await supabase.storage
-        .from('audio-files')
-        .createSignedUrl(storagePath, 3600)
+      let finalSignedUrl = ''
 
-      if (signedError || !signedData?.signedUrl) {
-        throw new Error(
-          `Failed to generate signed URL for ${storagePath}: ${signedError?.message ?? 'unknown error'}`
-        )
+      // Requirement 9.2: Generate signed URLs (3600s expiry) for each audio file
+      if (process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME) {
+        const s3Client = new S3Client({
+          endpoint: process.env.B2_ENDPOINT,
+          region: process.env.B2_REGION || 'us-west-004',
+          credentials: {
+            accessKeyId: process.env.B2_KEY_ID!,
+            secretAccessKey: process.env.B2_APP_KEY!,
+          },
+        })
+        const command = new GetObjectCommand({
+          Bucket: process.env.B2_BUCKET_NAME,
+          Key: storagePath,
+        })
+        finalSignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 })
+      } else {
+        const { data: signedData, error: signedError } = await supabase.storage
+          .from('audio-files')
+          .createSignedUrl(storagePath, 3600)
+
+        if (signedError || !signedData?.signedUrl) {
+          throw new Error(
+            `Failed to generate signed URL for ${storagePath}: ${signedError?.message ?? 'unknown error'}`
+          )
+        }
+        finalSignedUrl = signedData.signedUrl
       }
 
       return {
         index: (audioFile as any).index ?? idx,
         audioFileId: (audioFile as any).ino || (audioFile as any).id,
-        contentUrl: signedData.signedUrl,
+        contentUrl: finalSignedUrl,
         duration: (audioFile as any).duration,
         mimeType: (audioFile as any).mimeType || (audioFile as any).mime_type,
       } satisfies PlaybackTrack
