@@ -1,6 +1,7 @@
 import { createServiceRoleClient } from '@/utils/supabase/service-role'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { fetchBookCover } from '@/lib/coverFetch'
 
 /**
  * POST /api/upload

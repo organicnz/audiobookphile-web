@@ -289,7 +289,7 @@ function InputDropdown({
           items={dropdownMenuItems}
           focusedIndex={focusedIndex}
           dropdownId={dropdownId}
-          onItemClick={(item) => handleOptionClick(item.value)}
+          onItemClick={(item) => item.value !== undefined && handleOptionClick(item.value)}
           isItemSelected={isMenuItemSelected}
           showSelectedIndicator={true}
           menuMaxHeight="224px"

@@ -35,9 +35,9 @@ interface UsePlaybackSessionReturn {
   /** Sync progress to server */
   syncProgress: (currentTime: number) => void
   /** Close the current session */
-  closeSession: (getCurrentTime?: () => number) => Promise<void>
+  closeSession: (getCurrentTime?: () => number, getDuration?: () => number) => Promise<void>
   /** Start the sync interval (call when playback starts) */
-  startSyncInterval: (getCurrentTime: () => number) => void
+  startSyncInterval: (getCurrentTime: () => number, getDuration?: () => number) => void
   /** Stop the sync interval (call when playback stops) */
   stopSyncInterval: () => void
   /** Get the current session ID */
@@ -58,7 +58,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
   const lastSyncTimeRef = useRef(0)
   const listeningTimeSinceSync = useRef(0)
   const failedSyncsRef = useRef(0)
-  const syncFailureToastIdRef = useRef<string | null>(null)
+  const syncFailureToastIdRef = useRef<string | number | null>(null)
   const syncIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const lastTickRef = useRef(Date.now())
 

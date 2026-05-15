@@ -8,8 +8,8 @@ import type { MetadataProvider as MetadataProviderType } from '@/types/api'
  */
 export async function getMetadataProvidersAction() {
   const books: MetadataProviderType[] = [
-    { id: 'openlibrary', name: 'Open Library', official: true },
-    { id: 'google', name: 'Google Books', official: true },
+    { value: 'openlibrary', text: 'Open Library' },
+    { value: 'google', text: 'Google Books' },
   ]
 
   return {

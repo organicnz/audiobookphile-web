@@ -26,16 +26,16 @@ export async function fetchBookMetadata(title: string, author: string, _provider
           description: doc.first_sentence?.value || '',
           cover: doc.cover_i
             ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`
-            : null,
+            : undefined,
           series: [],
           genres: doc.subject?.slice(0, 3) || [],
           tags: [],
-          isbn: doc.isbn?.[0] || null,
-          asin: null,
-          language: doc.language?.[0] || null,
-          publisher: doc.publisher?.[0] || null,
-          publishedYear: doc.first_publish_year ? String(doc.first_publish_year) : null,
-          narratorName: null,
+          isbn: doc.isbn?.[0] || undefined,
+          asin: undefined,
+          language: doc.language?.[0] || undefined,
+          publisher: doc.publisher?.[0] || undefined,
+          publishedYear: doc.first_publish_year ? String(doc.first_publish_year) : undefined,
+          narrator: undefined,
           explicit: false,
           abridged: false,
         })
@@ -54,7 +54,7 @@ export async function fetchBookMetadata(title: string, author: string, _provider
         const items = (data?.items as any[]) || []
         for (const item of items.slice(0, 5)) {
           const info = item.volumeInfo || {}
-          const thumbnail = info.imageLinks?.thumbnail?.replace('http://', 'https://') || null
+          const thumbnail = info.imageLinks?.thumbnail?.replace('http://', 'https://') || undefined
           results.push({
             title: info.title || title,
             author: info.authors?.[0] || author || '',
@@ -63,12 +63,12 @@ export async function fetchBookMetadata(title: string, author: string, _provider
             series: [],
             genres: info.categories?.slice(0, 3) || [],
             tags: [],
-            isbn: info.industryIdentifiers?.find((i: any) => i.type === 'ISBN_13')?.identifier || null,
-            asin: null,
-            language: info.language || null,
-            publisher: info.publisher || null,
-            publishedYear: info.publishedDate?.slice(0, 4) || null,
-            narratorName: null,
+            isbn: info.industryIdentifiers?.find((i: any) => i.type === 'ISBN_13')?.identifier || undefined,
+            asin: undefined,
+            language: info.language || undefined,
+            publisher: info.publisher || undefined,
+            publishedYear: info.publishedDate?.slice(0, 4) || undefined,
+            narrator: undefined,
             explicit: false,
             abridged: false,
           })
