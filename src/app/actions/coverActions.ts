@@ -8,8 +8,10 @@ import { removeCover, uploadCover } from '@/lib/supabase-api'
  */
 export async function uploadCoverAction(libraryItemId: string, base64Data: string, fileName: string) {
   const buffer = Buffer.from(base64Data, 'base64')
-  const file = new File([buffer], fileName, { type: 'image/jpeg' })
-  return uploadCover(libraryItemId, file)
+  const extension = fileName.split('.').pop() || 'jpg'
+  const contentType = `image/${extension === 'jpg' ? 'jpeg' : extension}`
+  const file = new File([buffer], fileName, { type: contentType })
+  return uploadCover(libraryItemId, file, { extension, contentType })
 }
 
 /**
@@ -28,7 +30,9 @@ export async function updateCoverFromUrlAction(libraryItemId: string, coverUrl: 
     if (!res.ok) throw new Error(`Failed to fetch cover: ${res.status}`)
     const buffer = await res.arrayBuffer()
     if (buffer.byteLength < 1000) throw new Error('Cover image too small')
-    return uploadCover(libraryItemId, buffer)
+    const contentType = res.headers.get('content-type') || 'image/jpeg'
+    const extension = contentType.split('/')[1]?.split('+')[0] || 'jpg'
+    return uploadCover(libraryItemId, buffer, { extension, contentType })
   } catch (err) {
     console.error('[coverActions] updateCoverFromUrl failed:', err)
     return null

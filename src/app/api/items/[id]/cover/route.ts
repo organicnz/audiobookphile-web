@@ -11,20 +11,33 @@ export async function GET(
 
   const supabase = await createClient()
 
-  // Check if cover exists in Supabase Storage
-  const storagePath = `${id}/cover.jpg`
-  const { data: publicUrlData } = await supabase.storage
-    .from('covers')
-    .getPublicUrl(storagePath)
+  // 1. Try to get the actual path from the database
+  const { data: item } = await supabase
+    .from('library_items')
+    .select('cover_path')
+    .eq('id', id)
+    .single()
 
-  // Verify if it actually exists (head request)
-  try {
-    const headRes = await fetch(publicUrlData.publicUrl, { method: 'HEAD' })
-    if (headRes.ok) {
-      return NextResponse.redirect(publicUrlData.publicUrl)
+  let storagePath = item?.cover_path
+
+  // 2. If no path is in DB, try common legacy defaults
+  if (!storagePath) {
+    const fallbacks = [`${id}/cover.jpg`, `${id}/cover.png`, `${id}/cover.webp`]
+    for (const path of fallbacks) {
+      const { data: publicUrlData } = await supabase.storage.from('covers').getPublicUrl(path)
+      try {
+        const headRes = await fetch(publicUrlData.publicUrl, { method: 'HEAD' })
+        if (headRes.ok) {
+          storagePath = path
+          break
+        }
+      } catch { /* continue */ }
     }
-  } catch {
-    console.warn(`[CoverProxy] Supabase storage check failed for ${id}`)
+  }
+
+  if (storagePath) {
+    const { data: publicUrlData } = await supabase.storage.from('covers').getPublicUrl(storagePath)
+    return NextResponse.redirect(publicUrlData.publicUrl)
   }
 
   // Fallback: Placeholder

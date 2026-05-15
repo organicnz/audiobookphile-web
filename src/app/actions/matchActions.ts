@@ -201,7 +201,9 @@ export async function applyMatchAction(
         if (imgRes.ok) {
           const buf = await imgRes.arrayBuffer()
           if (buf.byteLength > 1000) {
-            await uploadCover(libraryItemId, buf)
+            const contentType = imgRes.headers.get('content-type') || 'image/jpeg'
+            const extension = contentType.split('/')[1]?.split('+')[0] || 'jpg'
+            await uploadCover(libraryItemId, buf, { extension, contentType })
           }
         }
       } catch (err) {
