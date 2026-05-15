@@ -198,64 +198,68 @@ export async function upload(
   cookie: string,
   onProgress?: (progress: UploadProgressInfo) => void
 ): Promise<void> {
+  const { Upload } = await import('tus-js-client')
+
   const bookId = crypto.randomUUID()
   const totalSize = item.itemFiles.reduce((sum, f) => sum + f.size, 0)
   let uploadedBytes = 0
 
+  // Extract the project ID from the Supabase URL for the direct storage hostname
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const projectId = new URL(supabaseUrl).hostname.split('.')[0]
+  const tusEndpoint = `https://${projectId}.supabase.co/storage/v1/upload/resumable`
 
-  // 1. Upload each file directly to Supabase Storage via XHR for progress tracking
+  // 1. Upload each file via TUS resumable protocol (required for files > 6MB)
   const uploadedPaths: string[] = []
 
   for (const file of item.itemFiles) {
     const storagePath = `${bookId}/${file.name}`
-    const uploadUrl = `${supabaseUrl}/storage/v1/object/audio-files/${storagePath}`
 
     await new Promise<void>((resolve, reject) => {
-      const xhr = new XMLHttpRequest()
-      // Use POST for the initial upload as it's the standard for new files in Supabase Storage
-      xhr.open('POST', uploadUrl, true)
-      xhr.setRequestHeader('Authorization', `Bearer ${cookie}`)
-      xhr.setRequestHeader('apikey', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
-      xhr.setRequestHeader('x-upsert', 'true')
-      xhr.setRequestHeader('Cache-Control', 'no-cache')
-      
-      // Explicitly set Content-Type for the audio file
-      const contentType = file.type || 'application/octet-stream'
-      xhr.setRequestHeader('Content-Type', contentType)
-
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable && onProgress) {
-          const chunkLoaded = uploadedBytes + event.loaded
-          onProgress({
-            percent: Math.round((chunkLoaded / totalSize) * 100),
-            loaded: chunkLoaded,
-            total: totalSize,
-          })
-        }
-      }
-
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
+      const tusUpload = new Upload(file, {
+        endpoint: tusEndpoint,
+        retryDelays: [0, 3000, 5000, 10000, 20000],
+        headers: {
+          authorization: `Bearer ${cookie}`,
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          'x-upsert': 'true',
+        },
+        uploadDataDuringCreation: true,
+        removeFingerprintOnSuccess: true,
+        metadata: {
+          bucketName: 'audio-files',
+          objectName: storagePath,
+          contentType: file.type || 'application/octet-stream',
+          cacheControl: '3600',
+        },
+        chunkSize: 6 * 1024 * 1024, // 6MB chunks — required by Supabase
+        onError: (error) => {
+          reject(new Error(`Failed to upload ${file.name}: ${error.message}`))
+        },
+        onProgress: (bytesUploaded, bytesTotal) => {
+          if (onProgress) {
+            const chunkLoaded = uploadedBytes + bytesUploaded
+            onProgress({
+              percent: Math.round((chunkLoaded / totalSize) * 100),
+              loaded: chunkLoaded,
+              total: totalSize,
+            })
+          }
+        },
+        onSuccess: () => {
           uploadedBytes += file.size
           uploadedPaths.push(storagePath)
           resolve()
-        } else {
-          let msg = `Storage upload failed (${xhr.status})`
-          try { 
-            const response = JSON.parse(xhr.responseText)
-            msg = response.error || response.message || msg
-          } catch { /* ignore */ }
-          reject(new Error(`Failed to upload ${file.name}: ${msg}`))
+        },
+      })
+
+      // Resume previous uploads if any, then start
+      tusUpload.findPreviousUploads().then((previousUploads) => {
+        if (previousUploads.length) {
+          tusUpload.resumeFromPreviousUpload(previousUploads[0])
         }
-      }
-
-      xhr.onerror = () => reject(new Error(`Network error uploading ${file.name}`))
-      xhr.ontimeout = () => reject(new Error(`Upload timed out for ${file.name}`))
-
-      // Set a generous timeout for large files (1 hour)
-      xhr.timeout = 3600000
-      xhr.send(file)
+        tusUpload.start()
+      })
     })
   }
 
