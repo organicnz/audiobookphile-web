@@ -58,7 +58,8 @@ export default function MediaCardFrame({
         className="bg-primary/95 backdrop-blur-xl relative start-0 top-0 z-10 w-full overflow-hidden rounded-xl border border-white/10 shadow-2xl transition-transform duration-500 ease-out group-hover:scale-[1.02]"
         style={{
           height: typeof height === 'number' ? `${height}px` : height,
-          aspectRatio: aspectRatio ? `${aspectRatio}` : undefined
+          aspectRatio: aspectRatio ? `${aspectRatio}` : undefined,
+          willChange: 'transform'
         }}
       >
         <div className="absolute start-0 top-0 z-10 h-full w-full overflow-hidden">

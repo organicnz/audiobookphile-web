@@ -134,7 +134,7 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             className="bg-primary/95 backdrop-blur-2xl border-white/10 fixed top-16 right-4 left-auto z-[100] mt-0 w-auto max-w-[24rem] min-w-[20rem] overflow-hidden rounded-2xl border text-base shadow-2xl ring-1 ring-black/20 focus:outline-none md:mt-1.5"
-            style={{ maxHeight: '80vh' }}
+            style={{ maxHeight: '80vh', willChange: 'transform, opacity' }}
           >
             <div className="border-white/10 flex items-center justify-between border-b px-4 py-3 bg-white/5">
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">{t('LabelActivities')}</h3>
