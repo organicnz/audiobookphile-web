@@ -213,7 +213,7 @@ export async function upload(
 
     await new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest()
-      xhr.open('POST', uploadUrl, true)
+      xhr.open('PUT', uploadUrl, true)
       xhr.setRequestHeader('Authorization', `Bearer ${cookie}`)
       xhr.setRequestHeader('x-upsert', 'true')
       // Content-Type is set automatically by the browser for File objects

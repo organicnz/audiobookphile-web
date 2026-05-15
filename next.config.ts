@@ -38,7 +38,7 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
     ],
     experimental: {
       serverActions: {
-        bodySizeLimit: '10mb'
+        bodySizeLimit: '1gb'
       }
     },
     images: {
