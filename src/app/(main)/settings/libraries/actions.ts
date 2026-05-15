@@ -56,14 +56,14 @@ export async function requestScanLibrary(_libraryId: string): Promise<void> {
 }
 
 export async function matchAll(libraryId: string): Promise<void> {
-  // Batch fetch covers for all items in this library that are missing cover art
-  const { fetchBookCover } = await import('@/lib/coverFetch')
+  // Batch fetch metadata and covers for all items in this library that are missing cover art
+  const { fetchBookMetadata } = await import('@/lib/coverFetch')
   const { createServiceRoleClient } = await import('@/utils/supabase/service-role')
   const db = createServiceRoleClient()
 
   const { data: items } = await db
     .from('library_items')
-    .select('id, title, author_names_first_last')
+    .select('id, title, author_names_first_last, media_id')
     .eq('library_id', libraryId)
     .is('cover_path', null)
     .not('title', 'is', null)
@@ -75,16 +75,43 @@ export async function matchAll(libraryId: string): Promise<void> {
     if (!title || title.length < 3) continue
 
     const author = item.author_names_first_last?.split('/')[0]?.trim() || undefined
-    const fetched = await fetchBookCover(title, author)
-    if (!fetched) continue
+    const { cover, metadata } = await fetchBookMetadata(title, author)
+    
+    if (!cover && !metadata) continue
 
-    const storagePath = `${item.id}/cover.${fetched.extension}`
-    const { error: uploadErr } = await db.storage
-      .from('covers')
-      .upload(storagePath, fetched.buffer, { upsert: true, contentType: fetched.contentType })
-    if (uploadErr) continue
+    // 1. Update cover if found
+    let storagePath: string | undefined = undefined
+    if (cover) {
+      storagePath = `${item.id}/cover.${cover.extension}`
+      const { error: uploadErr } = await db.storage
+        .from('covers')
+        .upload(storagePath, cover.buffer, { upsert: true, contentType: cover.contentType })
+      if (uploadErr) {
+        storagePath = undefined
+      }
+    }
 
-    await db.from('library_items').update({ cover_path: storagePath }).eq('id', item.id)
+    // 2. Update Book
+    const bookUpdates: any = {}
+    if (metadata) {
+      if (metadata.title) bookUpdates.title = metadata.title
+      if (metadata.description) bookUpdates.description = metadata.description
+      if (metadata.publishedYear) bookUpdates.published_year = metadata.publishedYear
+      if (metadata.genres?.length) bookUpdates.genres = metadata.genres
+    }
+    if (storagePath) bookUpdates.cover_path = storagePath
+    if (Object.keys(bookUpdates).length > 0 && item.media_id) {
+      await db.from('books').update(bookUpdates).eq('id', item.media_id)
+    }
+
+    // 3. Update Library Item
+    const itemUpdates: any = {}
+    if (metadata?.title) itemUpdates.title = metadata.title
+    if (storagePath) itemUpdates.cover_path = storagePath
+    if (Object.keys(itemUpdates).length > 0) {
+      await db.from('library_items').update(itemUpdates).eq('id', item.id)
+    }
+
     // Small delay to be polite to external APIs
     await new Promise(r => setTimeout(r, 300))
   }

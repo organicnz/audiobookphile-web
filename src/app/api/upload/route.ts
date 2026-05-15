@@ -199,24 +199,68 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // ── 9. Auto-fetch cover art (non-blocking) ────────────────────────────────
+  // ── 9. Auto-match metadata and cover art (non-blocking) ──────────────────
   // Fire and forget — don't await so the upload response is immediate.
-  // The cover will appear after a few seconds once fetched and stored.
+  // This enriched data will appear after a few seconds once fetched.
   if (mediaType === 'book' && title) {
-    fetchBookCover(title, author || undefined)
-      .then(async (fetched) => {
-        if (!fetched) return
-        const storagePath = `${libraryItemId}/cover.${fetched.extension}`
-        const { error: coverErr } = await db.storage
-          .from('covers')
-          .upload(storagePath, fetched.buffer, { upsert: true, contentType: fetched.contentType })
-        if (coverErr) {
-          console.warn('[upload] cover fetch storage failed:', coverErr.message)
-          return
+    const { fetchBookMetadata } = await import('@/lib/coverFetch')
+    fetchBookMetadata(title, author || undefined)
+      .then(async ({ cover, metadata }) => {
+        if (!cover && !metadata) return
+
+        // 1. Update cover if found
+        let storagePath: string | undefined = undefined
+        if (cover) {
+          storagePath = `${libraryItemId}/cover.${cover.extension}`
+          const { error: coverErr } = await db.storage
+            .from('covers')
+            .upload(storagePath, cover.buffer, { upsert: true, contentType: cover.contentType })
+          if (coverErr) {
+            console.warn('[upload] cover fetch storage failed:', coverErr.message)
+            storagePath = undefined
+          }
         }
-        await db.from('library_items').update({ cover_path: storagePath }).eq('id', libraryItemId)
+
+        // 2. Prepare book updates
+        const bookUpdates: any = {}
+        if (metadata) {
+          if (metadata.title) bookUpdates.title = metadata.title
+          if (metadata.description) bookUpdates.description = metadata.description
+          if (metadata.publishedYear) bookUpdates.published_year = metadata.publishedYear
+          if (metadata.genres?.length) bookUpdates.genres = metadata.genres
+          if (metadata.publisher) bookUpdates.publisher = metadata.publisher
+          if (metadata.language) bookUpdates.language = metadata.language
+        }
+        if (storagePath) bookUpdates.cover_path = storagePath
+
+        // 3. Apply updates to database
+        if (Object.keys(bookUpdates).length > 0) {
+          await db.from('books').update(bookUpdates).eq('id', bookId)
+        }
+
+        // 4. Update library_item fields
+        const itemUpdates: any = {}
+        if (metadata?.title) itemUpdates.title = metadata.title
+        if (metadata?.author) {
+          itemUpdates.author_names_first_last = metadata.author
+          // Ensure author exists in authors table too
+          const { data: existingAuthor } = await db.from('authors').select('id').eq('name', metadata.author).eq('library_id', libraryId).maybeSingle()
+          let authorId = existingAuthor?.id
+          if (!authorId) {
+            authorId = crypto.randomUUID()
+            await db.from('authors').insert({ id: authorId, name: metadata.author, library_id: libraryId })
+          }
+          if (authorId) {
+            await db.from('book_authors').upsert({ book_id: bookId, author_id: authorId })
+          }
+        }
+        if (storagePath) itemUpdates.cover_path = storagePath
+
+        if (Object.keys(itemUpdates).length > 0) {
+          await db.from('library_items').update(itemUpdates).eq('id', libraryItemId)
+        }
       })
-      .catch((err) => console.warn('[upload] cover fetch failed:', err?.message))
+      .catch((err) => console.warn('[upload] auto-match failed:', err?.message))
   }
 
   return NextResponse.json({ success: true, libraryItemId, bookId })
