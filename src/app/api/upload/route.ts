@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
 
   if (!token) {
+    console.error('[api/upload] Missing token in Authorization header')
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -37,6 +38,7 @@ export async function POST(request: NextRequest) {
   const { data: { user }, error: userError } = await anonClient.auth.getUser(token)
 
   if (userError || !user) {
+    console.error('[api/upload] User verification failed:', userError?.message || 'No user found')
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

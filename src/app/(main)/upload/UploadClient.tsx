@@ -237,6 +237,11 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
     setUploadProcessing(true)
     setUploadFinished(false)
     const cookie = await getCookie()
+    if (!cookie) {
+      setErrors('ErrorUnauthorized')
+      setUploadProcessing(false)
+      return
+    }
 
     // Work on a fresh copy so React sees the state changes
     const items = uploadItems.map((item) => ({ ...item }))

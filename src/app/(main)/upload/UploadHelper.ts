@@ -215,6 +215,7 @@ export async function upload(
       const xhr = new XMLHttpRequest()
       xhr.open('PUT', uploadUrl, true)
       xhr.setRequestHeader('Authorization', `Bearer ${cookie}`)
+      xhr.setRequestHeader('apikey', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
       xhr.setRequestHeader('x-upsert', 'true')
       // Content-Type is set automatically by the browser for File objects
 
