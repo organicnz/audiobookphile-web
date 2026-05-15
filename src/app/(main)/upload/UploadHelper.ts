@@ -213,11 +213,16 @@ export async function upload(
 
     await new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest()
-      xhr.open('PUT', uploadUrl, true)
+      // Use POST for the initial upload as it's the standard for new files in Supabase Storage
+      xhr.open('POST', uploadUrl, true)
       xhr.setRequestHeader('Authorization', `Bearer ${cookie}`)
       xhr.setRequestHeader('apikey', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
       xhr.setRequestHeader('x-upsert', 'true')
-      // Content-Type is set automatically by the browser for File objects
+      xhr.setRequestHeader('Cache-Control', 'no-cache')
+      
+      // Explicitly set Content-Type for the audio file
+      const contentType = file.type || 'application/octet-stream'
+      xhr.setRequestHeader('Content-Type', contentType)
 
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable && onProgress) {
@@ -237,13 +242,19 @@ export async function upload(
           resolve()
         } else {
           let msg = `Storage upload failed (${xhr.status})`
-          try { msg = JSON.parse(xhr.responseText)?.error ?? msg } catch { /* ignore */ }
+          try { 
+            const response = JSON.parse(xhr.responseText)
+            msg = response.error || response.message || msg
+          } catch { /* ignore */ }
           reject(new Error(`Failed to upload ${file.name}: ${msg}`))
         }
       }
 
       xhr.onerror = () => reject(new Error(`Network error uploading ${file.name}`))
+      xhr.ontimeout = () => reject(new Error(`Upload timed out for ${file.name}`))
 
+      // Set a generous timeout for large files (1 hour)
+      xhr.timeout = 3600000
       xhr.send(file)
     })
   }
