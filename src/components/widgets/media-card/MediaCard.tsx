@@ -298,6 +298,7 @@ function MediaCard(props: MediaCardProps) {
         damping: 25,
         delay: entityIndex ? (entityIndex % 20) * 0.02 : 0 
       }}
+      style={{ willChange: 'transform, opacity' }}
       className="h-full group"
     >
       <MediaCardFrame

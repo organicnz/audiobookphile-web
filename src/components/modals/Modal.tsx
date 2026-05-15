@@ -167,6 +167,7 @@ export default function Modal({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            style={{ willChange: 'transform, opacity' }}
             className="relative outline-none focus:outline-none"
             cy-id="modal-content"
             onClick={(e) => e.stopPropagation()}

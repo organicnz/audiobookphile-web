@@ -62,6 +62,8 @@ export class LocalAudioPlayer {
     const audioEl = document.createElement('audio')
     audioEl.id = 'audio-player'
     audioEl.style.display = 'none'
+    audioEl.preload = 'metadata'
+    audioEl.crossOrigin = 'anonymous'
     document.body.appendChild(audioEl)
     this.player = audioEl
 

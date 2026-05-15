@@ -166,6 +166,7 @@ export default function MediaCardOverlay({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
+            style={{ willChange: 'opacity' }}
             cy-id="overlay" 
             className={mergeClasses('absolute start-0 top-0 z-10 h-full w-full rounded-lg md:block overflow-hidden', overlayWrapperClasslist)}
           >
@@ -176,6 +177,7 @@ export default function MediaCardOverlay({
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  style={{ willChange: 'transform, opacity' }}
                   className="pointer-events-auto"
                 >
                   {showPlayButton ? (
