@@ -211,8 +211,8 @@ export async function applyMatchAction(
       // Auto-fetch cover if none provided
       const authorData = metadata.authors?.[0]
       const authorName = (typeof authorData === 'string' ? authorData : authorData?.name) || undefined
-      const buf = await fetchBookCover(metadata.title, authorName)
-      if (buf) await uploadCover(libraryItemId, buf)
+      const fetched = await fetchBookCover(metadata.title, authorName)
+      if (fetched) await uploadCover(libraryItemId, fetched.buffer, { extension: fetched.extension, contentType: fetched.contentType })
     }
 
     return { updated: true } as UpdateLibraryItemMediaResponse

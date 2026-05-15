@@ -58,13 +58,13 @@ export async function rescanLibraryItemAction(libraryItemId: string) {
 
   const { fetchBookCover } = await import('@/lib/coverFetch')
   const author = item.author_names_first_last?.split('/')[0]?.trim() || undefined
-  const buf = await fetchBookCover(item.title, author)
+  const fetched = await fetchBookCover(item.title, author)
 
-  if (buf) {
-    const storagePath = `${libraryItemId}/cover.jpg`
+  if (fetched) {
+    const storagePath = `${libraryItemId}/cover.${fetched.extension}`
     const { error } = await db.storage
       .from('covers')
-      .upload(storagePath, buf, { upsert: true, contentType: 'image/jpeg' })
+      .upload(storagePath, fetched.buffer, { upsert: true, contentType: fetched.contentType })
     if (!error) {
       await db.from('library_items').update({ cover_path: storagePath }).eq('id', libraryItemId)
       return { result: 'UPDATED' }

@@ -204,12 +204,12 @@ export async function POST(request: NextRequest) {
   // The cover will appear after a few seconds once fetched and stored.
   if (mediaType === 'book' && title) {
     fetchBookCover(title, author || undefined)
-      .then(async (imageBuffer) => {
-        if (!imageBuffer) return
-        const storagePath = `${libraryItemId}/cover.jpg`
+      .then(async (fetched) => {
+        if (!fetched) return
+        const storagePath = `${libraryItemId}/cover.${fetched.extension}`
         const { error: coverErr } = await db.storage
           .from('covers')
-          .upload(storagePath, imageBuffer, { upsert: true, contentType: 'image/jpeg' })
+          .upload(storagePath, fetched.buffer, { upsert: true, contentType: fetched.contentType })
         if (coverErr) {
           console.warn('[upload] cover fetch storage failed:', coverErr.message)
           return

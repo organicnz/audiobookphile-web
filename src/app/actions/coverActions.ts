@@ -44,9 +44,9 @@ export async function autoFetchCoverAction(
   author?: string
 ): Promise<string | null> {
   try {
-    const imageBuffer = await fetchBookCover(title, author)
-    if (!imageBuffer) return null
-    return uploadCover(libraryItemId, imageBuffer)
+    const fetched = await fetchBookCover(title, author)
+    if (!fetched) return null
+    return uploadCover(libraryItemId, fetched.buffer, { extension: fetched.extension, contentType: fetched.contentType })
   } catch (err) {
     console.error('[coverActions] autoFetchCover failed:', err)
     return null

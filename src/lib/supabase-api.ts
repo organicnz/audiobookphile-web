@@ -474,17 +474,19 @@ export async function getUsers(): Promise<import('@/types').Profile[]> {
 export async function uploadCover(
   libraryItemId: string,
   file: File | Blob | ArrayBuffer,
+  options?: { extension?: string; contentType?: string }
 ): Promise<string> {
   const { createServiceRoleClient } = await import('@/utils/supabase/service-role')
   const adminClient = createServiceRoleClient()
 
-  const storagePath = `${libraryItemId}/cover.jpg`
+  const extension = options?.extension || 'jpg'
+  const storagePath = `${libraryItemId}/cover.${extension}`
 
   const { error: uploadError } = await adminClient.storage
     .from('covers')
     .upload(storagePath, file, {
       upsert: true,
-      contentType: file instanceof ArrayBuffer ? 'image/jpeg' : (file as File | Blob).type || 'image/jpeg',
+      contentType: options?.contentType || (file instanceof ArrayBuffer ? 'image/jpeg' : (file as File | Blob).type || 'image/jpeg'),
     })
 
   if (uploadError) {
@@ -520,24 +522,27 @@ export async function removeCover(libraryItemId: string): Promise<void> {
   const { createServiceRoleClient } = await import('@/utils/supabase/service-role')
   const adminClient = createServiceRoleClient()
 
-  const storagePath = `${libraryItemId}/cover.jpg`
+  const { data: item } = await adminClient.from('library_items').select('cover_path').eq('id', libraryItemId).single()
+  const storagePath = item?.cover_path || `${libraryItemId}/cover.jpg`
 
   // Attempt to delete the storage object. We intentionally ignore a "not found"
   // error (the file may have already been deleted) but still propagate other
   // storage errors so callers are aware of unexpected failures.
-  const { error: storageError } = await adminClient.storage
-    .from('covers')
-    .remove([storagePath])
+  if (storagePath) {
+    const { error: storageError } = await adminClient.storage
+      .from('covers')
+      .remove([storagePath])
 
-  if (storageError) {
-    // Supabase Storage returns a generic error for missing objects; treat it as
-    // a non-fatal warning and continue to clear the DB column.
-    const isNotFound =
-      storageError.message.toLowerCase().includes('not found') ||
-      storageError.message.toLowerCase().includes('does not exist')
+    if (storageError) {
+      // Supabase Storage returns a generic error for missing objects; treat it as
+      // a non-fatal warning and continue to clear the DB column.
+      const isNotFound =
+        storageError.message.toLowerCase().includes('not found') ||
+        storageError.message.toLowerCase().includes('does not exist')
 
-    if (!isNotFound) {
-      throw new ApiError(storageError.message, 500, storageError.name ?? '')
+      if (!isNotFound) {
+        throw new ApiError(storageError.message, 500, storageError.name ?? '')
+      }
     }
   }
 

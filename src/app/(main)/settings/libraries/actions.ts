@@ -75,13 +75,13 @@ export async function matchAll(libraryId: string): Promise<void> {
     if (!title || title.length < 3) continue
 
     const author = item.author_names_first_last?.split('/')[0]?.trim() || undefined
-    const buf = await fetchBookCover(title, author)
-    if (!buf) continue
+    const fetched = await fetchBookCover(title, author)
+    if (!fetched) continue
 
-    const storagePath = `${item.id}/cover.jpg`
+    const storagePath = `${item.id}/cover.${fetched.extension}`
     const { error: uploadErr } = await db.storage
       .from('covers')
-      .upload(storagePath, buf, { upsert: true, contentType: 'image/jpeg' })
+      .upload(storagePath, fetched.buffer, { upsert: true, contentType: fetched.contentType })
     if (uploadErr) continue
 
     await db.from('library_items').update({ cover_path: storagePath }).eq('id', item.id)
