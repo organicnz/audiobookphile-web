@@ -1,4 +1,4 @@
-import { SupportedFileTypes } from '@/lib/fileUtils'
+import { sanitizeFileName, SupportedFileTypes } from '@/lib/fileUtils'
 import type { Library } from '@/types/api'
 import path from 'path'
 import { ItemToUpload } from './UploadClient'
@@ -37,6 +37,8 @@ export interface UploadProgressInfo {
  * Check file type based on extension
  */
 function checkFileType(filename: string): string | false {
+  if (filename.startsWith('.')) return false
+
   let ext = path.extname(filename)
   if (!ext) return false
   if (ext.startsWith('.')) ext = ext.slice(1)
@@ -214,7 +216,7 @@ export async function upload(
   const uploadedPaths: string[] = []
 
   for (const file of item.itemFiles) {
-    const storagePath = `${bookId}/${file.name}`
+    const storagePath = `${bookId}/${sanitizeFileName(file.name)}`
 
     // Attempt to get a presigned URL for B2
     let b2Url = ''
@@ -345,7 +347,7 @@ export async function upload(
       name: f.name,
       size: f.size,
       type: f.type,
-      storagePath: `${bookId}/${f.name}`,
+      storagePath: `${bookId}/${sanitizeFileName(f.name)}`,
     })),
   })
 
