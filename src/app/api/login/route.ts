@@ -1,9 +1,20 @@
 import { createClient } from '@/utils/supabase/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    const bodyText = await request.text()
+    console.log('[API Login] Raw body:', bodyText)
+    
+    let body
+    try {
+      body = JSON.parse(bodyText)
+    } catch (e) {
+      console.error('[API Login] Failed to parse JSON:', e)
+      return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 })
+    }
+
     const { username, password } = body
 
     if (!username || !password) {
@@ -11,28 +22,65 @@ export async function POST(request: Request) {
     }
 
     const supabase = await createClient()
+    let emailToUse = username
 
-    // Assuming the mobile app's username field might contain an email
-    // Or we attempt to login with email directly
+    // If the username doesn't look like an email, we need to look it up in the profiles table
+    if (!username.includes('@')) {
+      console.log(`[API Login] Looking up email for nickname: ${username}`)
+      
+      // We must use the service role key to bypass RLS on profiles for unauthenticated users
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+      if (serviceRoleKey) {
+        const adminSupabase = createSupabaseClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          serviceRoleKey
+        )
+        
+        const { data: profileData, error: profileError } = await adminSupabase
+          .from('profiles')
+          .select('id')
+          .eq('username', username)
+          .single()
+          
+        if (profileData?.id) {
+          // Now fetch the user's email using the admin API
+          const { data: userData, error: userError } = await adminSupabase.auth.admin.getUserById(profileData.id)
+          if (userData?.user?.email) {
+            emailToUse = userData.user.email
+            console.log(`[API Login] Found email for nickname: ${emailToUse}`)
+          } else {
+            console.error('[API Login] Could not find auth user for profile ID:', profileData.id)
+          }
+        } else {
+          console.error('[API Login] Profile lookup failed:', profileError?.message)
+        }
+      } else {
+        console.error('[API Login] Missing SUPABASE_SERVICE_ROLE_KEY for nickname lookup')
+      }
+    }
+
+    console.log(`[API Login] Attempting login with email: ${emailToUse}`)
+
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email: username,
+      email: emailToUse,
       password: password,
     })
 
     if (authError || !authData.user) {
-      // If login fails, try fetching the profile by username to get the email (if they used a real username)
-      // Note: Supabase auth requires email. If they entered a username, we must find the email.
-      // For now, we will assume they entered their email in the username field.
       console.error('[API Login] Auth error:', authError?.message)
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+      return NextResponse.json({ error: 'Invalid credentials or missing password (did you sign up with Google?)' }, { status: 401 })
     }
 
     // Fetch the user's profile
-    const { data: profile } = await supabase
+    const { data: profile, error: pError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', authData.user.id)
       .single()
+      
+    if (pError) {
+      console.error('[API Login] Profile fetch error after login:', pError.message)
+    }
 
     // Construct the payload the Audiobookshelf mobile app expects
     const userPayload = {
@@ -40,7 +88,7 @@ export async function POST(request: Request) {
         id: authData.user.id,
         username: profile?.username || authData.user.email?.split('@')[0] || 'User',
         type: profile?.user_type || 'user',
-        token: authData.session.access_token, // Pass the Supabase JWT as the Audiobookshelf token
+        token: authData.session.access_token,
         isActive: true,
         isLocked: false,
         permissions: {
@@ -56,6 +104,7 @@ export async function POST(request: Request) {
       source: 'local'
     }
 
+    console.log(`[API Login] Successful login for: ${emailToUse}`)
     return NextResponse.json(userPayload)
   } catch (error) {
     console.error('[API Login] Internal error:', error)
