@@ -13,6 +13,12 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
         permanent: false,
       },
     ],
+    rewrites: async () => [
+      {
+        source: '/login',
+        destination: '/api/login',
+      },
+    ],
     headers: async () => [
       {
         source: '/(.*)',

@@ -25,6 +25,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Intercept Audiobookshelf mobile app login requests
+  if (request.nextUrl.pathname === '/login' && request.method === 'POST') {
+    return NextResponse.rewrite(new URL('/api/login', request.url))
+  }
+
   const response = await updateSession(request)
 
   if (request.nextUrl.pathname !== '/') {
