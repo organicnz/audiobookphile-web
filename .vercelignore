@@ -1,0 +1,14 @@
+# Ignore all local scratch scripts in the root and scripts folder
+/check_audio_files.ts
+/check_books_temp.ts
+/count_books.ts
+/count_books_anon.ts
+/count_books_auth.ts
+/fetch_production_books.ts
+/get_sync_report3.ts
+/inspect_schema.ts
+/inspect_schema_temp.ts
+/test_aws_sdk.ts
+/test_b2_production.ts
+/search_books_temp.ts
+/scripts/

@@ -45,7 +45,7 @@ export function getPlaceholderCoverUrl(): string {
 export function getLibraryItemCoverSrc(libraryItem: LibraryItem, placeholder: string): string {
   const hasCover =
     // Full library item media
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     !!(libraryItem as any).media?.coverPath
 
   if (!hasCover) {

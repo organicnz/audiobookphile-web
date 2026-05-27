@@ -34,7 +34,9 @@ module.exports = [
       'cypress/videos/',
       '.eslintcache',
       'next-env.d.ts',
-      'eslint.config.js'
+      'eslint.config.js',
+      '.vercel/',
+      '.trunk/'
     ]
   },
   ...nextConfig,

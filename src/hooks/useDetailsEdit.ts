@@ -16,7 +16,7 @@ type Action<TDetails> =
   | { type: 'BATCH_UPDATE'; payload: { batchDetails: Partial<TDetails & { tags: string[] }>; mapType: 'overwrite' | 'append' } }
 
 // Generic reducer factory
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export function createDetailsReducer<TDetails extends Record<string, any>>(
   batchAppendLogic?: (state: EditState<TDetails>, detailsToUpdate: Partial<TDetails>) => TDetails
 ) {
@@ -96,7 +96,7 @@ interface UseDetailsEditOptions<TDetails> {
   useLooseEquality?: boolean
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export function useDetailsEdit<TDetails extends Record<string, any>>({
   metadata,
   tags,
