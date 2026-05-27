@@ -27,15 +27,17 @@ export interface StorageObject {
   source: 'supabase' | 'b2'
 }
 
-export interface SyncReportItem {
-  /** Storage path of the file */
-  storagePath: string
-  /** Source of the file */
-  source: 'supabase' | 'b2'
-  /** Size in bytes */
-  size: number
-  /** Inferred title from path (e.g. filename without extension) */
-  inferredTitle?: string
+export interface OrphanedGroup {
+  /** The parent directory path, or the file path if it's at root */
+  dirPath: string
+  /** Inferred book title from the directory name */
+  inferredTitle: string
+  /** The files belonging to this group */
+  files: {
+    storagePath: string
+    source: 'supabase' | 'b2'
+    size: number
+  }[]
 }
 
 export interface MissingFileItem {
@@ -50,8 +52,8 @@ export interface MissingFileItem {
 }
 
 export interface SyncReport {
-  /** Files in storage with no DB record */
-  orphanedFiles: SyncReportItem[]
+  /** Grouped orphaned files */
+  orphanedGroups: OrphanedGroup[]
   /** DB records pointing to non-existent storage files */
   missingFiles: MissingFileItem[]
   /** Total files in storage */
@@ -71,7 +73,7 @@ export interface SyncReport {
  *
  * Supabase Storage uses a flat namespace with `/` as a virtual separator.
  * The `list` API returns files at a given path; we recursively walk
- * directories to get every object.
+ * directories to get every object. Pagination is strictly respected.
  */
 export async function listSupabaseStorageObjects(
   supabase: SupabaseClient,
@@ -80,34 +82,51 @@ export async function listSupabaseStorageObjects(
 ): Promise<StorageObject[]> {
   const results: StorageObject[] = []
 
-  const { data, error } = await supabase.storage.from(bucket).list(prefix, {
-    limit: 1000,
-    offset: 0,
-    sortBy: { column: 'name', order: 'asc' },
-  })
+  let offset = 0
+  let hasMore = true
+  const limit = 1000
 
-  if (error) {
-    console.error(`[storageSync] Error listing ${bucket}/${prefix}:`, error.message)
-    return results
-  }
+  while (hasMore) {
+    const { data, error } = await supabase.storage.from(bucket).list(prefix, {
+      limit,
+      offset,
+      sortBy: { column: 'name', order: 'asc' },
+    })
 
-  if (!data) return results
+    if (error) {
+      console.error(`[storageSync] Error listing ${bucket}/${prefix}:`, error.message)
+      return results
+    }
 
-  for (const item of data) {
-    const fullPath = prefix ? `${prefix}/${item.name}` : item.name
+    if (!data || data.length === 0) {
+      hasMore = false
+      break
+    }
 
-    if (item.id === null) {
-      // It's a folder — recurse
-      const nested = await listSupabaseStorageObjects(supabase, bucket, fullPath)
-      results.push(...nested)
+    for (const item of data) {
+      if (item.name === '.emptyFolderPlaceholder') continue
+
+      const fullPath = prefix ? `${prefix}/${item.name}` : item.name
+
+      if (item.id === null) {
+        // It's a folder — recurse
+        const nested = await listSupabaseStorageObjects(supabase, bucket, fullPath)
+        results.push(...nested)
+      } else {
+        // It's a file
+        results.push({
+          key: fullPath,
+          size: item.metadata?.size ?? 0,
+          lastModified: item.updated_at ? new Date(item.updated_at) : null,
+          source: 'supabase',
+        })
+      }
+    }
+
+    if (data.length < limit) {
+      hasMore = false
     } else {
-      // It's a file
-      results.push({
-        key: fullPath,
-        size: item.metadata?.size ?? 0,
-        lastModified: item.updated_at ? new Date(item.updated_at) : null,
-        source: 'supabase',
-      })
+      offset += limit
     }
   }
 
@@ -201,12 +220,7 @@ export async function checkB2ObjectExists(key: string): Promise<boolean> {
 
 /**
  * Extracts all storage paths referenced in the database.
- *
- * Checks two sources:
- *   1. `audio_files.storage_path` — normalized audio file table
- *   2. `books.audio_files` JSONB — legacy/denormalized audio file data
- *      (paths stored as `metadata.path` or `storage_path` within each object)
- *
+ * Uses pagination to retrieve all records and avoids non-existent tables.
  * Returns a map of storagePath → { libraryItemId, title }.
  */
 export async function getDbStoragePaths(
@@ -214,62 +228,55 @@ export async function getDbStoragePaths(
 ): Promise<Map<string, { libraryItemId: string; title: string }>> {
   const pathMap = new Map<string, { libraryItemId: string; title: string }>()
 
-  // 1. Check normalized audio_files table
-  const { data: audioFiles, error: afError } = await supabase
-    .from('audio_files')
-    .select('storage_path, library_item_id')
+  let from = 0
+  let hasMore = true
+  const limit = 1000
 
-  if (!afError && audioFiles) {
-    // We need titles — batch-fetch the item titles
-    const itemIds = [...new Set(audioFiles.map((af) => af.library_item_id))]
-    const { data: items } = await supabase
+  while (hasMore) {
+    const { data: items, error } = await supabase
       .from('library_items')
-      .select('id, title')
-      .in('id', itemIds)
+      .select(`
+        id,
+        title,
+        books!inner (
+          id,
+          title,
+          audio_files
+        )
+      `)
+      .range(from, from + limit - 1)
 
-    const titleMap = new Map((items || []).map((i) => [i.id, i.title]))
-
-    for (const af of audioFiles) {
-      if (af.storage_path) {
-        pathMap.set(af.storage_path, {
-          libraryItemId: af.library_item_id,
-          title: titleMap.get(af.library_item_id) || 'Unknown',
-        })
-      }
+    if (error) {
+      console.error('[storageSync] Error fetching db paths:', error.message)
+      break
     }
-  }
 
-  // 2. Check books.audio_files JSONB (legacy path format)
-  const { data: books, error: booksError } = await supabase
-    .from('books')
-    .select('id, title, audio_files')
-    .not('audio_files', 'is', null)
+    if (!items || items.length === 0) {
+      hasMore = false
+      break
+    }
 
-  if (!booksError && books) {
-    // Find the library_item that references each book
-    const bookIds = books.map((b) => b.id)
-    const { data: linkedItems } = await supabase
-      .from('library_items')
-      .select('id, title, media_id')
-      .in('media_id', bookIds)
+    for (const item of items) {
+      const bookData = Array.isArray(item.books) ? item.books[0] : item.books
+      if (!bookData) continue
 
-    const bookToItem = new Map(
-      (linkedItems || []).map((li) => [li.media_id, { id: li.id, title: li.title }])
-    )
-
-    for (const book of books) {
-      const audioFilesList = Array.isArray(book.audio_files) ? book.audio_files : []
-      const linkedItem = bookToItem.get(book.id)
+      const audioFilesList = Array.isArray(bookData.audio_files) ? bookData.audio_files : []
 
       for (const af of audioFilesList) {
         const path = af.metadata?.path || af.storage_path || af.path
         if (path) {
           pathMap.set(path, {
-            libraryItemId: linkedItem?.id || book.id,
-            title: linkedItem?.title || book.title || 'Unknown',
+            libraryItemId: item.id,
+            title: item.title || bookData.title || 'Unknown',
           })
         }
       }
+    }
+
+    if (items.length < limit) {
+      hasMore = false
+    } else {
+      from += limit
     }
   }
 
@@ -283,7 +290,7 @@ export async function getDbStoragePaths(
 /**
  * Computes the diff between storage and DB.
  *
- * - `orphanedFiles`: files in storage with no matching DB path reference
+ * - `orphanedGroups`: files in storage with no matching DB path reference, grouped by directory
  * - `missingFiles`: DB records referencing paths that don't exist in storage
  */
 export function computeSyncDiff(
@@ -291,24 +298,42 @@ export function computeSyncDiff(
   dbPaths: Map<string, { libraryItemId: string; title: string }>
 ): SyncReport {
   const storageKeys = new Set(storageObjects.map((obj) => obj.key))
-  const storageMap = new Map(storageObjects.map((obj) => [obj.key, obj]))
+  
+  const orphanGroupsMap = new Map<string, OrphanedGroup>()
 
-  // Orphaned: in storage but not in DB
-  const orphanedFiles: SyncReportItem[] = []
   for (const obj of storageObjects) {
     if (!dbPaths.has(obj.key)) {
-      // Infer title from path: e.g. "uuid/My Book.mp3" → "My Book"
-      const filename = obj.key.split('/').pop() || obj.key
-      const inferredTitle = filename.replace(/\.[^.]+$/, '')
+      // Group by directory
+      const parts = obj.key.split('/')
+      let dirPath = ''
+      let inferredTitle = ''
 
-      orphanedFiles.push({
+      if (parts.length > 1) {
+        parts.pop() // remove filename
+        dirPath = parts.join('/')
+        inferredTitle = parts[parts.length - 1] // last directory name
+      } else {
+        dirPath = obj.key
+        inferredTitle = obj.key.replace(/\.[^.]+$/, '')
+      }
+
+      if (!orphanGroupsMap.has(dirPath)) {
+        orphanGroupsMap.set(dirPath, {
+          dirPath,
+          inferredTitle,
+          files: []
+        })
+      }
+
+      orphanGroupsMap.get(dirPath)!.files.push({
         storagePath: obj.key,
         source: obj.source,
-        size: obj.size,
-        inferredTitle,
+        size: obj.size
       })
     }
   }
+
+  const orphanedGroups = Array.from(orphanGroupsMap.values())
 
   // Missing: in DB but not in storage
   const missingFiles: MissingFileItem[] = []
@@ -318,15 +343,13 @@ export function computeSyncDiff(
         libraryItemId: info.libraryItemId,
         title: info.title,
         missingPath: path,
-        // Best guess — if B2 is configured and the path doesn't start with
-        // a known Supabase bucket prefix, assume B2
         source: process.env.B2_ENDPOINT ? 'b2' : 'supabase',
       })
     }
   }
 
   return {
-    orphanedFiles,
+    orphanedGroups,
     missingFiles,
     totalStorageFiles: storageObjects.length,
     totalDbPaths: dbPaths.size,
@@ -339,10 +362,7 @@ export function computeSyncDiff(
 // ---------------------------------------------------------------------------
 
 /**
- * Infers a library ID for an orphaned file.
- *
- * If there is exactly one library, uses that. Otherwise returns the first
- * library with media_type = 'book'. Returns null if no libraries exist.
+ * Infers a library ID for an orphaned group.
  */
 export async function inferLibraryId(supabase: SupabaseClient): Promise<string | null> {
   const { data: libraries } = await supabase
@@ -358,32 +378,31 @@ export async function inferLibraryId(supabase: SupabaseClient): Promise<string |
 }
 
 /**
- * Creates DB records for an orphaned storage file.
- *
- * Creates a minimal `library_items` row pointing to the storage path.
- * The item is marked with `is_missing = false` (the file exists) but
- * with minimal metadata that can be enriched later.
+ * Creates DB records for an orphaned storage group.
+ * Grouping files avoids creating multiple books for the same audiobook.
  */
-export async function importOrphanedFile(
+export async function importOrphanedGroup(
   supabase: SupabaseClient,
-  orphan: SyncReportItem,
+  group: OrphanedGroup,
   libraryId: string
 ): Promise<{ libraryItemId: string } | { error: string }> {
   const libraryItemId = crypto.randomUUID()
-  const title = orphan.inferredTitle || 'Untitled Import'
-  const filename = orphan.storagePath.split('/').pop() || 'unknown'
+  const title = group.inferredTitle || 'Untitled Import'
+  
+  const totalSize = group.files.reduce((acc, f) => acc + f.size, 0)
 
-  // Build minimal audio_files JSONB
-  const audioFilesJson = [
-    {
-      index: 0,
+  // Build audio_files JSONB
+  const audioFilesJson = group.files.map((file, index) => {
+    const filename = file.storagePath.split('/').pop() || 'unknown'
+    return {
+      index,
       ino: crypto.randomUUID(),
       metadata: {
         filename,
         ext: '.' + (filename.split('.').pop()?.toLowerCase() ?? ''),
-        path: orphan.storagePath,
-        relPath: filename,
-        size: orphan.size,
+        path: file.storagePath,
+        relPath: file.storagePath.replace(group.dirPath + '/', ''),
+        size: file.size,
         mtimeMs: Date.now(),
         ctimeMs: Date.now(),
         birthtimeMs: Date.now(),
@@ -392,10 +411,9 @@ export async function importOrphanedFile(
       updatedAt: Date.now(),
       duration: null,
       mimeType: guessMimeType(filename),
-    },
-  ]
+    }
+  })
 
-  // Insert into books table (legacy schema)
   const bookId = crypto.randomUUID()
   const { error: bookError } = await supabase
     .from('books')
@@ -405,16 +423,15 @@ export async function importOrphanedFile(
     return { error: `Failed to create book: ${bookError.message}` }
   }
 
-  // Insert into library_items
   const { error: itemError } = await supabase.from('library_items').insert({
     id: libraryItemId,
     library_id: libraryId,
     media_type: 'book',
     media_id: bookId,
     title,
-    size: orphan.size,
-    path: orphan.storagePath,
-    rel_path: filename,
+    size: totalSize,
+    path: group.dirPath,
+    rel_path: group.dirPath.split('/').pop() || '',
     is_missing: false,
     last_storage_check: new Date().toISOString(),
     library_files: audioFilesJson.map((af) => ({
@@ -427,7 +444,6 @@ export async function importOrphanedFile(
   })
 
   if (itemError) {
-    // Rollback book
     await supabase.from('books').delete().eq('id', bookId)
     return { error: `Failed to create library item: ${itemError.message}` }
   }

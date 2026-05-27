@@ -5,7 +5,7 @@ import {
   getDbStoragePaths,
   computeSyncDiff,
   inferLibraryId,
-  importOrphanedFile,
+  importOrphanedGroup,
   type SyncReport,
 } from '@/lib/storageSync'
 
@@ -34,7 +34,7 @@ export async function buildSyncReport(db: ReturnType<typeof createServiceRoleCli
   // 3. Compute diff
   const report = computeSyncDiff(allStorageObjects, dbPaths)
   console.log(
-    `[storage-sync] Report: ${report.orphanedFiles.length} orphaned, ${report.missingFiles.length} missing`
+    `[storage-sync] Report: ${report.orphanedGroups.length} orphaned groups, ${report.missingFiles.length} missing`
   )
 
   return report
@@ -47,7 +47,7 @@ export async function buildSyncReport(db: ReturnType<typeof createServiceRoleCli
 export async function handleImportOrphans(db: ReturnType<typeof createServiceRoleClient>) {
   const report = await buildSyncReport(db)
 
-  if (report.orphanedFiles.length === 0) {
+  if (report.orphanedGroups.length === 0) {
     return {
       message: 'No orphaned files found — storage and DB are in sync.',
       imported: 0,
@@ -60,14 +60,14 @@ export async function handleImportOrphans(db: ReturnType<typeof createServiceRol
     return { error: 'No libraries exist. Create a library first.', status: 400 }
   }
 
-  const results: { storagePath: string; libraryItemId?: string; error?: string }[] = []
+  const results: { dirPath: string; libraryItemId?: string; error?: string }[] = []
 
-  for (const orphan of report.orphanedFiles) {
-    const result = await importOrphanedFile(db, orphan, libraryId)
+  for (const group of report.orphanedGroups) {
+    const result = await importOrphanedGroup(db, group, libraryId)
     if ('error' in result) {
-      results.push({ storagePath: orphan.storagePath, error: result.error })
+      results.push({ dirPath: group.dirPath, error: result.error })
     } else {
-      results.push({ storagePath: orphan.storagePath, libraryItemId: result.libraryItemId })
+      results.push({ dirPath: group.dirPath, libraryItemId: result.libraryItemId })
     }
   }
 
@@ -75,7 +75,7 @@ export async function handleImportOrphans(db: ReturnType<typeof createServiceRol
   const errorCount = results.filter((r) => r.error).length
 
   return {
-    message: `Imported ${successCount} orphaned files. ${errorCount} errors.`,
+    message: `Imported ${successCount} orphaned groups. ${errorCount} errors.`,
     imported: successCount,
     errors: errorCount,
     details: results,
@@ -144,7 +144,7 @@ export async function handleMarkMissing(db: ReturnType<typeof createServiceRoleC
 export async function handleCleanupOrphans(db: ReturnType<typeof createServiceRoleClient>) {
   const report = await buildSyncReport(db)
 
-  if (report.orphanedFiles.length === 0) {
+  if (report.orphanedGroups.length === 0) {
     return {
       message: 'No orphaned files found — storage and DB are in sync.',
       deleted: 0,
@@ -152,9 +152,12 @@ export async function handleCleanupOrphans(db: ReturnType<typeof createServiceRo
     }
   }
 
+  // Flat map the groups to individual files for deletion
+  const orphanedFiles = report.orphanedGroups.flatMap(group => group.files)
+
   // Separate by source
-  const supabaseOrphans = report.orphanedFiles.filter((f) => f.source === 'supabase')
-  const b2Orphans = report.orphanedFiles.filter((f) => f.source === 'b2')
+  const supabaseOrphans = orphanedFiles.filter((f) => f.source === 'supabase')
+  const b2Orphans = orphanedFiles.filter((f) => f.source === 'b2')
 
   let deletedCount = 0
   const errors: string[] = []
