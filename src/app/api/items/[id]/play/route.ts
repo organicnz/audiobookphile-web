@@ -1,7 +1,5 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 export async function POST(
   request: Request,
@@ -124,30 +122,16 @@ export async function POST(
       let isMissing = false
 
       try {
-        if (process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME) {
-          const s3Client = new S3Client({
-            endpoint: process.env.B2_ENDPOINT,
-            region: process.env.B2_REGION || 'us-west-004',
-            credentials: {
-              accessKeyId: process.env.B2_KEY_ID!,
-              secretAccessKey: process.env.B2_APP_KEY!,
-            },
-          })
-          const command = new GetObjectCommand({
-            Bucket: process.env.B2_BUCKET_NAME,
-            Key: storagePath,
-          })
-          finalSignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 })
-        } else {
-          const { data: signedData, error: signedError } = await supabase.storage
-            .from('audio-files')
-            .createSignedUrl(storagePath, 3600)
+        // Use Supabase storage signed URLs (proxied through Supabase's own B2 credentials)
+        // This matches the approach used by the React web app in playbackActions.ts
+        const { data: signedData, error: signedError } = await supabase.storage
+          .from('audio-files')
+          .createSignedUrl(storagePath, 3600)
 
-          if (signedError || !signedData?.signedUrl) {
-            throw new Error(signedError?.message ?? 'No signed URL returned')
-          }
-          finalSignedUrl = signedData.signedUrl
+        if (signedError || !signedData?.signedUrl) {
+          throw new Error(signedError?.message ?? 'No signed URL returned')
         }
+        finalSignedUrl = signedData.signedUrl
       } catch (signErr: any) {
         console.warn(
           `[API Play Session] Missing storage file at "${storagePath}": ${signErr.message}. Skipping track.`
