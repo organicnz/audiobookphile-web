@@ -2,6 +2,7 @@ import { createServiceRoleClient } from '@/utils/supabase/service-role'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchBookCover } from '@/lib/coverFetch'
+import { checkB2ObjectExists } from '@/lib/storageSync'
 
 /**
  * POST /api/upload
@@ -78,6 +79,30 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Missing required fields: bookId, title, library, files' }, { status: 400 })
   }
 
+  // ── 3b. Verify files exist in storage before creating DB records ─────────
+  const missingFiles: string[] = []
+  for (const file of files) {
+    if (process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME) {
+      const exists = await checkB2ObjectExists(file.storagePath)
+      if (!exists) missingFiles.push(file.storagePath)
+    } else {
+      // Check Supabase Storage
+      const { data } = await db.storage.from('audio').download(file.storagePath)
+      if (!data) missingFiles.push(file.storagePath)
+    }
+  }
+
+  if (missingFiles.length > 0) {
+    console.warn(`[upload] ${missingFiles.length} files not found in storage:`, missingFiles)
+    return NextResponse.json(
+      {
+        error: `${missingFiles.length} file(s) not found in storage. Upload files first.`,
+        missingFiles,
+      },
+      { status: 400 }
+    )
+  }
+
   const libraryItemId = crypto.randomUUID()
   const totalSize = files.reduce((sum, f) => sum + f.size, 0)
 
@@ -119,13 +144,16 @@ export async function POST(request: NextRequest) {
     mimeType: file.type || 'audio/mpeg',
   }))
 
-  // ── 5. Create book row ────────────────────────────────────────────────────
+  // ── 5. Create or update book row (idempotent) ─────────────────────────────
   const { error: bookError } = await db
     .from('books')
-    .insert({ id: bookId, title, audio_files: audioFilesJson })
+    .upsert(
+      { id: bookId, title, audio_files: audioFilesJson },
+      { onConflict: 'id' }
+    )
 
   if (bookError) {
-    console.error('[upload] books insert failed:', bookError)
+    console.error('[upload] books upsert failed:', bookError)
     return NextResponse.json({ error: `Failed to create book: ${bookError.message}` }, { status: 500 })
   }
 
@@ -141,6 +169,8 @@ export async function POST(request: NextRequest) {
       rel_path: title,
       title,
       size: totalSize,
+      is_missing: false,
+      last_storage_check: new Date().toISOString(),
       library_files: audioFilesJson.map((af) => ({
         ino: af.ino,
         metadata: af.metadata,
@@ -152,9 +182,18 @@ export async function POST(request: NextRequest) {
 
   if (itemError) {
     console.error('[upload] library_items insert failed:', itemError)
-    // Clean up book row and orphaned storage files
-    await db.from('books').delete().eq('id', bookId)
-    await db.storage.from('audio-files').remove(files.map((f) => f.storagePath))
+    // Clean up book row
+    const { error: bookCleanupError } = await db.from('books').delete().eq('id', bookId)
+    if (bookCleanupError) {
+      console.error('[upload] book cleanup also failed:', bookCleanupError.message)
+    }
+    // Clean up orphaned storage files
+    const { error: storageCleanupError } = await db.storage
+      .from('audio')
+      .remove(files.map((f) => f.storagePath))
+    if (storageCleanupError) {
+      console.error('[upload] storage cleanup also failed:', storageCleanupError.message)
+    }
     return NextResponse.json({ error: `Failed to create library item: ${itemError.message}` }, { status: 500 })
   }
 
