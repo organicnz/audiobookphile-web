@@ -8,8 +8,8 @@ export async function GET(
 ) {
   try {
     const resolvedParams = await params
-    const libraryId = resolvedParams.id
-    
+    const itemId = resolvedParams.id
+
     const authHeader = request.headers.get('authorization')
     const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null
 
@@ -28,14 +28,14 @@ export async function GET(
       }
     })
 
-    // Validate token
+    // Validate token and get user
     const { data: { user }, error: userError } = await supabase.auth.getUser(token)
     if (userError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Fetch library items. Audiobookshelf mobile expects a lot of fields.
-    const { data: items, error: itemsError } = await supabase
+    // Fetch the single library item with all relations
+    const { data: item, error: itemError } = await supabase
       .from('library_items')
       .select(`
         *,
@@ -53,50 +53,26 @@ export async function GET(
           )
         )
       `)
-      .eq('library_id', libraryId)
+      .eq('id', itemId)
+      .maybeSingle()
 
-    if (itemsError) throw itemsError
+    if (itemError || !item) {
+      console.error('[API Get Item] Item not found:', itemError?.message)
+      return NextResponse.json({ error: 'Item not found' }, { status: 404 })
+    }
 
     // Fetch user media progress separately
-    const { data: progressList } = await supabase
+    const { data: progressRecord } = await supabase
       .from('media_progress')
       .select('*')
       .eq('user_id', user.id)
+      .eq('library_item_id', item.id)
+      .maybeSingle()
 
-    // Map to Audiobookshelf item schema (Fully mapped to match models)
-    // Also flag items as is_missing if they have no audio files or if the DB flag is set
-    const formattedItems = (items || []).map((item: any) => {
-      const progressRecord = (progressList || []).find((p: any) => p.library_item_id === item.id) || null
-      const mapped = mapBookForMobile(item, progressRecord)
-
-      // Detect items with missing audio data
-      const audioFiles = item.books?.audio_files || []
-      const hasAudioFiles = Array.isArray(audioFiles) && audioFiles.length > 0
-      const dbIsMissing = item.is_missing === true
-
-      if (dbIsMissing || !hasAudioFiles) {
-        mapped.is_missing = true
-      }
-
-      return mapped
-    })
-
-    return NextResponse.json({
-      results: formattedItems,
-      total: formattedItems.length,
-      limit: 0,
-      page: 0,
-      sortBy: 'addedAt',
-      sortDesc: true,
-      filterBy: 'all',
-      mediaType: 'book',
-      minified: false,
-      collapseseries: false,
-      include: ''
-    })
-
+    const formattedBook = mapBookForMobile(item, progressRecord)
+    return NextResponse.json(formattedBook)
   } catch (error) {
-    console.error('[API Library Items] Error:', error)
+    console.error('[API Get Item] Error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

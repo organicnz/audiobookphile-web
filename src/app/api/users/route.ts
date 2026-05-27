@@ -38,18 +38,28 @@ export async function GET(request: Request) {
     const userPayload = {
       id: user.id,
       username: profile?.username || user.email?.split('@')[0] || 'User',
+      email: user.email,
       type: profile?.user_type || 'user',
       token: token,
+      refreshToken: null,
+      mediaProgress: [],
+      seriesHideFromContinueListening: [],
+      bookmarks: [],
       isActive: true,
       isLocked: false,
+      lastSeen: new Date().getTime(),
+      createdAt: new Date(profile?.created_at || user.created_at).getTime(),
       permissions: {
         download: true,
         update: profile?.user_type === 'admin',
         delete: profile?.user_type === 'admin',
         upload: profile?.user_type === 'admin',
         accessAllLibraries: true,
+        accessAllTags: true,
+        accessExplicitContent: true
       },
-      createdAt: new Date(profile?.created_at || user.created_at).getTime()
+      librariesAccessible: [],
+      itemTagsAccessible: []
     }
 
     // We only return the current user for security reasons unless we implement an admin check

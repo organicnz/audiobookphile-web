@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       console.log(`[API Login] Looking up email for nickname: ${username}`)
       
       // We must use the service role key to bypass RLS on profiles for unauthenticated users
-      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SERVICE_KEY
       if (serviceRoleKey) {
         const adminSupabase = createSupabaseClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
           console.error('[API Login] Profile lookup failed:', profileError?.message)
         }
       } else {
-        console.error('[API Login] Missing SUPABASE_SERVICE_ROLE_KEY for nickname lookup')
+        console.error('[API Login] Missing SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SERVICE_KEY for nickname lookup')
       }
     }
 
@@ -87,17 +87,28 @@ export async function POST(request: Request) {
       user: {
         id: authData.user.id,
         username: profile?.username || authData.user.email?.split('@')[0] || 'User',
+        email: authData.user.email,
         type: profile?.user_type || 'user',
         token: authData.session.access_token,
+        refreshToken: authData.session.refresh_token || null,
+        mediaProgress: [],
+        seriesHideFromContinueListening: [],
+        bookmarks: [],
         isActive: true,
         isLocked: false,
+        lastSeen: new Date().getTime(),
+        createdAt: new Date(profile?.created_at || authData.user.created_at).getTime(),
         permissions: {
           download: true,
           update: profile?.user_type === 'admin',
           delete: profile?.user_type === 'admin',
           upload: profile?.user_type === 'admin',
           accessAllLibraries: true,
+          accessAllTags: true,
+          accessExplicitContent: true
         },
+        librariesAccessible: [],
+        itemTagsAccessible: []
       },
       userDefaultLibraryId: profile?.default_library_id || null,
       serverSettings: {},

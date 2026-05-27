@@ -130,20 +130,20 @@ export default function SideRail({ serverVersion, installSource }: { serverVersi
                     size={24} 
                     className={mergeClasses(
                       'transition-all duration-300 group-hover:scale-110',
-                      isActive ? 'text-primary' : 'text-foreground/40 group-hover:text-foreground/80'
+                      isActive ? 'text-accent' : 'text-foreground/40 group-hover:text-foreground/80'
                     )} 
                   />
                   {isActive && (
                     <motion.div
                       layoutId="active-glow"
-                      className="absolute inset-0 bg-primary/20 blur-md rounded-full -z-10"
+                      className="absolute inset-0 bg-accent/20 blur-md rounded-full -z-10"
                     />
                   )}
                 </div>
                 
                 <p className={mergeClasses(
                   'text-[9px] uppercase font-black tracking-[0.15em] transition-all duration-300 text-center px-1',
-                  isActive ? 'text-primary' : 'text-foreground/30 group-hover:text-foreground/60'
+                  isActive ? 'text-accent' : 'text-foreground/30 group-hover:text-foreground/60'
                 )}>
                   {button.label}
                 </p>
@@ -155,7 +155,7 @@ export default function SideRail({ serverVersion, installSource }: { serverVersi
                       initial={{ opacity: 0, scaleY: 0 }}
                       animate={{ opacity: 1, scaleY: 1 }}
                       exit={{ opacity: 0, scaleY: 0 }}
-                      className="absolute start-0 top-1/4 h-1/2 w-1 rounded-r-full bg-primary shadow-[0_0_12px_rgba(var(--primary-rgb),0.6)]"
+                      className="absolute start-0 top-1/4 h-1/2 w-1 rounded-r-full bg-accent shadow-[0_0_12px_rgba(245,158,11,0.6)]"
                     />
                   )}
                 </AnimatePresence>

@@ -60,7 +60,7 @@ export default function SignupForm() {
 
         <p className="text-foreground-muted text-center text-sm">
           Already have an account?{' '}
-          <Link href="/login" className="text-primary hover:underline">
+          <Link href="/login" className="text-accent hover:underline">
             Sign in
           </Link>
         </p>

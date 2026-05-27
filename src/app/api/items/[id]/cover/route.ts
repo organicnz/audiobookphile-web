@@ -14,11 +14,11 @@ export async function GET(
   // 1. Try to get the actual path from the database
   const { data: item } = await supabase
     .from('library_items')
-    .select('cover_path')
+    .select('cover_path, books(cover_path)')
     .eq('id', id)
     .single()
 
-  let storagePath = item?.cover_path
+  let storagePath = item?.cover_path || (item as any)?.books?.cover_path
 
   // 2. If no path is in DB, try common legacy defaults
   if (!storagePath) {
@@ -37,7 +37,12 @@ export async function GET(
 
   if (storagePath) {
     const { data: publicUrlData } = await supabase.storage.from('covers').getPublicUrl(storagePath)
-    return NextResponse.redirect(publicUrlData.publicUrl)
+    try {
+      const headRes = await fetch(publicUrlData.publicUrl, { method: 'HEAD' })
+      if (headRes.ok) {
+        return NextResponse.redirect(publicUrlData.publicUrl)
+      }
+    } catch { /* continue */ }
   }
 
   // Fallback: Placeholder

@@ -32,7 +32,7 @@ export default function ProgressIndicator({ progress: rawProgress, label = 'Labe
           key={progress}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="min-w-[3rem] text-right text-sm font-mono font-bold text-primary"
+          className="min-w-[3rem] text-right text-sm font-mono font-bold text-accent"
         >
           {progress.toFixed(0)}%
         </motion.p>
@@ -43,7 +43,7 @@ export default function ProgressIndicator({ progress: rawProgress, label = 'Labe
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ type: 'spring', stiffness: 50, damping: 20 }}
-          className="relative h-full rounded-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"
+          className="relative h-full rounded-full bg-accent shadow-[0_0_15px_rgba(245,158,11,0.5)]"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
         </motion.div>

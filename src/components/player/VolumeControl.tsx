@@ -186,7 +186,7 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
                 style={{ width: 6, height: trackHeight }}
               />
               <div
-                className="bg-primary pointer-events-none absolute rounded-full shadow-[0_0_15px_rgba(var(--color-primary-rgb),0.5)]"
+                className="bg-accent pointer-events-none absolute rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"
                 style={{ width: 6, height: filledHeight, bottom: 0 }}
               />
               <motion.div
@@ -196,7 +196,7 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
                   width: 14,
                   height: 14,
                   bottom: filledHeight - 7,
-                  border: '2px solid rgb(var(--color-primary-rgb))'
+                  border: '2px solid rgb(245, 158, 11)'
                 }}
               />
             </div>

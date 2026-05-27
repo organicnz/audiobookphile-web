@@ -1,59 +1,54 @@
 /* Default theme */
 :root,
 .theme-dark {
-  --tc-primary: #232323;
-  --tc-primary-hover: #2d2d2d;
-  --tc-background: #373838;
-  --tc-background-hover: #ffffff26;
-  --tc-background-read-only: #444444;
-  --tc-background-disabled: #444444;
+  --tc-primary: #1e1e1e;
+  --tc-primary-hover: #282828;
+  --tc-background: #111111;
+  --tc-background-hover: #ffffff0b;
+  --tc-background-read-only: #161616;
+  --tc-background-disabled: #161616;
   --tc-foreground: #ededed;
   --tc-foreground-muted: #d1d5dc;
   --tc-foreground-subdued: #bbbbbb;
-  --tc-border: #444444;
+  --tc-border: #222222;
 
-  --tc-disabled: #99a1af;
+  --tc-disabled: #737373;
   --tc-read-only: #d1d5dc;
 
-  --tc-checkbox-disabled: #99a1af;
-  --tc-checkbox-bg-disabled: #444444;
+  --tc-checkbox-disabled: #737373;
+  --tc-checkbox-bg-disabled: #161616;
 
-  --tc-button-selected-bg: #555555;
+  --tc-button-selected-bg: #2d2d2d;
   --tc-button-foreground-muted: #ededed;
   --tc-button-foreground: #ffffff;
 
-  --tc-dropdown-item-hover: #333333;
-  --tc-dropdown-item-selected: #444444;
-  --tc-dropdown-menu-border: #555555;
+  --tc-dropdown-item-hover: #1e1e1e;
+  --tc-dropdown-item-selected: #2d2d2d;
+  --tc-dropdown-menu-border: #222222;
 
-  --tc-nav-item-hover: #2c2c2c;
-  --tc-nav-item-selected: #262626;
+  --tc-nav-item-hover: #1e1e1e;
+  --tc-nav-item-selected: #2a2a2a;
 
-  --tc-table-header-bg: #2e2e2e;
-  --tc-table-row-bg-even: #353535;
+  --tc-table-header-bg: #161616;
+  --tc-table-row-bg-even: #141414;
   --tc-table-row-bg-hover: #ffffff0b;
 
   --tc-page-gradient: linear-gradient(
     to right bottom,
-    #2e2e2e,
-    #303030,
-    #313131,
-    #333333,
-    #353535,
-    #343434,
-    #323232,
-    #313131,
-    #2c2c2c,
-    #282828,
-    #232323,
-    #1f1f1f
+    #181818,
+    #161616,
+    #141414,
+    #121212,
+    #111111,
+    #111111,
+    #111111
   );
 
   --tc-modal-content-box-shadow: 2px 8px 6px #111111aa;
   --tc-shadow-media-player: 0px -6px 8px #1111113f;
 
-  --tc-track-bg: #374151;
-  --tc-track-progress: #e5e7eb;
+  --tc-track-bg: #1f2937;
+  --tc-track-progress: #f59e0b;
 }
 
 /* Light theme */

@@ -180,8 +180,8 @@ export default function MediaCardCover({
               className={mergeClasses(
                 'h-full rounded-full transition-all duration-500',
                 itemIsFinished 
-                  ? 'bg-success shadow-[0_0_10px_rgba(var(--success-rgb),0.5)]' 
-                  : 'bg-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]'
+                  ? 'bg-success shadow-[0_0_10px_rgba(76,175,80,0.5)]' 
+                  : 'bg-accent shadow-[0_0_10px_rgba(245,158,11,0.5)]'
               )}
             />
           </div>

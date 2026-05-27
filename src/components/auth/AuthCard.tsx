@@ -31,11 +31,11 @@ export default function AuthCard({ title, subtitle, icon, onSubmit, children, cl
     if (!icon) return null
     if (typeof icon !== 'string') {
       const IconComp = icon
-      return <IconComp size={48} className="text-primary mb-6 mx-auto drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]" />
+      return <IconComp size={48} className="text-accent mb-6 mx-auto drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
     }
 
     const MappedIcon = getLegacyIcon(icon) || MailQuestion
-    return <MappedIcon size={48} className="text-primary mb-6 mx-auto drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]" />
+    return <MappedIcon size={48} className="text-accent mb-6 mx-auto drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
   }
 
   const header = (

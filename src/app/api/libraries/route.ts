@@ -1,5 +1,6 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import { mapLibraryForMobile } from '@/utils/mobileMappers'
 
 export async function GET(request: Request) {
   try {
@@ -36,23 +37,7 @@ export async function GET(request: Request) {
     if (libsError) throw libsError
 
     // Map to Audiobookshelf schema
-    const formattedLibraries = libraries.map(lib => ({
-      id: lib.id,
-      name: lib.name,
-      displayOrder: lib.display_order || 0,
-      icon: lib.icon || 'bookshelf',
-      mediaType: lib.media_type || 'book',
-      provider: lib.provider || 'local',
-      settings: lib.settings || {},
-      folders: lib.library_folders?.map((f: any) => ({
-        id: f.id,
-        fullPath: f.path || '',
-        libraryId: f.library_id,
-        addedAt: new Date(f.created_at).getTime()
-      })) || [],
-      createdAt: new Date(lib.created_at).getTime(),
-      lastUpdate: new Date(lib.updated_at).getTime()
-    }))
+    const formattedLibraries = libraries.map(lib => mapLibraryForMobile(lib))
 
     return NextResponse.json({ libraries: formattedLibraries })
   } catch (error) {

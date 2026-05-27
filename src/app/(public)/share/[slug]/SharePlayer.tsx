@@ -531,7 +531,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
                 size="custom"
                 loading={playerState === PlayerState.LOADING}
                 outlined={false}
-                className="h-16 w-16 rounded-full bg-primary text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] hover:scale-110 active:scale-95 transition-all"
+                className="h-16 w-16 rounded-full bg-accent text-white shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-110 active:scale-95 transition-all"
                 onClick={playPause}
               >
                 {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}

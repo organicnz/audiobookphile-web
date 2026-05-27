@@ -10,7 +10,7 @@ export default function VerifyEmailPage() {
         </p>
         <p className="text-foreground-muted text-sm">
           Already verified?{' '}
-          <Link href="/login" className="text-primary hover:underline">
+          <Link href="/login" className="text-accent hover:underline">
             Sign in
           </Link>
         </p>

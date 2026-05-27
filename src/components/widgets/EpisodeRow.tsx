@@ -125,7 +125,7 @@ export default function EpisodeRow({
                 <button
                   id={`btn-episode-${episode.id}`}
                   type="button"
-                  className={`focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2 line-clamp-2 cursor-pointer rounded-lg text-start text-[13px] sm:text-sm leading-tight font-black uppercase tracking-tight transition-colors ${userIsFinished ? 'text-white/40' : 'text-white/90'}`}
+                  className={`focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-2 line-clamp-2 cursor-pointer rounded-lg text-start text-[13px] sm:text-sm leading-tight font-black uppercase tracking-tight transition-colors ${userIsFinished ? 'text-white/40' : 'text-white/90'}`}
                   onClick={(e) => {
                     e.stopPropagation()
                     handleRowClick()
@@ -198,7 +198,7 @@ export default function EpisodeRow({
                 className={`border border-white/5 hover:border-white/10 hover:bg-white/10 flex-nowrap px-3 h-9 backdrop-blur-md shadow-lg ${userIsFinished ? 'text-white/30' : 'text-white/90'}`}
               >
                 {streamIsPlaying ? (
-                  <Pause size={18} className="text-primary fill-current" />
+                  <Pause size={18} className="text-accent fill-current" />
                 ) : (
                   <Play size={18} className="text-success fill-current" />
                 )}
@@ -272,7 +272,7 @@ export default function EpisodeRow({
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${progressPercent * 100}%` }}
-              className="bg-primary h-full shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" 
+              className="bg-accent h-full shadow-[0_0_8px_rgba(245,158,11,0.5)]" 
             />
           </div>
         )}

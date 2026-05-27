@@ -18,6 +18,10 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
         source: '/login',
         destination: '/api/login',
       },
+      {
+        source: '/auth/refresh',
+        destination: '/api/auth/refresh',
+      },
     ],
     headers: async () => [
       {

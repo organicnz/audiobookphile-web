@@ -620,6 +620,7 @@ export type Database = {
           is_missing: boolean | null
           last_scan: string | null
           last_scan_version: string | null
+          last_storage_check: string | null
           library_files: Json | null
           library_id: string | null
           media_id: string | null
@@ -647,6 +648,7 @@ export type Database = {
           is_missing?: boolean | null
           last_scan?: string | null
           last_scan_version?: string | null
+          last_storage_check?: string | null
           library_files?: Json | null
           library_id?: string | null
           media_id?: string | null
@@ -674,6 +676,7 @@ export type Database = {
           is_missing?: boolean | null
           last_scan?: string | null
           last_scan_version?: string | null
+          last_storage_check?: string | null
           library_files?: Json | null
           library_id?: string | null
           media_id?: string | null

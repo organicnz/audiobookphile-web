@@ -88,7 +88,7 @@ export default function LoginForm() {
       </div>
 
       <div className="mb-4 flex justify-end">
-        <Link href="/forgot-password" className="text-primary text-sm hover:underline">
+        <Link href="/forgot-password" className="text-accent text-sm hover:underline">
           Forgot password?
         </Link>
       </div>
@@ -124,7 +124,7 @@ export default function LoginForm() {
 
         <p className="text-foreground-muted text-center text-sm">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-primary hover:underline">
+          <Link href="/signup" className="text-accent hover:underline">
             Sign up
           </Link>
         </p>

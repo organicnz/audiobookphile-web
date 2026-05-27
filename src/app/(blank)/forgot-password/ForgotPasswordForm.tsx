@@ -36,7 +36,7 @@ export default function ForgotPasswordForm() {
         <p className="text-foreground-muted mb-6 text-sm">
           We sent a password reset link to <strong>{email}</strong>. Check your inbox and follow the link to reset your password.
         </p>
-        <Link href="/login" className="text-primary text-sm hover:underline">
+        <Link href="/login" className="text-accent text-sm hover:underline">
           Back to login
         </Link>
       </AuthCard>
@@ -61,7 +61,7 @@ export default function ForgotPasswordForm() {
         </Btn>
 
         <p className="text-foreground-muted text-center text-sm">
-          <Link href="/login" className="text-primary hover:underline">
+          <Link href="/login" className="text-accent hover:underline">
             Back to login
           </Link>
         </p>

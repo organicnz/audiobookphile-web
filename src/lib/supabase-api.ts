@@ -681,3 +681,58 @@ export async function getLibraryPersonalized(libraryId: string): Promise<import(
 
   return shelves
 }
+
+// ---------------------------------------------------------------------------
+// Storage Sync
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns all library items that are flagged as `is_missing`.
+ *
+ * These are items whose storage files could not be found during the last
+ * storage sync check.
+ *
+ * @param libraryId - Optional. Filter by a specific library.
+ * @returns Array of library items with `is_missing = true`.
+ */
+export async function getMissingItems(libraryId?: string) {
+  const supabase = await createClient()
+
+  let query = supabase
+    .from('library_items')
+    .select('*, books!media_id(*, book_authors(authors(*)))')
+    .eq('is_missing', true)
+
+  if (libraryId) {
+    query = query.eq('library_id', libraryId)
+  }
+
+  const { data, error } = await query.order('updated_at', { ascending: false })
+
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
+
+  return (data || []).map(mapLibraryItem)
+}
+
+/**
+ * Updates the `last_storage_check` timestamp and optionally the `is_missing`
+ * flag on a single library item.
+ *
+ * Called after verifying whether a file exists in storage.
+ *
+ * @param libraryItemId - The UUID of the library item.
+ * @param isMissing - Whether the item's storage file is missing.
+ */
+export async function markItemStorageChecked(libraryItemId: string, isMissing: boolean) {
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('library_items')
+    .update({
+      is_missing: isMissing,
+      last_storage_check: new Date().toISOString(),
+    })
+    .eq('id', libraryItemId)
+
+  if (error) throw new ApiError(error.message, 500, error.code ?? '')
+}

@@ -35,7 +35,7 @@ const HighlightMatch = ({ text, query }: { text: string; query: string }) => {
     <>
       {parts.map((part, i) =>
         part.isMatch ? (
-          <span key={i} className="font-black text-primary drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]">
+          <span key={i} className="font-black text-accent drop-shadow-[0_0_8px_rgba(245,158,11,0.3)]">
             {part.text}
           </span>
         ) : (
@@ -197,7 +197,7 @@ export default function GlobalSearchMenu({
               </div>
               
               {isSelected && (
-                <div className="text-primary pr-2">
+                <div className="text-accent pr-2">
                   <ChevronRight size={16} strokeWidth={3} />
                 </div>
               )}
