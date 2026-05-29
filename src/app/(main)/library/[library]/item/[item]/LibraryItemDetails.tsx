@@ -54,9 +54,9 @@ function DetailRow({ label, value, filterKey, libraryId }: DetailRowProps) {
 
 function getLibraryItemDuration(libraryItem: BookLibraryItem | PodcastLibraryItem): number | undefined {
   if (libraryItem.mediaType === 'book') {
-    return (libraryItem.media as BookLibraryItem['media']).duration
+    return (libraryItem.media as BookLibraryItem['media'])?.duration
   } else if (libraryItem.mediaType === 'podcast') {
-    return (libraryItem.media as PodcastLibraryItem['media']).episodes?.reduce((acc, episode) => acc + (episode.audioTrack?.duration || 0), 0)
+    return (libraryItem.media as PodcastLibraryItem['media'])?.episodes?.reduce((acc, episode) => acc + (episode.audioTrack?.duration || 0), 0)
   }
   return undefined
 }
@@ -72,7 +72,7 @@ export default function LibraryItemDetails({ libraryItem }: LibraryItemDetailsPr
   const podcastMetadata = isPodcast ? (metadata as PodcastMetadata) : null
 
   const duration = getLibraryItemDuration(libraryItem)
-  const size = libraryItem.media.size || 0
+  const size = libraryItem.media?.size || 0
 
   return (
     <div className="mt-6 flex flex-col gap-1">

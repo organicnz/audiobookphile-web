@@ -69,14 +69,14 @@ export default function AudioTracksTable({ libraryItem, keepOpen = false, expand
   }, [])
 
   const tracksWithAudioFile = useMemo<TrackWithAudioFile[]>(() => {
-    const tracks = libraryItem.media.tracks || []
-    const audioFiles = libraryItem.media.audioFiles || []
+    const tracks = libraryItem.media?.tracks || []
+    const audioFiles = libraryItem.media?.audioFiles || []
 
     return tracks.map((track) => ({
       ...track,
       audioFile: audioFiles.find((af) => af.metadata.path === track.metadata.path)
     }))
-  }, [libraryItem.media.tracks, libraryItem.media.audioFiles])
+  }, [libraryItem.media?.tracks, libraryItem.media?.audioFiles])
 
   const columns = useMemo(
     () => [

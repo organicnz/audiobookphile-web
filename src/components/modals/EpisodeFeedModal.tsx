@@ -53,7 +53,7 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
   const [selectedEpisodes, setSelectedEpisodes] = useState<Set<string>>(new Set())
   const [selectAll, setSelectAll] = useState(false)
 
-  const itemEpisodes = useMemo(() => libraryItem.media.episodes || [], [libraryItem.media.episodes])
+  const itemEpisodes = useMemo(() => libraryItem.media?.episodes || [], [libraryItem.media?.episodes])
 
   const { downloadedEpisodeGuidMap, downloadedEpisodeUrlMap } = useMemo(() => {
     const guidMap: Record<string, string> = {}
@@ -241,7 +241,7 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
       className="bg-background/90 backdrop-blur-xl border border-white/10"
       outerContent={
         <div className="pointer-events-none absolute top-0 left-0 w-2/3 overflow-hidden p-5">
-          <p className="truncate text-3xl text-white drop-shadow-md">{libraryItem.media.metadata.title}</p>
+          <p className="truncate text-3xl text-white drop-shadow-md">{libraryItem.media?.metadata?.title}</p>
         </div>
       }
       style={{ maxWidth: 1200 }}

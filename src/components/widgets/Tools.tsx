@@ -46,7 +46,7 @@ export default function Tools({ libraryItem, className }: ToolsProps) {
     if (!isBookLibraryItem(libraryItem)) {
       return []
     }
-    return libraryItem.media.tracks || []
+    return libraryItem.media?.tracks || []
   }, [libraryItem])
 
   const itemTasks = useMemo(() => getTasksByLibraryItemId(libraryItemId), [getTasksByLibraryItemId, libraryItemId])

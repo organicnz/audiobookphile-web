@@ -56,7 +56,7 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
 
   const { downloadFile, showMoreInfo, audioFileToShow, closeMoreInfo } = useLibraryFileActions(libraryItem.id)
 
-  const episodes = useMemo(() => libraryItem.media.episodes || [], [libraryItem.media.episodes])
+  const episodes = useMemo(() => libraryItem.media?.episodes || [], [libraryItem.media?.episodes])
 
   const { filterKey, setFilterKey, sortKey, setSortKey, sortDesc, setSortDesc, search, setSearch, isSearching, filteredEpisodes, hasMounted } =
     useEpisodeFilterAndSort({ libraryItemId: libraryItem.id, episodes, getMediaItemProgress })
@@ -150,7 +150,7 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
   }, [])
 
   const handleFindEpisodes = useCallback(() => {
-    const feedUrl = libraryItem.media.metadata.feedUrl
+    const feedUrl = libraryItem.media?.metadata?.feedUrl
     if (!feedUrl) {
       showToast(t('ToastNoRSSFeed'), { type: 'error' })
       return
@@ -170,7 +170,7 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
         showToast(t('ToastPodcastGetFeedFailed'), { type: 'error' })
       }
     })
-  }, [libraryItem.media.metadata.feedUrl, t, showToast])
+  }, [libraryItem.media?.metadata?.feedUrl, t, showToast])
 
   const handleDownloadFile = useCallback(
     (episode: PodcastEpisode) => {

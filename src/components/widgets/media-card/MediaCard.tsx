@@ -406,7 +406,7 @@ function MediaCard(props: MediaCardProps) {
         <ShareModal
           isOpen={shareModalOpen}
           onClose={closeShareModal}
-          mediaItemId={libraryItem.media.id ?? ''}
+          mediaItemId={libraryItem.media?.id ?? ''}
           mediaItemShare={mediaItemShare}
           onShareChange={handleShareChange}
         />

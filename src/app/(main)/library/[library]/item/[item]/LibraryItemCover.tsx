@@ -30,7 +30,7 @@ export default function LibraryItemCover({ libraryItem, canUpdate = false, class
   const [showPreviewModal, setShowPreviewModal] = useState(false)
 
   const isPodcast = isPodcastLibraryItem(libraryItem)
-  const mediaMetadata = libraryItem.media.metadata
+  const mediaMetadata = libraryItem.media?.metadata
 
   const title = mediaMetadata?.title || ''
   const author = isPodcast ? mediaMetadata?.author : (mediaMetadata as BookMetadata)?.authorName || ''

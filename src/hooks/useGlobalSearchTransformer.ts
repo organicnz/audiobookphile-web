@@ -93,9 +93,9 @@ export function useGlobalSearchTransformer({
     addGroup(searchResults.book, 'header-books', t('LabelBooks'), (item) => ({
       type: 'book',
       id: item.libraryItem.id,
-      title: item.libraryItem.media.metadata.title || 'Unknown Title',
-      subtitle: item.libraryItem.media.metadata.subtitle,
-      author: item.libraryItem.media.metadata.authorName,
+      title: item.libraryItem.media?.metadata?.title || 'Unknown Title',
+      subtitle: item.libraryItem.media?.metadata?.subtitle,
+      author: item.libraryItem.media?.metadata?.authorName,
       link: `/library/${item.libraryItem.libraryId}/item/${item.libraryItem.id}`,
       imageSrc: getLibraryItemCoverSrc(item.libraryItem, getPlaceholderCoverUrl()),
       originalItem: item.libraryItem
@@ -105,8 +105,8 @@ export function useGlobalSearchTransformer({
     addGroup(searchResults.podcast, 'header-podcasts', t('LabelPodcasts'), (item) => ({
       type: 'podcast',
       id: item.libraryItem.id,
-      title: item.libraryItem.media.metadata.title || 'Unknown Podcast',
-      subtitle: item.libraryItem.media.metadata.author,
+      title: item.libraryItem.media?.metadata?.title || 'Unknown Podcast',
+      subtitle: item.libraryItem.media?.metadata?.author,
       link: `/library/${item.libraryItem.libraryId}/item/${item.libraryItem.id}`,
       imageSrc: getLibraryItemCoverSrc(item.libraryItem, getPlaceholderCoverUrl()),
       originalItem: item.libraryItem
@@ -121,7 +121,7 @@ export function useGlobalSearchTransformer({
         type: 'episode',
         id: episode.id,
         title: episode.title, // Episode Title
-        subtitle: libItem.media.metadata.title, // Podcast Title as subtitle
+        subtitle: libItem.media?.metadata?.title, // Podcast Title as subtitle
         link: `/library/${libItem.libraryId}/item/${libItem.id}`,
         imageSrc: getLibraryItemCoverSrc(libItem, getPlaceholderCoverUrl()),
         originalItem: episode

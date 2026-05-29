@@ -86,8 +86,8 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
   } = useMediaCardActions({
     libraryItem,
     media: libraryItem.media,
-    title: libraryItem.media.metadata.title ?? '',
-    author: 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : null,
+    title: libraryItem.media?.metadata?.title ?? '',
+    author: libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : null,
     episodeForQueue: null,
     mediaProgress,
     itemIsFinished: isRead,
@@ -125,8 +125,8 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
       return
     }
 
-    const title = libraryItem.media.metadata.title ?? ''
-    const subtitle = 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : ''
+    const title = libraryItem.media?.metadata?.title ?? ''
+    const subtitle = libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : ''
     addItemToQueue({
       libraryItemId: libraryItem.id,
       libraryId: libraryItem.libraryId,
@@ -134,8 +134,8 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
       title,
       subtitle,
       caption: '',
-      duration: isBook ? (libraryItem.media.duration ?? null) : null,
-      coverPath: libraryItem.media.coverPath ?? null
+      duration: isBook ? (libraryItem.media?.duration ?? null) : null,
+      coverPath: libraryItem.media?.coverPath ?? null
     })
   }, [addItemToQueue, isBook, isQueued, libraryItem, removeItemFromQueue])
 
@@ -283,7 +283,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
         onClose={closeRssFeedModal}
         entity={{
           id: libraryItem.id,
-          name: libraryItem.media.metadata.title ?? '',
+          name: libraryItem.media?.metadata?.title ?? '',
           type: 'item',
           feed: rssFeed ?? null,
           hasEpisodesWithoutPubDate: isPodcast && podcastEpisodes.some((ep) => !ep.pubDate)
@@ -292,7 +292,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
       <ShareModal
         isOpen={shareModalOpen}
         onClose={closeShareModal}
-        mediaItemId={libraryItem.media.id ?? ''}
+        mediaItemId={libraryItem.media?.id ?? ''}
         mediaItemShare={mediaItemShare}
         onShareChange={handleShareChange}
       />
@@ -302,7 +302,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
           onClose={closeCollectionsModal}
           libraryId={libraryItem.libraryId}
           libraryItemId={libraryItem.id}
-          itemTitle={libraryItem.media.metadata.title ?? ''}
+          itemTitle={libraryItem.media?.metadata?.title ?? ''}
         />
       )}
       {playlistsModalOpen && (
@@ -312,7 +312,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
           libraryId={libraryItem.libraryId}
           libraryItemId={libraryItem.id}
           episodeId={null}
-          itemTitle={libraryItem.media.metadata.title ?? ''}
+          itemTitle={libraryItem.media?.metadata?.title ?? ''}
         />
       )}
       <MatchModal isOpen={matchModalOpen} onClose={() => setMatchModalOpen(false)} libraryItem={libraryItem} />

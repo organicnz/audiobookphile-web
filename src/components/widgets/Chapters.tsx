@@ -15,7 +15,7 @@ export default function Chapters({ libraryItem }: ChaptersProps) {
   const t = useTypeSafeTranslations()
   const { userCanUpdate } = useUser()
 
-  const chapters = useMemo<Chapter[]>(() => libraryItem.media.chapters || [], [libraryItem.media.chapters])
+  const chapters = useMemo<Chapter[]>(() => libraryItem.media?.chapters || [], [libraryItem.media?.chapters])
 
   return (
     <div className="h-full w-full overflow-x-hidden overflow-y-auto px-4 py-6" role="region" aria-label={t('HeaderChapters')}>

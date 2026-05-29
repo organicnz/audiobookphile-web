@@ -20,7 +20,7 @@ export default function ChaptersTable({ libraryItem, keepOpen = false, expanded:
   const { userCanUpdate } = useUser()
   const [expanded, setExpanded] = useState(expandedProp)
 
-  const chapters = useMemo<Chapter[]>(() => libraryItem.media.chapters || [], [libraryItem.media.chapters])
+  const chapters = useMemo<Chapter[]>(() => libraryItem.media?.chapters || [], [libraryItem.media?.chapters])
 
   // Sync expanded state with props (keepOpen takes precedence)
   useEffect(() => {

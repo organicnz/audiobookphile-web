@@ -60,8 +60,8 @@ export default function CommandPalette() {
   
   // Aggregate items for keyboard navigation
   const items = [
-    ...books.map(b => ({ type: 'book' as const, id: b.libraryItem.id, title: b.libraryItem.media.metadata.title, item: b.libraryItem })),
-    ...podcasts.map(p => ({ type: 'podcast' as const, id: p.libraryItem.id, title: p.libraryItem.media.metadata.title, item: p.libraryItem })),
+    ...books.map(b => ({ type: 'book' as const, id: b.libraryItem.id, title: b.libraryItem.media?.metadata?.title, item: b.libraryItem })),
+    ...podcasts.map(p => ({ type: 'podcast' as const, id: p.libraryItem.id, title: p.libraryItem.media?.metadata?.title, item: p.libraryItem })),
     { type: 'action' as const, id: 'settings', title: t('HeaderSettings'), icon: Settings, href: '/settings' }
   ]
 
