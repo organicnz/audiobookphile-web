@@ -81,6 +81,8 @@ function mapBook(book: any): BookMedia {
 
   // Map raw audio_files JSONB to AudioTrack shape for the tracks table
   const tracks = audioFiles.map((af: any, i: number) => ({
+    ...af,
+    metadata: af.metadata || { filename: '', ext: '', path: '', relPath: '', size: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0 },
     index: af.index ?? i,
     startOffset: 0,
     duration: af.duration ?? 0,
@@ -153,6 +155,15 @@ function mapPodcast(podcast: any): PodcastMedia {
     libraryItemId: podcast.library_item_id,
     coverPath: podcast.cover_path,
     tags: podcast.tags || [],
+    episodes: (podcast.podcast_episodes || []).map((ep: any) => ({
+      ...ep,
+      libraryItemId: ep.library_item_id,
+      podcastId: ep.podcast_id,
+      pubDate: ep.published_at ? new Date(ep.published_at).toISOString() : undefined,
+      publishedAt: ep.published_at ? new Date(ep.published_at).getTime() : 0,
+      addedAt: ep.created_at ? new Date(ep.created_at).getTime() : 0,
+      updatedAt: ep.updated_at ? new Date(ep.updated_at).getTime() : 0,
+    })),
     metadata: {
       title: podcast.title || 'Unknown',
       author: podcast.author,

@@ -133,7 +133,7 @@ export async function getLibraryItems(
 
   const { data, error, count } = await supabase
     .from('library_items')
-    .select('*, books!media_id(*, book_authors(authors(*)))', { count: 'exact' })
+    .select('*, books!media_id(*, book_authors(authors(*))), podcasts!media_id(*)', { count: 'exact' })
     .eq('library_id', libraryId)
     .order(sortBy, { ascending })
     .range(page * limit, (page + 1) * limit - 1)
@@ -159,7 +159,8 @@ export async function getLibraryItem(itemId: string) {
     .from('library_items')
     .select(
       `*,
-      books!media_id(*, book_authors(authors(*)), book_series(series(*)))`
+      books!media_id(*, book_authors(authors(*)), book_series(series(*))),
+      podcasts!media_id(*, podcast_episodes(*))`
     )
     .eq('id', itemId)
     .single()
@@ -625,7 +626,7 @@ export async function getLibraryPersonalized(libraryId: string): Promise<import(
   // 1. Recently Added
   const { data: recentlyAdded } = await supabase
     .from('library_items')
-    .select('*, books!media_id(*, book_authors(authors(*)))')
+    .select('*, books!media_id(*, book_authors(authors(*))), podcasts!media_id(*)')
     .eq('library_id', libraryId)
     .order('created_at', { ascending: false })
     .limit(12)
@@ -656,7 +657,7 @@ export async function getLibraryPersonalized(libraryId: string): Promise<import(
       const itemIds = inProgress.map((p) => p.library_item_id).filter(Boolean)
       const { data: continueItems } = await supabase
         .from('library_items')
-        .select('*, books!media_id(*, book_authors(authors(*)))')
+        .select('*, books!media_id(*, book_authors(authors(*))), podcasts!media_id(*)')
         .in('id', itemIds)
 
       if (continueItems && continueItems.length > 0) {
@@ -700,7 +701,7 @@ export async function getMissingItems(libraryId?: string) {
 
   let query = supabase
     .from('library_items')
-    .select('*, books!media_id(*, book_authors(authors(*)))')
+    .select('*, books!media_id(*, book_authors(authors(*))), podcasts!media_id(*)')
     .eq('is_missing', true)
 
   if (libraryId) {
