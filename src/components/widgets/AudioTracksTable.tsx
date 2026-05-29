@@ -74,7 +74,7 @@ export default function AudioTracksTable({ libraryItem, keepOpen = false, expand
 
     return tracks.map((track) => ({
       ...track,
-      audioFile: audioFiles.find((af) => af.metadata.path === track.metadata.path)
+      audioFile: audioFiles.find((af) => af.metadata?.path === track.metadata?.path)
     }))
   }, [libraryItem.media?.tracks, libraryItem.media?.audioFiles])
 
