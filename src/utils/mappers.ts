@@ -80,24 +80,27 @@ function mapBook(book: any): BookMedia {
   const audioFiles = book.audio_files || []
 
   // Map raw audio_files JSONB to AudioTrack shape for the tracks table
-  const tracks = audioFiles.map((af: any, i: number) => ({
-    ...af,
-    metadata: af.metadata || { filename: '', ext: '', path: '', relPath: '', size: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0 },
-    index: af.index ?? i,
-    startOffset: 0,
-    duration: af.duration ?? 0,
-    title: af.metadata?.filename ?? `Track ${i + 1}`,
-    contentUrl: af.metadata?.path ?? '',
-    mimeType: af.mimeType ?? 'audio/mpeg',
-    codec: af.codec ?? '',
-    timeBase: af.timeBase ?? '1/1000',
-    channels: af.channels ?? 2,
-    channelLayout: af.channelLayout ?? 'stereo',
-    chapters: af.chapters ?? [],
-    embeddedCoverArt: af.embeddedCoverArt ?? null,
-    metaTags: af.metaTags ?? {},
-    isDirectPlaySupported: true,
-  }))
+  const tracks = (Array.isArray(audioFiles) ? audioFiles : []).map((af: any, i: number) => {
+    if (!af || typeof af !== 'object') return null
+    return {
+      ...af,
+      metadata: af.metadata || { filename: '', ext: '', path: '', relPath: '', size: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0 },
+      index: af.index ?? i,
+      startOffset: 0,
+      duration: af.duration ?? 0,
+      title: af.metadata?.filename ?? `Track ${i + 1}`,
+      contentUrl: af.metadata?.path ?? '',
+      mimeType: af.mimeType ?? 'audio/mpeg',
+      codec: af.codec ?? '',
+      timeBase: af.timeBase ?? '1/1000',
+      channels: af.channels ?? 2,
+      channelLayout: af.channelLayout ?? 'stereo',
+      chapters: af.chapters ?? [],
+      embeddedCoverArt: af.embeddedCoverArt ?? null,
+      metaTags: af.metaTags ?? {},
+      isDirectPlaySupported: true,
+    }
+  }).filter(Boolean)
 
   return {
     id: book.id,
@@ -155,15 +158,18 @@ function mapPodcast(podcast: any): PodcastMedia {
     libraryItemId: podcast.library_item_id,
     coverPath: podcast.cover_path,
     tags: podcast.tags || [],
-    episodes: (podcast.podcast_episodes || []).map((ep: any) => ({
-      ...ep,
-      libraryItemId: ep.library_item_id,
-      podcastId: ep.podcast_id,
-      pubDate: ep.published_at ? new Date(ep.published_at).toISOString() : undefined,
-      publishedAt: ep.published_at ? new Date(ep.published_at).getTime() : 0,
-      addedAt: ep.created_at ? new Date(ep.created_at).getTime() : 0,
-      updatedAt: ep.updated_at ? new Date(ep.updated_at).getTime() : 0,
-    })),
+    episodes: (podcast.podcast_episodes || []).map((ep: any) => {
+      if (!ep || typeof ep !== 'object') return null
+      return {
+        ...ep,
+        libraryItemId: ep.library_item_id,
+        podcastId: ep.podcast_id,
+        pubDate: ep.published_at ? new Date(ep.published_at).toISOString() : undefined,
+        publishedAt: ep.published_at ? new Date(ep.published_at).getTime() : 0,
+        addedAt: ep.created_at ? new Date(ep.created_at).getTime() : 0,
+        updatedAt: ep.updated_at ? new Date(ep.updated_at).getTime() : 0,
+      }
+    }).filter(Boolean),
     metadata: {
       title: podcast.title || 'Unknown',
       author: podcast.author,
