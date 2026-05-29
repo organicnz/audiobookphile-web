@@ -1,4 +1,5 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { apiError } from '@/utils/apiResponse'
+import { requireApiAuth } from '@/utils/apiAuth'
 import { NextResponse } from 'next/server'
 
 export async function POST(
@@ -9,34 +10,15 @@ export async function POST(
     const resolvedParams = await params
     const sessionId = resolvedParams.id
 
-    const authHeader = request.headers.get('authorization')
-    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null
-
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { user, supabase } = await requireApiAuth(request)
+    if (!user || !supabase) {
+      return apiError('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Extract libraryItemId from stateless sessionId
     const [libraryItemId] = sessionId.split('__')
     if (!libraryItemId) {
-      return NextResponse.json({ error: 'Invalid session ID' }, { status: 400 })
-    }
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-    const supabase = createSupabaseClient(supabaseUrl, supabaseKey, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    })
-
-    // Validate token and get user
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-    if (userError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return apiError('Invalid session ID', 'API_ERROR', 400)
     }
 
     // Parse body parameters (sent in camelCase by the Swift app)
@@ -48,7 +30,7 @@ export async function POST(
     }
 
     if (typeof currentTime !== 'number') {
-      return NextResponse.json({ error: 'currentTime must be a number' }, { status: 400 })
+      return apiError('currentTime must be a number', 'API_ERROR', 400)
     }
 
     const finalDuration = duration || 0
@@ -74,7 +56,7 @@ export async function POST(
 
     if (upsertError) {
       console.error('[API Session Sync] DB upsert failed:', upsertError.message)
-      return NextResponse.json({ error: 'Failed to sync progress' }, { status: 500 })
+      return apiError('Failed to sync progress', 'API_ERROR', 500)
     }
 
     return NextResponse.json({ success: true })

@@ -17,6 +17,7 @@ import Tooltip from '../ui/Tooltip'
 import ChaptersModal from './ChaptersModal'
 import PlaybackRateWidget from './PlaybackRateWidget'
 import PlayerSettingsModal from './PlayerSettingsModal'
+import SleepTimerWidget from './SleepTimerWidget'
 import VolumeControl from './VolumeControl'
 
 interface PlayerControlsProps {
@@ -157,6 +158,9 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
           
           {/* playback rate widget */}
           <PlaybackRateWidget playerHandler={playerHandler} />
+
+          {/* sleep timer widget */}
+          <SleepTimerWidget playerHandler={playerHandler} />
 
           {/* chapters button */}
           {chapters.length > 0 && (

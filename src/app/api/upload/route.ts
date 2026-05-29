@@ -1,5 +1,6 @@
+import { apiError } from '@/utils/apiResponse'
 import { createServiceRoleClient } from '@/utils/supabase/service-role'
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { requireApiAuth } from '@/utils/apiAuth'
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchBookCover } from '@/lib/coverFetch'
 import { checkB2ObjectExists } from '@/lib/storageSync'
@@ -24,24 +25,10 @@ import { checkB2ObjectExists } from '@/lib/storageSync'
  */
 export async function POST(request: NextRequest) {
   // ── 1. Verify JWT ─────────────────────────────────────────────────────────
-  const authHeader = request.headers.get('authorization')
-  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
-
-  if (!token) {
-    console.error('[api/upload] Missing token in Authorization header')
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const anonClient = createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-  const { data: { user }, error: userError } = await anonClient.auth.getUser(token)
-
-  if (userError || !user) {
-    console.error('[api/upload] User verification failed:', userError?.message || 'No user found')
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, supabase } = await requireApiAuth(request)
+    if (!user || !supabase) {
+      return apiError('Unauthorized', 'UNAUTHORIZED', 401)
+    }
 
   // ── 2. Check admin/root ───────────────────────────────────────────────────
   const db = createServiceRoleClient()
@@ -53,7 +40,7 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (!profile || !['admin', 'root'].includes(profile.user_type ?? '')) {
-    return NextResponse.json({ error: 'Forbidden — admin or root required' }, { status: 403 })
+    return apiError('Forbidden — admin or root required', 'API_ERROR', 403)
   }
 
   // ── 3. Parse JSON body ────────────────────────────────────────────────────
@@ -70,13 +57,13 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    return apiError('Invalid JSON body', 'API_ERROR', 400)
   }
 
   const { bookId, title, author = '', series = '', library: libraryId, mediaType = 'book', files } = body
 
   if (!bookId || !title || !libraryId || !files?.length) {
-    return NextResponse.json({ error: 'Missing required fields: bookId, title, library, files' }, { status: 400 })
+    return apiError('Missing required fields: bookId, title, library, files', 'API_ERROR', 400)
   }
 
   // ── 3b. Verify files exist in storage before creating DB records ─────────
@@ -154,7 +141,7 @@ export async function POST(request: NextRequest) {
 
   if (bookError) {
     console.error('[upload] books upsert failed:', bookError)
-    return NextResponse.json({ error: `Failed to create book: ${bookError.message}` }, { status: 500 })
+    return apiError(`Failed to create book: ${bookError.message}`, 'API_ERROR', 500)
   }
 
   // ── 6. Create library_item row ────────────────────────────────────────────
@@ -194,7 +181,7 @@ export async function POST(request: NextRequest) {
     if (storageCleanupError) {
       console.error('[upload] storage cleanup also failed:', storageCleanupError.message)
     }
-    return NextResponse.json({ error: `Failed to create library item: ${itemError.message}` }, { status: 500 })
+    return apiError(`Failed to create library item: ${itemError.message}`, 'API_ERROR', 500)
   }
 
   // ── 7. Author ─────────────────────────────────────────────────────────────

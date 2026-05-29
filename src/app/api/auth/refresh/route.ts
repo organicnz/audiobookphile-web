@@ -1,3 +1,4 @@
+import { apiError } from '@/utils/apiResponse'
 import { createClient } from '@/utils/supabase/server'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
@@ -7,7 +8,7 @@ export async function POST(request: Request) {
     const refreshToken = request.headers.get('x-refresh-token')
 
     if (!refreshToken) {
-      return NextResponse.json({ error: 'Refresh token required' }, { status: 400 })
+      return apiError('Refresh token required', 'API_ERROR', 400)
     }
 
     const supabase = await createClient()
@@ -19,7 +20,7 @@ export async function POST(request: Request) {
 
     if (refreshError || !refreshData.user || !refreshData.session) {
       console.error('[API Refresh] Supabase session refresh failed:', refreshError?.message)
-      return NextResponse.json({ error: 'Session expired or invalid refresh token' }, { status: 401 })
+      return apiError('Session expired or invalid refresh token', 'API_ERROR', 401)
     }
 
     const user = refreshData.user
@@ -69,6 +70,6 @@ export async function POST(request: Request) {
     return NextResponse.json(userPayload)
   } catch (error) {
     console.error('[API Refresh] Internal error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return apiError('Internal server error', 'API_ERROR', 500)
   }
 }

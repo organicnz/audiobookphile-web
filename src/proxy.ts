@@ -17,6 +17,19 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function proxy(request: NextRequest) {
   console.log(`[Proxy] Handling request: ${request.nextUrl.pathname}`)
 
+  // Handle Preflight OPTIONS requests globally for cross-platform apps
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': '*', // Note: For production with credentials, a specific origin might be required, but '*' is fine without credentials or handled by next.config.ts
+        'Access-Control-Allow-Methods': 'GET,DELETE,PATCH,POST,PUT,OPTIONS',
+        'Access-Control-Allow-Headers': 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
+      },
+    })
+  }
+
   // If Supabase env vars are missing, skip session update and redirect root to /login
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     if (request.nextUrl.pathname === '/') {

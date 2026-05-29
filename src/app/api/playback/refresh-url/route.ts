@@ -1,3 +1,4 @@
+import { apiError } from '@/utils/apiResponse'
 import { createClient } from '@/utils/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -9,7 +10,7 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return apiError('Unauthorized', 'API_ERROR', 401)
   }
 
   const { audioFileId } = await request.json()
@@ -22,14 +23,14 @@ export async function POST(request: NextRequest) {
     .maybeSingle()
 
   if (error || !book) {
-    return NextResponse.json({ error: 'Audio file not found' }, { status: 404 })
+    return apiError('Audio file not found', 'API_ERROR', 404)
   }
 
   const audioFiles = (book.audio_files as any[]) || []
   const audioFile = audioFiles.find((f: any) => f.ino === audioFileId)
 
   if (!audioFile) {
-    return NextResponse.json({ error: 'Audio file not found in book' }, { status: 404 })
+    return apiError('Audio file not found in book', 'API_ERROR', 404)
   }
 
   // Generate a new signed URL with 3600s expiry
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     .createSignedUrl(path, 3600)
 
   if (signedUrlError || !signedUrlData) {
-    return NextResponse.json({ error: 'Failed to generate signed URL' }, { status: 500 })
+    return apiError('Failed to generate signed URL', 'API_ERROR', 500)
   }
 
   return NextResponse.json({ signedUrl: signedUrlData.signedUrl })

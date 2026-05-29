@@ -1,3 +1,4 @@
+import { apiError } from '@/utils/apiResponse'
 /**
  * GET  /api/admin/storage-sync                         — Returns sync report
  * POST /api/admin/storage-sync?action=import-orphans    — Creates DB records for orphaned storage files
@@ -85,10 +86,7 @@ export async function POST(request: NextRequest) {
   const action = request.nextUrl.searchParams.get('action')
 
   if (!action) {
-    return NextResponse.json(
-      { error: 'Missing ?action= parameter. Valid: import-orphans, mark-missing, cleanup-orphans' },
-      { status: 400 }
-    )
+    return apiError('Missing ?action= parameter. Valid: import-orphans, mark-missing, cleanup-orphans', 'API_ERROR', 400)
   }
 
   try {
@@ -104,10 +102,7 @@ export async function POST(request: NextRequest) {
         result = await handleCleanupOrphans(db)
         break
       default:
-        return NextResponse.json(
-          { error: `Unknown action: ${action}. Valid: import-orphans, mark-missing, cleanup-orphans` },
-          { status: 400 }
-        )
+        return apiError(`Unknown action: ${action}. Valid: import-orphans, mark-missing, cleanup-orphans`, 'API_ERROR', 400)
     }
 
     const { status, ...body } = result

@@ -48,6 +48,7 @@ export default function MediaPlayerContainer() {
             bookCoverAspectRatio={coverAspectRatio}
             showResolution={false}
             width={72}
+            priority={true}
           />
         </div>
         <div className="flex flex-col gap-0.5 max-w-[200px] sm:max-w-[400px]">

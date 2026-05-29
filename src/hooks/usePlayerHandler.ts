@@ -37,6 +37,8 @@ export interface PlayerHandlerState {
   previousChapter: Chapter | null
   /** Player settings (persisted in local storage) */
   settings: PlayerSettings
+  /** Remaining time in seconds for the sleep timer, null if inactive */
+  sleepTimerRemaining: number | null
 }
 
 export interface PlayerHandlerControls {
@@ -68,6 +70,10 @@ export interface PlayerHandlerControls {
   updateSettings: UsePlayerSettingsReturn['updateSettings']
   /** Close the player and end session */
   closePlayer: () => Promise<void>
+  /** Start a sleep timer with the given duration in seconds */
+  startSleepTimer: (duration: number) => void
+  /** Cancel the active sleep timer */
+  stopSleepTimer: () => void
 }
 
 export interface UsePlayerHandlerReturn {
@@ -100,6 +106,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
   const [displayTitle, setDisplayTitle] = useState<string | null>(null)
   const [displayAuthor, setDisplayAuthor] = useState<string | null>(null)
   const [chapters, setChapters] = useState<Chapter[]>([])
+  const [sleepTimerRemaining, setSleepTimerRemaining] = useState<number | null>(null)
 
   // Refs
   const playerRef = useRef<LocalAudioPlayer | null>(null)
@@ -231,6 +238,24 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
 
     return () => clearInterval(interval)
   }, [playerState])
+
+  // Sleep timer interval
+  useEffect(() => {
+    if (sleepTimerRemaining === null) return
+
+    const interval = setInterval(() => {
+      setSleepTimerRemaining((prev) => {
+        if (prev === null) return null
+        if (prev <= 1) {
+          playerRef.current?.pause()
+          return null
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [sleepTimerRemaining])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -364,9 +389,18 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
     setChapters([])
     setPlayMethod(null)
     setIsHlsTranscode(false)
+    setSleepTimerRemaining(null)
     audioTracksRef.current = []
     libraryItemRef.current = null
   }, [closeSession, stopSyncInterval])
+
+  const startSleepTimer = useCallback((duration: number) => {
+    setSleepTimerRemaining(duration)
+  }, [])
+
+  const stopSleepTimer = useCallback(() => {
+    setSleepTimerRemaining(null)
+  }, [])
 
   return {
     state: {
@@ -384,7 +418,8 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
       currentChapter,
       nextChapter,
       previousChapter,
-      settings
+      settings,
+      sleepTimerRemaining
     },
     controls: {
       load,
@@ -400,7 +435,9 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
       incrementPlaybackRate,
       decrementPlaybackRate,
       updateSettings: playerSettings.updateSettings,
-      closePlayer
+      closePlayer,
+      startSleepTimer,
+      stopSleepTimer
     }
   }
 }

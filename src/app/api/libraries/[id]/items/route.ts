@@ -1,4 +1,5 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { apiError } from '@/utils/apiResponse'
+import { requireApiAuth } from '@/utils/apiAuth'
 import { NextResponse } from 'next/server'
 import { mapBookForMobile } from '@/utils/mobileMappers'
 
@@ -10,28 +11,9 @@ export async function GET(
     const resolvedParams = await params
     const libraryId = resolvedParams.id
     
-    const authHeader = request.headers.get('authorization')
-    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null
-
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-    const supabase = createSupabaseClient(supabaseUrl, supabaseKey, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    })
-
-    // Validate token
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-    if (userError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { user, supabase } = await requireApiAuth(request)
+    if (!user || !supabase) {
+      return apiError('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Fetch library items. Audiobookshelf mobile expects a lot of fields.
@@ -97,6 +79,6 @@ export async function GET(
 
   } catch (error) {
     console.error('[API Library Items] Error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return apiError('Internal server error', 'API_ERROR', 500)
   }
 }

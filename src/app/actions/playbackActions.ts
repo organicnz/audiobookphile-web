@@ -21,7 +21,8 @@ interface SessionSyncData {
 export async function startPlaybackSession(
   libraryItemId: string,
   _payload: StartSessionPayload,
-  episodeId?: string,
+  episodeId?: string
+) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   

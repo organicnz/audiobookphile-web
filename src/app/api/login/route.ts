@@ -1,9 +1,24 @@
 import { createClient } from '@/utils/supabase/server'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import { rateLimit } from '@/utils/rateLimit'
+import { apiError } from '@/utils/apiResponse'
+
+const limiter = rateLimit({
+  interval: 60 * 1000, // 60 seconds
+  uniqueTokenPerInterval: 500, // Max 500 users per second
+})
 
 export async function POST(request: Request) {
   try {
+    // Attempt Rate Limiting
+    const ip = request.headers.get('x-forwarded-for') || 'anonymous'
+    try {
+      await limiter.check(10, ip) // 10 requests per minute per IP
+    } catch {
+      return apiError('Too many requests. Please try again later.', 'RATE_LIMIT_EXCEEDED', 429)
+    }
+
     const bodyText = await request.text()
     console.log('[API Login] Raw body:', bodyText)
     
@@ -12,13 +27,13 @@ export async function POST(request: Request) {
       body = JSON.parse(bodyText)
     } catch (e) {
       console.error('[API Login] Failed to parse JSON:', e)
-      return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 })
+      return apiError('Invalid JSON payload', 'INVALID_JSON', 400)
     }
 
     const { username, password } = body
 
     if (!username || !password) {
-      return NextResponse.json({ error: 'Username and password required' }, { status: 400 })
+      return apiError('Username and password required', 'MISSING_CREDENTIALS', 400)
     }
 
     const supabase = await createClient()
@@ -68,7 +83,7 @@ export async function POST(request: Request) {
 
     if (authError || !authData.user) {
       console.error('[API Login] Auth error:', authError?.message)
-      return NextResponse.json({ error: 'Invalid credentials or missing password (did you sign up with Google?)' }, { status: 401 })
+      return apiError('Invalid credentials or missing password (did you sign up with Google?)', 'INVALID_CREDENTIALS', 401)
     }
 
     // Fetch the user's profile
@@ -119,6 +134,6 @@ export async function POST(request: Request) {
     return NextResponse.json(userPayload)
   } catch (error) {
     console.error('[API Login] Internal error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return apiError('Internal server error', 'INTERNAL_ERROR', 500)
   }
 }

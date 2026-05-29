@@ -12,6 +12,7 @@ import { createClient } from '@/utils/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { apiError } from '@/utils/apiResponse'
 
 interface PlaybackTrack {
   index: number
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return apiError('Unauthorized', 'UNAUTHORIZED', 401)
   }
 
   const body = await request.json()
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (itemError || !item) {
-    return NextResponse.json({ error: 'Library item not found' }, { status: 404 })
+    return apiError('Library item not found', 'ITEM_NOT_FOUND', 404)
   }
 
   const book = Array.isArray(item.books) ? item.books[0] : item.books as any
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
 
   // Requirement 9.6: Return 404 if no audio files found
   if (!audioFiles || audioFiles.length === 0) {
-    return NextResponse.json({ error: 'No audio files found' }, { status: 404 })
+    return apiError('No audio files found', 'NO_AUDIO_FILES', 404)
   }
 
   // Requirement 9.2: Generate signed URLs (3600s expiry) for each audio file

@@ -220,6 +220,10 @@ export function useLibrary() {
   return context
 }
 
+export function useLibraryOptional() {
+  return useContext(LibraryContext)
+}
+
 /** Numeric height/width ratio for covers from library setting. Square (1) or standard (1.6) */
 export function useBookCoverAspectRatio(): number {
   const context = useContext(LibraryContext)

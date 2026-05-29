@@ -51,7 +51,8 @@ export default function MediaCardFrame({
       )}
       style={{
         minWidth: typeof width === 'number' ? `${width}px` : width,
-        maxWidth: typeof width === 'number' ? `${width}px` : width
+        maxWidth: typeof width === 'number' ? `${width}px` : width,
+        contentVisibility: 'auto'
       }}
     >
       <div

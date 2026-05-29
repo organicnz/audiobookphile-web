@@ -40,12 +40,12 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
   }, [initialLibraryItem])
 
   const isPodcast = libraryItem.mediaType === 'podcast'
-  const metadata = libraryItem.media.metadata as BookMetadata | PodcastMetadata
-  const podcastAuthor = 'author' in metadata ? metadata.author : undefined
-  const subtitle = 'subtitle' in metadata ? metadata.subtitle : undefined
-  const bookAuthors = 'authors' in metadata ? metadata.authors || [] : []
-  const bookSeries = 'series' in metadata ? metadata.series || [] : []
-  const description = 'description' in metadata ? metadata.description : undefined
+  const metadata = libraryItem.media?.metadata as BookMetadata | PodcastMetadata | undefined
+  const podcastAuthor = metadata && 'author' in metadata ? metadata.author : undefined
+  const subtitle = metadata && 'subtitle' in metadata ? metadata.subtitle : undefined
+  const bookAuthors = metadata && 'authors' in metadata && Array.isArray(metadata.authors) ? metadata.authors : []
+  const bookSeries = metadata && 'series' in metadata && Array.isArray(metadata.series) ? metadata.series : []
+  const description = metadata && 'description' in metadata ? metadata.description : undefined
 
   const userProgress = libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined
 
@@ -96,7 +96,7 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
           </div>
           <div className="flex-1">
             <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-semibold md:text-3xl">{libraryItem.media.metadata.title}</h1>
+              <h1 className="text-2xl font-semibold md:text-3xl">{metadata?.title || ''}</h1>
               {subtitle && <h2 className="text-foreground-muted text-xl font-medium md:text-2xl">{subtitle}</h2>}
               {podcastAuthor && <h2 className="text-foreground text-lg font-medium md:text-xl">{t('LabelByAuthor', { 0: podcastAuthor })}</h2>}
               {bookSeries.length > 0 && (

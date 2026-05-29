@@ -1,3 +1,4 @@
+import { apiError } from '@/utils/apiResponse'
 import { UnauthorizedError, updateMediaProgress } from '@/lib/supabase-api'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -31,7 +32,7 @@ export async function PATCH(request: NextRequest) {
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    return apiError('Invalid JSON body', 'API_ERROR', 400)
   }
 
   const { itemId, episodeId, currentTime, duration, isFinished } = body as {
@@ -43,11 +44,11 @@ export async function PATCH(request: NextRequest) {
   }
 
   if (!itemId || typeof itemId !== 'string') {
-    return NextResponse.json({ error: 'itemId is required' }, { status: 400 })
+    return apiError('itemId is required', 'API_ERROR', 400)
   }
 
   if (typeof currentTime !== 'number') {
-    return NextResponse.json({ error: 'currentTime must be a number' }, { status: 400 })
+    return apiError('currentTime must be a number', 'API_ERROR', 400)
   }
 
   try {
@@ -61,10 +62,10 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (err) {
     if (err instanceof UnauthorizedError) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return apiError('Unauthorized', 'API_ERROR', 401)
     }
 
     console.error('[PATCH /api/playback/progress]', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return apiError('Internal server error', 'API_ERROR', 500)
   }
 }

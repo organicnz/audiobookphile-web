@@ -1,4 +1,5 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { apiError } from '@/utils/apiResponse'
+import { requireApiAuth } from '@/utils/apiAuth'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { NextRequest, NextResponse } from 'next/server'
@@ -10,40 +11,28 @@ import { NextRequest, NextResponse } from 'next/server'
  */
 export async function POST(request: NextRequest) {
   // 1. Verify Authentication
-  const authHeader = request.headers.get('authorization')
-  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
-
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const anonClient = createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-  const { data: { user }, error: userError } = await anonClient.auth.getUser(token)
-
-  if (userError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const { user, supabase } = await requireApiAuth(request)
+    if (!user || !supabase) {
+      return apiError('Unauthorized', 'UNAUTHORIZED', 401)
+    }
 
   // 2. Parse request
   let body: { filename: string; contentType: string }
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+    return apiError('Invalid JSON body', 'API_ERROR', 400)
   }
 
   const { filename, contentType } = body
 
   if (!filename) {
-    return NextResponse.json({ error: 'Missing filename' }, { status: 400 })
+    return apiError('Missing filename', 'API_ERROR', 400)
   }
 
   // 3. Configure S3 Client for B2
   if (!process.env.B2_ENDPOINT || !process.env.B2_BUCKET_NAME) {
-    return NextResponse.json({ error: 'B2 not configured' }, { status: 501 })
+    return apiError('B2 not configured', 'API_ERROR', 501)
   }
 
   const s3Client = new S3Client({
@@ -68,6 +57,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url })
   } catch (error: any) {
     console.error('[presign] Failed to generate presigned URL:', error)
-    return NextResponse.json({ error: 'Failed to generate upload URL' }, { status: 500 })
+    return apiError('Failed to generate upload URL', 'API_ERROR', 500)
   }
 }

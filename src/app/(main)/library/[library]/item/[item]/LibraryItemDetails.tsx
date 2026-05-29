@@ -64,7 +64,7 @@ function getLibraryItemDuration(libraryItem: BookLibraryItem | PodcastLibraryIte
 export default function LibraryItemDetails({ libraryItem }: LibraryItemDetailsProps) {
   const t = useTypeSafeTranslations()
 
-  const metadata = libraryItem.media.metadata
+  const metadata = libraryItem.media?.metadata
   const isBook = libraryItem.mediaType === 'book'
   const isPodcast = libraryItem.mediaType === 'podcast'
 
@@ -89,9 +89,9 @@ export default function LibraryItemDetails({ libraryItem }: LibraryItemDetailsPr
       {isPodcast && podcastMetadata && <DetailRow label={t('LabelPodcastType')} value={podcastMetadata.type} />}
 
       {/* Common fields */}
-      <DetailRow label={t('LabelGenres')} value={metadata.genres} filterKey="genres" libraryId={libraryItem.libraryId} />
-      <DetailRow label={t('LabelTags')} value={libraryItem.media.tags} filterKey="tags" libraryId={libraryItem.libraryId} />
-      <DetailRow label={t('LabelLanguage')} value={metadata.language} filterKey="languages" libraryId={libraryItem.libraryId} />
+      <DetailRow label={t('LabelGenres')} value={metadata?.genres} filterKey="genres" libraryId={libraryItem.libraryId} />
+      <DetailRow label={t('LabelTags')} value={libraryItem.media?.tags} filterKey="tags" libraryId={libraryItem.libraryId} />
+      <DetailRow label={t('LabelLanguage')} value={metadata?.language} filterKey="languages" libraryId={libraryItem.libraryId} />
       <DetailRow label={t('LabelDuration')} value={formatDuration(duration || 0, t)} />
       <DetailRow label={t('LabelSize')} value={bytesPretty(size)} />
     </div>

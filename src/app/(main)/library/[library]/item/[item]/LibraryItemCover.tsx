@@ -32,8 +32,8 @@ export default function LibraryItemCover({ libraryItem, canUpdate = false, class
   const isPodcast = isPodcastLibraryItem(libraryItem)
   const mediaMetadata = libraryItem.media.metadata
 
-  const title = mediaMetadata.title || ''
-  const author = isPodcast ? mediaMetadata.author : (mediaMetadata as BookMetadata).authorName || ''
+  const title = mediaMetadata?.title || ''
+  const author = isPodcast ? mediaMetadata?.author : (mediaMetadata as BookMetadata)?.authorName || ''
   const titleCleaned = !title ? '' : title.length > 60 ? `${title.slice(0, 57)}...` : title
   const authorCleaned = !author ? '' : author.length > 30 ? `${author.slice(0, 27)}...` : author
 

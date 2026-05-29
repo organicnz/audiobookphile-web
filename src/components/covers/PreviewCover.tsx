@@ -15,6 +15,7 @@ interface PreviewCoverProps {
   forceErrorState?: boolean // For testing purposes
   onClick?: () => void
   fill?: boolean
+  priority?: boolean
 }
 
 export default function PreviewCover({
@@ -24,7 +25,8 @@ export default function PreviewCover({
   showResolution = true,
   forceErrorState = false,
   onClick,
-  fill = false
+  fill = false,
+  priority = false
 }: PreviewCoverProps) {
   const libraryBookCoverAspectRatio = useBookCoverAspectRatio()
   const bookCoverAspectRatio = bookCoverAspectRatioProp ?? libraryBookCoverAspectRatio
@@ -153,6 +155,7 @@ export default function PreviewCover({
           alt={t('LabelCoverPreview')}
           fill
           unoptimized
+          priority={priority}
           className={mergeClasses(showCoverBg ? 'object-contain' : 'object-fill')}
         />
       </div>

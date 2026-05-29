@@ -1,4 +1,5 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { apiError } from '@/utils/apiResponse'
+import { requireApiAuth } from '@/utils/apiAuth'
 import { NextResponse } from 'next/server'
 import { PlaybackService } from '@/lib/services/PlaybackService'
 
@@ -10,28 +11,9 @@ export async function POST(
     const resolvedParams = await params
     const itemId = resolvedParams.id
 
-    const authHeader = request.headers.get('authorization')
-    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null
-
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-    const supabase = createSupabaseClient(supabaseUrl, supabaseKey, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    })
-
-    // Validate token and get user
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-    if (userError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { user, supabase } = await requireApiAuth(request)
+    if (!user || !supabase) {
+      return apiError('Unauthorized', 'UNAUTHORIZED', 401)
     }
 
     // Call shared service
