@@ -1,0 +1,519 @@
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import type { MultiSelectItem, MultiSelectProps } from '../MultiSelect'
+import type { DropdownMenuItem } from '../DropdownMenu'
+
+export function useMultiSelect<T = string>({
+  value,
+  selectedItems = [],
+  items,
+  disabled = false,
+  showEdit = false,
+  showInput = true,
+  allowNew = true,
+  menuDisabled = false,
+  editingPillIndex: controlledEditingPillIndex,
+  getEditableText,
+  getReadOnlyPrefix,
+  getFullText,
+  getItemTextId: getItemTextIdProp,
+  onMutate: onMutateProp,
+  onValidate,
+  onValidationError,
+  onDuplicateError,
+  onItemEdited,
+  onItemAdded,
+  onItemRemoved,
+  onInputChange,
+  onEditingPillIndexChange,
+  onEditDone
+}: MultiSelectProps<T>) {
+  const onMutate = (prev: T | null, text: string): T => {
+    if (onMutateProp) {
+      return onMutateProp(prev, text)
+    }
+    // For string types, just return the string
+    return text as unknown as T
+  }
+
+  const getItemTextId = (content: T) => {
+    if (getItemTextIdProp) {
+      return getItemTextIdProp(content)
+    } else if (typeof content === 'string') {
+      return content
+    } else {
+      return String(content)
+    }
+  }
+
+  const isControlled = value !== undefined
+  const [textInput, setTextInput] = useState<string>(isControlled ? value : '')
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [filteredItems, setFilteredItems] = useState<MultiSelectItem<string>[] | null>(null)
+  // focusIndex: null = none, >=0 = dropdown item, <0 = pill (e.g. -1 = last pill)
+  const [focusIndex, setFocusIndex] = useState<number | null>(null)
+  const [uncontrolledEditingPillIndex, setUncontrolledEditingPillIndex] = useState<number | null>(null)
+
+  const isEditingPillIndexControlled = controlledEditingPillIndex !== undefined
+  const editingPillIndex = isEditingPillIndexControlled ? controlledEditingPillIndex : uncontrolledEditingPillIndex
+
+  const setEditingPillIndex = (index: number | null) => {
+    if (!isEditingPillIndexControlled) {
+      setUncontrolledEditingPillIndex(index)
+    }
+    onEditingPillIndexChange?.(index)
+  }
+  const multiSelectId = useId()
+
+  const selectedItemValues = useMemo(() => selectedItems.map((i) => i.value), [selectedItems])
+
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const inputWrapperRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const sizerRef = useRef<HTMLSpanElement>(null)
+
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const showMenu = isMenuOpen && !menuDisabled
+
+  useEffect(() => {
+    if (isControlled) {
+      setTextInput(value)
+    }
+  }, [value, isControlled])
+
+  useEffect(() => {
+    if (inputRef.current && inputWrapperRef.current) {
+      const containerWidth = inputWrapperRef.current.clientWidth
+      // Set max-width to prevent overflow
+      inputRef.current.style.maxWidth = `${containerWidth}px`
+
+      if (textInput && sizerRef.current) {
+        const sizerWidth = sizerRef.current.getBoundingClientRect().width
+        const newWidth = Math.max(24, sizerWidth)
+        inputRef.current.style.width = `${newWidth}px`
+
+        // If the content is wider than the input, scroll to the end
+        if (inputRef.current.scrollWidth > inputRef.current.clientWidth) {
+          inputRef.current.scrollLeft = inputRef.current.scrollWidth
+        }
+      } else {
+        inputRef.current.style.width = '24px'
+      }
+    }
+  }, [textInput])
+
+  const itemsToShow = useMemo(() => {
+    return !textInput || !filteredItems ? items : filteredItems
+  }, [textInput, filteredItems, items])
+
+  const dropdownItems: DropdownMenuItem[] = useMemo(() => {
+    return itemsToShow.map((item) => ({
+      text: item.content,
+      value: item.value
+    }))
+  }, [itemsToShow])
+
+  const openMenu = (index: number | null) => {
+    setIsMenuOpen(true)
+    setFocusIndex(index)
+  }
+
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+    setFocusIndex(null)
+  }
+
+  const setInputValueFn = (inputValue: string) => {
+    if (!isControlled) {
+      setTextInput(inputValue)
+    }
+    onInputChange?.(inputValue)
+  }
+
+  const resetInput = () => {
+    setInputValueFn('')
+    setFocusIndex(null)
+  }
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    openMenu(null)
+    setInputValueFn(e.target.value)
+  }
+
+  const isDuplicateByValue = (itemValue: string, excludeIndex?: number) => {
+    return selectedItemValues.some((v, idx) => idx !== excludeIndex && v === itemValue)
+  }
+
+  const isDuplicateByText = (text: string, excludeIndex?: number) => {
+    return selectedItems.some((item, idx) => idx !== excludeIndex && getItemTextId(item.content).toLowerCase() === text.toLowerCase())
+  }
+
+  // Remove item
+  const removeItem = (itemValue: string) => {
+    const itemToRemove = selectedItems.find((i) => i.value === itemValue)
+    if (itemToRemove) {
+      onItemRemoved?.(itemToRemove)
+    }
+  }
+
+  const validate = (content: T): boolean => {
+    const validationError = onValidate?.(content)
+    if (validationError) {
+      onValidationError?.(validationError)
+      resetInput()
+      return false
+    }
+    return true
+  }
+
+  const addSelectedItem = (itemValue: string, removeIfDuplicate = false) => {
+    if (isDuplicateByValue(itemValue)) {
+      if (removeIfDuplicate) {
+        removeItem(itemValue)
+      }
+      resetInput()
+      return
+    }
+
+    const itemToAdd = items.find((i) => i.value === itemValue)
+    if (!itemToAdd) return
+
+    const newContent = onMutate(null, itemToAdd.content)
+
+    // Validate the new item
+    if (!validate(newContent)) return
+
+    onItemAdded?.({ value: itemToAdd.value, content: newContent })
+    resetInput()
+  }
+
+  // Handle dropdown menu item click
+  const handleDropdownItemClick = (item: DropdownMenuItem) => {
+    addSelectedItem(String(item.value), true)
+  }
+
+  // Check if item is selected
+  const isItemSelected = (item: DropdownMenuItem) => {
+    return selectedItemValues.includes(String(item.value))
+  }
+
+  // Insert new item
+  const insertNewItem = (item: string) => {
+    if (!allowNew) return
+    if (isDuplicateByText(item)) {
+      resetInput()
+      return
+    }
+    // Generate value for new items with 'new-' prefix
+    const newContent = onMutate(null, item)
+
+    // Validate the new item
+    if (!validate(newContent)) return
+
+    const newItem = { value: 'new-' + item, content: newContent }
+    onItemAdded?.(newItem)
+    resetInput()
+  }
+
+  // Submit form
+  const submitForm = () => {
+    if (!textInput) return
+    const cleaned = textInput.trim()
+    if (!cleaned) {
+      resetInput()
+    } else {
+      const matchedItem = items.find((i) => i.content.toLowerCase() === cleaned.toLowerCase())
+      if (matchedItem) {
+        addSelectedItem(matchedItem.value, false)
+      } else {
+        insertNewItem(cleaned)
+      }
+    }
+  }
+
+  // Focus/blur logic
+  const inputFocus = () => {
+    openMenu(null)
+  }
+
+  const inputBlur = () => {
+    if (!isMenuOpen) return
+    setTimeout(() => {
+      if (document.activeElement === inputRef.current) return
+      closeMenu()
+      if (textInput) submitForm()
+    }, 50)
+  }
+
+  const addPastedItems = (pastedItems: string[]) => {
+    const itemsToAdd = pastedItems
+      .filter((item) => !isDuplicateByText(item))
+      .map((item) => {
+        const itemExists = items.find((i) => i.content.toLowerCase() === item.toLowerCase())
+        if (itemExists) {
+          return { value: itemExists.value, content: onMutate(null, itemExists.content) }
+        } else {
+          // Generate value for new items with 'new-' prefix
+          return { value: 'new-' + item, content: onMutate(null, item) }
+        }
+      })
+    if (itemsToAdd.length) {
+      itemsToAdd.forEach((item) => {
+        onItemAdded?.(item)
+      })
+      resetInput()
+    }
+  }
+
+  const inputPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedText = e.clipboardData?.getData('text') || ''
+    const pastedItems = [
+      ...new Set(
+        pastedText
+          .split(';')
+          .map((i) => i.trim())
+          .filter((i) => i)
+      )
+    ]
+    addPastedItems(pastedItems)
+    e.preventDefault()
+  }
+
+  const handleArrowDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const itemCount = dropdownItems.length
+    if (!isMenuOpen) {
+      openMenu(0)
+    } else {
+      setFocusIndex((prev) => {
+        if (prev === null || prev < 0) return 0
+        return prev < itemCount - 1 ? prev + 1 : prev
+      })
+    }
+  }
+
+  const handleArrowUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const itemCount = dropdownItems.length
+    if (!isMenuOpen) {
+      openMenu(itemCount - 1)
+    } else {
+      setFocusIndex((prev) => {
+        if (prev === null || prev < 0) return itemCount - 1
+        return prev > 0 ? prev - 1 : prev
+      })
+    }
+  }
+
+  const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const itemCount = dropdownItems.length
+    if (focusIndex !== null && focusIndex >= 0 && focusIndex < itemCount) {
+      handleDropdownItemClick(dropdownItems[focusIndex])
+    } else if (focusIndex !== null && focusIndex < 0) {
+      const pillIdx = selectedItemValues.length + focusIndex
+      if (pillIdx >= 0 && selectedItemValues[pillIdx]) {
+        if (showEdit) {
+          setEditingPillIndex(pillIdx)
+        }
+      }
+    } else if (textInput) {
+      submitForm()
+    }
+  }
+
+  const handleEscape = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    closeMenu()
+  }
+
+  const handleHome = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    openMenu(0)
+  }
+
+  const handleEnd = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const itemCount = dropdownItems.length
+    openMenu(itemCount - 1)
+  }
+
+  const handleTab = () => {
+    closeMenu()
+  }
+
+  const handleArrowLeft = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const pillCount = selectedItemValues.length
+    if (!textInput && pillCount > 0) {
+      e.preventDefault()
+      setFocusIndex((prev) => {
+        if (prev === null || prev >= 0) return -1
+        if (Math.abs(prev) < pillCount) return prev - 1
+        return prev
+      })
+    }
+  }
+
+  const handleArrowRight = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!textInput && focusIndex !== null && focusIndex < 0) {
+      e.preventDefault()
+      setFocusIndex((prev) => {
+        if (prev === null) return null
+        if (prev < -1) return prev + 1
+        return null
+      })
+    }
+  }
+
+  const handlePillEdit = (editedPillItem: T, idx: number) => {
+    const itemToUpdate = selectedItems[idx]
+    if (itemToUpdate) {
+      const newText = getItemTextId(editedPillItem)
+      const isDupe = isDuplicateByText(newText, idx)
+      if (isDupe) {
+        onDuplicateError?.(`"${newText}" is already selected`)
+        return
+      }
+      const updatedItem = { ...itemToUpdate, content: editedPillItem }
+      onItemEdited?.(updatedItem, idx)
+    }
+  }
+
+  const handlePillEditDone = (shouldRefocus = false, cancelled = false) => {
+    setEditingPillIndex(null)
+    if (shouldRefocus) {
+      inputRef.current?.focus()
+    }
+    onEditDone?.(cancelled)
+  }
+
+  const handlePillDeletion = (key: 'Backspace' | 'Delete') => {
+    if (focusIndex === null || focusIndex >= 0) {
+      if (key === 'Backspace' && !textInput && selectedItemValues.length > 0) {
+        removeItem(selectedItemValues[selectedItemValues.length - 1])
+      }
+      return
+    }
+
+    if (focusIndex !== null && focusIndex < 0) {
+      const pillIdx = selectedItemValues.length + focusIndex
+      if (pillIdx < 0) return
+
+      const pillToRemove = selectedItemValues[pillIdx]
+      if (key === 'Backspace') {
+        // Focus moves to the pill to the left, or to input if first pill is deleted
+        setFocusIndex((prev) => {
+          if (prev === null || prev === -selectedItemValues.length) return null
+          if (prev <= -1) return prev
+          return prev
+        })
+      } else {
+        // Focus remains on the current index, which is now the next pill
+        setFocusIndex((prev) => {
+          if (prev === null || prev === -1) return null
+          if (prev < -1) return prev + 1
+          return prev
+        })
+      }
+      removeItem(pillToRemove)
+    }
+  }
+
+  const keydownHandlers: Record<string, (e: React.KeyboardEvent<HTMLInputElement>) => void> = {
+    ArrowDown: handleArrowDown,
+    ArrowUp: handleArrowUp,
+    Enter: handleEnter,
+    Escape: handleEscape,
+    Home: handleHome,
+    End: handleEnd,
+    Tab: handleTab,
+    ArrowLeft: handleArrowLeft,
+    ArrowRight: handleArrowRight,
+    Backspace: () => handlePillDeletion('Backspace'),
+    Delete: () => handlePillDeletion('Delete')
+  }
+
+  // Keyboard navigation for dropdown menu
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return
+    if (keydownHandlers[e.key]) {
+      keydownHandlers[e.key](e)
+    }
+  }
+
+  // Search logic with debouncing
+  useEffect(() => {
+    // Only search if the input is focused
+    if (document.activeElement !== inputRef.current) return
+
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current)
+    }
+
+    // Set new timeout to wait for user to stop typing
+    const newTimeout = setTimeout(() => {
+      if (!textInput) {
+        setFilteredItems(null)
+      } else {
+        const results = items.filter((i) => i.content.toLowerCase().includes(textInput.toLowerCase()))
+        setFilteredItems(results || [])
+      }
+    }, 200)
+
+    typingTimeoutRef.current = newTimeout
+
+    // Cleanup function to clear timeout on unmount or dependency change
+    return () => {
+      if (newTimeout) {
+        clearTimeout(newTimeout)
+      }
+    }
+  }, [textInput, items])
+
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      // Clear any pending search timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current)
+      }
+    }
+  }, [])
+
+
+
+  return {
+    textInput,
+    isMenuOpen,
+    filteredItems,
+    focusIndex,
+    editingPillIndex,
+    uncontrolledEditingPillIndex,
+    multiSelectId,
+    selectedItemValues,
+    wrapperRef,
+    inputWrapperRef,
+    inputRef,
+    sizerRef,
+    showMenu,
+    itemsToShow,
+    dropdownItems,
+    setEditingPillIndex,
+    handleInputChange,
+    handleDropdownItemClick,
+    isItemSelected,
+    inputFocus,
+    inputBlur,
+    inputPaste,
+    handleKeyDown,
+    handlePillEdit,
+    handlePillEditDone,
+    removeItem,
+    onMutate,
+    onValidate,
+    setIsMenuOpen,
+    setFocusIndex
+  }
+}

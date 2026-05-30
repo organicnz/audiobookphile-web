@@ -1,7 +1,7 @@
 import { sanitizeFileName, SupportedFileTypes } from '@/lib/fileUtils'
 import type { Library } from '@/types/api'
 import path from 'path'
-import { ItemToUpload } from './UploadClient'
+import { ItemToUpload } from './useUploader'
 
 export interface FileWithMetadata extends File {
   filetype?: string | false
