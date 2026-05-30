@@ -29,6 +29,11 @@ cp .env.example .env.local
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon/public key                          |
 | `SUPABASE_SERVICE_ROLE_KEY`     | Server-side service role key (never expose to browser) |
 | `NEXT_PUBLIC_SITE_URL`          | Public URL of your app (required for OAuth redirects)  |
+| `B2_ENDPOINT`                   | (Optional) Backblaze B2 S3 endpoint url                |
+| `B2_REGION`                     | (Optional) Backblaze B2 S3 region                      |
+| `B2_BUCKET_NAME`                | (Optional) Backblaze B2 Bucket name                    |
+| `B2_KEY_ID`                     | (Optional) Backblaze B2 Key ID                         |
+| `B2_APP_KEY`                    | (Optional) Backblaze B2 Application Key                |
 
 > `SUPABASE_SERVICE_ROLE_KEY` must never be prefixed with `NEXT_PUBLIC_` and must never appear in client-side code.
 
@@ -43,6 +48,14 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Hybrid Storage (Supabase + Backblaze B2)
+
+The client supports a hybrid storage model to minimize costs.
+- **Small files (< 25MB):** Cover images, metadata files, and short podcast clips are securely uploaded directly to Supabase Storage.
+- **Large files (>= 25MB):** Full audiobooks are securely uploaded directly to Backblaze B2 using S3 pre-signed URLs.
+
+To enable this, simply provide the `B2_*` environment variables in your `.env.local` or Vercel project settings. The client and backend will seamlessly route uploads and playback between the two providers based on file size.
 
 ## Database Setup
 
