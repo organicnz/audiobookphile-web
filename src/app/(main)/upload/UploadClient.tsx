@@ -23,7 +23,7 @@ import FilePicker from '@/components/widgets/FilePicker'
 import { sanitizeFileName, SupportedFileTypes } from '@/lib/fileUtils'
 import { bytesPretty } from '@/lib/string'
 import { Library } from '@/types/api'
-import path from 'path'
+
 import { CleanedItem, FileWithMetadata, getItemsFromFilelist, upload, UploadProgressInfo } from './UploadHelper'
 import { fetchBookMetadata, fetchPodcastMetadata, getCookie } from './actions'
 

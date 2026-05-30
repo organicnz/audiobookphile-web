@@ -4,7 +4,7 @@ import { useUser } from '@/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { startTransition, useEffect, useMemo, useState } from 'react'
 import { Library } from '@/types/api'
-import path from 'path'
+
 import { CleanedItem, FileWithMetadata, getItemsFromFilelist, upload, UploadProgressInfo } from './UploadHelper'
 import { fetchBookMetadata, fetchPodcastMetadata, getCookie } from './actions'
 import { sanitizeFileName, SupportedFileTypes } from '@/lib/fileUtils'
@@ -149,7 +149,7 @@ export function useUploader(libraries: Library[]) {
     if (currentLibraryMediaType === 'podcast') return item.title
     const outputPathParts = [item.author, item.series, item.title]
     const cleanedOutputPathParts = outputPathParts.filter(Boolean).map((part) => sanitizeFileName(part ?? ''))
-    return path.join(...cleanedOutputPathParts)
+    return cleanedOutputPathParts.join('/')
   }
 
   function resetUpload(): void {
