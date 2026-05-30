@@ -48,9 +48,35 @@ export class B2S3StorageProvider implements StorageProvider {
   }
 }
 
-export function getStorageProvider(supabase: SupabaseClient): StorageProvider {
-  if (process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME && process.env.B2_APP_KEY) {
-    return new B2S3StorageProvider()
+export class StorageRouter implements StorageProvider {
+  private b2Provider: B2S3StorageProvider | null = null;
+  private supabaseProvider: SupabaseStorageProvider;
+
+  constructor(supabase: SupabaseClient) {
+    this.supabaseProvider = new SupabaseStorageProvider(supabase, 'audio');
+    if (process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME && process.env.B2_APP_KEY) {
+      this.b2Provider = new B2S3StorageProvider();
+    }
   }
-  return new SupabaseStorageProvider(supabase, 'audio-files')
+
+  async getSignedUrl(path: string, expiresIn: number): Promise<string> {
+    if (path.startsWith('supabase://')) {
+      const actualPath = path.substring('supabase://'.length);
+      return this.supabaseProvider.getSignedUrl(actualPath, expiresIn);
+    } else if (path.startsWith('b2://')) {
+      const actualPath = path.substring('b2://'.length);
+      if (!this.b2Provider) throw new Error('B2 Storage is not configured but path requires it');
+      return this.b2Provider.getSignedUrl(actualPath, expiresIn);
+    } else {
+      // Legacy paths without prefix default to B2 if configured, else Supabase
+      if (this.b2Provider) {
+        return this.b2Provider.getSignedUrl(path, expiresIn);
+      }
+      return this.supabaseProvider.getSignedUrl(path, expiresIn);
+    }
+  }
+}
+
+export function getStorageProvider(supabase: SupabaseClient): StorageProvider {
+  return new StorageRouter(supabase);
 }

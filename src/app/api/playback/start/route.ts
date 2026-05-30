@@ -79,31 +79,11 @@ export async function POST(request: NextRequest) {
       let finalSignedUrl = ''
 
       // Requirement 9.2: Generate signed URLs (3600s expiry) for each audio file
-      if (process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME) {
-        const s3Client = new S3Client({
-          endpoint: process.env.B2_ENDPOINT,
-          region: process.env.B2_REGION || 'us-west-004',
-          credentials: {
-            accessKeyId: process.env.B2_KEY_ID!,
-            secretAccessKey: process.env.B2_APP_KEY!,
-          },
-        })
-        const command = new GetObjectCommand({
-          Bucket: process.env.B2_BUCKET_NAME,
-          Key: storagePath,
-        })
-        finalSignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 })
-      } else {
-        const { data: signedData, error: signedError } = await supabase.storage
-          .from('audio-files')
-          .createSignedUrl(storagePath, 3600)
-
-        if (signedError || !signedData?.signedUrl) {
-          throw new Error(
-            `Failed to generate signed URL for ${storagePath}: ${signedError?.message ?? 'unknown error'}`
-          )
-        }
-        finalSignedUrl = signedData.signedUrl
+      try {
+        const storage = await import('@/lib/storage/StorageProvider').then(m => m.getStorageProvider(supabase))
+        finalSignedUrl = await storage.getSignedUrl(storagePath, 3600)
+      } catch (err: any) {
+        throw new Error(`Failed to generate signed URL for ${storagePath}: ${err?.message ?? 'unknown error'}`)
       }
 
       return {

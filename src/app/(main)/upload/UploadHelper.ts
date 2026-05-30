@@ -218,8 +218,9 @@ export async function upload(
   for (const file of item.itemFiles) {
     const storagePath = `${bookId}/${sanitizeFileName(file.name)}`
 
-    // Attempt to get a presigned URL for B2
-    let b2Url = ''
+    // Attempt to get a presigned URL for B2 or Supabase (based on size)
+    let uploadUrl = ''
+    let providerPrefix = ''
     try {
       const presignRes = await fetch('/api/upload/presign', {
         method: 'POST',
@@ -230,24 +231,26 @@ export async function upload(
         body: JSON.stringify({
           filename: storagePath,
           contentType: file.type || 'application/octet-stream',
+          size: file.size,
         }),
       })
 
       if (presignRes.status === 200) {
         const data = await presignRes.json()
-        b2Url = data.url
+        uploadUrl = data.url
+        providerPrefix = data.provider_prefix || ''
       } else if (presignRes.status !== 501) {
         throw new Error(`Presign failed: ${presignRes.status}`)
       }
     } catch (e) {
-      console.warn('Failed to get B2 presigned URL, falling back to TUS:', e)
+      console.warn('Failed to get presigned URL, falling back to TUS:', e)
     }
 
     await new Promise<void>((resolve, reject) => {
-      if (b2Url) {
-        // --- B2 DIRECT S3 UPLOAD VIA XHR ---
+      if (uploadUrl) {
+        // --- DIRECT UPLOAD VIA XHR (B2 or Supabase Signed URL) ---
         const xhr = new XMLHttpRequest()
-        xhr.open('PUT', b2Url, true)
+        xhr.open('PUT', uploadUrl, true)
         
         // Explicitly set Content-Type for the audio file (must match presign)
         const contentType = file.type || 'application/octet-stream'
@@ -267,14 +270,14 @@ export async function upload(
         xhr.onload = () => {
           if (xhr.status >= 200 && xhr.status < 300) {
             uploadedBytes += file.size
-            uploadedPaths.push(storagePath)
+            uploadedPaths.push(providerPrefix + storagePath)
             resolve()
           } else {
-            reject(new Error(`Failed to upload ${file.name} to B2: HTTP ${xhr.status}`))
+            reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status}`))
           }
         }
 
-        xhr.onerror = () => reject(new Error(`Network error uploading ${file.name} to B2`))
+        xhr.onerror = () => reject(new Error(`Network error uploading ${file.name}`))
         xhr.ontimeout = () => reject(new Error(`Upload timed out for ${file.name}`))
 
         // Generous timeout for large files
@@ -315,7 +318,7 @@ export async function upload(
           },
           onSuccess: () => {
             uploadedBytes += file.size
-            uploadedPaths.push(storagePath)
+            uploadedPaths.push('supabase://' + storagePath)
             resolve()
           },
         })
@@ -343,11 +346,11 @@ export async function upload(
     library: libraryId,
     mediaType: mediaType || 'book',
     uploadedPaths,
-    files: item.itemFiles.map((f) => ({
+    files: item.itemFiles.map((f, i) => ({
       name: f.name,
       size: f.size,
       type: f.type,
-      storagePath: `${bookId}/${sanitizeFileName(f.name)}`,
+      storagePath: uploadedPaths[i],
     })),
   })
 

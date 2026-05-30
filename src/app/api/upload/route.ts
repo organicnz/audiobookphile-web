@@ -69,13 +69,32 @@ export async function POST(request: NextRequest) {
   // ── 3b. Verify files exist in storage before creating DB records ─────────
   const missingFiles: string[] = []
   for (const file of files) {
-    if (process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME) {
-      const exists = await checkB2ObjectExists(file.storagePath)
+    if (file.storagePath.startsWith('b2://')) {
+      const actualPath = file.storagePath.substring('b2://'.length)
+      const exists = await checkB2ObjectExists(actualPath)
+      if (!exists) missingFiles.push(file.storagePath)
+    } else if (file.storagePath.startsWith('supabase://')) {
+      const actualPath = file.storagePath.substring('supabase://'.length)
+      // Check Supabase Storage. Use getPublicUrl or download to check existence
+      // Because download is expensive, we can use createSignedUrl instead to check existence. Wait, createSignedUrl doesn't check existence.
+      // We can use list to check existence
+      const folder = actualPath.split('/').slice(0, -1).join('/')
+      const filename = actualPath.split('/').pop()
+      const { data } = await db.storage.from('audio').list(folder, { search: filename })
+      const exists = data && data.length > 0 && data[0].name === filename
       if (!exists) missingFiles.push(file.storagePath)
     } else {
-      // Check Supabase Storage
-      const { data } = await db.storage.from('audio').download(file.storagePath)
-      if (!data) missingFiles.push(file.storagePath)
+      // Legacy un-prefixed check
+      if (process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME) {
+        const exists = await checkB2ObjectExists(file.storagePath)
+        if (!exists) missingFiles.push(file.storagePath)
+      } else {
+        const folder = file.storagePath.split('/').slice(0, -1).join('/')
+        const filename = file.storagePath.split('/').pop()
+        const { data } = await db.storage.from('audio').list(folder, { search: filename })
+        const exists = data && data.length > 0 && data[0].name === filename
+        if (!exists) missingFiles.push(file.storagePath)
+      }
     }
   }
 

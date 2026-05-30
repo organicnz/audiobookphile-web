@@ -17,44 +17,55 @@ export async function POST(request: NextRequest) {
     }
 
   // 2. Parse request
-  let body: { filename: string; contentType: string }
+  let body: { filename: string; contentType: string; size?: number }
   try {
     body = await request.json()
   } catch {
     return apiError('Invalid JSON body', 'API_ERROR', 400)
   }
 
-  const { filename, contentType } = body
+  const { filename, contentType, size } = body
 
   if (!filename) {
     return apiError('Missing filename', 'API_ERROR', 400)
   }
 
-  // 3. Configure S3 Client for B2
-  if (!process.env.B2_ENDPOINT || !process.env.B2_BUCKET_NAME) {
-    return apiError('B2 not configured', 'API_ERROR', 501)
-  }
+  const THRESHOLD_BYTES = 25 * 1024 * 1024; // 25 MB
+  const isSmallFile = size !== undefined && size < THRESHOLD_BYTES;
+  const useB2 = !isSmallFile && process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME;
 
-  const s3Client = new S3Client({
-    endpoint: process.env.B2_ENDPOINT, // e.g. https://s3.us-west-004.backblazeb2.com
-    region: process.env.B2_REGION || 'us-west-004', // AWS SDK requires a region
-    credentials: {
-      accessKeyId: process.env.B2_KEY_ID!,
-      secretAccessKey: process.env.B2_APP_KEY!,
-    },
-  })
-
-  // 4. Generate Pre-signed URL
   try {
-    const command = new PutObjectCommand({
-      Bucket: process.env.B2_BUCKET_NAME!,
-      Key: filename,
-      ContentType: contentType || 'application/octet-stream',
-    })
+    if (useB2) {
+      // 3a. Generate B2 Pre-signed URL
+      const s3Client = new S3Client({
+        endpoint: process.env.B2_ENDPOINT,
+        region: process.env.B2_REGION || 'us-west-004',
+        credentials: {
+          accessKeyId: process.env.B2_KEY_ID!,
+          secretAccessKey: process.env.B2_APP_KEY!,
+        },
+      })
 
-    // Presigned URL expires in 1 hour
-    const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 })
-    return NextResponse.json({ url })
+      const command = new PutObjectCommand({
+        Bucket: process.env.B2_BUCKET_NAME!,
+        Key: filename,
+        ContentType: contentType || 'application/octet-stream',
+      })
+
+      const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 })
+      return NextResponse.json({ url, provider_prefix: 'b2://' })
+    } else {
+      // 3b. Generate Supabase Pre-signed URL
+      const { data, error } = await supabase.storage.from('audio').createSignedUploadUrl(filename)
+      if (error || !data?.signedUrl) {
+        throw new Error(error?.message || 'Failed to create Supabase signed URL')
+      }
+      
+      // The signedUrl returned by Supabase might just be a token or relative path depending on the API.
+      // Usually it's a full URL. Supabase Storage client handles uploads to it directly.
+      // Wait, if it returns signedUrl, it includes the token.
+      return NextResponse.json({ url: data.signedUrl, provider_prefix: 'supabase://' })
+    }
   } catch (error: any) {
     console.error('[presign] Failed to generate presigned URL:', error)
     return apiError('Failed to generate upload URL', 'API_ERROR', 500)
