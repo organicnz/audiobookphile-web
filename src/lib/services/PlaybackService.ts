@@ -125,8 +125,8 @@ export class PlaybackService {
 
     // Get Chapters
     const chaptersList = book?.chapters || []
-    const chapters = chaptersList.map((ch: any) => ({
-      id: ch.chapter_index !== undefined ? ch.chapter_index : ch.id,
+    const chapters = chaptersList.map((ch: any, index: number) => ({
+      id: ch.chapter_index !== undefined ? ch.chapter_index : (typeof ch.id === 'number' ? ch.id : index),
       title: ch.title,
       start: Number(ch.start_time !== undefined ? ch.start_time : ch.start) || 0,
       end: Number(ch.end_time !== undefined ? ch.end_time : ch.end) || 0
