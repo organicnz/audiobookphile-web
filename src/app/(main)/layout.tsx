@@ -2,6 +2,8 @@ import { MediaProvider } from '@/contexts/MediaContext'
 import { MetadataProvider } from '@/contexts/MetadataContext'
 import { TasksProvider } from '@/contexts/TasksContext'
 import { UserProvider } from '@/contexts/UserContext'
+import { CommandPaletteProvider } from '@/contexts/CommandPaletteContext'
+import CommandPalette from '@/components/modals/CommandPalette'
 import { getCurrentUser } from '@/lib/api'
 import { redirect } from 'next/navigation'
 
@@ -25,7 +27,12 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     <UserProvider initialUser={{ id: user.id, email: user.email, profile: { id: user.id, username: user.username, user_type: user.type, default_library_id: userPayload.userDefaultLibraryId ?? null, created_at: null, updated_at: null, language: null, theme: null } }}>
       <TasksProvider>
         <MetadataProvider>
-          <MediaProvider>{children}</MediaProvider>
+          <MediaProvider>
+            <CommandPaletteProvider>
+              {children}
+              <CommandPalette />
+            </CommandPaletteProvider>
+          </MediaProvider>
         </MetadataProvider>
       </TasksProvider>
     </UserProvider>
