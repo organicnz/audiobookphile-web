@@ -1,5 +1,5 @@
-import { useMultiSelect } from './multi-select/useMultiSelect'
 'use client'
+import { useMultiSelect } from './multi-select/useMultiSelect'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/lib/merge-classes'
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react'

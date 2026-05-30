@@ -36,7 +36,8 @@ module.exports = [
       'next-env.d.ts',
       'eslint.config.js',
       '.vercel/',
-      '.trunk/'
+      '.trunk/',
+      'supabase/functions/'
     ]
   },
   ...nextConfig,
