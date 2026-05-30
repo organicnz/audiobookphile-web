@@ -1,7 +1,7 @@
 'use server'
 
 import { fetchBookCover } from '@/lib/coverFetch'
-import { uploadCover } from '@/lib/supabase-api'
+import { uploadCover } from '@/lib/api'
 
 /**
  * Automatically fetch a cover image from metadata providers and save it
@@ -21,8 +21,9 @@ export async function autoFetchCoverAction(
     const fetched = await fetchBookCover(title, author)
     if (!fetched) return null
 
-    const storagePath = await uploadCover(libraryItemId, fetched.buffer, { extension: fetched.extension, contentType: fetched.contentType })
-    return storagePath
+    const file = new File([fetched.buffer], `cover.${fetched.extension}`, { type: fetched.contentType })
+    await uploadCover(libraryItemId, file)
+    return `${libraryItemId}/cover.${fetched.extension}`
   } catch (err) {
     console.error('[autoFetchCover] Failed for', libraryItemId, err)
     return null

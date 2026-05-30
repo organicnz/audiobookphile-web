@@ -1,5 +1,5 @@
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import { getLibraries, getLibraryFilterData } from '@/lib/supabase-api'
+import { getLibraries, getLibraryFilterData } from '@/lib/api'
 import SettingsContent from '../../SettingsContent'
 import TagsClient from './TagsClient'
 

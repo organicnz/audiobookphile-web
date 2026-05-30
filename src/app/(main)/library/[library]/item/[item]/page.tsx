@@ -1,4 +1,4 @@
-import { getLibraryItem } from '@/lib/supabase-api';
+import { getLibraryItem } from '@/lib/api';
 import { BookLibraryItem, PodcastLibraryItem } from '@/types/api';
 import LibraryItemClient from './LibraryItemClient';
 

@@ -1,5 +1,5 @@
 import { SettingsDrawerProvider } from '@/contexts/SettingsDrawerContext'
-import { getCurrentUser } from '@/lib/supabase-api'
+import { getCurrentUser } from '@/lib/api'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import '../../../assets/globals.css'
@@ -24,7 +24,7 @@ export default async function SettingsLayout({ children }: Readonly<{ children: 
   }
 
   // Redirect to library page if user is not admin or root
-  if (!['admin', 'root'].includes(currentUser.userType)) {
+  if (!['admin', 'root'].includes(currentUser.user.type)) {
     return redirect('/library')
   }
 

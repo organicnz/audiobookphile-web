@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/supabase-api'
+import { getCurrentUser } from '@/lib/api'
 import { redirect } from 'next/navigation'
 
 /**
@@ -13,8 +13,8 @@ export const GET = async () => {
       return redirect('/login?error=no_session')
     }
 
-    const libraryId = currentUser.defaultLibraryId
-    const userType = currentUser.userType
+    const libraryId = currentUser.userDefaultLibraryId
+    const userType = currentUser.user.type
 
     if (libraryId) {
       return redirect(`/library/${libraryId}`)

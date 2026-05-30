@@ -1,5 +1,5 @@
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import { getCurrentUser } from '@/lib/supabase-api'
+import { getCurrentUser } from '@/lib/api'
 
 export const dynamic = 'force-dynamic'
 

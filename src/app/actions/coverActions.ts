@@ -1,7 +1,7 @@
 'use server'
 
 import { fetchBookCover } from '@/lib/coverFetch'
-import { removeCover, uploadCover } from '@/lib/supabase-api'
+import { removeCover, uploadCover, updateCoverFromUrl, setCoverFromLocalFile } from '@/lib/api'
 
 /**
  * Server Action: Upload a cover image file for a library item
@@ -11,7 +11,7 @@ export async function uploadCoverAction(libraryItemId: string, base64Data: strin
   const extension = fileName.split('.').pop() || 'jpg'
   const contentType = `image/${extension === 'jpg' ? 'jpeg' : extension}`
   const file = new File([buffer], fileName, { type: contentType })
-  return uploadCover(libraryItemId, file, { extension, contentType })
+  return uploadCover(libraryItemId, file)
 }
 
 /**
@@ -25,18 +25,7 @@ export async function removeCoverAction(libraryItemId: string) {
  * Server Action: Update cover from a URL — fetches the image and stores it in Supabase Storage
  */
 export async function updateCoverFromUrlAction(libraryItemId: string, coverUrl: string) {
-  try {
-    const res = await fetch(coverUrl, { signal: AbortSignal.timeout(10000) })
-    if (!res.ok) throw new Error(`Failed to fetch cover: ${res.status}`)
-    const buffer = await res.arrayBuffer()
-    if (buffer.byteLength < 1000) throw new Error('Cover image too small')
-    const contentType = res.headers.get('content-type') || 'image/jpeg'
-    const extension = contentType.split('/')[1]?.split('+')[0] || 'jpg'
-    return uploadCover(libraryItemId, buffer, { extension, contentType })
-  } catch (err) {
-    console.error('[coverActions] updateCoverFromUrl failed:', err)
-    return null
-  }
+  return updateCoverFromUrl(libraryItemId, coverUrl)
 }
 
 /**
@@ -50,7 +39,9 @@ export async function autoFetchCoverAction(
   try {
     const fetched = await fetchBookCover(title, author)
     if (!fetched) return null
-    return uploadCover(libraryItemId, fetched.buffer, { extension: fetched.extension, contentType: fetched.contentType })
+    const file = new File([fetched.buffer], `cover.${fetched.extension}`, { type: fetched.contentType })
+    await uploadCover(libraryItemId, file)
+    return `${libraryItemId}/cover.${fetched.extension}`
   } catch (err) {
     console.error('[coverActions] autoFetchCover failed:', err)
     return null
@@ -60,7 +51,6 @@ export async function autoFetchCoverAction(
 /**
  * Server Action: Set cover from a local file — not available in Supabase-backed version
  */
-export async function setCoverFromLocalFileAction(_libraryItemId: string, _filePath: string) {
-  console.warn('[coverActions] setCoverFromLocalFile is not available in the Supabase-backed version')
-  return null
+export async function setCoverFromLocalFileAction(libraryItemId: string, filePath: string) {
+  return setCoverFromLocalFile(libraryItemId, filePath)
 }

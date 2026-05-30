@@ -1,4 +1,4 @@
-import { getCurrentUser, getPlaylist } from '@/lib/supabase-api';
+import { getCurrentUser, getPlaylist } from '@/lib/api';
 import PlaylistClient from './PlaylistClient';
 
 export default async function PlaylistPage({ params }: { params: Promise<{ playlist: string; library: string }> }) {

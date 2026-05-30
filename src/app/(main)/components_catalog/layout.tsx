@@ -1,4 +1,4 @@
-import { getLibraries } from '@/lib/supabase-api'
+import { getLibraries } from '@/lib/api'
 import type { Metadata } from 'next'
 import '../../../assets/globals.css'
 import { ComponentsCatalogProvider } from '../../../contexts/ComponentsCatalogContext'

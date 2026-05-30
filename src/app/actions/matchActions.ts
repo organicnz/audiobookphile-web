@@ -1,7 +1,7 @@
 'use server'
 
 import { fetchBookCover } from '@/lib/coverFetch'
-import { uploadCover } from '@/lib/supabase-api'
+import { uploadCover } from '@/lib/api'
 import type { BookSearchResult, PodcastSearchResult, UpdateLibraryItemMediaPayload, UpdateLibraryItemMediaResponse } from '@/types/api'
 import type { Database } from '@/types/supabase'
 import { createServiceRoleClient } from '@/utils/supabase/service-role'
@@ -101,120 +101,29 @@ export async function applyMatchAction(
   libraryItemId: string,
   updatePayload: UpdateLibraryItemMediaPayload,
 ): Promise<UpdateLibraryItemMediaResponse> {
-  const db = createServiceRoleClient()
+  const { apiRequest } = await import('@/lib/api')
 
   try {
-    // Get the book ID for this library item
-    const { data: item } = await db
-      .from('library_items')
-      .select('media_id, title')
-      .eq('id', libraryItemId)
-      .single()
-
-    if (!item?.media_id) throw new Error('Library item has no associated book')
-
-    const bookId = item.media_id
-    const metadata = updatePayload.metadata || {}
-
-    // Update books table
-    const bookUpdate: Database['public']['Tables']['books']['Update'] = {}
-    if (metadata.title) bookUpdate.title = metadata.title
-    if (metadata.subtitle) bookUpdate.subtitle = metadata.subtitle
-    if (metadata.description) bookUpdate.description = metadata.description
-    if (metadata.isbn) bookUpdate.isbn = metadata.isbn
-    if (metadata.asin) bookUpdate.asin = metadata.asin
-    if (metadata.publisher) bookUpdate.publisher = metadata.publisher
-    if (metadata.publishedYear) bookUpdate.published_year = metadata.publishedYear
-    if (metadata.language) bookUpdate.language = metadata.language
-    if (metadata.explicit !== undefined) bookUpdate.explicit = metadata.explicit
-    if (metadata.abridged !== undefined) bookUpdate.abridged = metadata.abridged
-    if (metadata.genres?.length) bookUpdate.genres = metadata.genres
-    if (metadata.tags?.length) bookUpdate.tags = metadata.tags
-
-    if (Object.keys(bookUpdate).length > 0) {
-      await db.from('books').update(bookUpdate).eq('id', bookId)
-    }
-
-    // Update library_items title
-    if (metadata.title) {
-      await db.from('library_items').update({ title: metadata.title }).eq('id', libraryItemId)
-    }
-
-    // Handle authors
-    if (metadata.authors?.length) {
-      // Remove existing book_authors
-      await db.from('book_authors').delete().eq('book_id', bookId)
-
-      for (const authorData of metadata.authors) {
-        const authorName = (typeof authorData === 'string' ? authorData : authorData.name) || ''
-        if (!authorName) continue
-
-        const { data: existing } = await db
-          .from('authors')
-          .select('id')
-          .eq('name', authorName)
-          .maybeSingle()
-
-        let authorId = existing?.id
-        if (!authorId) {
-          authorId = crypto.randomUUID()
-          await db.from('authors').insert({ id: authorId, name: authorName })
-        }
-        await db.from('book_authors').insert({ book_id: bookId, author_id: authorId })
-      }
-
-      const authorNames = metadata.authors.map((a: any) => (typeof a === 'string' ? a : a.name)).filter(Boolean).join(', ')
-      await db.from('library_items').update({ author_names_first_last: authorNames }).eq('id', libraryItemId)
-    }
-
-    // Handle series
-    if (metadata.series?.length) {
-      await db.from('book_series').delete().eq('book_id', bookId)
-
-      const { data: libItem } = await db.from('library_items').select('library_id').eq('id', libraryItemId).single()
-      const libraryId = libItem?.library_id
-
-      for (const s of metadata.series) {
-        const seriesName = (typeof s === 'string' ? s : s.name) || ''
-        if (!seriesName) continue
-
-        const { data: existing } = await db
-          .from('series')
-          .select('id')
-          .eq('name', seriesName)
-          .eq('library_id', libraryId ?? '')
-          .maybeSingle()
-
-        let seriesId = existing?.id
-        if (!seriesId) {
-          seriesId = crypto.randomUUID()
-          await db.from('series').insert({ id: seriesId, name: seriesName, library_id: libraryId })
-        }
-        await db.from('book_series').insert({ book_id: bookId, series_id: seriesId, sequence: s.sequence || null })
-      }
-    }
+    // Update metadata using Edge Function
+    await apiRequest(`/api/items/${libraryItemId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ metadata: updatePayload.metadata })
+    })
 
     // Fetch and save cover if provided
     if (updatePayload.cover) {
       try {
-        const imgRes = await fetch(updatePayload.cover, { signal: AbortSignal.timeout(10000) })
-        if (imgRes.ok) {
-          const buf = await imgRes.arrayBuffer()
-          if (buf.byteLength > 1000) {
-            const contentType = imgRes.headers.get('content-type') || 'image/jpeg'
-            const extension = contentType.split('/')[1]?.split('+')[0] || 'jpg'
-            await uploadCover(libraryItemId, buf, { extension, contentType })
-          }
-        }
+        const { updateCoverFromUrlAction } = await import('@/app/actions/coverActions')
+        await updateCoverFromUrlAction(libraryItemId, updatePayload.cover)
       } catch (err) {
         console.warn('[matchActions] cover fetch failed:', err)
       }
-    } else if (metadata.title) {
+    } else if (updatePayload.metadata?.title) {
       // Auto-fetch cover if none provided
-      const authorData = metadata.authors?.[0]
+      const authorData = updatePayload.metadata.authors?.[0]
       const authorName = (typeof authorData === 'string' ? authorData : authorData?.name) || undefined
-      const fetched = await fetchBookCover(metadata.title, authorName)
-      if (fetched) await uploadCover(libraryItemId, fetched.buffer, { extension: fetched.extension, contentType: fetched.contentType })
+      const { autoFetchCoverAction } = await import('@/app/actions/coverActions')
+      await autoFetchCoverAction(libraryItemId, updatePayload.metadata.title, authorName)
     }
 
     return { updated: true } as UpdateLibraryItemMediaResponse

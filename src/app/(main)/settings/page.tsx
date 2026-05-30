@@ -1,5 +1,5 @@
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import { getLibraries } from '@/lib/supabase-api'
+import { getLibraries } from '@/lib/api'
 import { iconMap } from '@/lib/icon-mapping'
 import { Settings } from 'lucide-react'
 import Link from 'next/link'

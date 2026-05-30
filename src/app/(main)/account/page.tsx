@@ -1,7 +1,7 @@
 import TextInput from '@/components/ui/TextInput'
 
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import { getCurrentUser } from '@/lib/supabase-api'
+import { getCurrentUser } from '@/lib/api'
 
 import Btn from '@/components/ui/Btn'
 import { getTheme } from '@/lib/theme'
@@ -33,6 +33,8 @@ export default async function AccountPage() {
     return null
   }
 
+  const user = currentUser.user
+
   return (
     <div className="mx-auto w-full max-w-xl p-8">
       <h1 className="text-xl">{t('HeaderAccount')}</h1>
@@ -40,10 +42,10 @@ export default async function AccountPage() {
       <div className="mt-8 flex flex-col items-start gap-4">
         <div className="flex w-full items-center gap-2">
           <div className="flex-2">
-            <TextInput value={currentUser.username ?? ''} label={t('LabelUsername')} readOnly />
+            <TextInput value={user.username ?? ''} label={t('LabelUsername')} readOnly />
           </div>
           <div className="flex-1">
-            <TextInput value={currentUser.userType} label={t('LabelAccountType')} readOnly />
+            <TextInput value={user.type} label={t('LabelAccountType')} readOnly />
           </div>
         </div>
         <div className="w-full">

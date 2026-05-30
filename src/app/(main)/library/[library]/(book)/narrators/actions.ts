@@ -1,6 +1,9 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import {
+  updateNarrator as apiUpdateNarrator,
+  deleteNarrator as apiDeleteNarrator
+} from '@/lib/api'
 import { revalidatePath } from 'next/cache'
 
 export type SaveNarratorApiResponse = {
@@ -12,17 +15,21 @@ export type DeleteNarratorApiResponse = {
 }
 
 export async function saveNarrator(libraryId: string, narratorId: string, newName: string): Promise<SaveNarratorApiResponse> {
-  const supabase = await createClient()
-  const { error } = await (supabase as any).from('narrators').update({ name: newName }).eq('id', narratorId)
-  if (error) throw new Error(error.message)
-  revalidatePath(`/library/${libraryId}/narrators`)
-  return { updated: 1 }
+  try {
+    await apiUpdateNarrator(narratorId, { name: newName })
+    revalidatePath(`/library/${libraryId}/narrators`)
+    return { updated: 1 }
+  } catch (error: any) {
+    throw new Error(error.message)
+  }
 }
 
 export async function deleteNarrator(libraryId: string, narratorId: string): Promise<DeleteNarratorApiResponse> {
-  const supabase = await createClient()
-  const { error } = await (supabase as any).from('narrators').delete().eq('id', narratorId)
-  if (error) throw new Error(error.message)
-  revalidatePath(`/library/${libraryId}/narrators`)
-  return { updated: 1 }
+  try {
+    await apiDeleteNarrator(narratorId)
+    revalidatePath(`/library/${libraryId}/narrators`)
+    return { updated: 1 }
+  } catch (error: any) {
+    throw new Error(error.message)
+  }
 }

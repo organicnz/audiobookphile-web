@@ -1,4 +1,4 @@
-import { getLibraries } from '@/lib/supabase-api'
+import { getLibraries } from '@/lib/api'
 import { LibrarySchema } from '@/lib/schemas'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'

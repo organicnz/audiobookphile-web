@@ -1,0 +1,139 @@
+import { Author, AuthorImagePayload, AuthorQuickMatchPayload, AuthorResponse, AuthorUpdateResponse, BookSearchResult, Collection, CreateApiKeyPayload, CreateCustomMetadataProviderPayload, CreateCustomMetadataProviderResponse, CreateUpdateApiKeyResponse, FetchPodcastFeedResponse, FFProbeData, GetApiKeysResponse, GetAuthorsResponse, GetBackupsResponse, GetCollectionsResponse, GetCustomMetadataProvidersResponse, GetFilesystemPathsResponse, GetLibrariesResponse, GetLibraryItemsResponse, GetListeningSessionsResponse, GetLoggerDataResponse, GetNarratorsResponse, GetOpenListeningSessionsResponse, GetPlaylistsResponse, GetRssFeedsResponse, GetSeriesResponse, GetUsersResponse, Library, LibraryFilterData, LibraryItem, MediaItemShare, MetadataProvidersResponse, MutateBackupsResponse, OpenMediaItemSharePayload, OpenRssFeedPayload, OpenRssFeedResponse, PersonalizedShelf, Playlist, PlaylistItemPayload, PodcastSearchResult, RssPodcastEpisode, SaveLibraryOrderApiResponse, SearchLibraryResponse, Series, ServerStatus, TasksResponse, UpdateAuthorPayload, UpdateLibraryItemMediaPayload, UpdateLibraryItemMediaResponse, UploadCoverResponse, User, UserLoginResponse } from '@/types/api'
+import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
+import { cache } from 'react'
+import { apiRequest } from './client'
+
+/**
+ * Get filter data for a library (genres, tags, authors, series, etc.)
+ * Used for populating filter dropdown menus
+ */
+export async function getLibraryFilterData(libraryId: string): Promise<LibraryFilterData> {
+  return await apiRequest<LibraryFilterData>(`/api/libraries/${libraryId}/filterdata`, {})
+}
+
+/**
+ * Create a library
+ * @param newLibrary - New library object
+ * Returns: Library object
+ */
+export async function createLibrary(newLibrary: Library): Promise<Library> {
+  return apiRequest<Library>(`/api/libraries/`, {
+    method: 'POST',
+    body: JSON.stringify(newLibrary)
+  })
+}
+
+/**
+ * Update a library
+ * @param libraryId - Library ID
+ * @param newLibrary - New library object
+ * Returns: Library object
+ */
+export async function updateLibrary(libraryId: string, updatedLibrary: Library): Promise<Library> {
+  return apiRequest<Library>(`/api/libraries/${libraryId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(updatedLibrary)
+  })
+}
+
+/**
+ * Delete a library
+ * @param libraryId - Library ID
+ * @param newLibrary - New library object
+ * Returns: Library object
+ */
+export async function deleteLibrary(libraryId: string): Promise<Library> {
+  return apiRequest<Library>(`/api/libraries/${libraryId}`, {
+    method: 'DELETE'
+  })
+}
+
+/**
+ * Scan a library
+ * @param libraryItemId - Library item ID
+ * @param force - force a scan
+ * Returns: void (success) or throws error
+ */
+export async function scanLibrary(libraryId: string, force: boolean = false): Promise<void> {
+  return apiRequest<void>(`/api/libraries/${libraryId}/scan?force=${force ? 1 : 0}`, {
+    method: 'POST'
+  })
+}
+
+/**
+ * Save the order of libraries
+ * @param libraryItemId - Library item ID
+ * Returns: void (success) or throws error TODO
+ */
+export async function saveLibraryOrder(reorderObjects: { id: string; newOrder: number }[]): Promise<SaveLibraryOrderApiResponse> {
+  return apiRequest<SaveLibraryOrderApiResponse>('/api/libraries/order', {
+    method: 'POST',
+    body: JSON.stringify(reorderObjects)
+  })
+}
+
+export const getLibraries = cache(async (): Promise<GetLibrariesResponse> => {
+  return await apiRequest<GetLibrariesResponse>('/api/libraries', {})
+})
+
+export const getLibrary = cache(async (libraryId: string): Promise<Library> => {
+  return await apiRequest<Library>(`/api/libraries/${libraryId}`, {})
+})
+
+export const getLibraryPersonalized = cache(async (libraryId: string): Promise<PersonalizedShelf[]> => {
+  return await apiRequest<PersonalizedShelf[]>(`/api/libraries/${libraryId}/personalized?include=rssfeed,share`, {})
+})
+
+export const getLibraryItems = cache(async (libraryId: string, queryParams?: string): Promise<GetLibraryItemsResponse> => {
+  return await apiRequest<GetLibraryItemsResponse>(`/api/libraries/${libraryId}/items${queryParams ? `?${queryParams}` : ''}`, {})
+})
+
+/**
+ * Get a single library item by ID.
+ * @param itemId - Library item ID
+ * @param expanded - If true, returns expanded item with full media/chapters etc.
+ * @param include - Optional comma-separated includes: rssfeed, share, downloads
+ */
+export const getLibraryItem = cache(async (itemId: string, expanded?: boolean, include?: string): Promise<LibraryItem> => {
+  const params = new URLSearchParams()
+        params.set('expanded', expanded ? '1' : '0')
+        if (include) params.set('include', include)
+        return await apiRequest<LibraryItem>(`/api/items/${itemId}?${params.toString()}`, {})
+})
+
+export const getLibrarySeries = cache(async (libraryId: string, queryParams?: string): Promise<GetSeriesResponse> => {
+  return await apiRequest<GetSeriesResponse>(`/api/libraries/${libraryId}/series${queryParams ? `?${queryParams}` : ''}`, {})
+})
+
+export const getLibraryAuthors = cache(async (libraryId: string, queryParams?: string): Promise<GetAuthorsResponse> => {
+  return await apiRequest<GetAuthorsResponse>(`/api/libraries/${libraryId}/authors${queryParams ? `?${queryParams}` : ''}`, {})
+})
+
+export const getLibraryCollections = cache(async (libraryId: string, queryParams?: string): Promise<GetCollectionsResponse> => {
+  try {
+    return await apiRequest<GetCollectionsResponse>(`/api/libraries/${libraryId}/collections${queryParams ? `?${queryParams}` : ''}`, {})
+  } catch (error) {
+    return {
+      results: [],
+      total: 0,
+      limit: 50,
+      page: 0,
+      sortDesc: false,
+      minified: false,
+      include: ''
+    }
+  }
+})
+
+export const getLibraryPlaylists = cache(async (libraryId: string, queryParams?: string): Promise<GetPlaylistsResponse> => {
+  try {
+    return await apiRequest<GetPlaylistsResponse>(`/api/libraries/${libraryId}/playlists${queryParams ? `?${queryParams}` : ''}`, {})
+  } catch (error) {
+    return {
+      results: [],
+      total: 0,
+      limit: 50,
+      page: 0
+    }
+  }
+})

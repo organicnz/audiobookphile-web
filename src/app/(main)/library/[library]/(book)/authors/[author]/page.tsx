@@ -1,4 +1,4 @@
-import { getAuthor } from '@/lib/supabase-api';
+import { getAuthor } from '@/lib/api';
 import AuthorClient from './AuthorClient';
 
 export default async function AuthorPage({ params }: { params: Promise<{ author: string; library: string }> }) {

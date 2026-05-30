@@ -1,4 +1,4 @@
-import { getCollection, getCurrentUser } from '@/lib/supabase-api';
+import { getCollection, getCurrentUser } from '@/lib/api';
 import CollectionClient from './CollectionClient';
 
 export default async function CollectionPage({ params }: { params: Promise<{ collection: string; library: string }> }) {

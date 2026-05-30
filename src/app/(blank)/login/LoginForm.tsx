@@ -30,9 +30,7 @@ export default function LoginForm() {
           setLoading(false)
           return
         }
-        // Wait for the auth state change to confirm the session cookie is
-        // written before navigating. signInWithPassword resolves before
-        // createBrowserClient finishes persisting the session to cookies.
+        // Wait for the auth state change to confirm the session cookie is written
         const redirect = searchParams.get('redirect')
         const supabaseForNav = createClient()
         await new Promise<void>((resolve) => {
@@ -44,22 +42,30 @@ export default function LoginForm() {
           })
           setTimeout(resolve, 1000)
         })
+
         if (redirect) {
           window.location.href = redirect
           return
         }
-        const { data: { user: loggedInUser } } = await supabaseForNav.auth.getUser()
-        if (loggedInUser) {
-          const { data: profile } = await supabaseForNav
-            .from('profiles')
-            .select('default_library_id')
-            .eq('id', loggedInUser.id)
-            .single()
-          if (profile?.default_library_id) {
-            window.location.href = `/library/${profile.default_library_id}`
-            return
+
+        // We can just use the API to get the user's default library
+        try {
+          const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: email, password })
+          })
+          if (res.ok) {
+            const data = await res.json()
+            if (data.userDefaultLibraryId) {
+              window.location.href = `/library/${data.userDefaultLibraryId}`
+              return
+            }
           }
+        } catch (e) {
+          console.error('Failed to get user profile', e)
         }
+        
         window.location.href = '/library'
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'

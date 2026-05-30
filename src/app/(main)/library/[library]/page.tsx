@@ -1,4 +1,4 @@
-import { getLibraryPersonalized } from '@/lib/supabase-api'
+import { getLibraryPersonalized } from '@/lib/api'
 import LibraryClient from './LibraryClient'
 
 export default async function LibraryPage({ params }: { params: Promise<{ library: string }> }) {

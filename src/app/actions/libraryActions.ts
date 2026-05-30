@@ -7,7 +7,7 @@ import {
     getLibraryItems,
     getLibraryPlaylists,
     getLibrarySeries,
-} from '@/lib/supabase-api'
+} from '@/lib/api'
 
 export async function fetchLibraryItemsAction(libraryId: string, _query?: string) {
   return getLibraryItems(libraryId)

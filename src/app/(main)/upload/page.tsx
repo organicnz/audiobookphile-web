@@ -1,4 +1,4 @@
-import { getLibraries } from '@/lib/supabase-api'
+import { getLibraries } from '@/lib/api'
 import UploadClient from './UploadClient'
 
 export const dynamic = 'force-dynamic'

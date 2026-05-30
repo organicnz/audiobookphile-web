@@ -222,7 +222,8 @@ export async function upload(
     let uploadUrl = ''
     let providerPrefix = ''
     try {
-      const presignRes = await fetch('/api/upload/presign', {
+      const presignUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-presign` : '/api/upload/presign'
+      const presignRes = await fetch(presignUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -354,7 +355,9 @@ export async function upload(
     })),
   })
 
-  const response = await fetch('/api/upload', {
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-finalize` : '/api/upload'
+  
+  const response = await fetch(baseUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

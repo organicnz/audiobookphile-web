@@ -1,60 +1,6 @@
-// ============================================================================
-// ENUMS
-// ============================================================================
+import { AuthMethod } from "./auth"
+import { BookshelfView, LogLevel, PersonalizedShelfType, PlayMethod } from "./enums"
 
-import { AudibleRegion } from '@/lib/providerUtils'
-
-export enum LogLevel {
-  TRACE = 0,
-  DEBUG = 1,
-  INFO = 2,
-  WARN = 3,
-  ERROR = 4,
-  FATAL = 5,
-  NOTE = 6
-}
-
-export enum AuthMethod {
-  LOCAL = 'local',
-  OPENID = 'openid'
-}
-
-export enum BookshelfView {
-  STANDARD = 0, // Skeumorphic (original) design
-  DETAIL = 1, // Modern default design
-  AUTHOR = 2 // Books shown on author page
-}
-
-export enum PlayMethod {
-  DIRECT_PLAY = 0,
-  DIRECT_STREAM = 1,
-  TRANSCODE = 2,
-  LOCAL = 3
-}
-
-export enum PlayerState {
-  IDLE = 'IDLE',
-  LOADING = 'LOADING',
-  LOADED = 'LOADED',
-  PLAYING = 'PLAYING',
-  PAUSED = 'PAUSED',
-  FINISHED = 'FINISHED',
-  ERROR = 'ERROR'
-}
-
-// ============================================================================
-// ENTITY TYPES
-// ============================================================================
-
-export type EntityType = 'items' | 'series' | 'collections' | 'playlists' | 'authors'
-
-export type BookshelfEntity = LibraryItem | Series | Collection | Playlist | Author
-
-// ============================================================================
-// SERVER & SYSTEM
-// ============================================================================
-
-// Server status interface
 export interface ServerStatus {
   serverVersion: string
   language: string
@@ -66,7 +12,6 @@ export interface ServerStatus {
   app: string
 }
 
-// Server settings interface
 export interface ServerSettings {
   // Scanner settings
   scannerParseSubtitle: boolean
@@ -135,10 +80,6 @@ export interface ServerSettings {
   authOpenIDSubfolderForRedirectURLs?: string
 }
 
-// ============================================================================
-// FILE SYSTEM
-// ============================================================================
-
 export interface FileMetadata {
   filename: string
   ext: string
@@ -164,15 +105,6 @@ export interface DirectoryEntry {
   dirname: string
   level: number
 }
-
-export interface GetFilesystemPathsResponse {
-  directories: DirectoryEntry[]
-  posix: boolean
-}
-
-// ============================================================================
-// LIBRARIES
-// ============================================================================
 
 export interface LibrarySettings {
   coverAspectRatio: 0 | 1
@@ -205,24 +137,12 @@ export interface Library {
   folders?: LibraryFolder[]
 }
 
-export interface GetLibrariesResponse {
-  libraries: Library[]
-}
-
-export interface GetUsersResponse {
-  users: User[]
-}
-
 export interface LibraryFolder {
   id: string
   fullPath: string
   libraryId: string
   updatedAt: number
 }
-
-// ============================================================================
-// LIBRARY FILTER DATA
-// ============================================================================
 
 export interface LibraryFilterData {
   authors: { id: string; name: string }[]
@@ -234,10 +154,6 @@ export interface LibraryFilterData {
   languages: string[]
   publishedDecades: string[]
 }
-
-// ============================================================================
-// AUTHORS
-// ============================================================================
 
 export interface Author {
   id: string
@@ -252,48 +168,6 @@ export interface Author {
   libraryItems?: LibraryItem[]
   series?: Series[]
 }
-
-/** Payload for the `author_removed` socket event (full author JSON or `{ id, libraryId }`). */
-export interface AuthorRemovedPayload {
-  id: string
-  libraryId: string
-}
-
-/** Payload for the `item_removed` socket event. */
-export interface LibraryItemRemovedPayload {
-  id: string
-  libraryId: string
-}
-
-export interface AuthorQuickMatchPayload {
-  asin?: string
-  q?: string
-  region: AudibleRegion
-}
-
-export interface AuthorImagePayload {
-  url: string
-}
-
-export interface UpdateAuthorPayload {
-  name?: string
-  description?: string
-  asin?: string
-}
-
-export interface AuthorUpdateResponse {
-  updated: boolean
-  merged?: boolean
-  author: Author
-}
-
-export interface AuthorResponse {
-  author: Author
-}
-
-// ============================================================================
-// SERIES
-// ============================================================================
 
 export interface Series {
   id: string
@@ -326,10 +200,6 @@ export interface CollapsedSeries {
   seriesSequenceList?: string
 }
 
-// ============================================================================
-// COLLECTIONS
-// ============================================================================
-
 export interface Collection {
   id: string
   name: string
@@ -342,10 +212,6 @@ export interface Collection {
   createdAt?: number
   updatedAt?: number
 }
-
-// ============================================================================
-// PLAYLISTS
-// ============================================================================
 
 export interface PlaylistItem {
   libraryItemId: string
@@ -365,16 +231,6 @@ export interface Playlist {
   lastUpdate?: number
   createdAt?: number
 }
-
-/** Request body entry for playlist create and batch add/remove */
-export type PlaylistItemPayload = {
-  libraryItemId: string
-  episodeId?: string | null
-}
-
-// ============================================================================
-// METADATA
-// ============================================================================
 
 export interface BookMetadata {
   title?: string
@@ -458,10 +314,6 @@ export interface AudioMetaTags {
   tagMusicBrainzArtistId?: string
 }
 
-// ============================================================================
-// MEDIA FILES
-// ============================================================================
-
 export interface AudioFile {
   index: number
   ino: string
@@ -531,14 +383,6 @@ export interface EBookFile {
   updatedAt: number
 }
 
-// FFProbe data is a complex nested structure returned by ffprobe/ffmpeg
-// Using Record<string, unknown> to allow any JSON-serializable structure
-export type FFProbeData = Record<string, unknown>
-
-// ============================================================================
-// MEDIA
-// ============================================================================
-
 export interface BookMedia {
   id?: string
   libraryItemId?: string
@@ -572,10 +416,6 @@ export interface PodcastMedia {
   size?: number
   numEpisodes?: number
 }
-
-// ============================================================================
-// PODCAST EPISODES
-// ============================================================================
 
 export interface PodcastEpisode {
   libraryItemId: string
@@ -636,10 +476,6 @@ export interface PodcastEpisodeDownload {
   guid?: string
 }
 
-// ============================================================================
-// LIBRARY ITEMS
-// ============================================================================
-
 export interface LibraryItem {
   id: string
   ino: string
@@ -691,30 +527,6 @@ export interface LibraryItemQueryParams {
   episode?: string // Episode ID for progress
 }
 
-export interface GetLibraryItemsResponse {
-  results: LibraryItem[]
-  total?: number
-  limit: number
-  page: number
-  sortBy?: string
-  sortDesc: boolean
-  filterBy?: string
-  mediaType: string
-  minified: boolean
-  collapseseries: boolean
-  include: string
-  offset: number
-}
-
-export interface UploadCoverResponse {
-  success: boolean
-  cover: string
-}
-
-// ============================================================================
-// PROGRESS & BOOKMARKS
-// ============================================================================
-
 export interface MediaProgress {
   id: string
   libraryItemId: string
@@ -745,10 +557,6 @@ export interface AudioBookmark {
   time: number
   createdAt: number
 }
-
-// ============================================================================
-// RSS FEEDS & SHARES
-// ============================================================================
 
 export interface RssFeedMeta {
   author: string
@@ -781,10 +589,6 @@ export interface RssFeed {
   updatedAt: number
 }
 
-export interface GetRssFeedsResponse {
-  feeds: RssFeed[]
-}
-
 export interface MediaItemShare {
   id: string
   mediaItemId: string
@@ -797,121 +601,12 @@ export interface MediaItemShare {
   isDownloadable: boolean
 }
 
-/**
- * Response from the public share endpoint GET /public/share/:slug
- * Includes the playback session with audio tracks for the shared item
- */
-export interface MediaItemShareResponse extends MediaItemShare {
-  playbackSession: PlaybackSession
-}
-
-export interface OpenMediaItemSharePayload {
-  slug: string
-  mediaItemType: 'book' | 'podcastEpisode'
-  mediaItemId: string
-  /** 0 for no expiration */
-  expiresAt: number
-  isDownloadable?: boolean
-}
-
-// ============================================================================
-// USERS & AUTHENTICATION
-// ============================================================================
-
-export interface UserPermissions {
-  download: boolean
-  update: boolean
-  delete: boolean
-  upload: boolean
-  createEreader: boolean
-  accessAllLibraries: boolean
-  accessAllTags: boolean
-  accessExplicitContent: boolean
-  /** Whether tags are deny list (true) or allow list (false) */
-  selectedTagsNotAccessible: boolean
-}
-
-export interface User {
-  id: string
-  username: string
-  email?: string
-  type: 'root' | 'admin' | 'user' | 'guest'
-  /** Legacy non-expiring token (empty string for root users when hidden) */
-  token: string
-  isOldToken?: boolean
-  mediaProgress: MediaProgress[]
-  /** Series IDs to hide from continue listening */
-  seriesHideFromContinueListening: string[]
-  bookmarks: AudioBookmark[]
-  isActive: boolean
-  isLocked: boolean
-  /** null if never seen */
-  lastSeen?: number
-  createdAt: number
-  permissions: UserPermissions
-  /** Library IDs accessible to user (empty if accessAllLibraries is true) */
-  librariesAccessible: string[]
-  /** Tags selected/filtered for user (empty if accessAllTags is true) */
-  itemTagsSelected: string[]
-  hasOpenIDLink: boolean
-  /** Latest playback session (included when include=latestSession) */
-  latestSession?: PlaybackSession
-}
-
 export interface EReaderDevice {
   name: string
   email: string
   availabilityOption: 'adminOrUp' | 'userOrUp' | 'guestOrUp' | 'specificUsers'
   /** User IDs with access (only when availabilityOption is 'specificUsers') */
   users?: string[]
-}
-
-export interface UserLoginResponse {
-  user: User
-  userDefaultLibraryId?: string
-  serverSettings: ServerSettings
-  ereaderDevices: EReaderDevice[]
-  /** e.g., 'local', 'docker' */
-  Source: string
-}
-
-export interface ApiKey {
-  createdAt: string
-  createdByUser: {
-    id: string
-    username: string
-    type: string
-  }
-  createdByUserId: string
-  description: string | null
-  expiresAt: string | null // e.g. 2026-01-23T00:56:47.402Z
-  id: string
-  isActive: boolean
-  lastUsedAt: string | null
-  name: string
-  updatedAt: string
-  user: {
-    id: string
-    username: string
-    type: string
-  }
-  userId: string
-  apiKey?: string // Only returned when creating a new API key
-}
-
-export interface GetApiKeysResponse {
-  apiKeys: ApiKey[]
-}
-
-export interface CreateApiKeyPayload {
-  name: string
-  expiresIn?: number
-  isActive: boolean
-  userId: string
-}
-
-export interface CreateUpdateApiKeyResponse {
-  apiKey: ApiKey
 }
 
 export interface CustomMetadataProvider {
@@ -923,25 +618,6 @@ export interface CustomMetadataProvider {
   createdAt: string
   updatedAt: string
 }
-
-export interface GetCustomMetadataProvidersResponse {
-  providers: CustomMetadataProvider[]
-}
-
-export interface CreateCustomMetadataProviderPayload {
-  name: string
-  url: string
-  mediaType: 'book' | 'podcast'
-  authHeaderValue?: string
-}
-
-export interface CreateCustomMetadataProviderResponse {
-  provider: CustomMetadataProvider
-}
-
-// ============================================================================
-// BACKUPS
-// ============================================================================
 
 export interface Backup {
   id: string
@@ -955,22 +631,6 @@ export interface Backup {
   createdAt: number
   serverVersion: string | null
 }
-
-export interface GetBackupsResponse {
-  backupLocation: string
-  backupPathEnvSet: boolean
-  backups: Backup[]
-}
-
-export interface MutateBackupsResponse {
-  backups: Backup[]
-}
-
-// ============================================================================
-// SHELVES
-// ============================================================================
-
-export type PersonalizedShelfType = 'book' | 'podcast' | 'episode' | 'series' | 'authors'
 
 export interface PersonalizedShelf {
   id:
@@ -992,82 +652,12 @@ export interface PersonalizedShelf {
   total: number
 }
 
-// ============================================================================
-// SEARCH
-// ============================================================================
-
-export interface SearchLibraryResponse {
-  book: Array<{ libraryItem: BookLibraryItem }>
-  podcast: Array<{ libraryItem: PodcastLibraryItem }>
-  narrators: Array<{ name: string; numBooks: number }>
-  tags: Array<{ name: string; numItems: number }>
-  genres: Array<{ name: string; numItems: number }>
-  series: Array<{
-    series: Series
-    books: LibraryItem[]
-  }>
-  authors: Author[]
-  episodes?: Array<{ libraryItem: PodcastLibraryItem }>
-  /** Client-side filtered collections (not from server search API) */
-  collections?: Collection[]
-  /** Client-side filtered playlists (not from server search API) */
-  playlists?: Playlist[]
-}
-
-// ============================================================================
-// METADATA PROVIDERS
-// ============================================================================
-
 export interface MetadataProvider {
   /** Provider identifier (e.g. 'google', 'audible', 'itunes') */
   value: string
   /** Display name (e.g. 'Google Books', 'Audible.com') */
   text: string
 }
-
-export interface MetadataProvidersResponse {
-  providers: {
-    books: MetadataProvider[]
-    booksCovers: MetadataProvider[]
-    podcasts: MetadataProvider[]
-  }
-}
-
-// ============================================================================
-// TYPE UTILITIES
-// ============================================================================
-
-export type MediaType<T extends LibraryItem> = T['mediaType']
-
-export type MediaByType<T extends LibraryItem['mediaType']> = T extends 'book' ? BookMedia : T extends 'podcast' ? PodcastMedia : never
-
-export function isBookMedia(media: BookMedia | PodcastMedia): media is BookMedia {
-  return 'audioFiles' in media || 'numTracks' in media
-}
-
-export function isPodcastMedia(media: BookMedia | PodcastMedia): media is PodcastMedia {
-  return 'episodes' in media || 'numEpisodes' in media
-}
-
-export function isBookMetadata(metadata: BookMetadata | PodcastMetadata): metadata is BookMetadata {
-  return 'authors' in metadata || 'authorName' in metadata
-}
-
-export function isPodcastMetadata(metadata: BookMetadata | PodcastMetadata): metadata is PodcastMetadata {
-  return 'author' in metadata && !('authors' in metadata)
-}
-
-export function isBookLibraryItem(item: LibraryItem): item is BookLibraryItem {
-  return item.mediaType === 'book'
-}
-
-export function isPodcastLibraryItem(item: LibraryItem): item is PodcastLibraryItem {
-  return item.mediaType === 'podcast'
-}
-
-// ============================================================================
-// SEARCH & MATCH TYPES
-// ============================================================================
 
 export interface BookSearchResult {
   title?: string
@@ -1116,47 +706,6 @@ export interface PodcastSearchResult {
   id?: string | number
 }
 
-export type MatchResult = BookSearchResult | PodcastSearchResult
-
-export interface UpdateLibraryItemMediaPayload {
-  metadata?: {
-    title?: string
-    subtitle?: string
-    authors?: Author[]
-    narrators?: string[]
-    series?: Series[]
-    genres?: string[]
-    tags?: string[]
-    publisher?: string
-    publishedYear?: string
-    publishedDate?: string
-    description?: string
-    language?: string
-    explicit?: boolean
-    abridged?: boolean
-    isbn?: string
-    asin?: string
-    // Podcast-specific fields
-    feedUrl?: string
-    itunesPageUrl?: string
-    itunesId?: string | number
-    releaseDate?: string
-    [key: string]: unknown
-  }
-  tags?: string[]
-  url?: string
-  cover?: string
-}
-
-export interface UpdateLibraryItemMediaResponse {
-  updated: boolean
-  libraryItem?: LibraryItem
-}
-
-// ============================================================================
-// TASKS & PROGRESS TRACKING
-// ============================================================================
-
 export interface Task {
   id: string
   action: string // 'embed-metadata' | 'encode-m4b'
@@ -1186,92 +735,11 @@ export interface MetadataEmbedQueueUpdate {
   queued: boolean
 }
 
-export interface TrackStartedPayload {
-  libraryItemId: string
-  ino: string
-}
-
-export interface TrackFinishedPayload {
-  libraryItemId: string
-  ino: string
-}
-
-export interface TrackProgressPayload {
-  libraryItemId: string
-  ino: string
-  progress: number
-}
-
-export interface TaskProgressPayload {
-  libraryItemId: string
-  progress: number
-}
-
-export interface TasksResponse {
-  tasks: Task[]
-  queuedTaskData?: {
-    embedMetadata?: Array<{ libraryItemId: string }>
-  }
-}
-
-export interface LibraryTaskPayload {
-  libraryId: string
-}
-
-export interface GetNarratorsResponse {
-  narrators: NarratorObject[]
-}
-
 export interface NarratorObject {
   /** this is the name base64 encoded for use in filters */
   id: string
   name: string
   numBooks: number
-}
-
-export interface GetAuthorsResponse {
-  // When paginated (limit/page query params), uses 'results' instead of 'authors'
-  authors?: Author[]
-  results?: Author[]
-  total?: number
-  limit?: number
-  page?: number
-  sortBy?: string
-  sortDesc?: boolean
-  filterBy?: string
-  minified?: boolean
-  include?: string
-}
-
-export interface GetSeriesResponse {
-  results: Series[]
-  total: number
-  limit: number
-  page: number
-  sortDesc: boolean
-  minified: boolean
-  include: string
-}
-
-export interface GetCollectionsResponse {
-  results: Collection[]
-  total: number
-  limit: number
-  page: number
-  sortDesc: boolean
-  minified: boolean
-  include: string
-}
-
-export interface GetPlaylistsResponse {
-  results: Playlist[]
-  total: number
-  limit: number
-  page: number
-}
-
-export type SaveLibraryOrderApiResponse = {
-  libraries: Library[]
 }
 
 /**
@@ -1349,22 +817,6 @@ export interface PlaybackSession {
   coverAspectRatio?: 0 | 1
 }
 
-export interface GetListeningSessionsResponse {
-  total: number
-  numPages: number
-  page: number
-  itemsPerPage: number
-  sessions: PlaybackSession[]
-  userId?: string
-}
-
-export interface GetOpenListeningSessionsResponse {
-  sessions: PlaybackSession[]
-  shareSessions: PlaybackSession[]
-  /** Cover aspect ratio from library settings (included in share sessions) */
-  coverAspectRatio?: 0 | 1
-}
-
 /**
  * Payload for starting a playback session
  */
@@ -1372,17 +824,6 @@ export interface StartSessionDeviceInfo {
   clientName: string
   deviceId: string
 }
-export interface StartSessionPayload {
-  deviceInfo: StartSessionDeviceInfo
-  supportedMimeTypes: string[]
-  mediaPlayer: 'html5' | 'chromecast'
-  forceTranscode: boolean
-  forceDirectPlay: boolean
-}
-
-// ============================================================================
-// LOGGER DATA
-// ============================================================================
 
 export interface LoggerDataLog {
   level: number
@@ -1391,14 +832,6 @@ export interface LoggerDataLog {
   source: string // e.g. Server.js:143
   timestamp: string // e.g. 2026-01-20 15:37:42.926
 }
-
-export interface GetLoggerDataResponse {
-  currentDailyLogs: LoggerDataLog[]
-}
-
-// ============================================================================
-// PODCAST RSS FEEDS
-// ============================================================================
 
 export interface RssPodcastChapter {
   id: number
@@ -1449,24 +882,10 @@ export interface RssPodcast {
   numEpisodes?: number
 }
 
-export interface FetchPodcastFeedResponse {
-  podcast: RssPodcast
-}
+export type BookshelfEntity = LibraryItem | Series | Collection | Playlist | Author
 
-// ============================================================================
-// OPEN RSS FEED
-// ============================================================================
+export type FFProbeData = Record<string, unknown>
 
-export interface OpenRssFeedPayload {
-  serverAddress: string
-  slug: string
-  metadataDetails: {
-    preventIndexing: boolean
-    ownerName: string
-    ownerEmail: string
-  }
-}
+export type MediaByType<T extends LibraryItem['mediaType']> = T extends 'book' ? BookMedia : T extends 'podcast' ? PodcastMedia : never
 
-export interface OpenRssFeedResponse {
-  feed: RssFeed
-}
+export type MatchResult = BookSearchResult | PodcastSearchResult

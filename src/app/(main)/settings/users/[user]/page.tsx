@@ -1,5 +1,5 @@
 import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import { createClient } from '@/utils/supabase/server'
+import { getUsers } from '@/lib/api'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import UserClient from './UserClient'
@@ -10,8 +10,8 @@ export default async function UserPage({ params }: { params: Promise<{ user: str
   const t = await getTypeSafeTranslations()
   const { user: userId } = await params
 
-  const supabase = await createClient()
-  const { data: user } = await supabase.from('profiles').select('*').eq('id', userId).single()
+  const { users } = await getUsers()
+  const user = users.find((u: any) => u.id === userId)
 
   if (!user) {
     return null

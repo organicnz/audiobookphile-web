@@ -1,5 +1,5 @@
 import { LibraryProvider } from '@/contexts/LibraryContext'
-import { getLibraries } from '@/lib/supabase-api'
+import { getLibraries } from '@/lib/api'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import AppBar from '../../AppBar'

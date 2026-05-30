@@ -1,4 +1,4 @@
-import { getCurrentUser, getLibraryItem } from '@/lib/supabase-api';
+import { getCurrentUser, getLibraryItem } from '@/lib/api';
 
 export default async function ChaptersPage({ params }: { params: Promise<{ item: string; library: string }> }) {
   const { item: itemId } = await params

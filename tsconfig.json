@@ -37,6 +37,7 @@
   ],
   "exclude": [
     "node_modules",
+    "supabase/functions",
     "check_audio_files.ts",
     "inspect_schema.ts",
     "scripts"

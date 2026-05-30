@@ -1,34 +1,27 @@
 'use server'
 
-import { getLibraryItem, updateMediaProgress } from '@/lib/supabase-api'
+import { getLibraryItem } from '@/lib/api'
 import type { UpdateLibraryItemMediaPayload } from '@/types/api'
-import { createClient } from '@/utils/supabase/server'
-import { createServiceRoleClient } from '@/utils/supabase/service-role'
+import { apiRequest } from '@/lib/api'
 import { revalidatePath } from 'next/cache'
 
 export async function toggleFinishedAction(
   libraryItemId: string,
   params: { isFinished: boolean; episodeId?: string },
 ) {
-  await updateMediaProgress(libraryItemId, {
-    currentTime: 0,
-    isFinished: params.isFinished,
-    episodeId: params.episodeId,
+  return await apiRequest(`/api/me/progress/${libraryItemId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ isFinished: params.isFinished, episodeId: params.episodeId })
   })
 }
 
 export async function batchUpdateMediaFinishedAction(
   payload: { libraryItemId: string; episodeId?: string; isFinished: boolean }[],
 ) {
-  await Promise.all(
-    payload.map((item) =>
-      updateMediaProgress(item.libraryItemId, {
-        currentTime: 0,
-        isFinished: item.isFinished,
-        episodeId: item.episodeId,
-      }),
-    ),
-  )
+  return await apiRequest('/api/me/progress-batch', {
+    method: 'PATCH',
+    body: JSON.stringify({ items: payload })
+  })
 }
 
 /**
@@ -47,31 +40,20 @@ export async function updateLibraryItemMediaAction(
  * Rescan a library item — re-fetches metadata and cover from providers.
  */
 export async function rescanLibraryItemAction(libraryItemId: string) {
-  const db = createServiceRoleClient()
-  const { data: item } = await db
-    .from('library_items')
-    .select('title, author_names_first_last')
-    .eq('id', libraryItemId)
-    .single()
-
-  if (!item?.title) return { result: 'UPTODATE' }
-
+  // This is a complex DB/Storage flow that we can migrate to an Edge Function
+  // For now, let's just trigger a re-fetch and cover update
   const { fetchBookCover } = await import('@/lib/coverFetch')
-  const author = item.author_names_first_last?.split('/')[0]?.trim() || undefined
-  const fetched = await fetchBookCover(item.title, author)
+  const { autoFetchCoverAction } = await import('@/app/actions/coverActions')
+  
+  // We'd need to fetch the item title first.
+  const item = await getLibraryItem(libraryItemId)
+  if (!item?.media?.metadata?.title) return { result: 'UPTODATE' }
+  
+  const title = item.media.metadata.title
+  const author = (item.media.metadata as any).authorName || (item.media.metadata as any).author
 
-  if (fetched) {
-    const storagePath = `${libraryItemId}/cover.${fetched.extension}`
-    const { error } = await db.storage
-      .from('covers')
-      .upload(storagePath, fetched.buffer, { upsert: true, contentType: fetched.contentType })
-    if (!error) {
-      await db.from('library_items').update({ cover_path: storagePath }).eq('id', libraryItemId)
-      return { result: 'UPDATED' }
-    }
-  }
-
-  return { result: 'UPTODATE' }
+  await autoFetchCoverAction(libraryItemId, title, author)
+  return { result: 'UPDATED' }
 }
 
 export async function sendEbookToDeviceAction(_payload: { libraryItemId: string; deviceName: string }) {
@@ -84,80 +66,26 @@ export async function sendEbookToDeviceAction(_payload: { libraryItemId: string;
  * in-progress items in that series as finished.
  */
 export async function removeSeriesFromContinueListeningAction(seriesId: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
-
-  // Get all library items in this series
-  const { data: bookSeries } = await supabase
-    .from('book_series')
-    .select('book_id, books!book_id(library_items!media_id(id))')
-    .eq('series_id', seriesId)
-
-  if (!bookSeries?.length) return null
-
-  const itemIds = bookSeries
-    .flatMap((bs: any) => bs.books?.library_items || [])
-    .map((li: any) => li.id)
-    .filter(Boolean)
-
-  if (!itemIds.length) return null
-
-  await Promise.all(
-    itemIds.map((id: string) =>
-      updateMediaProgress(id, { currentTime: 0, isFinished: true })
-    )
-  )
-  return null
+  return await apiRequest(`/api/me/progress/series/${seriesId}`, {
+    method: 'DELETE'
+  })
 }
 
 /**
  * Remove a single item from Continue Listening by marking it finished.
  */
 export async function removeFromContinueListeningAction(progressId: string) {
-  const db = createServiceRoleClient()
-  await db
-    .from('media_progress')
-    .update({ is_finished: true })
-    .eq('id', progressId)
-  return null
+  return await apiRequest(`/api/me/progress/id/${progressId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ isFinished: true })
+  })
 }
 
 /**
  * Delete a library item and its associated book, audio files from storage.
  */
 export async function deleteLibraryItemAction(libraryItemId: string, _hardDelete: boolean) {
-  const db = createServiceRoleClient()
-
-  // Get the book ID before deleting
-  const { data: item } = await db
-    .from('library_items')
-    .select('media_id')
-    .eq('id', libraryItemId)
-    .single()
-
-  // Delete storage files
-  const { data: storageFiles } = await db.storage
-    .from('audio-files')
-    .list(item?.media_id || libraryItemId)
-
-  if (storageFiles?.length) {
-    const paths = storageFiles.map((f) => `${item?.media_id || libraryItemId}/${f.name}`)
-    await db.storage.from('audio-files').remove(paths)
-  }
-
-  // Delete cover
-  await db.storage.from('covers').remove([`${libraryItemId}/cover.jpg`])
-
-  // Delete DB records (cascade handles related tables if FK constraints exist)
-  if (item?.media_id) {
-    await db.from('book_authors').delete().eq('book_id', item.media_id)
-    await db.from('book_series').delete().eq('book_id', item.media_id)
-    await db.from('books').delete().eq('id', item.media_id)
-  }
-  await db.from('media_progress').delete().eq('library_item_id', libraryItemId)
-  await db.from('library_items').delete().eq('id', libraryItemId)
-
+  await apiRequest(`/api/items/${libraryItemId}`, { method: 'DELETE' })
   revalidatePath('/library')
   return null
 }
