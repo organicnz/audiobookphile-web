@@ -15,12 +15,8 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
     ],
     rewrites: async () => [
       {
-        source: '/login',
-        destination: '/api/login',
-      },
-      {
-        source: '/auth/refresh',
-        destination: '/api/auth/refresh',
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api/:path*`,
       },
     ],
     headers: async () => [
