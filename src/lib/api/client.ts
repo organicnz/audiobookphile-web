@@ -7,6 +7,9 @@ import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
 
 
 export function getServerBaseUrl() {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+
   let host = process.env.HOST || 'localhost'
   if (host === '0.0.0.0') {
     // Convert "all interfaces" address to localhost for internal API calls
