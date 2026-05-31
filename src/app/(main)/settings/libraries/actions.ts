@@ -6,6 +6,7 @@ import {
   updateLibrary as apiUpdateLibrary,
   deleteLibrary as apiDeleteLibrary
 } from '@/lib/api'
+import { matchAll as apiMatchAll } from '@/lib/api/items'
 import { revalidatePath } from 'next/cache'
 
 export async function createLibrary(newLibrary: Library): Promise<Library> {
@@ -54,8 +55,12 @@ export async function requestScanLibrary(_libraryId: string): Promise<void> {
   console.warn('[libraries/actions] requestScanLibrary is not available in the Supabase-backed version')
 }
 
-export async function matchAll(_libraryId: string): Promise<void> {
-  console.warn('[libraries/actions] matchAll is not available in the Edge API version yet')
+export async function matchAll(libraryId: string): Promise<void> {
+  try {
+    await apiMatchAll(libraryId)
+  } catch (error: any) {
+    throw new Error(error.message)
+  }
 }
 
 export async function getFilesystemPaths(_path: string, _level: number): Promise<GetFilesystemPathsResponse> {
