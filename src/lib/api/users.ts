@@ -50,7 +50,7 @@ export const getData = cache(async <T extends Promise<unknown>[]>(...promises: T
 export const getCurrentUser = cache(async (): Promise<UserLoginResponse> => {
   return apiRequest<UserLoginResponse>('/api/authorize', {
     method: 'POST',
-    next: { tags: ['current-user'] }
+    cache: 'no-store'
   })
 })
 
