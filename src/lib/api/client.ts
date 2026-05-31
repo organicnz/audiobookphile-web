@@ -7,6 +7,14 @@ import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
 
 
 export function getServerBaseUrl() {
+  const isServer = typeof window === 'undefined'
+  
+  // On the server, bypass Vercel's Edge Router (loopback fetch) to prevent it from dropping
+  // Authorization headers and throwing 401 Unauthorized loops.
+  if (isServer && process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1`
+  }
+
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
 
