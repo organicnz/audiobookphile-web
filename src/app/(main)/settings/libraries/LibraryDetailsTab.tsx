@@ -7,7 +7,6 @@ import TextInput from '@/components/ui/TextInput'
 import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { Folder, FolderPlus, X } from 'lucide-react'
 import { LibraryFormData } from './LibraryEditModal'
-import LibraryFolderChooser from './LibraryFolderChooser'
 
 const mediaTypeItems: DropdownItem[] = [
   { text: 'Books', value: 'book' },
@@ -19,16 +18,12 @@ interface LibraryDetailsTabProps {
   isEditing: boolean
   providerItems: DropdownItem[]
   newFolderPath: string
-  showFolderChooser: boolean
   onFormDataChange: (updater: (prev: LibraryFormData) => LibraryFormData) => void
   onMediaTypeChange: (value: string | number) => void
   onNewFolderPathChange: (value: string) => void
   onCommitNewFolder: () => void
   onNewFolderKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void
   onRemoveFolder: (index: number) => void
-  onFolderSelected: (folderPath: string) => void
-  onShowFolderChooser: () => void
-  onHideFolderChooser: () => void
 }
 
 export default function LibraryDetailsTab({
@@ -36,16 +31,12 @@ export default function LibraryDetailsTab({
   isEditing,
   providerItems,
   newFolderPath,
-  showFolderChooser,
   onFormDataChange,
   onMediaTypeChange,
   onNewFolderPathChange,
   onCommitNewFolder,
   onNewFolderKeyDown,
-  onRemoveFolder,
-  onFolderSelected,
-  onShowFolderChooser,
-  onHideFolderChooser
+  onRemoveFolder
 }: LibraryDetailsTabProps) {
   const t = useTypeSafeTranslations()
 
@@ -89,7 +80,7 @@ export default function LibraryDetailsTab({
 
       {/* Folders Section */}
       <div className="mt-8">
-        <h3 className="text-white/40 mb-3 text-[10px] font-black uppercase tracking-widest">{t('LabelFolders')}</h3>
+        <h3 className="text-white/40 mb-3 text-[10px] font-black uppercase tracking-widest">Storage Bucket Prefixes</h3>
 
         <div className="space-y-3">
           {/* Committed folder paths */}
@@ -117,7 +108,7 @@ export default function LibraryDetailsTab({
             </div>
             <TextInput
               value={newFolderPath}
-              placeholder={t('PlaceholderNewFolderPath')}
+              placeholder="e.g., books/sci-fi/"
               onChange={onNewFolderPathChange}
               onBlur={onCommitNewFolder}
               onKeyDown={onNewFolderKeyDown}
@@ -126,15 +117,7 @@ export default function LibraryDetailsTab({
             />
           </div>
         </div>
-
-        {/* Browse for Folder button */}
-        <Btn color="bg-primary" className="mt-4 w-full shadow-lg shadow-primary/10 uppercase font-black tracking-widest text-[11px] h-11" onClick={onShowFolderChooser}>
-          {t('ButtonBrowseForFolder')}
-        </Btn>
       </div>
-
-      {/* Folder Chooser Overlay */}
-      {showFolderChooser && <LibraryFolderChooser paths={formData.folders.map((f) => f.fullPath)} onSelect={onFolderSelected} onBack={onHideFolderChooser} />}
     </>
   )
 }

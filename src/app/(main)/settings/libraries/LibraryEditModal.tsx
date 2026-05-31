@@ -69,7 +69,6 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
   const { bookProviders, podcastProviders, ensureProvidersLoaded } = useMetadata()
   const [formData, setFormData] = useState<LibraryFormData>(getInitialFormData(library))
   const [newFolderPath, setNewFolderPath] = useState('')
-  const [showFolderChooser, setShowFolderChooser] = useState(false)
   const [selectedTab, setSelectedTab] = useState('details')
   const initialFormDataRef = useRef<string>('')
 
@@ -98,7 +97,6 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
       initialFormDataRef.current = JSON.stringify(initial)
       setFormData(initial)
       setNewFolderPath('')
-      setShowFolderChooser(false)
       setSelectedTab('details')
     }
   }, [isOpen, library])
@@ -165,16 +163,6 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
     }
   }
 
-  const handleFolderSelected = (folderPath: string) => {
-    const trimmed = folderPath.trim()
-    if (trimmed && !formData.folders.some((f) => f.fullPath.trim() === trimmed)) {
-      setFormData((prev) => ({
-        ...prev,
-        folders: [...prev.folders, { fullPath: trimmed }]
-      }))
-    }
-    setShowFolderChooser(false)
-  }
 
   // Check if form is valid
   const isValid = useMemo(() => {
@@ -233,16 +221,12 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
           isEditing={isEditing}
           providerItems={providerItems}
           newFolderPath={newFolderPath}
-          showFolderChooser={showFolderChooser}
           onFormDataChange={setFormData}
           onMediaTypeChange={handleMediaTypeChange}
           onNewFolderPathChange={setNewFolderPath}
           onCommitNewFolder={commitNewFolder}
           onNewFolderKeyDown={handleNewFolderKeyDown}
           onRemoveFolder={handleRemoveFolder}
-          onFolderSelected={handleFolderSelected}
-          onShowFolderChooser={() => setShowFolderChooser(true)}
-          onHideFolderChooser={() => setShowFolderChooser(false)}
         />
       )}
       {selectedTab === 'settings' && (
