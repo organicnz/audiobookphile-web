@@ -216,7 +216,10 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
         }
       }
 
+      console.log(`[apiRequest] Endpoint: ${endpoint}, accessToken found? ${!!accessToken}`)
+
       if (!accessToken) {
+        console.error(`[apiRequest] Throwing UnauthorizedError for ${endpoint} because accessToken is null`)
         throw new UnauthorizedError('No authentication token found')
       }
 
@@ -238,6 +241,7 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
     }
 
     if (!response.ok) {
+      console.error(`[apiRequest] Failed for ${url}: status ${response.status}`)
       if (response.status === 401) {
         throw new UnauthorizedError('Unauthorized')
       }
