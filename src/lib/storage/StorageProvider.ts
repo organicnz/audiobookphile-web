@@ -34,8 +34,8 @@ export class B2S3StorageProvider implements StorageProvider {
         accessKeyId: process.env.B2_KEY_ID!,
         secretAccessKey: process.env.B2_APP_KEY!,
       },
-      // B2 sometimes requires path style for better compatibility depending on the endpoint setup
-      forcePathStyle: false,
+      // B2 requires path style for restricted application keys
+      forcePathStyle: true,
     })
   }
 
