@@ -53,7 +53,7 @@ export class StorageRouter implements StorageProvider {
   private supabaseProvider: SupabaseStorageProvider;
 
   constructor(supabase: SupabaseClient) {
-    this.supabaseProvider = new SupabaseStorageProvider(supabase, 'audio');
+    this.supabaseProvider = new SupabaseStorageProvider(supabase, 'audio-files');
     if (process.env.B2_ENDPOINT && process.env.B2_BUCKET_NAME && process.env.B2_APP_KEY) {
       this.b2Provider = new B2S3StorageProvider();
     }
