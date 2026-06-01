@@ -4,9 +4,10 @@ import { getStorageProvider } from '@/lib/storage/StorageProvider'
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -17,7 +18,7 @@ export async function GET(
     const { data: item, error: itemError } = await supabase
       .from('library_items')
       .select('*, books(*)')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (itemError || !item) {

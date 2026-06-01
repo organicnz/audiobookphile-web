@@ -4,9 +4,10 @@ import { getStorageProvider } from '@/lib/storage/StorageProvider'
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string; fileId: string } }
+  { params }: { params: Promise<{ id: string; fileId: string }> }
 ) {
   try {
+    const { id, fileId } = await params
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -17,7 +18,7 @@ export async function GET(
     const { data: item, error: itemError } = await supabase
       .from('library_items')
       .select('*, books(*)')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (itemError || !item) {
@@ -26,7 +27,7 @@ export async function GET(
 
     const book = Array.isArray(item.books) ? item.books[0] : item.books
     const audioFiles = book?.audio_files || []
-    const file = audioFiles.find((f: any) => f.ino === params.fileId || f.id === params.fileId)
+    const file = audioFiles.find((f: any) => f.ino === fileId || f.id === fileId)
 
     if (!file) {
       return NextResponse.json({ error: 'File not found' }, { status: 404 })
