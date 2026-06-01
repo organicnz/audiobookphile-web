@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "cy:open": "cypress open",
     "cy:comp": "cypress open --component --browser chrome",
     "test": "cypress run --component --browser chrome",
