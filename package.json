@@ -4,6 +4,7 @@
   "private": true,
   "packageManager": "bun@1.3.9",
   "scripts": {
+    "build": "echo \"No build required for Supabase backend\"",
     "start": "supabase functions serve",
     "deploy": "supabase functions deploy"
   },
