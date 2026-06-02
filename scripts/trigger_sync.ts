@@ -6,8 +6,8 @@ import readline from 'readline'
 const envPath = path.resolve(process.cwd(), ".env.local")
 dotenv.config({ path: envPath })
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const supabase = createClient(supabaseUrl, anonKey)
 
 const rl = readline.createInterface({

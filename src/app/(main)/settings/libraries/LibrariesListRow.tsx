@@ -1,0 +1,97 @@
+'use client'
+
+import Btn from '@/components/ui/Btn'
+import ContextMenuDropdown, { ContextMenuDropdownItem } from '@/components/ui/ContextMenuDropdown'
+import LibraryIcon from '@/components/ui/LibraryIcon'
+import LoadingSpinner from '@/components/widgets/LoadingSpinner'
+import { useTasks } from '@/contexts/TasksContext'
+import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { Library } from '@/types/api'
+import Link from 'next/link'
+import { useCallback, useMemo } from 'react'
+import { GripVertical } from 'lucide-react'
+import { matchAll, requestScanLibrary } from './actions'
+
+interface LibrariesListRowProps {
+  item: Library
+  handleDeleteLibrary: (library: Library) => void
+  handleEditLibrary: (library: Library) => void
+}
+
+export default function LibrariesListRow({ item, handleDeleteLibrary, handleEditLibrary }: LibrariesListRowProps) {
+  const t = useTypeSafeTranslations()
+  const { getTasksByLibraryId } = useTasks()
+
+  const libraryTasks = useMemo(() => getTasksByLibraryId(item.id), [getTasksByLibraryId, item.id])
+
+  const isLibraryTaskRunning = useMemo(() => {
+    return libraryTasks.find((task) => (task.action === 'library-scan' || task.action === 'library-match-all') && !task.isFinished)
+  }, [libraryTasks])
+
+  const contextMenuItems: ContextMenuDropdownItem[] = [
+    { text: t('ButtonEdit'), action: 'edit' },
+    { text: t('ButtonScan'), action: 'scan' },
+    { text: t('ButtonDelete'), action: 'delete' }
+  ]
+
+  if (item.mediaType === 'book') {
+    contextMenuItems.splice(2, 0, { text: t('ButtonMatchBooks'), action: 'matchBooks' })
+  }
+
+  const handleScanLibrary = useCallback(() => {
+    try {
+      requestScanLibrary(item.id)
+    } catch (error) {
+      console.error('Failed to start scan', error)
+    }
+  }, [item.id])
+
+  const handleMatchBooks = useCallback(() => {
+    try {
+      matchAll(item.id)
+    } catch (error) {
+      console.error('Failed to start matching', error)
+    }
+  }, [item.id])
+
+  const handleContextMenuActions = useCallback(
+    (params: { action: string; data?: Record<string, string> }) => {
+      switch (params.action) {
+        case 'edit':
+          handleEditLibrary(item)
+          break
+        case 'delete':
+          handleDeleteLibrary(item)
+          break
+        case 'scan':
+          handleScanLibrary()
+          break
+        case 'matchBooks':
+          handleMatchBooks()
+          break
+      }
+    },
+    [handleDeleteLibrary, handleEditLibrary, handleMatchBooks, handleScanLibrary, item]
+  )
+
+  return (
+    <div className="hover:bg-white/5 border-white/5 border-b text-foreground/50 hover:text-foreground flex items-center gap-4 px-4 py-2 transition-all duration-200">
+      {isLibraryTaskRunning ? <LoadingSpinner size="la-sm" /> : <LibraryIcon icon={item.icon} className="opacity-80" />}
+      <Link className="text-foreground text-[13px] font-bold py-2 hover:text-primary transition-colors" href={`/library/${item.id}`}>
+        {item.name}
+      </Link>
+      <div className="grow" />
+      {!isLibraryTaskRunning && (
+        <div className="flex items-center gap-2">
+          <Btn color="bg-white/5" className="h-auto px-4 py-1.5 text-[11px] font-black uppercase tracking-widest border border-white/10" size="small" onClick={handleScanLibrary} disabled={isLibraryTaskRunning}>
+            {t('ButtonScan')}
+          </Btn>
+          <ContextMenuDropdown usePortal borderless size="small" items={contextMenuItems} onAction={handleContextMenuActions} />
+        </div>
+      )}
+      <div className="drag-handle cursor-grab active:cursor-grabbing p-1 hover:bg-white/10 rounded-md transition-colors">
+        <GripVertical size={18} className="opacity-30" />
+      </div>
+    </div>
+  )
+}
