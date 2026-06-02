@@ -60,7 +60,42 @@ async function fetchFromGoogleBooks(title, author) {
   } catch { return null }
 }
 
+function getExtensionFromType(contentType) {
+  if (contentType.includes('png')) return 'png'
+  if (contentType.includes('webp')) return 'webp'
+  if (contentType.includes('gif')) return 'gif'
+  return 'jpg'
+}
+
+async function fetchFromITunes(title, author) {
+  try {
+    const queryTerm = author ? `${title} ${author}` : title
+    const searchRes = await fetch(
+      `https://itunes.apple.com/search?term=${encodeURIComponent(queryTerm)}&media=audiobook&limit=1`,
+      { signal: AbortSignal.timeout(8000) }
+    )
+    if (!searchRes.ok) return null
+    const data = await searchRes.json()
+    if (!data?.results?.length) {
+      if (author) return fetchFromITunes(title)
+      return null
+    }
+
+    const item = data.results[0]
+    if (item.artworkUrl100) {
+      const imgUrl = item.artworkUrl100.replace('100x100bb.jpg', '600x600bb.jpg')
+      const imgRes = await fetch(imgUrl, { signal: AbortSignal.timeout(10000) })
+      if (imgRes.ok) {
+        const buf = await imgRes.arrayBuffer()
+        return buf.byteLength > 5000 ? buf : null
+      }
+    }
+  } catch { return null }
+}
+
 async function fetchCover(title, author) {
+  const itunes = await fetchFromITunes(title, author)
+  if (itunes) return itunes
   const ol = await fetchFromOpenLibrary(title, author)
   if (ol) return ol
   return fetchFromGoogleBooks(title, author)
