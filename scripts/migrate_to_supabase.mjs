@@ -1,51 +1,40 @@
 import { Database } from "bun:sqlite";
-import { createClient } from "@supabase/supabase-js";
 import path from "path";
 import dotenv from "dotenv";
 
-// Try loading from catch-22-next by default if missing in env
-const envPath = path.resolve(import.meta.dir, "../../../catch-22-next/.env.local");
+const envPath = path.resolve(import.meta.dir, "../.env.local");
 dotenv.config({ path: envPath });
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SECRET_KEY; // Service role key needed for bulk insert and admin auth
-
-if (!supabaseUrl || !supabaseKey) {
-  console.error("Missing Supabase credentials in .env.local.");
-  process.exit(1);
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: { autoRefreshToken: false, persistSession: false },
-});
+const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const edgeApiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL + "/functions/v1/api/migrate-batch";
 
 const sqliteDbPath = path.resolve(import.meta.dir, "../../audiobookshelf/config/absdatabase.sqlite");
 const db = new Database(sqliteDbPath, { readonly: true });
 
 // Ordered by dependencies (parents before children)
 const tables = [
-  "settings",
-  "libraries",
-  "libraryFolders",
-  { name: "users", target: "profiles", isAuth: true },
-  "authors",
-  "series",
-  "books",
-  "libraryItems",
-  "bookAuthors",
-  "bookSeries",
-  "devices",
-  "playbackSessions",
-  "mediaProgresses",
+  { name: "settings", target: "settings" },
+  { name: "libraries", target: "libraries" },
+  { name: "libraryFolders", target: "library_folders" },
+  { name: "authors", target: "authors" },
+  { name: "series", target: "series" },
+  { name: "books", target: "books" },
+  { name: "libraryItems", target: "library_items" },
+  { name: "bookAuthors", target: "book_authors" },
+  { name: "bookSeries", target: "book_series" },
 ];
+
+// Helper to convert camelCase to snake_case
+function toSnakeCase(str) {
+  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+}
 
 async function migrate() {
   console.log("🚀 Starting migration from SQLite to Supabase...");
   
   for (const tableConf of tables) {
-    const sourceTable = typeof tableConf === "string" ? tableConf : tableConf.name;
-    const targetTable = typeof tableConf === "string" ? tableConf : tableConf.target;
-    const isAuth = typeof tableConf === "object" ? tableConf.isAuth : false;
+    const sourceTable = tableConf.name;
+    const targetTable = tableConf.target;
     
     console.log(`\n📦 Migrating ${sourceTable} -> ${targetTable}...`);
     
@@ -61,11 +50,26 @@ async function migrate() {
       
       // We parse JSON fields since SQLite stores them as strings
       const parsedRows = rows.map(row => {
-        const newRow = { ...row };
-        for (const [key, value] of Object.entries(newRow)) {
+        const newRow = {};
+        for (const [key, value] of Object.entries(row)) {
+          const newKey = toSnakeCase(key);
+          
+          // OMIT COLUMNS THAT DON'T EXIST IN SUPABASE SCHEMA
+          if (newKey === 'title_ignore_prefix') continue;
+          if (newKey === 'library_folder_id') continue;
+          if (newKey === 'last_scan') continue;
+          if (newKey === 'current_time') continue; 
+          if (targetTable === 'playback_sessions' && newKey === 'date') continue;
+          if (targetTable === 'media_progress' && newKey === 'created_at') continue;
+          if (targetTable === 'media_progress' && newKey === 'last_update') continue;
+          if (targetTable === 'media_progress' && newKey === 'ebook_location') continue;
+          if (targetTable === 'media_progress' && newKey === 'ebook_progress') continue;
+          if (targetTable === 'libraries' && newKey === 'last_scan_version') continue;
+
+          newRow[newKey] = value;
           if (typeof value === "string" && (value.startsWith("{") || value.startsWith("["))) {
             try {
-              newRow[key] = JSON.parse(value);
+              newRow[newKey] = JSON.parse(value);
             } catch (e) {
               // Ignore if not valid JSON
             }
@@ -77,54 +81,24 @@ async function migrate() {
       let successCount = 0;
       let errorCount = 0;
 
-      if (isAuth) {
-        // Special logic for Users -> Auth.Users + Profiles
-        for (const user of parsedRows) {
-          const email = user.email || `${user.username || 'user'}_${user.id.substring(0, 8)}@legacy.audiobookshelf`;
-          const { data, error } = await supabase.auth.admin.createUser({
-            email,
-            password: 'PlaceholderPassword123!', // Legacy users will need to reset this
-            email_confirm: true,
-            user_metadata: {
-              username: user.username,
-              is_legacy_migration: true,
-              type: user.type
-            }
-          });
-
-          if (error) {
-            // Check if user already exists
-            if (error.message.includes('already registered')) {
-              successCount++;
-            } else {
-              console.error(`   ❌ Error creating auth user ${user.username}:`, error.message);
-              errorCount++;
-            }
-          } else {
-            // Wait briefly to allow trigger to create profile
-            await new Promise(r => setTimeout(r, 200));
-            
-            // Optionally, update the profile with the legacy ID if you want to keep references intact
-            // However, Supabase Auth creates a new UUID. If we need to preserve the UUID for foreign keys:
-            // The best way is to use the Auth API to create users and map the new IDs, OR we just let the 
-            // script insert the old UUID into `profiles` manually if we bypass the trigger.
-            // For now, we will just count it as success and let the Catch-22 trigger handle it.
-            successCount++;
-          }
-        }
-        console.log(`✅ Completed ${sourceTable}: ${successCount} successful, ${errorCount} failed.`);
-        continue;
-      }
-
-      // Batch insert (up to 1000 rows at a time) for non-auth tables
-      const BATCH_SIZE = 1000;
+      // Batch insert
+      const BATCH_SIZE = 500;
       
       for (let i = 0; i < parsedRows.length; i += BATCH_SIZE) {
         const batch = parsedRows.slice(i, i + BATCH_SIZE);
-        const { error } = await supabase.from(targetTable).upsert(batch, { onConflict: 'id' });
         
-        if (error) {
-          console.error(`   ❌ Error inserting batch:`, error.message);
+        const res = await fetch(edgeApiUrl, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${anonKey}`
+          },
+          body: JSON.stringify({ table: targetTable, rows: batch })
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          console.error(`   ❌ Error inserting batch:`, errData.error || res.statusText);
           errorCount += batch.length;
         } else {
           successCount += batch.length;
