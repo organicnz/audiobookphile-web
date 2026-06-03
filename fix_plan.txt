@@ -1,0 +1,4 @@
+1. Fix playbackService.ts: if size is 0 or totalFilesSize is 0, but we have totalBookDuration > 0, we can evenly divide totalBookDuration by the number of tracks!
+duration = totalBookDuration / sortedAudioFiles.length.
+2. Fix mappers.ts: same thing.
+3. Fix AudioPlayerService.swift: update session.audioTracks[currentTrackIndex].duration and recalculate startOffsets!

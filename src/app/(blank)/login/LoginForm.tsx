@@ -23,47 +23,42 @@ export default function LoginForm() {
       setError('')
       setLoading(true)
       try {
-        const supabase = createClient()
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) {
-          setError(error.message || 'Login failed. Please check your credentials.')
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: email, password })
+        })
+        
+        const data = await res.json()
+        
+        if (!res.ok || data.error) {
+          setError(data.error?.message || data.error || 'Login failed. Please check your credentials.')
           setLoading(false)
           return
         }
-        // Wait for the auth state change to confirm the session cookie is written
-        const redirect = searchParams.get('redirect')
-        const supabaseForNav = createClient()
-        await new Promise<void>((resolve) => {
-          const { data: { subscription } } = supabaseForNav.auth.onAuthStateChange((event) => {
-            if (event === 'SIGNED_IN') {
-              subscription.unsubscribe()
-              resolve()
-            }
-          })
-          setTimeout(resolve, 1000)
-        })
 
-        if (redirect) {
-          window.location.href = redirect
+        // Establish session with Supabase using returned tokens to set SSR cookies
+        const supabase = createClient()
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.user.token,
+          refresh_token: data.user.refreshToken
+        })
+        
+        if (sessionError) {
+          setError(sessionError.message)
+          setLoading(false)
           return
         }
 
-        // We can just use the API to get the user's default library
-        try {
-          const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: email, password })
-          })
-          if (res.ok) {
-            const data = await res.json()
-            if (data.userDefaultLibraryId) {
-              window.location.href = `/library/${data.userDefaultLibraryId}`
-              return
-            }
-          }
-        } catch (e) {
-          console.error('Failed to get user profile', e)
+        const redirectUrl = searchParams.get('redirect')
+        if (redirectUrl) {
+          window.location.href = redirectUrl
+          return
+        }
+
+        if (data.userDefaultLibraryId) {
+          window.location.href = `/library/${data.userDefaultLibraryId}`
+          return
         }
         
         window.location.href = '/library'

@@ -45,43 +45,48 @@ export async function signInWithGoogle() {
 }
 
 export async function signUp(email: string, password: string) {
-  const siteUrl = getSiteUrl()
-  const supabase = await createClient()
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${siteUrl}/auth/callback?next=/library`,
-    },
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const res = await fetch(`${supabaseUrl}/functions/v1/api/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
   })
 
-  if (error) {
-    return { error: error.message }
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}))
+    return { error: errorData.error || 'Failed to sign up.' }
   }
 
   return { success: true }
 }
 
 export async function forgotPassword(email: string) {
-  const siteUrl = getSiteUrl()
-  const supabase = await createClient()
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl}/auth/callback?next=/reset-password`,
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
   })
 
-  if (error) {
-    return { error: error.message }
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}))
+    return { error: errorData.error || 'Failed to send reset email.' }
   }
 
   return { success: true }
 }
 
 export async function resetPassword(password: string) {
-  const supabase = await createClient()
-  const { error } = await supabase.auth.updateUser({ password })
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password })
+  })
 
-  if (error) {
-    return { error: error.message }
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}))
+    return { error: errorData.error || 'Failed to reset password.' }
   }
 
   return { success: true }
@@ -89,6 +94,19 @@ export async function resetPassword(password: string) {
 
 export async function signOut() {
   const supabase = await createClient()
+  const { data: { session } } = await supabase.auth.getSession()
+  
+  if (session?.access_token) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    await fetch(`${supabaseUrl}/functions/v1/api/logout`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json'
+      }
+    }).catch(console.error)
+  }
+
   await supabase.auth.signOut()
   redirect('/login')
 }
