@@ -143,12 +143,16 @@ export default function MediaCardCover({
             showCoverBg ? 'object-contain' : 'object-cover',
             isHovering ? 'shadow-2xl' : 'shadow-none'
           )}
+          style={{ viewTransitionName: `cover-${libraryItem.id}` }}
         />
       )}
 
       {/* Placeholder cover title & author */}
       {!hasCover && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5 p-4 text-center">
+        <div 
+          className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5 p-4 text-center"
+          style={{ viewTransitionName: `cover-${libraryItem.id}` }}
+        >
           <div
             cy-id="placeholderTitle"
             className="flex-1 flex items-center justify-center"

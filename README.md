@@ -73,10 +73,22 @@ bunx supabase db push
 bunx supabase gen types typescript --linked > src/types/supabase.ts
 ```
 
-## Production Deployment (Vercel)
+## Production Deployment (Vercel & GitHub Actions)
 
-1. Push to your GitHub repository.
-2. Import the project in [Vercel](https://vercel.com/new).
+The repository comes pre-configured with two GitHub Actions for automated CI/CD:
+1. **Next.js Checks (`nextjs-check.yml`)**: Automatically runs TypeScript and Linter checks on PRs and pushes to `main`.
+2. **Edge Functions Deploy (`edge-functions.yml`)**: Automatically deploys Supabase Edge Functions on pushes to `main`.
+
+### CI/CD Setup
+
+To enable the automated Edge Functions deployment, you must add the following **Repository Secrets** in your GitHub repository settings (`Settings > Secrets and variables > Actions`):
+
+| Secret Name | Description |
+|---|---|
+| `SUPABASE_PROJECT_ID` | Your Supabase Project Ref ID (e.g. `iambzzclljayqdxkeepy`) |
+| `SUPABASE_ACCESS_TOKEN` | A personal access token generated from your Supabase account settings. |
+
+For the frontend deployment, simply import the project in [Vercel](https://vercel.com/new). Vercel natively handles Next.js deployments on push.
 3. Add the environment variables listed above in the Vercel project settings.
 4. Deploy — Vercel handles SSL and CDN automatically.
 

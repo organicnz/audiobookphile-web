@@ -59,7 +59,7 @@ export default function BookShelfRow({ title, children, className }: BookShelfRo
   }
 
   return (
-    <div className={mergeClasses('relative w-full', className)}>
+    <div className={mergeClasses('relative w-full content-visibility-auto', className)}>
       <div
         ref={shelfRef}
         className="bookshelf-row categorizedBookshelfRow no-scroll pl-4e md:pl-8e relative w-full max-w-full overflow-x-auto overflow-y-hidden"

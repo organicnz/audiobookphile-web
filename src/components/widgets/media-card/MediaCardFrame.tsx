@@ -43,7 +43,7 @@ export default function MediaCardFrame({
       onMouseLeave={onMouseLeave}
       onKeyDown={onKeyDown}
       className={mergeClasses(
-        'relative z-30 rounded-xl overflow-hidden',
+        'relative z-30 @container rounded-xl overflow-hidden',
         onClick && 'cursor-pointer',
         'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2',
         'transition-all duration-300',

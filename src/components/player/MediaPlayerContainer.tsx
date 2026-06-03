@@ -39,7 +39,7 @@ export default function MediaPlayerContainer() {
       exit={{ y: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       style={{ willChange: 'transform, opacity' }}
-      className="bg-primary/90 backdrop-blur-md shadow-[0_-8px_30px_rgb(0,0,0,0.3)] border-t border-primary/20 fixed right-0 bottom-0 left-0 z-50 h-48 w-full px-2 pt-2 pb-1 lg:h-40 lg:px-4 lg:pb-4"
+      className="glassmorphism shadow-[0_-8px_30px_rgb(0,0,0,0.3)] border-t border-primary/20 fixed right-0 bottom-0 left-0 z-50 h-48 w-full px-2 pt-2 pb-1 lg:h-40 lg:px-4 lg:pb-4"
     >
       <div className="absolute top-4 left-4 flex gap-4 lg:left-6">
         <div className="shadow-lg rounded-md overflow-hidden ring-1 ring-white/10">
