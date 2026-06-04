@@ -20,6 +20,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react'
 import LibraryItemActionButtons from './LibraryItemActionButtons'
 import LibraryItemCover from './LibraryItemCover'
 import LibraryItemDetails from './LibraryItemDetails'
+import SimilarBooksShelf from '@/components/widgets/SimilarBooksShelf'
 
 interface LibraryItemClientProps {
   libraryItem: BookLibraryItem | PodcastLibraryItem
@@ -196,6 +197,9 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
               {/* library files table */}
               {!isPodcast && (libraryItem.libraryFiles?.length ?? 0) > 0 && <LibraryFilesTable libraryItem={libraryItem} />}
             </div>
+            
+            {/* AI Recommendations Shelf */}
+            <SimilarBooksShelf libraryItem={libraryItem} />
           </div>
         </div>
       </div>
