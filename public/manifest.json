@@ -1,0 +1,22 @@
+{
+  "name": "Audiobookshelf",
+  "short_name": "Audiobooks",
+  "description": "A self-hosted audiobook and podcast server.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#D4A373",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

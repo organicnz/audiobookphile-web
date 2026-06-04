@@ -4,6 +4,7 @@ import { TasksProvider } from '@/contexts/TasksContext'
 import { UserProvider } from '@/contexts/UserContext'
 import { CommandPaletteProvider } from '@/contexts/CommandPaletteContext'
 import CommandPalette from '@/components/modals/CommandPalette'
+import { InstallPrompt } from '@/components/ui/InstallPrompt'
 import { getCurrentUser } from '@/lib/api'
 import { redirect } from 'next/navigation'
 
@@ -31,6 +32,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
             <CommandPaletteProvider>
               {children}
               <CommandPalette />
+              <InstallPrompt />
             </CommandPaletteProvider>
           </MediaProvider>
         </MetadataProvider>

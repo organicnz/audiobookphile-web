@@ -20,6 +20,12 @@ export const viewport = {
 export const metadata: Metadata = {
   title: 'Audiobookshelf',
   description: 'A self-hosted audiobook and podcast server',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Audiobookshelf',
+  },
   openGraph: {
     title: 'Audiobookshelf',
     description: 'A self-hosted audiobook and podcast server',
