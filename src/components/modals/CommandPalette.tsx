@@ -28,7 +28,9 @@ export default function CommandPalette() {
     setSearchQuery,
     searchResults,
     isSearching,
-    handleSearch
+    handleSearch,
+    useSemanticSearch,
+    setUseSemanticSearch
   } = useLibrarySearch({
     libraryId: activeLibraryId || undefined,
     autoSelectFirst: false
@@ -135,12 +137,12 @@ export default function CommandPalette() {
           className="relative w-full max-w-2xl overflow-hidden rounded-xl border border-white/10 bg-primary shadow-2xl mx-4"
         >
           {/* Search Input */}
-          <div className="flex items-center border-b border-white/10 px-4 py-4">
+          <div className="flex items-center border-b border-white/10 px-4 py-4 relative">
             <Search className="text-foreground-muted mr-3 h-5 w-5" />
             <input
               ref={inputRef}
               className="flex-1 bg-transparent text-lg text-foreground outline-none placeholder:text-foreground-muted"
-              placeholder={t('PlaceholderSearch') + '...'}
+              placeholder={useSemanticSearch ? "Describe what you're looking for..." : t('PlaceholderSearch') + '...'}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value)
@@ -148,8 +150,29 @@ export default function CommandPalette() {
               }}
             />
             {isSearching && (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-foreground border-t-transparent" />
+              <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-foreground border-t-transparent" />
             )}
+            
+            {/* Semantic Search Toggle */}
+            <button
+              onClick={() => {
+                setUseSemanticSearch(!useSemanticSearch)
+                if (searchQuery) handleSearch()
+              }}
+              className={mergeClasses(
+                "mr-3 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors border",
+                useSemanticSearch 
+                  ? "bg-primary-500/20 text-primary-400 border-primary-500/50" 
+                  : "bg-white/5 text-foreground-muted border-white/10 hover:bg-white/10 hover:text-foreground"
+              )}
+              title="Toggle AI Semantic Search"
+            >
+              <span className="relative flex h-2 w-2">
+                {useSemanticSearch && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>}
+                <span className={mergeClasses("relative inline-flex rounded-full h-2 w-2", useSemanticSearch ? "bg-primary-500" : "bg-foreground-muted")}></span>
+              </span>
+              AI Search
+            </button>
             <button
               onClick={() => setIsOpen(false)}
               className="ml-3 rounded-md p-1 text-foreground-muted hover:bg-white/10 hover:text-foreground transition-colors"

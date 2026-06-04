@@ -4,6 +4,7 @@ import { getCollectionsAction, getPlaylistsAction, searchLibraryAction } from '@
 import { useSocketEvent } from '@/contexts/SocketContext'
 import { Author, BookLibraryItem, Collection, LibraryItem, Playlist, PodcastLibraryItem, SearchLibraryResponse, Series } from '@/types/api'
 import { useCallback, useEffect, useState } from 'react'
+import { createClient } from '@/utils/supabase/client'
 
 export interface UseLibrarySearchOptions {
   autoSelectFirst?: boolean
@@ -42,6 +43,9 @@ export interface UseLibrarySearchReturn {
   setSelectedPlaylist: (playlist: Playlist | null) => void
   setSelectedSeries: (series: { series: Series; books: LibraryItem[] } | null) => void
   setSelectedAuthor: (author: Author | null) => void
+
+  useSemanticSearch: boolean
+  setUseSemanticSearch: (useSemantic: boolean) => void
 }
 
 const DEFAULT_MEDIA_TYPES: ('book' | 'podcast')[] = ['book', 'podcast']
@@ -56,6 +60,7 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
   const [isSearching, setIsSearching] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
   const [processing, setProcessing] = useState(false)
+  const [useSemanticSearch, setUseSemanticSearch] = useState(false)
 
   // Selected items
   const [selectedBook, setSelectedBook] = useState<BookLibraryItem | null>(null)
@@ -139,7 +144,36 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
       // Fetch collections/playlists on-demand if not yet fetched
       await fetchCollectionsAndPlaylists()
 
-      const result = await searchLibraryAction(selectedLibraryId, searchQuery.trim(), 10)
+      let result: SearchLibraryResponse | null = null
+
+      if (useSemanticSearch) {
+        const supabase = createClient()
+        const { data, error } = await supabase.functions.invoke('search-semantic', {
+          body: { query: searchQuery.trim() }
+        })
+        if (error) {
+          throw new Error(error.message || 'Semantic search failed')
+        }
+        if (data?.error) {
+          throw new Error(data.error)
+        }
+        
+        // Map results back to SearchLibraryResponse structure
+        const items = data?.results || []
+        result = {
+          book: items.filter((item: any) => item.mediaType === 'book').map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
+          podcast: items.filter((item: any) => item.mediaType === 'podcast').map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
+          tags: [],
+          authors: [],
+          series: [],
+          collections: [],
+          playlists: [],
+          narrators: [],
+          genres: []
+        }
+      } else {
+        result = await searchLibraryAction(selectedLibraryId, searchQuery.trim(), 10)
+      }
 
       if (result) {
         // Client-side filter collections and playlists by name
@@ -203,7 +237,7 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
     } finally {
       setIsSearching(false)
     }
-  }, [searchQuery, selectedLibraryId, autoSelectFirst, mediaTypes, cachedCollections, cachedPlaylists, fetchCollectionsAndPlaylists])
+  }, [searchQuery, selectedLibraryId, autoSelectFirst, mediaTypes, cachedCollections, cachedPlaylists, fetchCollectionsAndPlaylists, useSemanticSearch])
 
   const clearSelection = useCallback(() => {
     setSelectedBook(null)
@@ -246,6 +280,9 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
     setSelectedCollection,
     setSelectedPlaylist,
     setSelectedSeries,
-    setSelectedAuthor
+    setSelectedAuthor,
+    
+    useSemanticSearch,
+    setUseSemanticSearch
   }
 }
