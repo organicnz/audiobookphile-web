@@ -17,6 +17,10 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
       href: '/settings'
     },
     {
+      label: 'Analytics',
+      href: '/settings/analytics'
+    },
+    {
       label: 'Libraries',
       href: '/settings/libraries'
     },
