@@ -13,6 +13,8 @@
     "cy:comp": "cypress open --component --browser chrome",
     "test": "cypress run --component --browser chrome",
     "test:spec": "cypress run --component --browser chrome --spec",
+    "cy:e2e": "cypress open --e2e --browser chrome",
+    "test:e2e": "cypress run --e2e --browser chrome",
     "cy:brave": "cypress open --component --browser \"C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe:chrome\"",
     "test:brave": "cypress run --component --browser \"C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe:chrome\"",
     "lint:fix": "eslint . --fix",

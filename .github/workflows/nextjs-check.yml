@@ -29,3 +29,15 @@ jobs:
 
       - name: Run Linter
         run: bun run lint
+
+      - name: Run Cypress E2E Tests
+        uses: cypress-io/github-action@v6
+        with:
+          build: bun run build
+          start: bun start
+          wait-on: 'http://localhost:3000'
+        env:
+          # Pass required secrets to Cypress test environment
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
