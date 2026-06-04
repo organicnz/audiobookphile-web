@@ -4,6 +4,11 @@ import BookShelfRow from '@/components/widgets/BookShelfRow'
 import ItemSlider from '@/components/widgets/ItemSlider'
 import { AuthorCard } from '@/components/widgets/media-card/AuthorCard'
 import BookMediaCard from '@/components/widgets/media-card/BookMediaCard'
+import LibraryEmptyState from './LibraryEmptyState'
+import BookShelfGrid from '@/components/widgets/BookShelfGrid'
+import { LayoutGrid, List } from 'lucide-react'
+import IconBtn from '@/components/ui/IconBtn'
+import Tooltip from '@/components/ui/Tooltip'
 import PodcastEpisodeCard from '@/components/widgets/media-card/PodcastEpisodeCard'
 import PodcastMediaCard from '@/components/widgets/media-card/PodcastMediaCard'
 import { SeriesCard } from '@/components/widgets/media-card/SeriesCard'
@@ -15,7 +20,7 @@ import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
 import { Author, BookshelfView, LibraryItem, MediaItemShare, MediaProgress, PersonalizedShelf, PersonalizedShelfType, RssFeed, Series } from '@/types/api'
 import { useCallback, useEffect, useState, useTransition } from 'react'
 import { requestScanLibrary } from '../../settings/libraries/actions'
-import LibraryEmptyState from './LibraryEmptyState'
+
 
 interface LibraryClientProps {
   personalized: PersonalizedShelf[]
@@ -29,6 +34,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
   const { library, setContextMenuItems, setContextMenuActionHandler, homeBookshelfView } = useLibrary()
 
   const [shelves, setShelves] = useState(personalized)
+  const [localViewMode, setLocalViewMode] = useState<'row' | 'grid'>('row')
 
   useEffect(() => {
     setShelves(personalized)
@@ -157,6 +163,32 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
 
   return (
     <div className="pb-20" style={{ fontSize: sizeMultiplier + 'rem' }}>
+      {/* Controls Bar */}
+      {shelves.length > 0 && (
+        <div className="px-4e md:px-8e mb-4 flex justify-end">
+          <div className="bg-primary/10 rounded-full p-1 flex items-center gap-1 border border-primary/20">
+            <Tooltip text="Row View">
+              <IconBtn 
+                size="small"
+                borderless 
+                className={`p-1.5 rounded-full transition-colors ${localViewMode === 'row' ? 'bg-primary text-primary-foreground' : 'text-foreground-muted hover:text-foreground'}`}
+                onClick={() => setLocalViewMode('row')}
+                icon={List}
+              />
+            </Tooltip>
+            <Tooltip text="Grid View">
+              <IconBtn 
+                size="small"
+                borderless 
+                className={`p-1.5 rounded-full transition-colors ${localViewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-foreground-muted hover:text-foreground'}`}
+                onClick={() => setLocalViewMode('grid')}
+                icon={LayoutGrid}
+              />
+            </Tooltip>
+          </div>
+        </div>
+      )}
+
       {/* empty state with scan button if user is admin or root */}
       {shelves.length === 0 && (
         <div className="py-8">
@@ -166,7 +198,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
 
       {/* bookshelf rows */}
       {shelves.map((shelf) => {
-        const Wrapper = homeBookshelfView === BookshelfView.STANDARD ? BookShelfRow : ItemSlider
+        const Wrapper = localViewMode === 'grid' ? BookShelfGrid : (homeBookshelfView === BookshelfView.STANDARD ? BookShelfRow : ItemSlider)
 
         return (
           <Wrapper key={shelf.id} title={shelf.label}>

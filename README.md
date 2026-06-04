@@ -87,6 +87,7 @@ To enable the automated Edge Functions deployment, you must add the following **
 |---|---|
 | `SUPABASE_PROJECT_ID` | Your Supabase Project Ref ID (e.g. `iambzzclljayqdxkeepy`) |
 | `SUPABASE_ACCESS_TOKEN` | A personal access token generated from your Supabase account settings. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-side service role key (required for automated database backups cron job). |
 
 For the frontend deployment, simply import the project in [Vercel](https://vercel.com/new). Vercel natively handles Next.js deployments on push.
 3. Add the environment variables listed above in the Vercel project settings.

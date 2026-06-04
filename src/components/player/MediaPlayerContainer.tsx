@@ -14,13 +14,16 @@ import IconBtn from '../ui/IconBtn'
 import PlayerControls from './PlayerControls'
 import PlayerTrackBar from './PlayerTrackBar'
 
+import { useImageColor } from '@/hooks/useImageColor'
+
 export default function MediaPlayerContainer() {
   const { streamLibraryItem, clearStreamMedia, playerHandler } = useMediaContext()
 
   useAudioPlayerHotkeys(playerHandler.state, playerHandler.controls, !!streamLibraryItem, clearStreamMedia)
 
-  // TODO: Set library in media context for streaming library item
   const coverAspectRatio = 1
+  const coverUrl = streamLibraryItem ? getLibraryItemCoverUrl(streamLibraryItem.id, streamLibraryItem.updatedAt) : null
+  const dominantColor = useImageColor(coverUrl)
 
   // Don't render the player if nothing is streaming
   if (!streamLibraryItem) {
@@ -38,13 +41,16 @@ export default function MediaPlayerContainer() {
       animate={{ y: 0 }}
       exit={{ y: '100%' }}
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      style={{ willChange: 'transform, opacity' }}
-      className="glassmorphism shadow-[0_-8px_30px_rgb(0,0,0,0.3)] border-t border-primary/20 fixed right-0 bottom-0 left-0 z-50 h-48 w-full px-2 pt-2 pb-1 lg:h-40 lg:px-4 lg:pb-4"
+      style={{ 
+        willChange: 'transform, opacity',
+        background: dominantColor ? `linear-gradient(to top, var(--background) 40%, ${dominantColor}22 100%)` : undefined,
+      }}
+      className="glassmorphism shadow-[0_-8px_30px_rgb(0,0,0,0.3)] border-t border-primary/20 fixed right-0 bottom-0 left-0 z-50 h-48 w-full px-2 pt-2 pb-1 lg:h-40 lg:px-4 lg:pb-4 transition-colors duration-1000"
     >
       <div className="absolute top-4 left-4 flex gap-4 lg:left-6">
-        <div className="shadow-lg rounded-md overflow-hidden ring-1 ring-white/10">
+        <div className="shadow-lg rounded-md overflow-hidden ring-1 ring-white/10 transition-transform duration-300 hover:scale-105 hover:shadow-xl">
           <PreviewCover
-            src={getLibraryItemCoverUrl(streamLibraryItem.id, streamLibraryItem.updatedAt)}
+            src={coverUrl || ''}
             bookCoverAspectRatio={coverAspectRatio}
             showResolution={false}
             width={72}

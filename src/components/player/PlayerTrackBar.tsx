@@ -182,7 +182,7 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
         {/* Track */}
         <div
           ref={trackRef}
-          className="bg-track-bg relative h-2 w-full cursor-pointer overflow-hidden transition-transform duration-100 hover:scale-y-125"
+          className="bg-track-bg relative h-2 w-full cursor-pointer overflow-hidden transition-transform duration-100 hover:scale-y-125 rounded-full ring-1 ring-white/5"
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           onClick={handleTrackClick}
@@ -194,14 +194,14 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
           />
           {/* Played track */}
           <div
-            className="bg-track-progress pointer-events-none absolute top-0 left-0 h-full transition-[width] duration-75"
+            className="bg-track-progress pointer-events-none absolute top-0 left-0 h-full transition-[width] duration-75 shadow-[0_0_8px_rgba(255,255,255,0.3)]"
             style={{ width: `${playedPercent}%` }}
           />
           {/* Track cursor (vertical line on hover) */}
           <div
             ref={trackCursorRef}
             className={mergeClasses(
-              'bg-track-progress pointer-events-none absolute top-0 left-0 h-full w-0.5 transition-opacity duration-100',
+              'bg-white pointer-events-none absolute top-0 left-0 h-full w-0.5 transition-opacity duration-100 shadow-[0_0_8px_rgba(255,255,255,0.8)]',
               isHovering ? 'opacity-100' : 'opacity-0'
             )}
           />
