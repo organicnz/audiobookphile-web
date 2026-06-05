@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Compass, PlusSquare, Users, Activity } from 'lucide-react'
+import { Home, Compass, PlusSquare, Users, Activity, LogOut } from 'lucide-react'
+import { logout } from '@/app/login/actions'
 
 const navItems = [
   { name: 'Home', href: '/home', icon: Home },
@@ -14,6 +15,9 @@ const navItems = [
 
 export function Navigation() {
   const pathname = usePathname()
+
+  // Don't show nav on auth pages
+  if (pathname === '/login') return null
 
   return (
     <>
@@ -35,7 +39,7 @@ export function Navigation() {
                   }`}
                 />
                 <span
-                  className={`text-xs ${
+                  className={`text-[10px] ${
                     isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary/80'
                   }`}
                 >
@@ -49,11 +53,11 @@ export function Navigation() {
 
       {/* Desktop Sidebar Navigation */}
       <aside className="fixed top-0 left-0 z-40 hidden w-64 h-screen transition-transform -translate-x-full md:translate-x-0 md:block bg-charcoal/50 backdrop-blur-2xl border-r border-white/10">
-        <div className="h-full px-3 py-4 overflow-y-auto">
+        <div className="h-full px-3 py-4 flex flex-col">
           <div className="flex items-center mb-10 pl-2 mt-4">
             <span className="text-2xl font-semibold text-off-white tracking-tight">Aficionado</span>
           </div>
-          <ul className="space-y-2 font-medium">
+          <ul className="space-y-2 font-medium flex-1">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname.startsWith(item.href)
@@ -72,6 +76,18 @@ export function Navigation() {
               )
             })}
           </ul>
+
+          <div className="mt-auto">
+            <form action={logout}>
+              <button
+                type="submit"
+                className="flex items-center w-full p-3 rounded-xl group text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+              >
+                <LogOut className="w-5 h-5 transition duration-75" />
+                <span className="ms-3">Sign Out</span>
+              </button>
+            </form>
+          </div>
         </div>
       </aside>
     </>

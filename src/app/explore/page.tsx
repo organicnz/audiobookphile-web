@@ -1,6 +1,21 @@
-import { Search, Hash, Star } from "lucide-react";
+import { Search, Hash, Star, UserCircle2 } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
 
-export default function ExplorePage() {
+export default async function ExplorePage() {
+  const supabase = await createClient();
+
+  // Fetch some public profiles (simulating 'featured creators')
+  const { data: featuredCreators } = await supabase
+    .from('profiles')
+    .select('id, avatar_url, ai_tone, bio')
+    .limit(5);
+
+  // Fetch some public circles
+  const { data: activeCircles } = await supabase
+    .from('circles')
+    .select('id, name, description')
+    .limit(5);
+
   return (
     <div className="max-w-3xl px-4 py-8 mx-auto lg:py-12">
       <header className="mb-8">
@@ -17,22 +32,57 @@ export default function ExplorePage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="liquid-glass p-6 group cursor-pointer hover:bg-white/5 transition-colors">
-          <div className="w-12 h-12 rounded-xl bg-primary/20 text-primary flex items-center justify-center mb-4">
-            <Star className="w-6 h-6" />
+      <div className="space-y-12">
+        {/* Featured Creators Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-6">
+            <Star className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-semibold text-off-white">Featured Creators</h2>
           </div>
-          <h3 className="text-lg font-medium text-off-white mb-2">Featured Creators</h3>
-          <p className="text-sm text-muted-foreground">Find inspiring individuals sharing their wellness journeys.</p>
-        </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {featuredCreators && featuredCreators.length > 0 ? (
+              featuredCreators.map((creator) => (
+                <div key={creator.id} className="liquid-glass p-5 flex items-center gap-4 cursor-pointer hover:bg-white/5 transition-colors">
+                  {creator.avatar_url ? (
+                    <img src={creator.avatar_url} alt="Avatar" className="w-12 h-12 rounded-full" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                      <UserCircle2 className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-medium text-off-white truncate">{creator.ai_tone || 'User'}</h3>
+                    <p className="text-xs text-muted-foreground truncate">{creator.bio || 'Wellness Enthusiast'}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-muted-foreground text-sm">No creators found.</p>
+            )}
+          </div>
+        </section>
 
-        <div className="liquid-glass p-6 group cursor-pointer hover:bg-white/5 transition-colors">
-          <div className="w-12 h-12 rounded-xl bg-deep-plum/50 text-deep-plum flex items-center justify-center mb-4 border border-deep-plum/30">
-            <Hash className="w-6 h-6 text-off-white" />
+        {/* Active Circles/Challenges Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-6">
+            <Hash className="w-5 h-5 text-deep-plum" />
+            <h2 className="text-xl font-semibold text-off-white">Active Circles</h2>
           </div>
-          <h3 className="text-lg font-medium text-off-white mb-2">Active Challenges</h3>
-          <p className="text-sm text-muted-foreground">Join community-driven goals and build your streak.</p>
-        </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {activeCircles && activeCircles.length > 0 ? (
+              activeCircles.map((circle) => (
+                <div key={circle.id} className="liquid-glass p-5 cursor-pointer hover:bg-white/5 transition-colors">
+                  <h3 className="text-base font-medium text-off-white truncate mb-1">{circle.name}</h3>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{circle.description || 'A community circle.'}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-muted-foreground text-sm">No active circles found.</p>
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );
