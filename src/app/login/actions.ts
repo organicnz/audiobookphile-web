@@ -5,16 +5,31 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 
 export async function login(formData: FormData) {
-  const supabase = await createClient()
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
 
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'login', email, password })
+    })
 
-  if (error) {
+    if (!res.ok) {
+      throw new Error('Authentication failed')
+    }
+
+    const { session } = await res.json()
+    if (session) {
+      const supabase = await createClient()
+      await supabase.auth.setSession({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token
+      })
+    }
+  } catch (err) {
     redirect('/login?message=Could not authenticate user')
   }
 
@@ -23,16 +38,31 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const supabase = await createClient()
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
 
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-  }
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
-  const { error } = await supabase.auth.signUp(data)
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'signup', email, password })
+    })
 
-  if (error) {
+    if (!res.ok) {
+      throw new Error('Authentication failed')
+    }
+
+    const { session } = await res.json()
+    if (session) {
+      const supabase = await createClient()
+      await supabase.auth.setSession({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token
+      })
+    }
+  } catch (err) {
     redirect('/login?message=Could not authenticate user')
   }
 
