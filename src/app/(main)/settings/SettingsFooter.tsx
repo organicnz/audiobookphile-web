@@ -10,12 +10,12 @@ export default function SettingsFooter() {
       <div className="grow" />
       <p className="pr-2 text-sm text-yellow-400">
         {t('MessageReportBugsAndContribute')}{' '}
-        <a className="underline" href="https://github.com/advplyr/audiobookshelf" target="_blank" rel="noopener noreferrer">
+        <a className="underline" href="https://github.com/advplyr/audiobookphile" target="_blank" rel="noopener noreferrer">
           github
         </a>
       </p>
       <a
-        href="https://github.com/advplyr/audiobookshelf"
+        href="https://github.com/advplyr/audiobookphile"
         target="_blank"
         rel="noopener noreferrer"
         className="transform duration-500 hover:scale-150 hover:rotate-6"

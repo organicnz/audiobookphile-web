@@ -50,7 +50,7 @@ export default function MediaIconPicker({ value, disabled = false, label, onChan
     if (AVAILABLE_ICONS.includes(selectedIcon as AvailableIcon)) {
       return selectedIcon as AvailableIcon
     }
-    return 'audiobookshelf'
+    return 'audiobookphile'
   }, [selectedIcon])
 
   // Generate unique ID using React's useId hook

@@ -3,7 +3,7 @@
  * These are all the icon classes that can be used with the absicons font
  */
 export const AVAILABLE_ICONS = [
-  'audiobookshelf',
+  'audiobookphile',
   'books-1',
   'microphone-1',
   'radio',

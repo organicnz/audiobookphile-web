@@ -56,7 +56,7 @@ export function InstallPrompt() {
     <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
       <div className="bg-primary/90 backdrop-blur-md text-primary-foreground px-6 py-3 rounded-full shadow-lg border border-primary-foreground/20 flex items-center space-x-4">
         <div className="flex flex-col">
-          <span className="font-semibold text-sm">Install Audiobookshelf</span>
+          <span className="font-semibold text-sm">Install Audiobookphile</span>
           <span className="text-xs opacity-80">Add to home screen for offline listening</span>
         </div>
         <button 

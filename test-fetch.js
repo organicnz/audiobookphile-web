@@ -1,4 +1,4 @@
-fetch('https://audiobookshelf.foodshare.club/')
+fetch('https://audiobookphile.foodshare.club/')
   .then(r => {
     console.log(r.status, r.statusText)
     return r.text()

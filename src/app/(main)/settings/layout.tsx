@@ -7,8 +7,8 @@ import AppBar from '../AppBar'
 import SettingsLayoutWrapper from './SettingsLayoutWrapper'
 
 export const metadata: Metadata = {
-  title: 'audiobookshelf',
-  description: 'audiobookshelf'
+  title: 'audiobookphile',
+  description: 'audiobookphile'
 }
 
 export default async function SettingsLayout({ children }: Readonly<{ children: React.ReactNode }>) {

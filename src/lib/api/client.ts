@@ -79,7 +79,7 @@ function writeSessionCookies(store: SessionCookieSetter, accessToken: string, re
 }
 
 /**
- * The NextJS server sets its own cookies separate from the Audiobookshelf server
+ * The NextJS server sets its own cookies separate from the Audiobookphile server
  * because the Abs Server cookies are not available to NextJS for server-side rendering.
  */
 export function setTokenCookies(response: NextResponse, accessToken: string, refreshToken: string | null) {

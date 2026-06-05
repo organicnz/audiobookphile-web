@@ -16,10 +16,10 @@ interface LibraryIconProps {
 
 /**
  * A component that displays a library icon using the absicons font.
- * The component validates the icon against the list of available icons and falls back to 'audiobookshelf' if invalid.
+ * The component validates the icon against the list of available icons and falls back to 'audiobookphile' if invalid.
  */
 export default function LibraryIcon({
-  icon = 'audiobookshelf',
+  icon = 'audiobookphile',
   fontSize = 'text-lg',
   size = 5,
   className = '',
@@ -29,7 +29,7 @@ export default function LibraryIcon({
   const sizeClasses = size === 6 ? 'h-6 w-6 min-w-6' : 'h-5 w-5 min-w-5'
   const classList = mergeClasses('flex items-center justify-center', sizeClasses, fontSize, className)
 
-  const iconToUse = isValidIcon(icon) ? icon : 'audiobookshelf'
+  const iconToUse = isValidIcon(icon) ? icon : 'audiobookphile'
 
   // Generate default aria-label if not provided
   const defaultAriaLabel = (() => {

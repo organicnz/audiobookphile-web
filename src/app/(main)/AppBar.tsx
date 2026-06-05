@@ -50,7 +50,7 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
         <div className="flex items-center gap-4 min-w-0 flex-shrink-0">
           <Link
             href={redirectUrl}
-            aria-label={`audiobookshelf - ${t('ButtonHome')}`}
+            aria-label={`audiobookphile - ${t('ButtonHome')}`}
             className="group flex items-center gap-3"
           >
             <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white/5 p-1 shadow-inner transition-transform group-hover:scale-105 group-active:scale-95">
@@ -64,7 +64,7 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
               />
             </div>
             <span className="hidden text-lg font-black tracking-tight text-foreground/90 transition-colors group-hover:text-foreground md:block">
-              audiobookshelf
+              audiobookphile
             </span>
           </Link>
 

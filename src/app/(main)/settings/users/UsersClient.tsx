@@ -17,7 +17,7 @@ export default function UsersClient({ profiles }: UsersClientProps) {
   return (
     <SettingsContent
       title={t('HeaderUsers')}
-      moreInfoUrl="https://www.audiobookshelf.org/guides/users"
+      moreInfoUrl="https://www.audiobookphile.org/guides/users"
       entityCount={profiles.length}
     >
       <UsersTable profiles={profiles} dateFormat={serverSettings.dateFormat ?? 'MM/dd/yyyy'} timeFormat={serverSettings.timeFormat ?? 'HH:mm'} />

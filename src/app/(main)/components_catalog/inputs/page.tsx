@@ -15,7 +15,7 @@ export default function InputComponentsPage() {
     <div className="mx-auto w-full max-w-7xl p-8">
       <div className="mb-8">
         <h1 className="mb-4 text-3xl font-bold">Input & Selection Components</h1>
-        <p className="mb-6 text-gray-300">This page showcases all the input, dropdown, and selection components available in the audiobookshelf client.</p>
+        <p className="mb-6 text-gray-300">This page showcases all the input, dropdown, and selection components available in the audiobookphile client.</p>
         <a href="/components_catalog" className="text-blue-400 transition-colors hover:text-blue-300">
           ← Back to Components Catalog
         </a>

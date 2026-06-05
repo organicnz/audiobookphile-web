@@ -6,8 +6,8 @@ import AppBar from '../../AppBar'
 import LibraryLayoutWrapper from './LibraryLayoutWrapper'
 
 export const metadata: Metadata = {
-  title: 'audiobookshelf',
-  description: 'audiobookshelf'
+  title: 'audiobookphile',
+  description: 'audiobookphile'
 }
 
 export default async function LibraryLayout({

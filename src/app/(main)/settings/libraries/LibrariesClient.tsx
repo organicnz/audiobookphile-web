@@ -73,7 +73,7 @@ export default function LibrariesClient({ libraries }: LibraryClientProps) {
           label: t('ButtonAddLibrary'),
           onClick: handleAddLibrary
         }}
-        moreInfoUrl="https://www.audiobookshelf.org/guides/library_creation"
+        moreInfoUrl="https://www.audiobookphile.org/guides/library_creation"
       >
         <LibrariesList libraries={libraries} saveLibraryOrderAction={saveLibraryOrder} onEditLibrary={handleEditLibrary} />
       </SettingsContent>

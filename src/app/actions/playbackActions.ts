@@ -27,7 +27,7 @@ export async function startPlaybackSession(
   return await apiRequest<PlaybackSession>(url, {
     method: 'POST',
     body: JSON.stringify({
-      deviceInfo: { clientName: 'Audiobookshelf Web' },
+      deviceInfo: { clientName: 'Audiobookphile Web' },
       mediaPlayer: 'web',
       forceDirectPlay: true
     })

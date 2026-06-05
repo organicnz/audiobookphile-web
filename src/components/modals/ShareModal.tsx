@@ -176,7 +176,7 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
         <div className="absolute end-0 top-0 p-6">
           <Tooltip text={t('LabelClickForMoreInfo')} className="inline-flex">
             <a
-              href="https://www.audiobookshelf.org/guides/media-item-shares"
+              href="https://www.audiobookphile.org/guides/media-item-shares"
               target="_blank"
               rel="noreferrer"
               className="text-white/40 hover:text-primary transition-colors inline-flex"

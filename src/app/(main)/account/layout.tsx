@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import AppBar from '../AppBar'
 
 export const metadata: Metadata = {
-  title: 'audiobookshelf',
-  description: 'audiobookshelf'
+  title: 'audiobookphile',
+  description: 'audiobookphile'
 }
 
 export default async function AccountLayout({ children }: Readonly<{ children: React.ReactNode }>) {

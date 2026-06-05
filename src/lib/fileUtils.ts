@@ -17,7 +17,7 @@ export const sanitizeFileName = (filename: string, colonReplacement = ' - '): st
   // Most file systems use number of bytes for max filename
   //   to support most filesystems we will use max of 255 bytes in utf-16
   //   Ref: https://doc.owncloud.com/server/next/admin_manual/troubleshooting/path_filename_length.html
-  //   Issue: https://github.com/advplyr/audiobookshelf/issues/1261
+  //   Issue: https://github.com/advplyr/audiobookphile/issues/1261
   const MAX_FILENAME_BYTES = 255
   const replacement = ''
   const illegalRe = /[\/\?<>\\:\*\|"]/g

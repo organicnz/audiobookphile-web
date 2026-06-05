@@ -31,7 +31,7 @@ import BackupScheduleModal from './BackupScheduleModal'
 import RestoreBackupModal from './RestoreBackupModal'
 
 /** Rare legacy backups message pre version 2 */
-const LEGACY_BACKUP_UNSUPPORTED_HINT = 'This backup was created with an old version of Audiobookshelf that is no longer supported'
+const LEGACY_BACKUP_UNSUPPORTED_HINT = 'This backup was created with an old version of Audiobookphile that is no longer supported'
 
 interface BackupsClientProps {
   backupResponse: GetBackupsResponse
@@ -312,7 +312,7 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
 
         <div className="mt-8 mb-4 flex flex-wrap items-center justify-between gap-2">
           <FileInput
-            accept=".audiobookshelf"
+            accept=".audiobookphile"
             ariaLabel={t('ButtonUploadBackup')}
             onChange={(file) => void handleUploadBackup(file)}
             className={isUploadingBackup || isCreatingBackup || isApplyingBackup ? 'pointer-events-none opacity-50' : ''}

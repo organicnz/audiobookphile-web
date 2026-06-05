@@ -65,7 +65,7 @@ export default function ApiKeysClient({ apiKeys, users }: ApiKeysClientProps) {
   return (
     <SettingsContent
       title={t('HeaderApiKeys')}
-      moreInfoUrl="https://www.audiobookshelf.org/guides/api-keys"
+      moreInfoUrl="https://www.audiobookphile.org/guides/api-keys"
       addButton={{
         label: t('ButtonAddApiKey'),
         onClick: handleAddClick

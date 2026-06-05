@@ -1,5 +1,5 @@
 services:
-  audiobookshelf:
+  audiobookphile:
     build:
       context: .
       dockerfile: Dockerfile.local

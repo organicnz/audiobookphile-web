@@ -8,7 +8,7 @@ dotenv.config({ path: envPath });
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const edgeApiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL + "/functions/v1/api/migrate-batch";
 
-const sqliteDbPath = path.resolve(import.meta.dir, "../../audiobookshelf/config/absdatabase.sqlite");
+const sqliteDbPath = path.resolve(import.meta.dir, "../../audiobookphile/config/absdatabase.sqlite");
 const db = new Database(sqliteDbPath, { readonly: true });
 
 // Ordered by dependencies (parents before children)

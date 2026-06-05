@@ -21,7 +21,7 @@ const defaultMetadataSources: MetadataSource[] = [
   { id: 'nfoFile', name: 'NFO file', include: true },
   { id: 'txtFiles', name: 'desc.txt & reader.txt files', include: true },
   { id: 'opfFile', name: 'OPF file', include: true },
-  { id: 'absMetadata', name: 'Audiobookshelf metadata file', include: true }
+  { id: 'absMetadata', name: 'Audiobookphile metadata file', include: true }
 ]
 
 const defaultMetadataSourceMap = Object.fromEntries(defaultMetadataSources.map((s) => [s.id, s]))
@@ -127,7 +127,7 @@ export default function LibraryScannerTab({ settings, onSettingsChange }: Librar
 
       <div className="mb-4 flex items-center justify-between md:justify-start">
         <p className="text-foreground-muted pr-2 text-sm">{t('LabelMetadataOrderOfPrecedenceDescription')}</p>
-        <SettingsMoreInfoIcon moreInfoUrl="https://www.audiobookshelf.org/guides/book-scanner" />
+        <SettingsMoreInfoIcon moreInfoUrl="https://www.audiobookphile.org/guides/book-scanner" />
       </div>
 
       <SortableList key={listKey} items={sources} onSortEnd={handleSortEnd} renderItem={renderItem} />

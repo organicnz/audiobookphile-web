@@ -38,7 +38,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Intercept Audiobookshelf mobile app login requests
+  // Intercept Audiobookphile mobile app login requests
   if (request.nextUrl.pathname === '/login' && request.method === 'POST') {
     return NextResponse.rewrite(new URL('/api/login', request.url))
   }

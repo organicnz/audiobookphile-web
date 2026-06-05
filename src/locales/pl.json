@@ -472,7 +472,7 @@
   "LabelMissingEbook": "Nie posiada ebooka",
   "LabelMissingSupplementaryEbook": "Nie posiada dodatkowego ebooka",
   "LabelMobileRedirectURIs": "Dozwolone URI przekierowań mobilnych",
-  "LabelMobileRedirectURIsDescription": "To jest biała lista prawidłowych adresów URI przekierowań dla aplikacji mobilnych. Domyślny adres to <code>audiobookshelf://oauth</code>, który można usunąć lub dodać inne adresy URI w celu integracji z aplikacjami innych firm. Użycie gwiazdki (<code>*</code>) jako jedynego wpisu zezwala na dowolny URI.",
+  "LabelMobileRedirectURIsDescription": "To jest biała lista prawidłowych adresów URI przekierowań dla aplikacji mobilnych. Domyślny adres to <code>audiobookphile://oauth</code>, który można usunąć lub dodać inne adresy URI w celu integracji z aplikacjami innych firm. Użycie gwiazdki (<code>*</code>) jako jedynego wpisu zezwala na dowolny URI.",
   "LabelMore": "Więcej",
   "LabelMoreInfo": "Więcej informacji",
   "LabelName": "Nazwa",

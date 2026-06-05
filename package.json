@@ -1,5 +1,5 @@
 {
-  "name": "audiobookshelf-client-react",
+  "name": "audiobookphile-client-react",
   "version": "0.1.0",
   "private": true,
   "packageManager": "bun@1.3.9",

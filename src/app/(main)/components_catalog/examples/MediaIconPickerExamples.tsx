@@ -6,7 +6,7 @@ import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '
 // MediaIconPicker Examples
 
 export function MediaIconPickerExamples() {
-  const [mediaIconValue, setMediaIconValue] = useState('audiobookshelf')
+  const [mediaIconValue, setMediaIconValue] = useState('audiobookphile')
 
   return (
     <ComponentExamples title="Media Icon Pickers">

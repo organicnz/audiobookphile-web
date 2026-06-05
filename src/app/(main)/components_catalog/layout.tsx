@@ -5,8 +5,8 @@ import { ComponentsCatalogProvider } from '../../../contexts/ComponentsCatalogCo
 import AppBar from '../AppBar'
 
 export const metadata: Metadata = {
-  title: 'audiobookshelf - Components Catalog',
-  description: 'Components catalog for audiobookshelf client'
+  title: 'audiobookphile - Components Catalog',
+  description: 'Components catalog for audiobookphile client'
 }
 
 export default async function ComponentsCatalogLayout({ children }: Readonly<{ children: React.ReactNode }>) {

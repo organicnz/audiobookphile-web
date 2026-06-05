@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import '../../assets/globals.css'
 
 export const metadata: Metadata = {
-  title: 'audiobookshelf'
+  title: 'audiobookphile'
 }
 
 export default function PublicLayout({

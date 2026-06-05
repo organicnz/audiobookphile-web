@@ -12,7 +12,7 @@ interface RssFeedsClientProps {
 export default function RssFeedsClient({ rssFeeds }: RssFeedsClientProps) {
   const t = useTypeSafeTranslations()
   return (
-    <SettingsContent title={t('HeaderRSSFeeds')} moreInfoUrl="https://www.audiobookshelf.org/guides/rss_feeds">
+    <SettingsContent title={t('HeaderRSSFeeds')} moreInfoUrl="https://www.audiobookphile.org/guides/rss_feeds">
       <RssFeedsTable rssFeeds={rssFeeds} />
     </SettingsContent>
   )

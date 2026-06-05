@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 const sqliteSqlPath = path.resolve(import.meta.dir, 'sqlite_schema.sql');
-const pgSqlPath = path.resolve(import.meta.dir, '../../../catch-22-next/supabase/migrations/20260507000000_audiobookshelf_schema.sql');
+const pgSqlPath = path.resolve(import.meta.dir, '../../../catch-22-next/supabase/migrations/20260507000000_audiobookphile_schema.sql');
 
 let sql = fs.readFileSync(sqliteSqlPath, 'utf8');
 

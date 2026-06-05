@@ -17,8 +17,8 @@ export default async function LogsPage() {
           {[
             { label: 'Supabase API Logs', desc: 'Database and auth requests', href: 'https://supabase.com/dashboard/project/iambzzclljayqdxkeepy/logs/edge-logs' },
             { label: 'Supabase Auth Logs', desc: 'Login and auth events', href: 'https://supabase.com/dashboard/project/iambzzclljayqdxkeepy/logs/auth-logs' },
-            { label: 'Vercel Function Logs', desc: 'Server-side function logs', href: 'https://vercel.com/organicnz/audiobookshelf-client-react/logs' },
-            { label: 'Vercel Deployments', desc: 'Build and deploy history', href: 'https://vercel.com/organicnz/audiobookshelf-client-react' },
+            { label: 'Vercel Function Logs', desc: 'Server-side function logs', href: 'https://vercel.com/organicnz/audiobookphile-client-react/logs' },
+            { label: 'Vercel Deployments', desc: 'Build and deploy history', href: 'https://vercel.com/organicnz/audiobookphile-client-react' },
           ].map((item) => (
             <a
               key={item.href}

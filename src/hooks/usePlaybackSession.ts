@@ -81,7 +81,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
       try {
         const payload: StartSessionPayload = {
           deviceInfo: {
-            clientName: 'Audiobookshelf Web (React)',
+            clientName: 'Audiobookphile Web (React)',
             deviceId: getDeviceId()
           },
           supportedMimeTypes,

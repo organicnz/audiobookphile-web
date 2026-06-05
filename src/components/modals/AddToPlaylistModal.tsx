@@ -240,7 +240,7 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
                   <div className="text-foreground-muted flex items-center justify-center text-sm">
                     <p>{t('MessageNoUserPlaylistsHelp')}</p>
                     <Tooltip text={t('LabelClickForMoreInfo')} className="ms-2 inline-flex">
-                      <a href="https://www.audiobookshelf.org/guides/collections" target="_blank" rel="noreferrer" className="text-white/40 hover:text-primary transition-colors inline-flex">
+                      <a href="https://www.audiobookphile.org/guides/collections" target="_blank" rel="noreferrer" className="text-white/40 hover:text-primary transition-colors inline-flex">
                         <HelpCircle size={18} strokeWidth={2.5} />
                       </a>
                     </Tooltip>

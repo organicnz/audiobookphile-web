@@ -11,7 +11,7 @@ export function LibraryIconExamples() {
           <span className="font-bold">Import:</span> <Code overflow>import LibraryIcon from &apos;@/components/ui/LibraryIcon&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>icon</Code> (icon name from absicons, defaults to &apos;audiobookshelf&apos;), <Code>fontSize</Code>{' '}
+          <span className="font-bold">Props:</span> <Code>icon</Code> (icon name from absicons, defaults to &apos;audiobookphile&apos;), <Code>fontSize</Code>{' '}
           (CSS font size class, defaults to &apos;text-lg&apos;), <Code>size</Code> (5 or 6 for container size, defaults to 5), <Code>className</Code>{' '}
           (additional CSS classes)
         </p>

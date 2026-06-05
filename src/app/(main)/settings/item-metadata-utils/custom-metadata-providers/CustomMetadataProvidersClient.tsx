@@ -39,7 +39,7 @@ export default function CustomMetadataProvidersClient({ providers: initialProvid
     <SettingsContent
       title={t('HeaderCustomMetadataProviders')}
       backLink="/settings/item-metadata-utils"
-      moreInfoUrl="https://www.audiobookshelf.org/guides/custom-metadata-providers"
+      moreInfoUrl="https://www.audiobookphile.org/guides/custom-metadata-providers"
       addButton={{
         label: t('ButtonAdd'),
         onClick: () => setIsAddModalOpen(true)
