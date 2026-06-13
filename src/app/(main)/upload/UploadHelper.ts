@@ -274,7 +274,7 @@ export async function upload(
             uploadedPaths.push(providerPrefix + storagePath)
             resolve()
           } else {
-            reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status}`))
+            reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status} ${xhr.responseText}`))
           }
         }
 
