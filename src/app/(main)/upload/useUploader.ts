@@ -6,10 +6,11 @@ import { startTransition, useEffect, useMemo, useState } from 'react'
 import { Library } from '@/types/api'
 
 import { CleanedItem, FileWithMetadata, getItemsFromFilelist, upload, UploadProgressInfo } from './UploadHelper'
-import { fetchBookMetadata, fetchPodcastMetadata, getCookie } from './actions'
+import { fetchBookMetadata, fetchPodcastMetadata, getCookie, checkExistingBook } from './actions'
 import { sanitizeFileName, SupportedFileTypes } from '@/lib/fileUtils'
 
 export interface ItemToUpload extends CleanedItem {
+  bookId?: string
   metadataError?: string
   isFetchingMetadata?: boolean
   isUploading?: boolean
@@ -200,6 +201,21 @@ export function useUploader(libraries: Library[]) {
     const items = uploadItems.map((item) => ({ ...item }))
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
+      
+      try {
+        const existingBookId = await checkExistingBook(
+          item.title, 
+          item.author || '', 
+          selectedLibrary!, 
+          currentLibraryMediaType! || 'book'
+        )
+        if (existingBookId) {
+          item.bookId = existingBookId
+        }
+      } catch (err) {
+        console.warn('Failed to check for existing book:', err)
+      }
+
       item.isUploading = true
       item.uploadProgress = 0
       item.uploadBytesLoaded = 0

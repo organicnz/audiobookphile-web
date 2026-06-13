@@ -202,7 +202,7 @@ export async function upload(
 ): Promise<void> {
   const { Upload } = await import('tus-js-client')
 
-  const bookId = crypto.randomUUID()
+  const bookId = item.bookId || crypto.randomUUID()
   const totalSize = item.itemFiles.reduce((sum, f) => sum + f.size, 0)
   let uploadedBytes = 0
 

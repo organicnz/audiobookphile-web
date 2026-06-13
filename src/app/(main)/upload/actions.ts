@@ -95,3 +95,28 @@ export async function getCookie(): Promise<string> {
   const { data: { session } } = await supabase.auth.getSession()
   return session?.access_token ?? ''
 }
+
+export async function checkExistingBook(title: string, author: string, libraryId: string, mediaType: string): Promise<string | undefined> {
+  try {
+    const { createClient } = await import('@/utils/supabase/server')
+    const supabase = await createClient()
+    
+    let query = supabase
+      .from('library_items')
+      .select('media_id')
+      .eq('library_id', libraryId)
+      .eq('media_type', mediaType)
+      .eq('title', title)
+      
+    if (mediaType === 'book' && author) {
+      // For books, also try to match the exact author
+      query = query.eq('author_names_first_last', author)
+    }
+    
+    const { data } = await query.limit(1).maybeSingle()
+    return data?.media_id || undefined
+  } catch (err) {
+    console.error('[upload/actions] checkExistingBook failed:', err)
+    return undefined
+  }
+}
