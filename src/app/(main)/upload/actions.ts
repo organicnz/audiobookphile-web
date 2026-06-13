@@ -114,7 +114,31 @@ export async function checkExistingBook(title: string, author: string, libraryId
     }
     
     const { data } = await query.limit(1).maybeSingle()
-    return data?.media_id || undefined
+    if (data?.media_id) {
+      return data.media_id
+    }
+    
+    // Fuzzy match fallback
+    const { data: allBooks } = await supabase
+      .from('library_items')
+      .select('media_id, title')
+      .eq('library_id', libraryId)
+      .eq('media_type', mediaType)
+      
+    if (allBooks) {
+      const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
+      const normalizedQuery = normalize(title)
+      
+      for (const book of allBooks) {
+        const normalizedBookTitle = normalize(book.title || '')
+        if (normalizedBookTitle && (normalizedQuery.includes(normalizedBookTitle) || normalizedBookTitle.includes(normalizedQuery))) {
+          console.log(`[upload/actions] Fuzzy matched "${title}" to existing book "${book.title}"`)
+          return book.media_id || undefined
+        }
+      }
+    }
+    
+    return undefined
   } catch (err) {
     console.error('[upload/actions] checkExistingBook failed:', err)
     return undefined
