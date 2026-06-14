@@ -222,8 +222,6 @@ export async function upload(
   cookie: string,
   onProgress?: (progress: UploadProgressInfo) => void
 ): Promise<void> {
-  const { Upload } = await import('tus-js-client')
-
   const bookId = item.bookId || crypto.randomUUID()
   const totalSize = item.itemFiles.reduce((sum, f) => sum + f.size, 0)
   let uploadedBytes = 0
@@ -266,102 +264,54 @@ export async function upload(
         throw new Error(`Presign failed: ${presignRes.status}`)
       }
     } catch (e) {
-      console.warn('Failed to get presigned URL, falling back to TUS:', e)
+      console.warn('Failed to get presigned URL:', e)
     }
 
     await new Promise<void>((resolve, reject) => {
-      if (uploadUrl) {
-        // --- DIRECT UPLOAD VIA XHR (B2 or Supabase Signed URL) ---
-        const xhr = new XMLHttpRequest()
-        xhr.open('PUT', uploadUrl, true)
-        
-        // Explicitly set Content-Type for the audio file (must match presign)
-        const contentType = file.type || file.mime_type || 'application/octet-stream'
-        xhr.setRequestHeader('Content-Type', contentType)
-        
-        // Supabase requires x-upsert to overwrite files, but B2 (S3) strictly rejects unsigned headers
-        if (providerPrefix !== 'b2://') {
-          xhr.setRequestHeader('x-upsert', 'true')
-        }
+      // Choose upload method
+      // We rely on our Edge Function presign endpoint which returns a presigned URL.
+      // Standard XHR PUT supports upserts perfectly and works fine for our max 25MB Supabase threshold
+      // as well as unlimited B2 uploads.
+      
+      const xhr = new XMLHttpRequest()
+      xhr.open('PUT', uploadUrl, true)
 
-        xhr.upload.onprogress = (event) => {
-          if (event.lengthComputable && onProgress) {
-            const chunkLoaded = uploadedBytes + event.loaded
-            onProgress({
-              percent: Math.round((chunkLoaded / totalSize) * 100),
-              loaded: chunkLoaded,
-              total: totalSize,
-            })
-          }
-        }
-
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            uploadedBytes += file.size
-            uploadedPaths.push(providerPrefix + storagePath)
-            resolve()
-          } else {
-            reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status} ${xhr.responseText}`))
-          }
-        }
-
-        xhr.onerror = () => reject(new Error(`Network error uploading ${file.name}`))
-        xhr.ontimeout = () => reject(new Error(`Upload timed out for ${file.name}`))
-
-        // Generous timeout for large files
-        xhr.timeout = 3600000
-        xhr.send(file)
-
-      } else {
-        // --- FALLBACK TO SUPABASE TUS ---
-        const tusUpload = new Upload(file, {
-          endpoint: tusEndpoint,
-          retryDelays: [0, 3000, 5000, 10000, 20000],
-          headers: {
-            authorization: `Bearer ${cookie}`,
-            apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            'x-upsert': 'true',
-          },
-          uploadDataDuringCreation: true,
-          removeFingerprintOnSuccess: true,
-          metadata: {
-            bucketName: 'audio-files',
-            objectName: storagePath,
-            contentType: file.type || 'application/octet-stream',
-            cacheControl: '3600',
-          },
-          chunkSize: 6 * 1024 * 1024, // 6MB chunks — required by Supabase
-          onError: (error) => {
-            reject(new Error(`Failed to upload ${file.name}: ${error.message}`))
-          },
-          onProgress: (bytesUploaded, bytesTotal) => {
-            if (onProgress) {
-              const chunkLoaded = uploadedBytes + bytesUploaded
-              onProgress({
-                percent: Math.round((chunkLoaded / totalSize) * 100),
-                loaded: chunkLoaded,
-                total: totalSize,
-              })
-            }
-          },
-          onSuccess: () => {
-            uploadedBytes += file.size
-            uploadedPaths.push('supabase://' + storagePath)
-            resolve()
-          },
-        })
-
-        // Resume previous uploads if any, then start
-        tusUpload.findPreviousUploads().then((previousUploads) => {
-          if (previousUploads.length) {
-            tusUpload.resumeFromPreviousUpload(previousUploads[0])
-          }
-          tusUpload.start()
-        }).catch(() => {
-          // If fingerprint lookup fails, just start fresh
-          tusUpload.start()
-        })
+      // Explicitly set Content-Type for the audio file (must match presign)
+      const contentType = file.type || file.mime_type || 'application/octet-stream'
+      xhr.setRequestHeader('Content-Type', contentType)
+      
+      // Supabase requires x-upsert to overwrite files, but B2 (S3) strictly rejects unsigned headers
+      if (providerPrefix !== 'b2://') {
+        xhr.setRequestHeader('x-upsert', 'true')
       }
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable && onProgress) {
+          const chunkLoaded = uploadedBytes + event.loaded
+          onProgress({
+            percent: Math.round((chunkLoaded / totalSize) * 100),
+            loaded: chunkLoaded,
+            total: totalSize,
+          })
+        }
+      }
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          uploadedBytes += file.size
+          uploadedPaths.push(providerPrefix + storagePath)
+          resolve()
+        } else {
+          reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status} ${xhr.responseText}`))
+        }
+      }
+
+      xhr.onerror = () => reject(new Error(`Network error uploading ${file.name}`))
+      xhr.ontimeout = () => reject(new Error(`Upload timed out for ${file.name}`))
+
+      // Generous timeout for large files
+      xhr.timeout = 3600000
+      xhr.send(file)
     })
   }
 
