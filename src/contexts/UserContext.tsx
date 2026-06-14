@@ -126,7 +126,7 @@ export function UserProvider({
   }, [initialUser])
 
   const { profile } = userData
-  const userIsAdmin = profile.user_type === 'admin'
+  const userIsAdmin = profile.user_type === 'admin' || profile.user_type === 'root'
 
   const appUser: AppUser = {
     id: userData.id,
