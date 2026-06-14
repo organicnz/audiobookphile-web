@@ -278,7 +278,11 @@ export async function upload(
         // Explicitly set Content-Type for the audio file (must match presign)
         const contentType = file.type || file.mime_type || 'application/octet-stream'
         xhr.setRequestHeader('Content-Type', contentType)
-        xhr.setRequestHeader('x-upsert', 'true')
+        
+        // Supabase requires x-upsert to overwrite files, but B2 (S3) strictly rejects unsigned headers
+        if (providerPrefix !== 'b2://') {
+          xhr.setRequestHeader('x-upsert', 'true')
+        }
 
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable && onProgress) {
