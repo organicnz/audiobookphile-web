@@ -267,51 +267,75 @@ export async function upload(
       console.warn('Failed to get presigned URL:', e)
     }
 
-    await new Promise<void>((resolve, reject) => {
-      // Choose upload method
-      // We rely on our Edge Function presign endpoint which returns a presigned URL.
-      // Standard XHR PUT supports upserts perfectly and works fine for our max 25MB Supabase threshold
-      // as well as unlimited B2 uploads.
-      
-      const xhr = new XMLHttpRequest()
-      xhr.open('PUT', uploadUrl, true)
-
-      // Explicitly set Content-Type for the audio file (must match presign)
-      const contentType = file.type || file.mime_type || 'application/octet-stream'
-      xhr.setRequestHeader('Content-Type', contentType)
-      
-      // Supabase requires x-upsert to overwrite files, but B2 (S3) strictly rejects unsigned headers
-      if (providerPrefix !== 'b2://') {
-        xhr.setRequestHeader('x-upsert', 'true')
+    await new Promise<void>(async (resolve, reject) => {
+      if (!uploadUrl) {
+        return reject(new Error(`Failed to obtain a valid presigned upload URL for ${file.name}`))
       }
 
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable && onProgress) {
-          const chunkLoaded = uploadedBytes + event.loaded
-          onProgress({
-            percent: Math.round((chunkLoaded / totalSize) * 100),
-            loaded: chunkLoaded,
-            total: totalSize,
-          })
+      const MAX_RETRIES = 3
+      let attempt = 0
+
+      const attemptUpload = () => {
+        attempt++
+        const xhr = new XMLHttpRequest()
+        xhr.open('PUT', uploadUrl, true)
+
+        const contentType = file.type || file.mime_type || 'application/octet-stream'
+        xhr.setRequestHeader('Content-Type', contentType)
+        
+        if (providerPrefix !== 'b2://') {
+          xhr.setRequestHeader('x-upsert', 'true')
         }
-      }
 
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          uploadedBytes += file.size
-          uploadedPaths.push(providerPrefix + storagePath)
-          resolve()
-        } else {
-          reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status} ${xhr.responseText}`))
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable && onProgress) {
+            const chunkLoaded = uploadedBytes + event.loaded
+            onProgress({
+              percent: Math.round((chunkLoaded / totalSize) * 100),
+              loaded: chunkLoaded,
+              total: totalSize,
+            })
+          }
         }
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            uploadedBytes += file.size
+            uploadedPaths.push(providerPrefix + storagePath)
+            resolve()
+          } else {
+            if (attempt < MAX_RETRIES && (xhr.status >= 500 || xhr.status === 429)) {
+              console.warn(`Upload failed with ${xhr.status}, retrying (${attempt}/${MAX_RETRIES})...`)
+              setTimeout(attemptUpload, 2000 * attempt)
+            } else {
+              reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status} ${xhr.responseText}`))
+            }
+          }
+        }
+
+        xhr.onerror = () => {
+          if (attempt < MAX_RETRIES) {
+            console.warn(`Network error, retrying (${attempt}/${MAX_RETRIES})...`)
+            setTimeout(attemptUpload, 2000 * attempt)
+          } else {
+            reject(new Error(`Network error uploading ${file.name}`))
+          }
+        }
+        
+        xhr.ontimeout = () => {
+          if (attempt < MAX_RETRIES) {
+            console.warn(`Upload timed out, retrying (${attempt}/${MAX_RETRIES})...`)
+            setTimeout(attemptUpload, 2000 * attempt)
+          } else {
+            reject(new Error(`Upload timed out for ${file.name}`))
+          }
+        }
+
+        xhr.timeout = 3600000
+        xhr.send(file)
       }
 
-      xhr.onerror = () => reject(new Error(`Network error uploading ${file.name}`))
-      xhr.ontimeout = () => reject(new Error(`Upload timed out for ${file.name}`))
-
-      // Generous timeout for large files
-      xhr.timeout = 3600000
-      xhr.send(file)
+      attemptUpload()
     })
   }
 
