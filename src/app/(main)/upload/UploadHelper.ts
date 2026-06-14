@@ -6,6 +6,27 @@ import { ItemToUpload } from './useUploader'
 export interface FileWithMetadata extends File {
   filetype?: string | false
   filepath?: string
+  mime_type?: string
+}
+
+function getMimeType(filename: string): string {
+  const ext = filename.split('.').pop()?.toLowerCase()
+  switch (ext) {
+    case 'm4b':
+    case 'm4a': return 'audio/mp4'
+    case 'mp3': return 'audio/mpeg'
+    case 'flac': return 'audio/flac'
+    case 'ogg':
+    case 'oga': return 'audio/ogg'
+    case 'opus': return 'audio/opus'
+    case 'wav': return 'audio/wav'
+    case 'webm':
+    case 'webma': return 'audio/webm'
+    case 'aac': return 'audio/aac'
+    case 'mkv':
+    case 'mka': return 'audio/x-matroska'
+    default: return 'application/octet-stream'
+  }
 }
 
 interface UploadItemData {
@@ -140,6 +161,7 @@ export function getItemsFromFilelist(filelist: FileList, mediaType: Library['med
     } else {
       fileWithMeta.filetype = filetype
       fileWithMeta.filepath = (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name
+      fileWithMeta.mime_type = getMimeType(file.name)
 
       if (filetype === 'audio' || (filetype === 'ebook' && mediaType === 'book')) {
         let dir = fileWithMeta.filepath ? path.dirname(fileWithMeta.filepath) : ''
@@ -231,7 +253,7 @@ export async function upload(
         },
         body: JSON.stringify({
           filename: storagePath,
-          contentType: file.type || 'application/octet-stream',
+          contentType: file.type || file.mime_type || 'application/octet-stream',
           size: file.size,
         }),
       })
@@ -254,8 +276,9 @@ export async function upload(
         xhr.open('PUT', uploadUrl, true)
         
         // Explicitly set Content-Type for the audio file (must match presign)
-        const contentType = file.type || 'application/octet-stream'
+        const contentType = file.type || file.mime_type || 'application/octet-stream'
         xhr.setRequestHeader('Content-Type', contentType)
+        xhr.setRequestHeader('x-upsert', 'true')
 
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable && onProgress) {
