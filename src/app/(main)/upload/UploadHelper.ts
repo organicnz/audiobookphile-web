@@ -278,7 +278,6 @@ export async function upload(
         // Explicitly set Content-Type for the audio file (must match presign)
         const contentType = file.type || file.mime_type || 'application/octet-stream'
         xhr.setRequestHeader('Content-Type', contentType)
-        xhr.setRequestHeader('x-upsert', 'true')
 
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable && onProgress) {
@@ -316,7 +315,6 @@ export async function upload(
           headers: {
             authorization: `Bearer ${cookie}`,
             apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            'x-upsert': 'true',
           },
           uploadDataDuringCreation: true,
           removeFingerprintOnSuccess: true,

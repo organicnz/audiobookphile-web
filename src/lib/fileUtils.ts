@@ -40,8 +40,11 @@ export const sanitizeFileName = (filename: string, colonReplacement = ' - '): st
   // Check if basename is too many bytes
   const ext = path.extname(sanitized) // separate out file extension
   const basename = path.basename(sanitized, ext)
-  const extByteLength = Buffer.byteLength(ext, 'utf16le')
-  const basenameByteLength = Buffer.byteLength(basename, 'utf16le')
+  // Use Blob instead of Node.js Buffer for browser compatibility
+  const getByteLength = (str: string) => new Blob([str]).size
+  const extByteLength = getByteLength(ext)
+  const basenameByteLength = getByteLength(basename)
+  
   if (basenameByteLength + extByteLength > MAX_FILENAME_BYTES) {
     const MaxBytesForBasename = MAX_FILENAME_BYTES - extByteLength
     let totalBytes = 0
@@ -49,7 +52,7 @@ export const sanitizeFileName = (filename: string, colonReplacement = ' - '): st
 
     // Add chars until max bytes is reached
     for (const char of basename) {
-      totalBytes += Buffer.byteLength(char, 'utf16le')
+      totalBytes += getByteLength(char)
       if (totalBytes > MaxBytesForBasename) break
       else trimmedBasename += char
     }
