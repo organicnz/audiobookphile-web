@@ -411,7 +411,7 @@ describe('<MediaIconPicker />', () => {
     it('handles invalid value', () => {
       cy.mount(<MediaIconPicker value="invalid-icon" />)
       cy.get('button').should('exist')
-      // Should fall back to 'audiobookshelf' as default
+      // Should fall back to 'audiobookphile' as default
       cy.get('button').find('[role="img"]').should('exist')
     })
 

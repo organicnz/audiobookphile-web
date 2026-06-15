@@ -16,7 +16,7 @@ describe('Authentication Flow', () => {
     
     // Fill out the login form
     // Assuming you have a test user in your local database
-    cy.get('input[type="email"]').type('test@audiobookshelf.test')
+    cy.get('input[type="email"]').type('test@audiobookphile.test')
     cy.get('input[type="password"]').type('testpassword123')
     
     // Submit
