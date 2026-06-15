@@ -9,7 +9,12 @@ describe('LibraryIcon', () => {
   it('renders with default props', () => {
     cy.get('&library-icon').should('be.visible')
     cy.get('&library-icon-span').should('have.class', 'abs-icons')
-    cy.get('&library-icon-span').should('have.class', 'icon-audiobookshelf')
+    cy.get('&library-icon-span').should('have.class', 'icon-audiobookphile')
+  })
+
+  it('renders with default icon if none provided', () => {
+    cy.mount(<LibraryIcon icon="" />)
+    cy.get('&library-icon-span').should('have.class', 'icon-audiobookphile')
   })
 
   it('applies custom icon', () => {
@@ -17,9 +22,9 @@ describe('LibraryIcon', () => {
     cy.get('&library-icon-span').should('have.class', 'icon-books-1')
   })
 
-  it('falls back to audiobookshelf for invalid icon', () => {
-    cy.mount(<LibraryIcon icon="invalid-icon" />)
-    cy.get('&library-icon-span').should('have.class', 'icon-audiobookshelf')
+  it('falls back to audiobookphile for invalid icon', () => {
+    cy.mount(<LibraryIcon icon="invalid-icon-name" />)
+    cy.get('&library-icon-span').should('have.class', 'icon-audiobookphile')
   })
 
   it('applies custom size', () => {

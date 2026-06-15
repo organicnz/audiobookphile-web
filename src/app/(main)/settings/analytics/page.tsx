@@ -92,7 +92,7 @@ export default function AnalyticsPage() {
     <div className="w-full max-w-5xl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Server Analytics</h1>
-        <p className="text-foreground-muted">Monitor your server's health and user activity.</p>
+        <p className="text-foreground-muted">Monitor your server&apos;s health and user activity.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

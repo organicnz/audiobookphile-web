@@ -13,7 +13,7 @@ describe('<MediaIconPicker />', () => {
   })
 
   it('displays selected icon', () => {
-    cy.mount(<MediaIconPicker value="audiobookshelf" />)
+    cy.mount(<MediaIconPicker value="audiobookphile" />)
     cy.get('button').should('exist')
     // The icon should be visible (we can't easily test the specific icon class)
     cy.get('button').find('[role="img"]').should('exist')
@@ -352,7 +352,7 @@ describe('<MediaIconPicker />', () => {
     })
 
     it('has proper ARIA selected states', () => {
-      cy.mount(<MediaIconPicker value="audiobookshelf" />)
+      cy.mount(<MediaIconPicker value="audiobookphile" />)
       cy.get('button').click()
       // The selected item should have aria-selected="true"
       cy.get('[role="listbox"] [role="option"]').should('have.attr', 'aria-selected')
@@ -484,7 +484,7 @@ describe('<MediaIconPicker />', () => {
     })
 
     it('maintains selected state', () => {
-      cy.mount(<MediaIconPicker value="audiobookshelf" />)
+      cy.mount(<MediaIconPicker value="audiobookphile" />)
       cy.get('button').click()
       // The selected item should be marked as selected
       cy.get('[role="listbox"] [role="option"]').should('have.attr', 'aria-selected')

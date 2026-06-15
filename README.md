@@ -1,23 +1,29 @@
-# Audiobookphile Client (React / Next.js)
+# Audiobookphile 🎧
 
-A Next.js 16 web client for [Audiobookphile](https://github.com/advplyr/audiobookphile), built with React, Supabase, and deployed on Vercel. This client is in active development and will replace the existing VueJS web client.
+A serverless, open-source audiobook and podcast client. Built with Next.js 16, Supabase, and deployed effortlessly on Vercel. 
+
+Audiobookphile is designed for users who want a beautiful, premium "Liquid Glass" UI for their audiobooks, without the hassle of managing servers or docker containers. It's an excellent, zero-maintenance alternative to traditional self-hosted solutions.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2A%2Agithub.com%2Fadvplyr%2Faudiobookphile&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,NEXT_PUBLIC_SITE_URL&project-name=audiobookphile&repository-name=audiobookphile)
 
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router)
 - **Auth & Database**: [Supabase](https://supabase.com) (Postgres + Auth + Storage)
 - **Deployment**: [Vercel](https://vercel.com)
+- **Styling**: Tailwind CSS v4 (Liquid Glass Aesthetic)
 - **Package Manager**: [Bun](https://bun.sh)
 
-## Prerequisites
+## One-Click Deployment
 
-- [Bun](https://bun.sh) installed
-- A [Supabase](https://supabase.com) project with the schema migrations applied (see [Database Setup](#database-setup))
-- A Vercel account (for production deployment)
+1. **Set up Supabase**: Create a free project on [Supabase](https://supabase.com).
+2. **Deploy to Vercel**: Click the "Deploy with Vercel" button above.
+3. **Configure Environment**: Provide your Supabase project URL and API keys during the Vercel deployment.
+4. **Push Database Schema**: See the [Database Setup](#database-setup) section below.
 
 ## Environment Variables
 
-Copy `.env.example` to `.env.local` and fill in your values:
+Copy `.env.example` to `.env.local` for local development:
 
 ```bash
 cp .env.example .env.local
@@ -49,90 +55,48 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Hybrid Storage (Supabase + Backblaze B2)
-
-The client supports a hybrid storage model to minimize costs.
-- **Small files (< 25MB):** Cover images, metadata files, and short podcast clips are securely uploaded directly to Supabase Storage.
-- **Large files (>= 25MB):** Full audiobooks are securely uploaded directly to Backblaze B2 using S3 pre-signed URLs.
-
-To enable this, simply provide the `B2_*` environment variables in your `.env.local` or Vercel project settings. The client and backend will seamlessly route uploads and playback between the two providers based on file size.
-
-## Database Setup
+## Database Setup & Migration
 
 All schema changes are tracked as Supabase CLI migration files in `supabase/migrations/`.
 
 ```bash
-# Install Supabase CLI (dev dependency — already in package.json)
-# Link to your Supabase project
+# Install Supabase CLI
 bunx supabase link --project-ref <your-project-ref>
 
 # Apply all migrations
 bunx supabase db push
-
-# Regenerate TypeScript types after schema changes
-bunx supabase gen types typescript --linked > src/types/supabase.ts
 ```
 
-## Production Deployment (Vercel & GitHub Actions)
+### Migrating from Audiobookshelf (SQLite)
+If you are coming from a traditional self-hosted Audiobookshelf instance and want to move your metadata to Audiobookphile's Postgres backend, we've included a migration toolkit! 
+Check out the `supabase-migration-toolkit` skill/scripts to convert your SQLite schema and bulk-upload your data to Supabase.
 
-The repository comes pre-configured with two GitHub Actions for automated CI/CD:
-1. **Next.js Checks (`nextjs-check.yml`)**: Automatically runs TypeScript and Linter checks on PRs and pushes to `main`.
-2. **Edge Functions Deploy (`edge-functions.yml`)**: Automatically deploys Supabase Edge Functions on pushes to `main`.
+## Hybrid Storage (Supabase + Backblaze B2)
 
-### CI/CD Setup
+The client supports a hybrid storage model to minimize cloud costs.
+- **Small files (< 25MB):** Cover images, metadata files, and short podcast clips are securely uploaded directly to Supabase Storage.
+- **Large files (>= 25MB):** Full audiobooks are securely uploaded directly to Backblaze B2 using S3 pre-signed URLs.
 
-To enable the automated Edge Functions deployment, you must add the following **Repository Secrets** in your GitHub repository settings (`Settings > Secrets and variables > Actions`):
+To enable this, provide the `B2_*` environment variables. The client and backend will seamlessly route uploads and playback between the two providers based on file size.
 
-| Secret Name | Description |
-|---|---|
-| `SUPABASE_PROJECT_ID` | Your Supabase Project Ref ID (e.g. `iambzzclljayqdxkeepy`) |
-| `SUPABASE_ACCESS_TOKEN` | A personal access token generated from your Supabase account settings. |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server-side service role key (required for automated database backups cron job). |
+## CI/CD (GitHub Actions)
 
-For the frontend deployment, simply import the project in [Vercel](https://vercel.com/new). Vercel natively handles Next.js deployments on push.
-3. Add the environment variables listed above in the Vercel project settings.
-4. Deploy — Vercel handles SSL and CDN automatically.
+The repository comes pre-configured with two GitHub Actions:
+1. **Next.js Checks (`nextjs-check.yml`)**: Runs TypeScript and Linter checks on PRs.
+2. **Edge Functions Deploy (`edge-functions.yml`)**: Deploys Supabase Edge Functions on pushes to `main`.
 
-For a custom domain, add a `CNAME` record pointing to `cname.vercel-dns.com` (DNS only, no Cloudflare proxy).
+Ensure you configure your GitHub Repository Secrets (`SUPABASE_PROJECT_ID`, `SUPABASE_ACCESS_TOKEN`, `SUPABASE_SERVICE_ROLE_KEY`) to enable Edge Function deployments.
 
 ## Docker (Local / Self-Hosted)
 
-A Docker setup is available for local testing or self-hosted deployments.
+A Docker setup is available if you prefer to host it yourself instead of Vercel.
 
 ```bash
-# Build and run with docker-compose
 docker compose up --build
 ```
 
 The app will be available at [http://localhost:3000](http://localhost:3000).
 
-> Note: The Docker setup does not include SSL termination. For production self-hosting, place a reverse proxy (Caddy, Nginx) in front of the container.
-
-## Running Tests
-
-```bash
-# Cypress component tests
-bun run test
-
-# Unit tests (Vitest)
-bunx vitest run
-```
-
-## Project Structure
-
-```
-src/
-├── app/              # Next.js App Router pages and route handlers
-│   ├── (blank)/      # Unauthenticated pages (login, signup, forgot-password)
-│   ├── (main)/       # Authenticated app shell (library, settings, etc.)
-│   ├── api/          # Route handlers (playback, upload)
-│   └── auth/         # OAuth callback and error pages
-├── contexts/         # React context providers
-├── lib/              # API module (supabase-api.ts) and utilities
-├── types/            # TypeScript types (supabase.ts, index.ts)
-└── utils/            # Supabase client helpers (browser, server, middleware)
-```
-
 ## Contributing
 
-Pull requests are welcome. For major changes, open an issue first to discuss what you'd like to change.
+Pull requests are welcome. For major changes, open an issue first to discuss what you'd like to change. Please ensure you do not use any GPLv3 assets or proprietary logos from other projects when contributing.

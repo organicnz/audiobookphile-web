@@ -1,7 +1,7 @@
 {
   "name": "Audiobookphile",
-  "short_name": "Audiobooks",
-  "description": "A self-hosted audiobook and podcast server.",
+  "short_name": "Audiobookphile",
+  "description": "A serverless, open-source audiobook and podcast client.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#121212",
@@ -9,7 +9,7 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/images/logo.png",
+      "src": "/images/icon192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
