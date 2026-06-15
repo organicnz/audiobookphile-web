@@ -1,7 +1,7 @@
 'use client'
 
-import MultiSelect, { MultiSelectItem } from '@/components/ui/MultiSelect'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import MultiSelect, { MultiSelectItem } from '@/shared/ui/MultiSelect'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -62,7 +62,7 @@ export function MultiSelectExamples() {
           <p className="mb-2">
             <span className="font-bold">Import:</span>{' '}
             <Code overflow>
-              import MultiSelect, {'{'} MultiSelectItem {'}'} from &apos;@/components/ui/MultiSelect&apos;
+              import MultiSelect, {'{'} MultiSelectItem {'}'} from &apos;@/shared/ui/MultiSelect&apos;
             </Code>
           </p>
           <p className="mb-2">

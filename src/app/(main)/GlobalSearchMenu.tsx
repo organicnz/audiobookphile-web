@@ -11,11 +11,11 @@ import {
   User as UserIcon,
   Search
 } from 'lucide-react'
-import AuthorImage from '@/components/covers/AuthorImage'
-import { FlatResultItem, SearchResultType } from '@/hooks/useGlobalSearchTransformer'
-import { useMenuPosition } from '@/hooks/useMenuPosition'
-import { useScrollToFocused } from '@/hooks/useScrollToFocused'
-import { mergeClasses } from '@/lib/merge-classes'
+import AuthorImage from '@/features/metadata/components/AuthorImage'
+import { FlatResultItem, SearchResultType } from '@/features/library/hooks/useGlobalSearchTransformer'
+import { useMenuPosition } from '@/shared/hooks/useMenuPosition'
+import { useScrollToFocused } from '@/shared/hooks/useScrollToFocused'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import Link from 'next/link'
 import React, { useCallback, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'

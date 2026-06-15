@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import Btn from '@/components/ui/Btn'
+import Btn from '@/shared/ui/Btn'
 
 export default function Error({
   error,

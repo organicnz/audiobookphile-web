@@ -1,6 +1,6 @@
 'use client'
 
-import Chapters from '@/components/widgets/Chapters'
+import Chapters from '@/shared/widgets/Chapters'
 import { BookLibraryItem } from '@/types/api'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../ComponentExamples'
 
@@ -54,7 +54,7 @@ export function ChaptersExamples({ selectedBook }: ChaptersExamplesProps) {
     <ComponentExamples title="Chapters">
       <ComponentInfo component="Chapters" description="Component that displays chapters information including ID, title, start time, and duration.">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Chapters from &apos;@/components/widgets/Chapters&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import Chapters from &apos;@/shared/widgets/Chapters&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

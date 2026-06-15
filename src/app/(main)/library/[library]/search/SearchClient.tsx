@@ -1,7 +1,7 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
-import { getPlaceholderCoverUrl } from '@/lib/coverUtils'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useTransition } from 'react'

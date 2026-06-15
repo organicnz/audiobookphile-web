@@ -1,8 +1,8 @@
 'use client'
 
-import PreviewCover from '@/components/covers/PreviewCover'
-import CoverPreviewModal from '@/components/modals/CoverPreviewModal'
-import { getLibraryItemCoverUrl } from '@/lib/coverUtils'
+import PreviewCover from '@/features/metadata/components/PreviewCover'
+import CoverPreviewModal from '@/shared/modals/CoverPreviewModal'
+import { getLibraryItemCoverUrl } from '@/shared/lib/coverUtils'
 import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
 import { useCallback, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
@@ -45,7 +45,7 @@ export function PreviewCoverExamples({ selectedBook, selectedPodcast }: PreviewC
         description="A cover image preview component with aspect ratio handling, error states, and optional 'open in new tab' functionality."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import PreviewCover from &apos;@/components/covers/PreviewCover&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import PreviewCover from &apos;@/features/metadata/components/PreviewCover&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

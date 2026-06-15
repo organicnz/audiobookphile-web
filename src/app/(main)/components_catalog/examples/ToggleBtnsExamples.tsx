@@ -1,5 +1,5 @@
 'use client'
-import ToggleButtonGroup from '@/components/ui/ToggleButtonGroup'
+import ToggleButtonGroup from '@/shared/ui/ToggleButtonGroup'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -39,7 +39,7 @@ export function ToggleBtnsExamples() {
     <ComponentExamples title="Toggle Buttons">
       <ComponentInfo component="ToggleButtonGroup" description="Toggle button group component with radio button behavior and keyboard navigation">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ToggleButtonGroup from &apos;@/components/ui/ToggleButtonGroup&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import ToggleButtonGroup from &apos;@/shared/ui/ToggleButtonGroup&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>items</Code>, <Code>value</Code>, <Code>onChange</Code>, <Code>size</Code>, <Code>label</Code>,{' '}

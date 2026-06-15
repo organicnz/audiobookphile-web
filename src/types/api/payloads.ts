@@ -1,4 +1,4 @@
-import { AudibleRegion } from "@/lib/providerUtils"
+import { AudibleRegion } from "@/shared/lib/providerUtils"
 import { Author, Series } from '.'
 import { StartSessionDeviceInfo } from "./models"
 

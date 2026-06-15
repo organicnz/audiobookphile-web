@@ -2,7 +2,7 @@ import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 import withPWAInit from '@ducanh2912/next-pwa'
 
-const withNextIntl = createNextIntlPlugin('./src/lib/i18n.ts')
+const withNextIntl = createNextIntlPlugin('./src/shared/lib/i18n.ts')
 
 const withPWA = withPWAInit({
   dest: 'public',

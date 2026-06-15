@@ -1,7 +1,7 @@
 'use client'
 
-import IconBtn from '@/components/ui/IconBtn'
-import { useSettingsDrawer } from '@/contexts/SettingsDrawerContext'
+import IconBtn from '@/shared/ui/IconBtn'
+import { useSettingsDrawer } from '@/shared/contexts/SettingsDrawerContext'
 import SideNavContent from './SideNavContent'
 
 interface SideNavMobileDrawerProps {

@@ -1,8 +1,8 @@
 'use client'
 
-import Btn from '@/components/ui/Btn'
-import TextInput from '@/components/ui/TextInput'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import Btn from '@/shared/ui/Btn'
+import TextInput from '@/shared/ui/TextInput'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'

@@ -1,6 +1,6 @@
 'use client'
 
-import Dropdown from '@/components/ui/Dropdown'
+import Dropdown from '@/shared/ui/Dropdown'
 import { Library } from '@/types/api'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTransition } from 'react'

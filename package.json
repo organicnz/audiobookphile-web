@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "types:sync": "supabase gen types typescript --linked > src/types/supabase.ts",
     "cy:open": "cypress open",
     "cy:comp": "cypress open --component --browser chrome",
     "test": "cypress run --component --browser chrome",
@@ -18,7 +19,8 @@
     "cy:brave": "cypress open --component --browser \"C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe:chrome\"",
     "test:brave": "cypress run --component --browser \"C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe:chrome\"",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "sync:ios": "bun run scripts/generate-swift-models.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1047.0",
@@ -49,7 +51,8 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "tus-js-client": "^4.3.1",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "zod-to-json-schema": "^3.25.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -70,6 +73,7 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "supabase": "^2.98.2",
     "tailwindcss": "^4",
+    "ts-morph": "^28.0.0",
     "typescript": "^5"
   },
   "devEngines": {

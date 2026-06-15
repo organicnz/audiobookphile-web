@@ -87,6 +87,7 @@
       "dependencies": [
         "npm:@aws-sdk/client-s3@^3.1047.0",
         "npm:@aws-sdk/s3-request-presigner@^3.1047.0",
+        "npm:@ducanh2912/next-pwa@^10.2.9",
         "npm:@eslint/eslintrc@^3.3.1",
         "npm:@floating-ui/react-dom@^2.1.6",
         "npm:@formkit/drag-and-drop@~0.5.3",
@@ -129,8 +130,10 @@
         "npm:supabase@^2.98.2",
         "npm:tailwind-merge@^3.3.1",
         "npm:tailwindcss@4",
+        "npm:ts-morph@28",
         "npm:tus-js-client@^4.3.1",
         "npm:typescript@5",
+        "npm:zod-to-json-schema@^3.25.2",
         "npm:zod@^4.4.3"
       ]
     }

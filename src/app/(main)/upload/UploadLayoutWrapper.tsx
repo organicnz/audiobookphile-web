@@ -1,7 +1,7 @@
 'use client'
 
-import { useMediaContext } from '@/contexts/MediaContext'
-import { mergeClasses } from '@/lib/merge-classes'
+import { useMediaContext } from '@/features/player/contexts/MediaContext'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface UploadLayoutWrapperProps {
   children: React.ReactNode

@@ -1,8 +1,8 @@
 'use client'
 
-import { useLibrary } from '@/contexts/LibraryContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/lib/merge-classes'
+import { useLibrary } from '@/features/library/contexts/LibraryContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Home, 

@@ -1,4 +1,4 @@
-import { sanitizeFileName, SupportedFileTypes } from '@/lib/fileUtils'
+import { sanitizeFileName, SupportedFileTypes } from '@/shared/lib/fileUtils'
 import type { Library } from '@/types/api'
 import path from 'path'
 import { ItemToUpload } from './useUploader'

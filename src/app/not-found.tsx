@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import Btn from '@/components/ui/Btn'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Btn from '@/shared/ui/Btn'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 
 export default function NotFound() {
   const t = useTypeSafeTranslations()

@@ -1,4 +1,4 @@
-import InputDropdown from '@/components/ui/InputDropdown'
+import InputDropdown from '@/shared/ui/InputDropdown'
 
 describe('<InputDropdown />', () => {
   const mockItems = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry']

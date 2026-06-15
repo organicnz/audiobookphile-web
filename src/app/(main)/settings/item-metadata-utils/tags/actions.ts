@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { removeTag as apiRemoveTag, renameTag as apiRenameTag } from '@/shared/lib/api/misc'
 import { revalidatePath } from 'next/cache'
 
 export type RemoveTagApiResponse = {
@@ -8,17 +8,7 @@ export type RemoveTagApiResponse = {
 }
 
 export async function removeTag(tag: string): Promise<RemoveTagApiResponse> {
-  const supabase = await createClient()
-  const { data: books } = await supabase.from('books').select('id, tags')
-  let numItemsUpdated = 0
-  for (const book of books ?? []) {
-    const tags = book.tags as string[] | null
-    if (Array.isArray(tags) && tags.includes(tag)) {
-      const newTags = tags.filter((t) => t !== tag)
-      await supabase.from('books').update({ tags: newTags }).eq('id', book.id)
-      numItemsUpdated++
-    }
-  }
+  const { numItemsUpdated } = await apiRemoveTag(tag)
   if (numItemsUpdated > 0) {
     revalidatePath('/settings/item-metadata-utils/tags')
   }
@@ -31,21 +21,7 @@ export type RenameTagApiResponse = {
 }
 
 export async function renameTag(tag: string, newTagName: string): Promise<RenameTagApiResponse> {
-  const supabase = await createClient()
-  const { data: books } = await supabase.from('books').select('id, tags')
-  let numItemsUpdated = 0
-  let tagMerged = false
-  for (const book of books ?? []) {
-    const tags = book.tags as string[] | null
-    if (Array.isArray(tags) && tags.includes(tag)) {
-      const newTags = tags.map((t) => (t === tag ? newTagName : t))
-      if (newTags.filter((t) => t === newTagName).length > 1) {
-        tagMerged = true
-      }
-      await supabase.from('books').update({ tags: [...new Set(newTags)] }).eq('id', book.id)
-      numItemsUpdated++
-    }
-  }
+  const { tagMerged, numItemsUpdated } = await apiRenameTag(tag, newTagName)
   if (numItemsUpdated > 0) {
     revalidatePath('/settings/item-metadata-utils/tags')
   }

@@ -1,4 +1,4 @@
-import IconBtn from '@/components/ui/IconBtn'
+import IconBtn from '@/shared/ui/IconBtn'
 
 describe('<IconBtn />', () => {
   it('renders a basic icon button', () => {

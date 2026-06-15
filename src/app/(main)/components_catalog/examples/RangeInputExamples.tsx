@@ -1,6 +1,6 @@
 'use client'
 
-import RangeInput from '@/components/ui/RangeInput'
+import RangeInput from '@/shared/ui/RangeInput'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -14,7 +14,7 @@ export function RangeInputExamples() {
     <ComponentExamples title="Range Inputs">
       <ComponentInfo component="RangeInput" description="Accessible range input component with customizable min/max/step values, labels, and disabled state">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import RangeInput from &apos;@/components/ui/RangeInput&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import RangeInput from &apos;@/shared/ui/RangeInput&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>, <Code>min</Code>, <Code>max</Code>,{' '}

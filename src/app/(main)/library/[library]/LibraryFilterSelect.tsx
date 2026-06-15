@@ -1,9 +1,9 @@
 'use client'
 
-import Dropdown, { DropdownItem } from '@/components/ui/Dropdown'
-import { useLibrary } from '@/contexts/LibraryContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
-import { filterDecode, filterEncode } from '@/lib/filterUtils'
+import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
+import { useLibrary } from '@/features/library/contexts/LibraryContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { filterDecode, filterEncode } from '@/shared/lib/filterUtils'
 import { EntityType, User } from '@/types/api'
 import { X, Filter } from 'lucide-react'
 import { useCallback, useMemo } from 'react'

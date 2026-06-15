@@ -1,5 +1,5 @@
-import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import { getLibraries, getLibraryFilterData } from '@/lib/api'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
+import { getLibraries, getLibraryFilterData } from '@/shared/lib/api'
 import SettingsContent from '../../SettingsContent'
 import GenresClient from './GenresClient'
 

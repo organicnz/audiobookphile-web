@@ -1,7 +1,7 @@
 'use client'
 
-import SeriesCard from '@/components/widgets/media-card/SeriesCard'
-import SeriesCardSkeleton from '@/components/widgets/media-card/SeriesCardSkeleton'
+import SeriesCard from '@/shared/widgets/media-card/SeriesCard'
+import SeriesCardSkeleton from '@/shared/widgets/media-card/SeriesCardSkeleton'
 import { BookLibraryItem, BookshelfView, LibraryItem, MediaProgress, Series } from '@/types/api'
 import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
@@ -51,7 +51,7 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
         description="Card component for displaying series in a Series bookshelf view. Shows multiple book covers in a stacked mosaic layout, series progress bar, book count badge, and RSS feed indicator. Different from CollapsedSeriesCard which is used for collapsed series within a library items view."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import SeriesCard from &apos;@/components/widgets/media-card/SeriesCard&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import SeriesCard from &apos;@/shared/widgets/media-card/SeriesCard&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

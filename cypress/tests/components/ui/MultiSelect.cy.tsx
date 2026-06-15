@@ -1,5 +1,5 @@
 import React from 'react'
-import { MultiSelect, MultiSelectItem } from '@/components/ui/MultiSelect'
+import { MultiSelect, MultiSelectItem } from '@/shared/ui/MultiSelect'
 
 describe('<MultiSelect />', () => {
   const basicItems: MultiSelectItem[] = [

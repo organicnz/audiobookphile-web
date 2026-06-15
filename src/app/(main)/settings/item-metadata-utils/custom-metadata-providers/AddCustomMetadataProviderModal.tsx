@@ -1,10 +1,10 @@
 'use client'
 
-import Modal from '@/components/modals/Modal'
-import Btn from '@/components/ui/Btn'
-import TextInput from '@/components/ui/TextInput'
-import { useGlobalToast } from '@/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
+import TextInput from '@/shared/ui/TextInput'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { CreateCustomMetadataProviderPayload } from '@/types/api'
 import { useState } from 'react'
 

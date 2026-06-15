@@ -1,7 +1,7 @@
 'use client'
 
-import CollectionCard from '@/components/widgets/media-card/CollectionCard'
-import CollectionCardSkeleton from '@/components/widgets/media-card/CollectionCardSkeleton'
+import CollectionCard from '@/shared/widgets/media-card/CollectionCard'
+import CollectionCardSkeleton from '@/shared/widgets/media-card/CollectionCardSkeleton'
 import { BookshelfView, Collection } from '@/types/api'
 import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
@@ -38,7 +38,7 @@ export function CollectionCardExamples({ collectionData }: CollectionCardExample
         description="Card component for displaying collections with side-by-side book covers, RSS indicator, and menu actions."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import CollectionCard from &apos;@/components/widgets/media-card/CollectionCard&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import CollectionCard from &apos;@/shared/widgets/media-card/CollectionCard&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

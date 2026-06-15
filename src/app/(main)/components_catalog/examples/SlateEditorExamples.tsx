@@ -1,10 +1,10 @@
 'use client'
 
-import Label from '@/components/ui/Label'
-import { slateElementStyles } from '@/components/ui/slate/constants'
-import SlateEditor from '@/components/ui/SlateEditor'
-import TextareaInput from '@/components/ui/TextareaInput'
-import { mergeClasses } from '@/lib/merge-classes'
+import Label from '@/shared/ui/Label'
+import { slateElementStyles } from '@/shared/ui/slate/constants'
+import SlateEditor from '@/shared/ui/SlateEditor'
+import TextareaInput from '@/shared/ui/TextareaInput'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -40,7 +40,7 @@ export function SlateEditorExamples() {
     <ComponentExamples title="Rich Text Editor">
       <ComponentInfo component="SlateEditor" description="A rich text editor built with Slate.js">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import SlateEditor from &apos;@/components/ui/SlateEditor&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import SlateEditor from &apos;@/shared/ui/SlateEditor&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>srcContent</Code>, <Code>onUpdate</Code>, <Code>placeholder</Code>, <Code>disabledEditor</Code>,{' '}

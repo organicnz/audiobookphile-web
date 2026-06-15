@@ -1,10 +1,10 @@
 'use client'
 
-import Modal from '@/components/modals/Modal'
-import TabbedModal from '@/components/modals/TabbedModal'
-import Btn from '@/components/ui/Btn'
-import MultiSelect, { MultiSelectItem } from '@/components/ui/MultiSelect'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import Modal from '@/shared/modals/Modal'
+import TabbedModal from '@/shared/modals/TabbedModal'
+import Btn from '@/shared/ui/Btn'
+import MultiSelect, { MultiSelectItem } from '@/shared/ui/MultiSelect'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { ComponentExamples, Example, ExamplesBlock } from '../ComponentExamples'
 

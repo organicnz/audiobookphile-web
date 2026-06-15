@@ -1,4 +1,4 @@
-import ExpandableHtml from '@/components/widgets/ExpandableHtml'
+import ExpandableHtml from '@/shared/widgets/ExpandableHtml'
 
 describe('<ExpandableHtml />', () => {
   const shortText = '<p>Short text that should not clamp.</p>'

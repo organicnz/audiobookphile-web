@@ -6,7 +6,7 @@ import {
   batchDeleteListeningSessions as apiBatchDeleteListeningSessions,
   deleteListeningSession as apiDeleteListeningSession,
   closeListeningSession as apiCloseListeningSession
-} from '@/lib/api'
+} from '@/shared/lib/api'
 import { revalidatePath } from 'next/cache'
 import { GetListeningSessionsResponse, GetOpenListeningSessionsResponse } from '@/types/api'
 

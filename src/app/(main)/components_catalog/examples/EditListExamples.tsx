@@ -1,7 +1,7 @@
 'use client'
 
-import EditList from '@/components/ui/EditList'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import EditList from '@/shared/ui/EditList'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -44,7 +44,7 @@ export function EditListExamples() {
       <ComponentInfo component="Edit List" description="Interactive list component for editing and deleting items">
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
-          <code className="rounded bg-gray-700 px-2 py-1">import Edit List from &apos;@/components/ui/EditList&apos;</code>
+          <code className="rounded bg-gray-700 px-2 py-1">import Edit List from &apos;@/shared/ui/EditList&apos;</code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <code className="rounded bg-gray-700 px-2 py-1">items</code>,{' '}

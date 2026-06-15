@@ -1,4 +1,4 @@
-import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import Link from 'next/link'
 import SettingsContent from '../SettingsContent'
 

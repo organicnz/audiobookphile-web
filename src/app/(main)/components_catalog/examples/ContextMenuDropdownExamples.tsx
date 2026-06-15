@@ -1,6 +1,6 @@
 'use client'
-import ContextMenuDropdown, { type ContextMenuDropdownItem } from '@/components/ui/ContextMenuDropdown'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import ContextMenuDropdown, { type ContextMenuDropdownItem } from '@/shared/ui/ContextMenuDropdown'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // ContextMenuDropdown Examples
@@ -54,7 +54,7 @@ export function ContextMenuDropdownExamples() {
     <ComponentExamples title="Context Menu Button">
       <ComponentInfo component="ContextMenuDropdown" description="Context menu triggered by a button with submenus, loading states, and custom triggers">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ContextMenuDropdown from &apos;@/components/ui/ContextMenuDropdown&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import ContextMenuDropdown from &apos;@/shared/ui/ContextMenuDropdown&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>items</Code> (ContextMenuItem[]), <Code>disabled</Code>, <Code>processing</Code>,{' '}

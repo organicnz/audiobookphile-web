@@ -1,7 +1,7 @@
 'use client'
 
-import CoverSizeWidget from '@/components/widgets/CoverSizeWidget'
-import { useCardSize } from '@/contexts/CardSizeContext'
+import CoverSizeWidget from '@/shared/widgets/CoverSizeWidget'
+import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function CoverSizeWidgetExamples() {

@@ -1,7 +1,7 @@
 'use client'
 
-import AuthorCard from '@/components/widgets/media-card/AuthorCard'
-import AuthorCardSkeleton from '@/components/widgets/media-card/AuthorCardSkeleton'
+import AuthorCard from '@/shared/widgets/media-card/AuthorCard'
+import AuthorCardSkeleton from '@/shared/widgets/media-card/AuthorCardSkeleton'
 import { Author } from '@/types/api'
 import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
@@ -33,7 +33,7 @@ export function AuthorCardExamples({ authorData }: AuthorCardExamplesProps) {
           description="Card component for displaying authors with image, book count, and hover actions."
         >
           <p className="mb-2">
-            <span className="font-bold">Import:</span> <Code overflow>import AuthorCard from &apos;@/components/widgets/media-card/AuthorCard&apos;</Code>
+            <span className="font-bold">Import:</span> <Code overflow>import AuthorCard from &apos;@/shared/widgets/media-card/AuthorCard&apos;</Code>
           </p>
           <div>
             <span className="font-bold">Props:</span>

@@ -1,7 +1,7 @@
 'use client'
-import LoadingIndicator from '@/components/ui/LoadingIndicator'
-import ProgressIndicator from '@/components/ui/ProgressIndicator'
-import LoadingSpinner from '@/components/widgets/LoadingSpinner'
+import LoadingIndicator from '@/shared/ui/LoadingIndicator'
+import ProgressIndicator from '@/shared/ui/ProgressIndicator'
+import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function LoadingExamples() {
@@ -9,7 +9,7 @@ export function LoadingExamples() {
     <ComponentExamples title="Loading Indicators">
       <ComponentInfo component="LoadingIndicator" description="Loading indicator component with animated dots">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import LoadingIndicator from &apos;@/components/ui/LoadingIndicator&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import LoadingIndicator from &apos;@/shared/ui/LoadingIndicator&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> No props required - displays animated loading dots
@@ -20,7 +20,7 @@ export function LoadingExamples() {
         <div className="col-span-1 md:col-span-2 lg:col-span-3">
           <ComponentInfo component="LoadingSpinner" description="Loading spinner component with various sizes and customization options">
             <p className="mb-2">
-              <span className="font-bold">Import:</span> <Code overflow>import LoadingSpinner from &apos;@/components/widgets/LoadingSpinner&apos;</Code>
+              <span className="font-bold">Import:</span> <Code overflow>import LoadingSpinner from &apos;@/shared/widgets/LoadingSpinner&apos;</Code>
             </p>
             <p className="mb-2">
               <span className="font-bold">Props:</span> <Code>size</Code> (la-sm, la-lg, la-2x, la-3x), <Code>invert</Code>, <Code>color</Code>,{' '}

@@ -1,7 +1,7 @@
 'use client'
 
-import { useUser } from '@/contexts/UserContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { useUser } from '@/shared/contexts/UserContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { Profile } from '@/types'
 import SettingsContent from '../SettingsContent'
 import UsersTable from './UsersTable'

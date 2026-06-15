@@ -1,6 +1,6 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { RssFeed } from '@/types/api'
 import SettingsContent from '../SettingsContent'
 import RssFeedsTable from './RssFeedsTable'

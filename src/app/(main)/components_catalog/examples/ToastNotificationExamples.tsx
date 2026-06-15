@@ -1,6 +1,6 @@
 'use client'
-import Btn from '@/components/ui/Btn'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import Btn from '@/shared/ui/Btn'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -16,7 +16,7 @@ export function ToastNotificationExamples() {
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
           <Code overflow>
-            import {'{'} useGlobalToast {'}'} from &apos;@/contexts/ToastContext&apos;
+            import {'{'} useGlobalToast {'}'} from &apos;@/shared/contexts/ToastContext&apos;
           </Code>
         </p>
         <p className="mb-2">

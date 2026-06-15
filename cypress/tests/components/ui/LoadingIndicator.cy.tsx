@@ -1,4 +1,4 @@
-import LoadingIndicator from '@/components/ui/LoadingIndicator'
+import LoadingIndicator from '@/shared/ui/LoadingIndicator'
 
 describe('<LoadingIndicator />', () => {
   it('renders', () => {

@@ -1,4 +1,4 @@
-import DropdownMenu, { type DropdownMenuItem } from '@/components/ui/DropdownMenu'
+import DropdownMenu, { type DropdownMenuItem } from '@/shared/ui/DropdownMenu'
 import React from 'react'
 
 describe('<DropdownMenu />', () => {

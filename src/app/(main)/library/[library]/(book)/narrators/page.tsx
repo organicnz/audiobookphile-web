@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from '@/shared/utils/supabase/server'
 import NarratorsClient from './NarratorsClient'
 
 export default async function NarratorsPage({ params }: { params: Promise<{ library: string }> }) {

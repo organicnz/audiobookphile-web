@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
-import { useUser } from '@/contexts/UserContext'
+import { createClient } from '@/shared/utils/supabase/client'
+import { useUser } from '@/shared/contexts/UserContext'
 import { Activity, Book, Users, Database } from 'lucide-react'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<{

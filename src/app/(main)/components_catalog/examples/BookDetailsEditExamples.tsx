@@ -1,7 +1,7 @@
 'use client'
 
-import Btn from '@/components/ui/Btn'
-import BookDetailsEdit, { BookDetailsEditRef, BookUpdatePayload } from '@/components/widgets/BookDetailsEdit'
+import Btn from '@/shared/ui/Btn'
+import BookDetailsEdit, { BookDetailsEditRef, BookUpdatePayload } from '@/shared/widgets/BookDetailsEdit'
 import { BookLibraryItem } from '@/types/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../ComponentExamples'
@@ -80,7 +80,7 @@ export function BookDetailsEditExamples({ selectedBook }: BookDetailsEditExample
         description="A form for editing the metadata of a book library item. It includes fields for title, author, series, and more."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import BookDetailsEdit from &apos;@/components/widgets/BookDetailsEdit&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import BookDetailsEdit from &apos;@/shared/widgets/BookDetailsEdit&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

@@ -4,7 +4,7 @@ import type { Library } from '@/types/api'
 import {
   deleteUser as apiDeleteUser,
   getLibraries,
-} from '@/lib/api'
+} from '@/shared/lib/api'
 import { revalidatePath } from 'next/cache'
 
 export async function deleteUser(userId: string): Promise<void> {

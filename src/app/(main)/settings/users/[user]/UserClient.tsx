@@ -1,7 +1,7 @@
 'use client'
 
-import SimpleDataTable, { DataTableColumn } from '@/components/ui/SimpleDataTable'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import SimpleDataTable, { DataTableColumn } from '@/shared/ui/SimpleDataTable'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { MediaProgress, User } from '@/types/api'
 import { formatDistanceToNow } from 'date-fns'
 

@@ -1,4 +1,4 @@
-import Checkbox from '@/components/ui/Checkbox'
+import Checkbox from '@/shared/ui/Checkbox'
 
 describe('<Checkbox />', () => {
   it('renders', () => {

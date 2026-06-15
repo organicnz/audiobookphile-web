@@ -1,8 +1,8 @@
 'use client'
 
-import Dropdown, { DropdownItem } from '@/components/ui/Dropdown'
-import { useLibrary } from '@/contexts/LibraryContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
+import { useLibrary } from '@/features/library/contexts/LibraryContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { EntityType } from '@/types/api'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react'
 import { useCallback, useEffect, useMemo } from 'react'

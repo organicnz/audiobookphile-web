@@ -1,9 +1,9 @@
 'use client'
 
-import Dropdown from '@/components/ui/Dropdown'
-import { useComponentsCatalog } from '@/contexts/ComponentsCatalogContext'
-import { LibraryProvider } from '@/contexts/LibraryContext'
-import { FlatResultItem } from '@/hooks/useGlobalSearchTransformer'
+import Dropdown from '@/shared/ui/Dropdown'
+import { useComponentsCatalog } from '@/shared/contexts/ComponentsCatalogContext'
+import { LibraryProvider } from '@/features/library/contexts/LibraryContext'
+import { FlatResultItem } from '@/features/library/hooks/useGlobalSearchTransformer'
 import { Author, BookLibraryItem, Collection, LibraryItem, Playlist, PodcastLibraryItem, Series } from '@/types/api'
 import { useCallback, useState } from 'react'
 import GlobalSearchInput from '../../GlobalSearchInput'

@@ -1,4 +1,4 @@
-import { getLibraryItem } from '@/lib/api';
+import { getLibraryItem } from '@/shared/lib/api';
 import { BookLibraryItem, PodcastLibraryItem } from '@/types/api';
 import LibraryItemClient from './LibraryItemClient';
 

@@ -1,10 +1,10 @@
 'use client'
 
-import Modal from '@/components/modals/Modal'
-import Btn from '@/components/ui/Btn'
-import IconBtn from '@/components/ui/IconBtn'
-import TextInput from '@/components/ui/TextInput'
-import Tooltip from '@/components/ui/Tooltip'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
+import IconBtn from '@/shared/ui/IconBtn'
+import TextInput from '@/shared/ui/TextInput'
+import Tooltip from '@/shared/ui/Tooltip'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -15,7 +15,7 @@ export function TooltipExamples() {
     <ComponentExamples title="Tooltips">
       <ComponentInfo component="Tooltip" description="Tooltip component with various positions and hover/focus interactions">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Tooltip from &apos;@/components/ui/Tooltip&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import Tooltip from &apos;@/shared/ui/Tooltip&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>text</Code>, <Code>children</Code>, <Code>position</Code>, <Code>usePortal</Code>

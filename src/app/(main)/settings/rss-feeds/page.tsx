@@ -1,4 +1,4 @@
-import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import SettingsContent from '../SettingsContent'
 
 export const dynamic = 'force-dynamic'

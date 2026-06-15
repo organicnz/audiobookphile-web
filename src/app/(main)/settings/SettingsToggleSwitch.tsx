@@ -1,5 +1,5 @@
-import ToggleSwitch from '@/components/ui/ToggleSwitch'
-import Tooltip from '@/components/ui/Tooltip'
+import ToggleSwitch from '@/shared/ui/ToggleSwitch'
+import Tooltip from '@/shared/ui/Tooltip'
 import { Info } from 'lucide-react'
 
 interface SettingsToggleSwitchProps {

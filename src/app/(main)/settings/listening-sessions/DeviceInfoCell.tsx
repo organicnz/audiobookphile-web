@@ -1,6 +1,6 @@
 'use client'
 
-import TruncatingTooltipText from '@/components/ui/TruncatingTooltipText'
+import TruncatingTooltipText from '@/shared/ui/TruncatingTooltipText'
 import type { PlaybackSession } from '@/types/api'
 
 /**

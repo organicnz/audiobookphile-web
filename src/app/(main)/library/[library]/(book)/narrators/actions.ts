@@ -3,7 +3,7 @@
 import {
   updateNarrator as apiUpdateNarrator,
   deleteNarrator as apiDeleteNarrator
-} from '@/lib/api'
+} from '@/shared/lib/api'
 import { revalidatePath } from 'next/cache'
 
 export type SaveNarratorApiResponse = {

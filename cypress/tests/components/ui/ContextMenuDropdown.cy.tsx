@@ -1,4 +1,4 @@
-import ContextMenuDropdown from '@/components/ui/ContextMenuDropdown'
+import ContextMenuDropdown from '@/shared/ui/ContextMenuDropdown'
 
 // Define types for the menu items based on the component's interface
 interface ContextMenuDropdownSubitem {

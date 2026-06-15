@@ -1,4 +1,4 @@
-import AuthCard from '@/components/auth/AuthCard'
+import AuthCard from '@/features/auth/components/AuthCard'
 import Link from 'next/link'
 
 export default function VerifyEmailPage() {

@@ -1,6 +1,6 @@
 'use client'
 
-import { MediaProvider } from '@/contexts/MediaContext'
+import { MediaProvider } from '@/features/player/contexts/MediaContext'
 import { Author, BookLibraryItem, Collection, LibraryItem, Playlist, PodcastLibraryItem, Series } from '@/types/api'
 import { AuthorCardExamples } from './media-card/AuthorCardExamples'
 import { BookMediaCardExamples } from './media-card/BookMediaCardExamples'

@@ -1,8 +1,8 @@
 'use client'
 
-import { useMediaContext } from '@/contexts/MediaContext'
-import { useUser } from '@/contexts/UserContext'
-import { mergeClasses } from '@/lib/merge-classes'
+import { useMediaContext } from '@/features/player/contexts/MediaContext'
+import { useUser } from '@/shared/contexts/UserContext'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import SideNav from './SideNav'
 import SideNavMobileDrawer from './SideNavMobileDrawer'
 

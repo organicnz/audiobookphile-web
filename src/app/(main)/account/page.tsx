@@ -1,10 +1,10 @@
-import TextInput from '@/components/ui/TextInput'
+import TextInput from '@/shared/ui/TextInput'
 
-import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import { getCurrentUser } from '@/lib/api'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
+import { getCurrentUser } from '@/shared/lib/api'
 
-import Btn from '@/components/ui/Btn'
-import { getTheme } from '@/lib/theme'
+import Btn from '@/shared/ui/Btn'
+import { getTheme } from '@/shared/lib/theme'
 import { cookies } from 'next/headers'
 import LogoutBtn from './LogoutBtn'
 import ThemeSelector from './ThemeSelector'

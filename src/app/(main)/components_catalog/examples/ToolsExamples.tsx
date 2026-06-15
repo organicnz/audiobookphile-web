@@ -1,6 +1,6 @@
 'use client'
 
-import Tools from '@/components/widgets/Tools'
+import Tools from '@/shared/widgets/Tools'
 import { BookLibraryItem } from '@/types/api'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../ComponentExamples'
 
@@ -13,7 +13,7 @@ export function ToolsExamples({ selectedBook }: ToolsExamplesProps) {
     <ComponentExamples title="Tools">
       <ComponentInfo component="Tools" description="Component for managing audiobook tools like M4B creation and metadata embedding.">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Tools from &apos;@/components/widgets/Tools&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import Tools from &apos;@/shared/widgets/Tools&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

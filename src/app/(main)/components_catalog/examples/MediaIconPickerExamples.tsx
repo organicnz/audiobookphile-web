@@ -1,5 +1,5 @@
 'use client'
-import MediaIconPicker from '@/components/ui/MediaIconPicker'
+import MediaIconPicker from '@/shared/ui/MediaIconPicker'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -12,7 +12,7 @@ export function MediaIconPickerExamples() {
     <ComponentExamples title="Media Icon Pickers">
       <ComponentInfo component="MediaIconPicker" description="Icon picker component for selecting library icons with dropdown menu">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import MediaIconPicker from &apos;@/components/ui/MediaIconPicker&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import MediaIconPicker from &apos;@/shared/ui/MediaIconPicker&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>value</Code> (selected icon name, defaults to &apos;database&apos;), <Code>onChange</Code> (callback

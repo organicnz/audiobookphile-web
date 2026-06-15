@@ -1,5 +1,5 @@
 'use client'
-import DurationPicker from '@/components/ui/DurationPicker'
+import DurationPicker from '@/features/player/components/DurationPicker'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -17,7 +17,7 @@ export function DurationPickerExamples() {
         description="Interactive duration input component with hours, minutes, and seconds. Supports keyboard navigation and 3-digit hours for long durations"
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import DurationPicker from &apos;@/components/ui/DurationPicker&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import DurationPicker from &apos;@/shared/ui/DurationPicker&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>onInput</Code>, <Code>showThreeDigitHour</Code>,{' '}

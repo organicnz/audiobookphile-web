@@ -1,4 +1,4 @@
-import { useBookshelfVirtualizer, type UseBookshelfVirtualizerProps } from '@/hooks/useBookshelfVirtualizer'
+import { useBookshelfVirtualizer, type UseBookshelfVirtualizerProps } from '@/features/library/hooks/useBookshelfVirtualizer'
 import { useState } from 'react'
 
 const TestComponent = ({ initialProps = {} }: { initialProps?: Partial<UseBookshelfVirtualizerProps> }) => {

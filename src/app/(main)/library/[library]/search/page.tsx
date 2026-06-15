@@ -1,4 +1,4 @@
-import { searchLibrary } from '@/lib/api'
+import { searchLibrary } from '@/shared/lib/api'
 import SearchClient from './SearchClient'
 
 export const dynamic = 'force-dynamic'

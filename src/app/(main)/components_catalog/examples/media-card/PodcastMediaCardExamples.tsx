@@ -1,9 +1,9 @@
 'use client'
 
-import MediaCardSkeleton from '@/components/widgets/media-card/MediaCardSkeleton'
-import PodcastEpisodeCard from '@/components/widgets/media-card/PodcastEpisodeCard'
-import PodcastMediaCard from '@/components/widgets/media-card/PodcastMediaCard'
-import { useComponentsCatalog } from '@/contexts/ComponentsCatalogContext'
+import MediaCardSkeleton from '@/shared/widgets/media-card/MediaCardSkeleton'
+import PodcastEpisodeCard from '@/shared/widgets/media-card/PodcastEpisodeCard'
+import PodcastMediaCard from '@/shared/widgets/media-card/PodcastMediaCard'
+import { useComponentsCatalog } from '@/shared/contexts/ComponentsCatalogContext'
 import { BookshelfView, EReaderDevice, PodcastEpisode, PodcastLibraryItem } from '@/types/api'
 import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
@@ -104,9 +104,9 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
       >
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
-          <Code overflow>import PodcastMediaCard from &apos;@/components/widgets/media-card/PodcastMediaCard&apos;</Code>
+          <Code overflow>import PodcastMediaCard from &apos;@/shared/widgets/media-card/PodcastMediaCard&apos;</Code>
           <br />
-          <Code overflow>import PodcastEpisodeCard from &apos;@/components/widgets/media-card/PodcastEpisodeCard&apos;</Code>
+          <Code overflow>import PodcastEpisodeCard from &apos;@/shared/widgets/media-card/PodcastEpisodeCard&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

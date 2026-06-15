@@ -1,7 +1,7 @@
 'use client'
-import { MultiSelectItem } from '@/components/ui/MultiSelect'
-import TwoStageMultiSelect, { TwoStageMultiSelectContent } from '@/components/ui/TwoStageMultiSelect'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import { MultiSelectItem } from '@/shared/ui/MultiSelect'
+import TwoStageMultiSelect, { TwoStageMultiSelectContent } from '@/shared/ui/TwoStageMultiSelect'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -65,7 +65,7 @@ export function TwoStageMultiSelectExamples() {
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
           <Code overflow>
-            import TwoStageMultiSelect, {'{'} TwoStageMultiSelectContent {'}'} from &apos;@/components/ui/TwoStageMultiSelect&apos;
+            import TwoStageMultiSelect, {'{'} TwoStageMultiSelectContent {'}'} from &apos;@/shared/ui/TwoStageMultiSelect&apos;
           </Code>
         </p>
         <p className="mb-2">

@@ -1,4 +1,4 @@
-import { getCurrentUser, getLibraryItem } from '@/lib/api';
+import { getCurrentUser, getLibraryItem } from '@/shared/lib/api';
 
 export default async function ChaptersPage({ params }: { params: Promise<{ item: string; library: string }> }) {
   const { item: itemId } = await params

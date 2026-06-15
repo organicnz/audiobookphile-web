@@ -1,8 +1,8 @@
 'use client'
 
 import { HelpCircle } from 'lucide-react'
-import Tooltip from '@/components/ui/Tooltip'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Tooltip from '@/shared/ui/Tooltip'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Link from 'next/link'
 
 export default function SettingsMoreInfoIcon(props: { moreInfoUrl: string }) {

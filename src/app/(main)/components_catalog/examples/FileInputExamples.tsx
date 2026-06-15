@@ -1,6 +1,6 @@
 'use client'
-import FileInput from '@/components/ui/FileInput'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import FileInput from '@/shared/ui/FileInput'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // FileInput Examples
@@ -11,7 +11,7 @@ export function FileInputExamples() {
     <ComponentExamples title="File Inputs">
       <ComponentInfo component="FileInput" description="File input component with customizable accept types and responsive design">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import FileInput from &apos;@/components/ui/FileInput&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import FileInput from &apos;@/shared/ui/FileInput&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>accept</Code> (file types to accept), <Code>onChange</Code> (callback with selected file),{' '}

@@ -1,7 +1,7 @@
 'use client'
 
-import Btn from '@/components/ui/Btn'
-import PodcastDetailsEdit, { PodcastDetailsEditRef, PodcastUpdatePayload } from '@/components/widgets/PodcastDetailsEdit'
+import Btn from '@/shared/ui/Btn'
+import PodcastDetailsEdit, { PodcastDetailsEditRef, PodcastUpdatePayload } from '@/shared/widgets/PodcastDetailsEdit'
 import { PodcastLibraryItem } from '@/types/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../ComponentExamples'
@@ -70,7 +70,7 @@ export function PodcastDetailsEditExamples({ selectedPodcast }: PodcastDetailsEd
         description="A form for editing the metadata of a podcast library item. It includes fields for title, author, RSS feed URL, description, and more."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import PodcastDetailsEdit from &apos;@/components/widgets/PodcastDetailsEdit&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import PodcastDetailsEdit from &apos;@/shared/widgets/PodcastDetailsEdit&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

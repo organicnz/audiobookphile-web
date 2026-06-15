@@ -1,4 +1,4 @@
-import Btn from '@/components/ui/Btn'
+import Btn from '@/shared/ui/Btn'
 
 describe('<Btn />', () => {
   it('renders a basic button', () => {

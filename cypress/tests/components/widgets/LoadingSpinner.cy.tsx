@@ -1,5 +1,5 @@
-import LoadingSpinner from '@/components/widgets/LoadingSpinner'
-import styles from '@/components/widgets/LoadingSpinner.module.css'
+import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
+import styles from '@/shared/widgets/LoadingSpinner.module.css'
 
 describe('<LoadingSpinner />', () => {
   it('renders a basic loading spinner', () => {

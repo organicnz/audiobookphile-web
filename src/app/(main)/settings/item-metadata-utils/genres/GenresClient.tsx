@@ -1,9 +1,9 @@
 'use client'
 
-import type { EditListItem } from '@/components/ui/EditList'
-import EditList from '@/components/ui/EditList'
-import { useGlobalToast } from '@/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import type { EditListItem } from '@/shared/ui/EditList'
+import EditList from '@/shared/ui/EditList'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { useMemo, useTransition } from 'react'
 import { removeGenre, renameGenre } from './actions'
 

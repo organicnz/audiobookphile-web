@@ -1,9 +1,9 @@
 'use client'
 
-import Checkbox from '@/components/ui/Checkbox'
-import CronExpressionBuilder from '@/components/widgets/CronExpressionBuilder'
-import CronExpressionPreview from '@/components/widgets/CronExpressionPreview'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Checkbox from '@/shared/ui/Checkbox'
+import CronExpressionBuilder from '@/shared/widgets/CronExpressionBuilder'
+import CronExpressionPreview from '@/shared/widgets/CronExpressionPreview'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { LibrarySettings } from '@/types/api'
 import { useState } from 'react'
 

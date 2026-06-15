@@ -1,6 +1,6 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { ApiKey, User } from '@/types/api'
 import { useCallback, useState } from 'react'
 import SettingsContent from '../SettingsContent'

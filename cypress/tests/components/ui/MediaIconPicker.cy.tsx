@@ -1,5 +1,5 @@
-import MediaIconPicker from '@/components/ui/MediaIconPicker'
-import { AVAILABLE_ICONS } from '@/lib/absicons'
+import MediaIconPicker from '@/shared/ui/MediaIconPicker'
+import { AVAILABLE_ICONS } from '@/shared/lib/absicons'
 
 describe('<MediaIconPicker />', () => {
   it('renders', () => {

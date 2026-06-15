@@ -1,4 +1,4 @@
-import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import ChangePasswordClient from './ChangePasswordClient'

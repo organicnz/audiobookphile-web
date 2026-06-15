@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/api'
+import { getCurrentUser } from '@/shared/lib/api'
 import { redirect } from 'next/navigation'
 
 /**

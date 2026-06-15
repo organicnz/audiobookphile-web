@@ -1,5 +1,5 @@
-import { SettingsDrawerProvider } from '@/contexts/SettingsDrawerContext'
-import { getCurrentUser } from '@/lib/api'
+import { SettingsDrawerProvider } from '@/shared/contexts/SettingsDrawerContext'
+import { getCurrentUser } from '@/shared/lib/api'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import '../../../assets/globals.css'

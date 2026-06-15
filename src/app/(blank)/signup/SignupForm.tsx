@@ -1,9 +1,9 @@
 'use client'
 
-import { signUp } from '@/app/actions/authActions'
-import AuthCard from '@/components/auth/AuthCard'
-import Btn from '@/components/ui/Btn'
-import TextInput from '@/components/ui/TextInput'
+import { signUp } from '@/features/auth/actions/authActions'
+import AuthCard from '@/features/auth/components/AuthCard'
+import Btn from '@/shared/ui/Btn'
+import TextInput from '@/shared/ui/TextInput'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'

@@ -1,6 +1,6 @@
 'use client'
-import TextInput from '@/components/ui/TextInput'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import TextInput from '@/shared/ui/TextInput'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -28,7 +28,7 @@ export function TextInputExamples() {
         description="Accessible text input with password visibility toggle, copy to clipboard, clear button, and various styling options"
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import TextInput from &apos;@/components/ui/TextInput&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import TextInput from &apos;@/shared/ui/TextInput&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>, <Code>placeholder</Code>, <Code>type</Code>,{' '}

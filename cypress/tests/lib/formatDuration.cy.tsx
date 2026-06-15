@@ -1,5 +1,5 @@
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
-import { formatDuration, type FormatDurationOptions } from '@/lib/formatDuration'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { formatDuration, type FormatDurationOptions } from '@/shared/lib/formatDuration'
 
 function DurationProbe({ seconds, options }: { seconds: number; options?: FormatDurationOptions }) {
   const t = useTypeSafeTranslations()

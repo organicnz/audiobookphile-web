@@ -1,9 +1,9 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
-import { filterEncode } from '@/lib/filterUtils'
-import { formatDuration } from '@/lib/formatDuration'
-import { bytesPretty } from '@/lib/string'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { filterEncode } from '@/shared/lib/filterUtils'
+import { formatDuration } from '@/shared/lib/formatDuration'
+import { bytesPretty } from '@/shared/lib/string'
 import { BookLibraryItem, BookMetadata, PodcastLibraryItem, PodcastMetadata } from '@/types/api'
 import { Fragment } from 'react'
 

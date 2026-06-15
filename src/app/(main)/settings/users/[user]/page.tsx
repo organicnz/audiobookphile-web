@@ -1,5 +1,5 @@
-import { getTypeSafeTranslations } from '@/lib/getTypeSafeTranslations'
-import { getUsers } from '@/lib/api'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
+import { getUsers } from '@/shared/lib/api'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import UserClient from './UserClient'

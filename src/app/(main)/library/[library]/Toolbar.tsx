@@ -1,8 +1,8 @@
 'use client'
 
-import ContextMenuDropdown from '@/components/ui/ContextMenuDropdown'
-import { useLibrary } from '@/contexts/LibraryContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import ContextMenuDropdown from '@/shared/ui/ContextMenuDropdown'
+import { useLibrary } from '@/features/library/contexts/LibraryContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { usePathname } from 'next/navigation'
 
 // Pages that should show item count and toolbar extras

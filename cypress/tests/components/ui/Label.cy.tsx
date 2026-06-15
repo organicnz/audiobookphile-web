@@ -1,5 +1,5 @@
 import React from 'react'
-import Label from '@/components/ui/Label'
+import Label from '@/shared/ui/Label'
 
 describe('<Label />', () => {
   it('renders with basic text content', () => {

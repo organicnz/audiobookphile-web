@@ -1,0 +1,171 @@
+'use client'
+
+import { useCardSize } from '@/features/library/contexts/CardSizeContext'
+import { getLibraryItemCoverSrc, getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
+import { mergeClasses } from '@/shared/lib/merge-classes'
+import type { LibraryItem } from '@/types/api'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+interface SeriesGroupCoverProps {
+  /** Series name (used as fallback when no covers available) */
+  name: string
+  /** Books in the series */
+  books: LibraryItem[]
+  /** Width of the cover area in pixels */
+  width: number
+  /** Height of the cover area in pixels */
+  height: number
+  /** Book cover aspect ratio (1 = square, 1.6 = standard) */
+  bookCoverAspectRatio: number
+}
+
+interface CoverData {
+  id: string
+  coverUrl: string
+  showCoverBg: boolean
+}
+
+const MAX_COVERS = 10
+
+export default function SeriesGroupCover({ name, books, width, height, bookCoverAspectRatio }: SeriesGroupCoverProps) {
+  const { sizeMultiplier } = useCardSize()
+  const [coverData, setCoverData] = useState<CoverData[]>([])
+  const [noValidCovers, setNoValidCovers] = useState(false)
+  const mountedRef = useRef(true)
+  const placeholderUrl = useMemo(() => getPlaceholderCoverUrl(), [])
+
+  // Single cover width based on aspect ratio
+  const coverWidth = useMemo(() => height / bookCoverAspectRatio, [height, bookCoverAspectRatio])
+
+  // Calculate offset increment for stacking covers
+  const offsetIncrement = useMemo(() => {
+    const validCount = Math.min(books.length, MAX_COVERS)
+    if (validCount <= 1) return 0
+    return (width - coverWidth) / (validCount - 1)
+  }, [books.length, width, coverWidth])
+
+  const checkImageAspectRatio = useCallback(
+    (src: string): Promise<boolean> => {
+      return new Promise((resolve) => {
+        const image = new Image()
+        image.onload = () => {
+          const { naturalWidth, naturalHeight } = image
+          const aspectRatio = naturalHeight / naturalWidth
+          const arDiff = Math.abs(aspectRatio - bookCoverAspectRatio)
+          // If image aspect ratio differs by more than 0.15, show background
+          resolve(arDiff > 0.15)
+        }
+        image.onerror = () => resolve(false)
+        image.src = src
+      })
+    },
+    [bookCoverAspectRatio]
+  )
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
+
+  useEffect(() => {
+    async function loadCovers() {
+      // Filter books that have covers
+      const validBooks = books
+        .map((book) => ({
+          id: book.id,
+          coverUrl: getLibraryItemCoverSrc(book, placeholderUrl)
+        }))
+        .filter((b) => b.coverUrl !== placeholderUrl)
+        .slice(0, MAX_COVERS)
+
+      if (validBooks.length === 0) {
+        if (mountedRef.current) {
+          setNoValidCovers(true)
+          setCoverData([])
+        }
+        return
+      }
+
+      // Force cover background for single cover
+      const forceCoverBg = validBooks.length === 1
+
+      // Check aspect ratios for all covers
+      const results = await Promise.all(
+        validBooks.map(async (book) => ({
+          id: book.id,
+          coverUrl: book.coverUrl,
+          showCoverBg: forceCoverBg || (await checkImageAspectRatio(book.coverUrl))
+        }))
+      )
+
+      if (mountedRef.current) {
+        setNoValidCovers(false)
+        setCoverData(results)
+      }
+    }
+
+    loadCovers()
+  }, [books, checkImageAspectRatio, placeholderUrl])
+
+  // Fallback when no valid covers
+  if (noValidCovers) {
+    return (
+      <div
+        className="box-shadow-book absolute start-0 top-0 flex h-full w-full items-center justify-center bg-gray-400/5"
+        style={{ padding: `${sizeMultiplier}em` }}
+      >
+        <p style={{ fontSize: `${sizeMultiplier}em` }} className="text-center text-white/60">
+          {name}
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="box-shadow-book relative h-full w-full">
+      {coverData.map((cover, index) => {
+        const offsetLeft = coverData.length === 1 ? 0 : offsetIncrement * index
+        const zIndex = coverData.length - index
+        const isLastCover = index === coverData.length - 1
+        const displayWidth = coverData.length === 1 ? width : coverWidth
+
+        return (
+          <div
+            key={`${cover.id}-${index}`}
+            className="absolute top-0 transition-transform"
+            style={{
+              height: `${height}px`,
+              width: `${displayWidth}px`,
+              left: `${offsetLeft}px`,
+              zIndex,
+              boxShadow: isLastCover ? undefined : '4px 0px 4px #11111166'
+            }}
+          >
+            {/* Cover background for aspect ratio mismatches */}
+            {cover.showCoverBg && (
+              <div className="bg-primary absolute start-0 top-0 h-full w-full overflow-hidden rounded-xs">
+                <div
+                  className="cover-bg absolute"
+                  style={{
+                    backgroundImage: `url("${cover.coverUrl}")`
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Cover image */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={cover.coverUrl}
+              alt=""
+              aria-hidden="true"
+              className={mergeClasses('absolute start-0 top-0 h-full w-full', cover.showCoverBg ? 'object-contain' : 'object-cover')}
+            />
+          </div>
+        )
+      })}
+    </div>
+  )
+}

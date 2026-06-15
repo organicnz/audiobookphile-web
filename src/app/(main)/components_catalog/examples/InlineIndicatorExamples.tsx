@@ -1,11 +1,11 @@
 'use client'
 
-import AbridgedIndicator from '@/components/widgets/AbridgedIndicator'
-import AlreadyInLibraryIndicator from '@/components/widgets/AlreadyInLibraryIndicator'
-import BonusIndicator from '@/components/widgets/BonusIndicator'
-import ExplicitIndicator from '@/components/widgets/ExplicitIndicator'
-import OnlineIndicator from '@/components/widgets/OnlineIndicator'
-import TrailerIndicator from '@/components/widgets/TrailerIndicator'
+import AbridgedIndicator from '@/shared/widgets/AbridgedIndicator'
+import AlreadyInLibraryIndicator from '@/shared/widgets/AlreadyInLibraryIndicator'
+import BonusIndicator from '@/shared/widgets/BonusIndicator'
+import ExplicitIndicator from '@/shared/widgets/ExplicitIndicator'
+import OnlineIndicator from '@/shared/widgets/OnlineIndicator'
+import TrailerIndicator from '@/shared/widgets/TrailerIndicator'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function InlineIndicatorExamples() {
@@ -13,7 +13,7 @@ export function InlineIndicatorExamples() {
     <ComponentExamples title="Inline Indicators">
       <ComponentInfo component="AbridgedIndicator" description="A small indicator showing that content is abridged, with a tooltip">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import AbridgedIndicator from &apos;@/components/widgets/AbridgedIndicator&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import AbridgedIndicator from &apos;@/shared/widgets/AbridgedIndicator&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>className</Code> (optional)
@@ -26,7 +26,7 @@ export function InlineIndicatorExamples() {
       <ComponentInfo component="AlreadyInLibraryIndicator" description="A small indicator showing that content is already in your library, with a tooltip">
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
-          <Code overflow>import AlreadyInLibraryIndicator from &apos;@/components/widgets/AlreadyInLibraryIndicator&apos;</Code>
+          <Code overflow>import AlreadyInLibraryIndicator from &apos;@/shared/widgets/AlreadyInLibraryIndicator&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>className</Code> (optional)
@@ -38,7 +38,7 @@ export function InlineIndicatorExamples() {
 
       <ComponentInfo component="ExplicitIndicator" description="A small indicator showing that content is explicit, with a tooltip">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ExplicitIndicator from &apos;@/components/widgets/ExplicitIndicator&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import ExplicitIndicator from &apos;@/shared/widgets/ExplicitIndicator&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>className</Code> (optional)

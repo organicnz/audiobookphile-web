@@ -2,22 +2,22 @@
 
 import Link from 'next/link'
 
-import AuthorImage from '@/components/covers/AuthorImage'
-import IconBtn from '@/components/ui/IconBtn'
-import ExpandableHtml from '@/components/widgets/ExpandableHtml'
-import ItemSlider from '@/components/widgets/ItemSlider'
-import BookMediaCard from '@/components/widgets/media-card/BookMediaCard'
-import { useCardSize } from '@/contexts/CardSizeContext'
-import { useLibrary } from '@/contexts/LibraryContext'
-import { useSocketEvent } from '@/contexts/SocketContext'
-import { useUser } from '@/contexts/UserContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
-import { filterEncode } from '@/lib/filterUtils'
+import AuthorImage from '@/features/metadata/components/AuthorImage'
+import IconBtn from '@/shared/ui/IconBtn'
+import ExpandableHtml from '@/shared/widgets/ExpandableHtml'
+import ItemSlider from '@/shared/widgets/ItemSlider'
+import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
+import { useCardSize } from '@/features/library/contexts/CardSizeContext'
+import { useLibrary } from '@/features/library/contexts/LibraryContext'
+import { useSocketEvent } from '@/shared/contexts/SocketContext'
+import { useUser } from '@/shared/contexts/UserContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { filterEncode } from '@/shared/lib/filterUtils'
 import { Author, BookshelfView } from '@/types/api'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
-import AuthorEditModal from '@/components/modals/AuthorEditModal'
+import AuthorEditModal from '@/shared/modals/AuthorEditModal'
 
 interface AuthorClientProps {
   author: Author

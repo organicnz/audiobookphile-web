@@ -1,6 +1,6 @@
 'use client'
 
-import ThemeDropdown from '@/components/widgets/ThemeDropdown'
+import ThemeDropdown from '@/shared/widgets/ThemeDropdown'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 

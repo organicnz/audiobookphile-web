@@ -1,4 +1,4 @@
-import { getLibraryPersonalized } from '@/lib/api'
+import { getLibraryPersonalized } from '@/shared/lib/api'
 import LibraryClient from './LibraryClient'
 
 export default async function LibraryPage({ params }: { params: Promise<{ library: string }> }) {

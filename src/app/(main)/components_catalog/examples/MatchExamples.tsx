@@ -1,6 +1,6 @@
 'use client'
 
-import Match from '@/components/widgets/Match'
+import Match from '@/features/metadata/components/Match'
 import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../ComponentExamples'
 
@@ -28,7 +28,7 @@ export function MatchExamples({
         description="A comprehensive metadata matching component for library items. Allows users to search for metadata matches using various providers, select a match, and apply selected fields to update the library item. Supports both books and podcasts with provider-specific search options. Search results are displayed as cards with cover previews, and selected matches can be customized field-by-field before applying."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Match from &apos;@/components/widgets/Match&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import Match from &apos;@/shared/widgets/Match&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

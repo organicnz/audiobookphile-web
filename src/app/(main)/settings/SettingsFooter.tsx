@@ -1,6 +1,6 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 
 export default function SettingsFooter() {
   const t = useTypeSafeTranslations()

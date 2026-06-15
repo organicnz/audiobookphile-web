@@ -1,5 +1,5 @@
-import ChaptersTable from '@/components/widgets/ChaptersTable'
-import { UserContext, type AppUser, type UserContextType } from '@/contexts/UserContext'
+import ChaptersTable from '@/features/player/components/ChaptersTable'
+import { UserContext, type AppUser, type UserContextType } from '@/shared/contexts/UserContext'
 import { BookLibraryItem } from '@/types/api'
 import type { Profile } from '@/types/index'
 

@@ -1,8 +1,8 @@
 'use client'
 
-import { MultiSelectItem } from '@/components/ui/MultiSelect'
-import MultiSelectDropdown from '@/components/ui/MultiSelectDropdown'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import { MultiSelectItem } from '@/shared/ui/MultiSelect'
+import MultiSelectDropdown from '@/shared/ui/MultiSelectDropdown'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -39,7 +39,7 @@ export function MultiSelectDropdownExamples() {
     <ComponentExamples title="Multi Select Dropdowns">
       <ComponentInfo component="MultiSelectDropdown" description="Multi-select dropdown component with item management">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import MultiSelectDropdown from &apos;@/components/ui/MultiSelectDropdown&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import MultiSelectDropdown from &apos;@/shared/ui/MultiSelectDropdown&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>selectedItems</Code> (MultiSelectItem[]), <Code>onItemAdded</Code>, <Code>onItemRemoved</Code>,{' '}

@@ -1,6 +1,6 @@
 'use client'
-import InputDropdown from '@/components/ui/InputDropdown'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import InputDropdown from '@/shared/ui/InputDropdown'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -35,7 +35,7 @@ export function InputDropdownExamples() {
     <ComponentExamples title="Input Dropdowns">
       <ComponentInfo component="InputDropdown" description="Input dropdown component that allows typing and filtering with optional new item creation">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import InputDropdown from &apos;@/components/ui/InputDropdown&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import InputDropdown from &apos;@/shared/ui/InputDropdown&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>items</Code> (string[] or number[]), <Code>label</Code>,{' '}

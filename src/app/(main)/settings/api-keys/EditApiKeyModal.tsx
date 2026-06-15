@@ -1,11 +1,11 @@
 'use client'
 
-import Modal from '@/components/modals/Modal'
-import Btn from '@/components/ui/Btn'
-import Dropdown, { DropdownItem } from '@/components/ui/Dropdown'
-import TextInput from '@/components/ui/TextInput'
-import ToggleSwitch from '@/components/ui/ToggleSwitch'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
+import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
+import TextInput from '@/shared/ui/TextInput'
+import ToggleSwitch from '@/shared/ui/ToggleSwitch'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { ApiKey, User } from '@/types/api'
 import { useEffect, useMemo, useState } from 'react'
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
-import { getStorageProvider } from '@/lib/storage/StorageProvider'
+import { createClient } from '@/shared/utils/supabase/server'
+import { getStorageProvider } from '@/shared/lib/storage/StorageProvider'
 
 export async function GET(
   req: Request,

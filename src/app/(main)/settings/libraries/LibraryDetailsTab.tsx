@@ -1,10 +1,10 @@
 'use client'
 
-import Btn from '@/components/ui/Btn'
-import Dropdown, { DropdownItem } from '@/components/ui/Dropdown'
-import MediaIconPicker from '@/components/ui/MediaIconPicker'
-import TextInput from '@/components/ui/TextInput'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Btn from '@/shared/ui/Btn'
+import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
+import MediaIconPicker from '@/shared/ui/MediaIconPicker'
+import TextInput from '@/shared/ui/TextInput'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { Folder, FolderPlus, X } from 'lucide-react'
 import { LibraryFormData } from './LibraryEditModal'
 

@@ -1,7 +1,7 @@
 'use client'
 
-import PlaylistGroupCover from '@/components/widgets/media-card/PlaylistGroupCover'
-import { useBookCoverAspectRatio } from '@/contexts/LibraryContext'
+import PlaylistGroupCover from '@/shared/widgets/media-card/PlaylistGroupCover'
+import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
 import { Playlist } from '@/types/api'
 
 interface PlaylistClientProps {

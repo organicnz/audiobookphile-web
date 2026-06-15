@@ -1,6 +1,6 @@
 'use client'
 
-import Alert from '@/components/widgets/Alert'
+import Alert from '@/shared/widgets/Alert'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function AlertExamples() {
@@ -8,7 +8,7 @@ export function AlertExamples() {
     <ComponentExamples title="Alert Components">
       <ComponentInfo component="Alert" description="Display contextual feedback messages with different severity levels (error, warning, success, info).">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Alert from &apos;@/components/widgets/Alert&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import Alert from &apos;@/shared/widgets/Alert&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>type</Code> (optional: &apos;error&apos; | &apos;warning&apos; | &apos;success&apos; |

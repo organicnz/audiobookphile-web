@@ -1,6 +1,6 @@
 'use client'
-import CronExpressionBuilder from '@/components/widgets/CronExpressionBuilder'
-import CronExpressionPreview from '@/components/widgets/CronExpressionPreview'
+import CronExpressionBuilder from '@/shared/widgets/CronExpressionBuilder'
+import CronExpressionPreview from '@/shared/widgets/CronExpressionPreview'
 import { useCallback, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -78,7 +78,7 @@ export function CronExpressionBuilderExamples() {
       >
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
-          <Code overflow>import CronExpressionBuilder from &apos;@/components/widgets/CronExpressionBuilder&apos;</Code>
+          <Code overflow>import CronExpressionBuilder from &apos;@/shared/widgets/CronExpressionBuilder&apos;</Code>
         </p>
         <div className="mb-2">
           <span className="font-bold">Props:</span>
@@ -101,7 +101,7 @@ export function CronExpressionBuilderExamples() {
       <ComponentInfo component="CronExpressionPreview" description="A preview of the cron expression with a verbal description of the schedule, next run date">
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
-          <Code overflow>import CronExpressionPreview from &apos;@/components/widgets/CronExpressionPreview&apos;</Code>
+          <Code overflow>import CronExpressionPreview from &apos;@/shared/widgets/CronExpressionPreview&apos;</Code>
         </p>
         <div className="mb-2">
           <span className="font-bold">Props:</span>

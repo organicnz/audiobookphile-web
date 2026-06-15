@@ -1,6 +1,6 @@
 'use client'
-import ReadIconBtn from '@/components/ui/ReadIconBtn'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import ReadIconBtn from '@/shared/ui/ReadIconBtn'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -22,7 +22,7 @@ export function ReadIconBtnExamples() {
     <ComponentExamples title="Read Icon Buttons">
       <ComponentInfo component="ReadIconBtn" description="Read status toggle button using IconBtn with BeenHere icon and visual state indication">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ReadIconBtn from &apos;@/components/ui/ReadIconBtn&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import ReadIconBtn from &apos;@/shared/ui/ReadIconBtn&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>isRead</Code>, <Code>disabled</Code>, <Code>borderless</Code>, <Code>onClick</Code>,{' '}

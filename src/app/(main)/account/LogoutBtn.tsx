@@ -1,10 +1,10 @@
 'use client'
 
-import Btn from '@/components/ui/Btn'
+import Btn from '@/shared/ui/Btn'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/shared/utils/supabase/client'
 import { LogOut } from 'lucide-react'
 
 export default function LogoutBtn() {

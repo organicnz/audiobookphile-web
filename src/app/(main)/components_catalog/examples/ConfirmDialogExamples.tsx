@@ -1,7 +1,7 @@
 'use client'
 
-import Btn from '@/components/ui/Btn'
-import ConfirmDialog from '@/components/widgets/ConfirmDialog'
+import Btn from '@/shared/ui/Btn'
+import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
 import { useCallback, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -50,7 +50,7 @@ export function ConfirmDialogExamples() {
         description="Reusable confirmation dialog component for confirming destructive or important actions. Optionally includes a checkbox for 'don't ask again' or similar functionality."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ConfirmDialog from &apos;@/components/widgets/ConfirmDialog&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import ConfirmDialog from &apos;@/shared/widgets/ConfirmDialog&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>isOpen</Code> (required: boolean), <Code>message</Code> (required: string), <Code>checkboxLabel</Code>{' '}

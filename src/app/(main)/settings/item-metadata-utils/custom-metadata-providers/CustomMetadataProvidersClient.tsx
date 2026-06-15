@@ -1,6 +1,6 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { CustomMetadataProvider } from '@/types/api'
 import { useState } from 'react'
 import SettingsContent from '../../SettingsContent'

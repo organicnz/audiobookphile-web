@@ -1,9 +1,9 @@
 'use client'
 
-import ConfirmDialog from '@/components/widgets/ConfirmDialog'
-import SortableList from '@/components/widgets/SortableList'
-import { useGlobalToast } from '@/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
+import SortableList from '@/shared/widgets/SortableList'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { Library } from '@/types/api'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { deleteLibrary } from './actions'

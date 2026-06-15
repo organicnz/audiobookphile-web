@@ -1,4 +1,4 @@
-import Dropdown, { type DropdownItem } from '@/components/ui/Dropdown'
+import Dropdown, { type DropdownItem } from '@/shared/ui/Dropdown'
 
 describe('<Dropdown />', () => {
   const mockItems: DropdownItem[] = [

@@ -1,4 +1,4 @@
-import DataTable, { DataTableColumn } from '@/components/ui/DataTable'
+import DataTable, { DataTableColumn } from '@/shared/ui/DataTable'
 
 interface TestData {
   id: number

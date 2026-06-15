@@ -1,7 +1,7 @@
 'use client'
 
 import ListeningSessionsTable from '@/app/(main)/settings/listening-sessions/ListeningSessionsTable'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { GetListeningSessionsResponse, GetOpenListeningSessionsResponse, User } from '@/types/api'
 import SettingsContent from '../SettingsContent'
 

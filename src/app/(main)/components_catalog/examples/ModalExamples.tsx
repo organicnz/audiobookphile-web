@@ -1,7 +1,7 @@
 'use client'
-import Modal from '@/components/modals/Modal'
-import Btn from '@/components/ui/Btn'
-import { useGlobalToast } from '@/contexts/ToastContext'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
@@ -29,7 +29,7 @@ export function ModalExamples() {
     <ComponentExamples title="Modals">
       <ComponentInfo component="Modal" description="Modal dialog component with backdrop, animations, and various customization options">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Modal from &apos;@/components/modals/Modal&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import Modal from &apos;@/shared/modals/Modal&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>isOpen</Code>, <Code>onClose</Code>, <Code>children</Code>, <Code>persistent</Code>,{' '}

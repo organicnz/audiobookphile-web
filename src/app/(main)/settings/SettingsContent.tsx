@@ -1,9 +1,9 @@
 'use client'
 
-import Btn from '@/components/ui/Btn'
-import IconBtn from '@/components/ui/IconBtn'
-import { useSettingsDrawer } from '@/contexts/SettingsDrawerContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Btn from '@/shared/ui/Btn'
+import IconBtn from '@/shared/ui/IconBtn'
+import { useSettingsDrawer } from '@/shared/contexts/SettingsDrawerContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { ArrowLeft, Menu, Plus } from 'lucide-react'
 import Link from 'next/link'
 import SettingsMoreInfoIcon from './SettingsMoreInfoIcon'

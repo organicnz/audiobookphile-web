@@ -1,5 +1,5 @@
 'use client'
-import LibraryIcon from '@/components/ui/LibraryIcon'
+import LibraryIcon from '@/shared/ui/LibraryIcon'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // LibraryIcon Examples
@@ -8,7 +8,7 @@ export function LibraryIconExamples() {
     <ComponentExamples title="Library Icons">
       <ComponentInfo component="LibraryIcon" description="Library icon component using absicons font with validation and fallback">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import LibraryIcon from &apos;@/components/ui/LibraryIcon&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import LibraryIcon from &apos;@/shared/ui/LibraryIcon&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>icon</Code> (icon name from absicons, defaults to &apos;audiobookphile&apos;), <Code>fontSize</Code>{' '}

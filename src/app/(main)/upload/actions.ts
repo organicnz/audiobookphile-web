@@ -90,7 +90,7 @@ export async function fetchPodcastMetadata(_title: string): Promise<PodcastSearc
 
 export async function getCookie(): Promise<string> {
   // Returns the Supabase session access token for authenticating upload requests
-  const { createClient } = await import('@/utils/supabase/server')
+  const { createClient } = await import('@/shared/utils/supabase/server')
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
   return session?.access_token ?? ''
@@ -98,60 +98,9 @@ export async function getCookie(): Promise<string> {
 
 export async function checkExistingBook(title: string, author: string, libraryId: string, mediaType: string): Promise<string | undefined> {
   try {
-    const { createClient } = await import('@/utils/supabase/server')
-    const supabase = await createClient()
-    
-    let query = supabase
-      .from('library_items')
-      .select('media_id')
-      .eq('library_id', libraryId)
-      .eq('media_type', mediaType)
-      .eq('title', title)
-      
-    if (mediaType === 'book' && author) {
-      // For books, also try to match the exact author
-      query = query.eq('author_names_first_last', author)
-    }
-    
-    const { data } = await query.limit(1).maybeSingle()
-    if (data?.media_id) {
-      return data.media_id
-    }
-    
-    // Fuzzy match fallback
-    const { data: allBooks } = await supabase
-      .from('library_items')
-      .select('media_id, title')
-      .eq('library_id', libraryId)
-      .eq('media_type', mediaType)
-      
-    if (allBooks) {
-      const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
-      const normalizedQuery = normalize(title)
-      
-      for (const book of allBooks) {
-        const normalizedBookTitle = normalize(book.title || '')
-        if (!normalizedBookTitle) continue
-        
-        if (normalizedBookTitle === normalizedQuery) {
-          console.log(`[upload/actions] Fuzzy matched "${title}" to existing book "${book.title}" (exact norm)`)
-          return book.media_id || undefined
-        }
-
-        if (normalizedBookTitle.length > 5) {
-          if (normalizedQuery.includes(normalizedBookTitle) || normalizedBookTitle.includes(normalizedQuery)) {
-            const ratio1 = normalizedBookTitle.length / normalizedQuery.length
-            const ratio2 = normalizedQuery.length / normalizedBookTitle.length
-            if (ratio1 > 0.5 || ratio2 > 0.5) {
-              console.log(`[upload/actions] Fuzzy matched "${title}" to existing book "${book.title}" (ratio)`)
-              return book.media_id || undefined
-            }
-          }
-        }
-      }
-    }
-    
-    return undefined
+    const { checkExistingBook: apiCheckExistingBook } = await import('@/shared/lib/api/items')
+    const { mediaId } = await apiCheckExistingBook(title, author, libraryId, mediaType)
+    return mediaId || undefined
   } catch (err) {
     console.error('[upload/actions] checkExistingBook failed:', err)
     return undefined

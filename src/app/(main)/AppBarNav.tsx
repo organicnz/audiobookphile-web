@@ -1,10 +1,10 @@
 'use client'
 
-import Btn from '@/components/ui/Btn'
-import IconBtn from '@/components/ui/IconBtn'
-import Menu from '@/components/ui/Menu'
-import { DropdownMenuItem } from '@/components/ui/DropdownMenu'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Btn from '@/shared/ui/Btn'
+import IconBtn from '@/shared/ui/IconBtn'
+import Menu from '@/shared/ui/Menu'
+import { DropdownMenuItem } from '@/shared/ui/DropdownMenu'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { 
   User, 
   Menu as MenuIcon, 

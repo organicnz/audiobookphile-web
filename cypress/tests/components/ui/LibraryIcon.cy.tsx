@@ -1,5 +1,5 @@
-import LibraryIcon from '@/components/ui/LibraryIcon'
-import { AVAILABLE_ICONS } from '@/lib/absicons'
+import LibraryIcon from '@/shared/ui/LibraryIcon'
+import { AVAILABLE_ICONS } from '@/shared/lib/absicons'
 
 describe('LibraryIcon', () => {
   beforeEach(() => {

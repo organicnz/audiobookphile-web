@@ -1,4 +1,4 @@
-import { getLibraryItems, getSeries } from '@/lib/api';
+import { getLibraryItems, getSeries } from '@/shared/lib/api';
 import SeriesClient from './SeriesClient';
 
 export default async function SeriesPage({ params }: { params: Promise<{ series: string; library: string }> }) {

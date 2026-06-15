@@ -1,0 +1,236 @@
+'use client'
+
+import { getAudioFileFFProbeDataAction } from '@/features/player/actions/audioFileActions'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
+import TextInput from '@/shared/ui/TextInput'
+import TextareaInput from '@/shared/ui/TextareaInput'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { copyToClipboard } from '@/shared/lib/clipboard'
+import { secondsToTimestamp } from '@/shared/lib/datefns'
+import { mergeClasses } from '@/shared/lib/merge-classes'
+import { bytesPretty } from '@/shared/lib/string'
+import { AudioFile, FFProbeData } from '@/types/api'
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
+import IconBtn from '../ui/IconBtn'
+
+interface AudioFileDataModalProps {
+  isOpen: boolean
+  audioFile: AudioFile | null
+  libraryItemId: string
+  onClose: () => void
+}
+
+/**
+ * Modal to display audio file metadata and optional FFProbe data
+ *
+ * Shows detailed information about an audio file including:
+ * - Basic metadata (path, size, duration, format, codec, etc.)
+ * - Meta tags from the file
+ * - Optional FFProbe raw data (for admins)
+ */
+export default function AudioFileDataModal({ isOpen, audioFile, libraryItemId, onClose }: AudioFileDataModalProps) {
+  const t = useTypeSafeTranslations()
+  const { showToast } = useGlobalToast()
+  const [isPending, startTransition] = useTransition()
+  const [ffprobeData, setFfprobeData] = useState<FFProbeData | null>(null)
+  const [hasCopied, setHasCopied] = useState(false)
+  const copyButtonRef = useRef<HTMLButtonElement>(null)
+
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      setFfprobeData(null)
+      setHasCopied(false)
+      // Focus first interactive element when modal opens
+      setTimeout(() => {
+        const firstButton = document.querySelector('[cy-id="modal-content"] button') as HTMLButtonElement
+        if (firstButton) {
+          firstButton.focus()
+        }
+      }, 100)
+    }
+  }, [isOpen])
+
+  const metadata = useMemo(() => audioFile?.metadata, [audioFile])
+  const metaTags = useMemo(() => audioFile?.metaTags || {}, [audioFile])
+
+  const prettyFfprobeData = useMemo(() => {
+    if (!ffprobeData) return ''
+    return JSON.stringify(ffprobeData, null, 2)
+  }, [ffprobeData])
+
+  const handleGetFFProbeData = useCallback(() => {
+    if (!audioFile) return
+
+    startTransition(async () => {
+      try {
+        const data = await getAudioFileFFProbeDataAction(libraryItemId, audioFile.ino)
+        setFfprobeData(data)
+      } catch (error) {
+        console.error('Failed to get ffprobe data', error)
+        showToast(t('ToastFailedToLoadData'), { type: 'error' })
+      }
+    })
+  }, [audioFile, libraryItemId, startTransition, showToast, t])
+
+  const handleCopyToClipboard = useCallback(async () => {
+    try {
+      await copyToClipboard(prettyFfprobeData)
+      setHasCopied(true)
+      setTimeout(() => setHasCopied(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy to clipboard', error)
+      showToast(t('ToastFailedToShare'), { type: 'error' })
+    }
+  }, [prettyFfprobeData, showToast, t])
+
+  const handleCopyKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        handleCopyToClipboard()
+      }
+    },
+    [handleCopyToClipboard]
+  )
+
+  const handleReset = useCallback(() => {
+    setFfprobeData(null)
+  }, [])
+
+  if (!audioFile) return null
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div
+        className={mergeClasses('w-full overflow-x-hidden p-4 sm:p-6', ffprobeData ? 'flex flex-col overflow-hidden' : 'overflow-y-auto')}
+        style={ffprobeData ? { height: '80vh' } : { maxHeight: '80vh' }}
+      >
+        <div className={mergeClasses('flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0', ffprobeData && 'shrink-0')}>
+          <h2 className="text-foreground truncate text-base" title={metadata?.filename}>
+            {metadata?.filename}
+          </h2>
+          {ffprobeData ? (
+            <Btn size="small" className="shrink-0 sm:ml-2" onClick={handleReset}>
+              {t('ButtonReset')}
+            </Btn>
+          ) : (
+            <Btn size="small" loading={isPending} className="shrink-0 sm:ml-2" onClick={handleGetFFProbeData}>
+              {t('ButtonProbeAudioFile')}
+            </Btn>
+          )}
+        </div>
+
+        <div className={mergeClasses('bg-border my-4 h-px w-full', ffprobeData && 'shrink-0')} />
+
+        {!ffprobeData ? (
+          <>
+            <TextInput value={metadata?.path || ''} readOnly label={t('LabelPath')} className="mb-4 text-sm" />
+
+            <dl className="flex flex-col gap-4 text-sm sm:flex-row">
+              <div className="w-full sm:w-1/2">
+                <div className="mb-1 flex flex-row gap-0">
+                  <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('LabelSize')}</dt>
+                  <dd className="break-words">{bytesPretty(metadata?.size || 0)}</dd>
+                </div>
+                <div className="mb-1 flex flex-row gap-0">
+                  <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('LabelDuration')}</dt>
+                  <dd className="break-words">{secondsToTimestamp(audioFile.duration)}</dd>
+                </div>
+                <div className="mb-1 flex flex-row gap-0">
+                  <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('LabelFormat')}</dt>
+                  <dd className="break-words">{audioFile.codec}</dd>
+                </div>
+                <div className="mb-1 flex flex-row gap-0">
+                  <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('HeaderChapters')}</dt>
+                  <dd className="break-words">{audioFile.chapters?.length || 0}</dd>
+                </div>
+                {audioFile.embeddedCoverArt && (
+                  <div className="mb-1 flex flex-row gap-0">
+                    <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('LabelEmbeddedCover')}</dt>
+                    <dd className="break-words">{audioFile.embeddedCoverArt}</dd>
+                  </div>
+                )}
+              </div>
+              <div className="w-full sm:w-1/2">
+                <div className="mb-1 flex flex-row gap-0">
+                  <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('LabelCodec')}</dt>
+                  <dd className="break-words">{audioFile.codec}</dd>
+                </div>
+                <div className="mb-1 flex flex-row gap-0">
+                  <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('LabelChannels')}</dt>
+                  <dd className="break-words">
+                    {audioFile.channels} ({audioFile.channelLayout})
+                  </dd>
+                </div>
+                <div className="mb-1 flex flex-row gap-0">
+                  <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('LabelBitrate')}</dt>
+                  <dd className="break-words">{bytesPretty(audioFile.bitRate || 0, 0)}</dd>
+                </div>
+                <div className="mb-1 flex flex-row gap-0">
+                  <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('LabelTimeBase')}</dt>
+                  <dd className="break-words">{audioFile.timeBase}</dd>
+                </div>
+                {audioFile.language && (
+                  <div className="mb-1 flex flex-row gap-0">
+                    <dt className="text-foreground-subdued w-32 min-w-24 shrink-0">{t('LabelLanguage')}</dt>
+                    <dd className="break-words">{audioFile.language}</dd>
+                  </div>
+                )}
+              </div>
+            </dl>
+
+            <div className="my-4 h-px w-full bg-white/10" role="separator" aria-orientation="horizontal" />
+
+            <h3 className="mb-2 font-bold">{t('LabelMetaTags')}</h3>
+
+            {Object.entries(metaTags).length > 0 ? (
+              <dl className="text-sm">
+                {Object.entries(metaTags).map(([key, value]) => (
+                  <div key={key} className="mb-1 flex flex-col gap-1 sm:flex-row sm:gap-2">
+                    <dt className="text-foreground-subdued w-32 min-w-24 shrink-0 sm:min-w-32 sm:break-words">{key.replace('tag', '')}</dt>
+                    <dd className="min-w-0 flex-1 break-words">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <p className="text-foreground-subdued text-sm" role="status">
+                {t('MessageNoItems')}
+              </p>
+            )}
+          </>
+        ) : (
+          <div className="flex min-h-0 w-full flex-1 flex-col">
+            <div className="relative flex min-h-0 flex-1 flex-col">
+              <TextareaInput
+                value={prettyFfprobeData}
+                readOnly
+                fillHeight
+                className="flex min-h-0 flex-1 flex-col font-mono text-xs"
+                label={t('LabelMetaTags')}
+              />
+              <IconBtn
+                ref={copyButtonRef}
+                borderless
+                className={mergeClasses(
+                  'absolute top-7 right-4',
+                  'z-10 rounded p-2',
+                  hasCopied ? 'text-success' : 'text-foreground-subdued hover:text-foreground'
+                )}
+                onClick={handleCopyToClipboard}
+                onKeyDown={handleCopyKeyDown}
+                ariaLabel={t('ButtonCopyToClipboard')}
+                aria-live="polite"
+              >
+                <span aria-hidden="true">{hasCopied ? 'done' : 'content_copy'}</span>
+                {hasCopied && <span className="sr-only">{t('ButtonCopiedToClipboard')}</span>}
+              </IconBtn>
+            </div>
+          </div>
+        )}
+      </div>
+    </Modal>
+  )
+}

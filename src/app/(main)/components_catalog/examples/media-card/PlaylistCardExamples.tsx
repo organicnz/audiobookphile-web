@@ -1,7 +1,7 @@
 'use client'
 
-import PlaylistCard from '@/components/widgets/media-card/PlaylistCard'
-import PlaylistCardSkeleton from '@/components/widgets/media-card/PlaylistCardSkeleton'
+import PlaylistCard from '@/shared/widgets/media-card/PlaylistCard'
+import PlaylistCardSkeleton from '@/shared/widgets/media-card/PlaylistCardSkeleton'
 import { BookshelfView, Playlist } from '@/types/api'
 import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
@@ -38,7 +38,7 @@ export function PlaylistCardExamples({ playlistData }: PlaylistCardExamplesProps
         description="Card component for displaying playlists with a 2x2 cover grid, edit button, and more-menu actions."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import PlaylistCard from &apos;@/components/widgets/media-card/PlaylistCard&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import PlaylistCard from &apos;@/shared/widgets/media-card/PlaylistCard&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

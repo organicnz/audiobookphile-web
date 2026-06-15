@@ -1,11 +1,11 @@
 'use client'
 
-import IconBtn from '@/components/ui/IconBtn'
-import SimpleDataTable, { DataTableColumn } from '@/components/ui/SimpleDataTable'
-import ConfirmDialog from '@/components/widgets/ConfirmDialog'
-import { useGlobalToast } from '@/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/lib/merge-classes'
+import IconBtn from '@/shared/ui/IconBtn'
+import SimpleDataTable, { DataTableColumn } from '@/shared/ui/SimpleDataTable'
+import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import { CustomMetadataProvider } from '@/types/api'
 import { useMemo, useRef, useState } from 'react'
 

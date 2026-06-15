@@ -1,4 +1,4 @@
-import FileInput from '@/components/ui/FileInput'
+import FileInput from '@/shared/ui/FileInput'
 
 describe('<FileInput />', () => {
   const file1 = {

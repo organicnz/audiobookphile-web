@@ -1,4 +1,4 @@
-import { getLibraries } from '@/lib/api'
+import { getLibraries } from '@/shared/lib/api'
 import LibrariesClient from './LibrariesClient'
 
 export const dynamic = 'force-dynamic'

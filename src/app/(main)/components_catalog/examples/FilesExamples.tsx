@@ -1,6 +1,6 @@
 'use client'
 
-import Files from '@/components/widgets/Files'
+import Files from '@/shared/widgets/Files'
 import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../ComponentExamples'
 
@@ -16,7 +16,7 @@ export function FilesExamples({ selectedBook, selectedPodcast }: FilesExamplesPr
     <ComponentExamples title="Files">
       <ComponentInfo component="Files" description="Files tab container component that displays library files table for a library item.">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Files from &apos;@/components/widgets/Files&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import Files from &apos;@/shared/widgets/Files&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

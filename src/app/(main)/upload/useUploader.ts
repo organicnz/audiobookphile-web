@@ -1,13 +1,13 @@
-import { useMediaContext } from '@/contexts/MediaContext'
-import { useBookProviders, useMetadata } from '@/contexts/MetadataContext'
-import { useUser } from '@/contexts/UserContext'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import { useMediaContext } from '@/features/player/contexts/MediaContext'
+import { useBookProviders, useMetadata } from '@/features/metadata/contexts/MetadataContext'
+import { useUser } from '@/shared/contexts/UserContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { startTransition, useEffect, useMemo, useState } from 'react'
 import { Library } from '@/types/api'
 
 import { CleanedItem, FileWithMetadata, getItemsFromFilelist, upload, UploadProgressInfo } from './UploadHelper'
 import { fetchBookMetadata, fetchPodcastMetadata, getCookie, checkExistingBook } from './actions'
-import { sanitizeFileName, SupportedFileTypes } from '@/lib/fileUtils'
+import { sanitizeFileName, SupportedFileTypes } from '@/shared/lib/fileUtils'
 
 export interface ItemToUpload extends CleanedItem {
   bookId?: string

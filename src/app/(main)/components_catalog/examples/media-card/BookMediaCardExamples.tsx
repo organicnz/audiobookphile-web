@@ -1,9 +1,9 @@
 'use client'
 
-import BookMediaCard from '@/components/widgets/media-card/BookMediaCard'
-import CollapsedSeriesCard from '@/components/widgets/media-card/CollapsedSeriesCard'
-import MediaCardSkeleton from '@/components/widgets/media-card/MediaCardSkeleton'
-import { useComponentsCatalog } from '@/contexts/ComponentsCatalogContext'
+import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
+import CollapsedSeriesCard from '@/shared/widgets/media-card/CollapsedSeriesCard'
+import MediaCardSkeleton from '@/shared/widgets/media-card/MediaCardSkeleton'
+import { useComponentsCatalog } from '@/shared/contexts/ComponentsCatalogContext'
 import { BookLibraryItem, BookshelfView, EReaderDevice, MediaProgress } from '@/types/api'
 import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
@@ -101,9 +101,9 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
         description="Media card components for displaying books in the bookshelf. BookMediaCard displays books with book-specific badges (series sequence, ebook format). CollapsedSeriesCard displays collapsed series items with series count badges. MediaCardSkeleton provides a loading state."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import BookMediaCard from &apos;@/components/widgets/media-card/BookMediaCard&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import BookMediaCard from &apos;@/shared/widgets/media-card/BookMediaCard&apos;</Code>
           <br />
-          <Code overflow>import MediaCardSkeleton from &apos;@/components/widgets/media-card/MediaCardSkeleton&apos;</Code>
+          <Code overflow>import MediaCardSkeleton from &apos;@/shared/widgets/media-card/MediaCardSkeleton&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

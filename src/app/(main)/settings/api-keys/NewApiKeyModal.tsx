@@ -1,9 +1,9 @@
 'use client'
 
-import Modal from '@/components/modals/Modal'
-import Btn from '@/components/ui/Btn'
-import TextInput from '@/components/ui/TextInput'
-import { useTypeSafeTranslations } from '@/hooks/useTypeSafeTranslations'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
+import TextInput from '@/shared/ui/TextInput'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 
 interface NewApiKeyModalProps {
   isOpen: boolean

@@ -5,8 +5,8 @@ import {
   createLibrary as apiCreateLibrary,
   updateLibrary as apiUpdateLibrary,
   deleteLibrary as apiDeleteLibrary
-} from '@/lib/api'
-import { matchAll as apiMatchAll } from '@/lib/api/items'
+} from '@/shared/lib/api'
+import { matchAll as apiMatchAll } from '@/shared/lib/api/items'
 import { revalidatePath } from 'next/cache'
 
 export async function createLibrary(newLibrary: Library): Promise<Library> {

@@ -7,7 +7,7 @@ import {
   deleteAuthor as apiDeleteAuthor,
   submitAuthorImage as apiSubmitAuthorImage,
   removeAuthorImage as apiRemoveAuthorImage
-} from '@/lib/api'
+} from '@/shared/lib/api'
 
 /**
  * Quick-match an author against Open Library / Google Books to fill in

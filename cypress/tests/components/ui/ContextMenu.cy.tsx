@@ -1,4 +1,4 @@
-import ContextMenu, { ContextMenuItem } from '@/components/ui/ContextMenu'
+import ContextMenu, { ContextMenuItem } from '@/shared/ui/ContextMenu'
 import { useRef, useState } from 'react'
 
 // Test wrapper component to manage ContextMenu state
