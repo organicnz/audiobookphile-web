@@ -61,6 +61,22 @@ export default function LoginForm() {
           return
         }
         
+        // Fetch libraries on the client side to avoid server-side route handler bugs
+        try {
+          const libsRes = await fetch('/api/libraries', {
+            headers: { Authorization: `Bearer ${data.user.token}` }
+          })
+          if (libsRes.ok) {
+            const libsData = await libsRes.json()
+            if (libsData?.libraries?.length > 0) {
+              window.location.href = `/library/${libsData.libraries[0].id}`
+              return
+            }
+          }
+        } catch (err) {
+          console.error('[LoginForm] Failed to fetch libraries:', err)
+        }
+        
         window.location.href = '/library'
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'

@@ -20,10 +20,14 @@ export const GET = async () => {
     if (!libraryId) {
       try {
         const libs = await getLibraries()
+        console.log('[library/route.ts] libs:', JSON.stringify(libs))
         if (libs?.libraries?.length > 0) {
           libraryId = libs.libraries[0].id
+        } else {
+          console.log('[library/route.ts] libs.libraries is empty!')
         }
       } catch (err) {
+        console.error('[library/route.ts] getLibraries error:', err)
         // Silently ignore and fall through
       }
     }

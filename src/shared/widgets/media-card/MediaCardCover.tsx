@@ -47,9 +47,9 @@ export default function MediaCardCover({
   const hasHandledLoad = useRef(false)
 
   // Determine if we should even attempt to show the cover.
-  // If the DB explicitly says 'missing', or if the image failed to load, we don't have a cover.
-  const isKnownMissing = (libraryItem as any).media?.coverPath === 'missing'
-  const shouldAttemptCover = !imageError && !isKnownMissing
+  // We ALWAYS attempt to fetch the cover at least once, because the backend will dynamically
+  // fetch it from third party APIs on the fly if it's missing.
+  const shouldAttemptCover = !imageError
 
   const bookCoverSrc = useMemo(() => getLibraryItemCoverSrc(libraryItem, placeholderUrl), [libraryItem, placeholderUrl])
 
