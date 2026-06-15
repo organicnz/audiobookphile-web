@@ -1,9 +1,10 @@
 import { getCurrentUser } from '@/shared/lib/api'
+import { getLibraries } from '@/shared/lib/api/libraries'
 import { redirect } from 'next/navigation'
 
 /**
  * GET /library
- * Redirects to the user's default library or settings/account page.
+ * Redirects to the user's default library (or first available), or settings/account page.
  */
 export const GET = async () => {
   try {
@@ -13,8 +14,19 @@ export const GET = async () => {
       return redirect('/login?error=no_session')
     }
 
-    const libraryId = currentUser.userDefaultLibraryId
+    let libraryId = currentUser.userDefaultLibraryId
     const userType = currentUser.user.type
+
+    if (!libraryId) {
+      try {
+        const libs = await getLibraries()
+        if (libs?.libraries?.length > 0) {
+          libraryId = libs.libraries[0].id
+        }
+      } catch (err) {
+        // Silently ignore and fall through
+      }
+    }
 
     if (libraryId) {
       return redirect(`/library/${libraryId}`)
