@@ -1,3 +1,5 @@
+'use client'
+
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import { motion } from 'framer-motion'
 import { MailQuestion, MailCheck, Lock, User, LucideIcon } from 'lucide-react'
