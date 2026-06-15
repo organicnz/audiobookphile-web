@@ -6,6 +6,8 @@ export const dynamic = 'force-dynamic'
 
 export default async function ApiKeysPage() {
   const t = await getTypeSafeTranslations()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || 'YOUR_PROJECT_REF'
 
   return (
     <SettingsContent title={t('HeaderAPIKeys' as any)}>
@@ -19,7 +21,7 @@ export default async function ApiKeysPage() {
             Use the Supabase dashboard to manage your project API keys, create service role keys, and configure Row Level Security policies.
           </p>
           <a
-            href="https://supabase.com/dashboard/project/iambzzclljayqdxkeepy/settings/api"
+            href={`https://supabase.com/dashboard/project/${projectRef}/settings/api`}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-primary/20 border border-primary/30 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-black uppercase tracking-widest text-primary hover:bg-primary/30 transition-all hover:scale-105 active:scale-95"
@@ -31,7 +33,7 @@ export default async function ApiKeysPage() {
         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 space-y-3">
           <h3 className="text-white/40 text-[11px] font-black uppercase tracking-widest">Project Reference</h3>
           <code className="bg-black/40 block rounded-xl p-4 text-xs font-mono text-primary/80 border border-white/5">
-            iambzzclljayqdxkeepy
+            {projectRef}
           </code>
         </div>
       </div>

@@ -6,6 +6,8 @@ export const dynamic = 'force-dynamic'
 
 export default async function BackupsPage() {
   const t = await getTypeSafeTranslations()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || 'YOUR_PROJECT_REF'
 
   return (
     <SettingsContent title={t('HeaderBackups')}>
@@ -19,7 +21,7 @@ export default async function BackupsPage() {
             Supabase automatically backs up your database daily on paid plans. Point-in-time recovery is available on Pro and above.
           </p>
           <a
-            href="https://supabase.com/dashboard/project/iambzzclljayqdxkeepy/database/backups/scheduled"
+            href={`https://supabase.com/dashboard/project/${projectRef}/database/backups/scheduled`}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-primary/20 border border-primary/30 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-black uppercase tracking-widest text-primary hover:bg-primary/30 transition-all hover:scale-105 active:scale-95"
@@ -37,7 +39,7 @@ export default async function BackupsPage() {
             You can export your data using the Supabase SQL editor or the CLI:
           </p>
           <code className="bg-black/40 block rounded-xl p-4 text-xs font-mono text-primary/80 border border-white/5">
-            supabase db dump --project-ref iambzzclljayqdxkeepy &gt; backup.sql
+            supabase db dump --project-ref {projectRef} &gt; backup.sql
           </code>
         </div>
       </div>

@@ -6,6 +6,8 @@ export const dynamic = 'force-dynamic'
 
 export default async function LogsPage() {
   const t = await getTypeSafeTranslations()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || 'YOUR_PROJECT_REF'
 
   return (
     <SettingsContent title={t('HeaderLogs')}>
@@ -15,8 +17,8 @@ export default async function LogsPage() {
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           {[
-            { label: 'Supabase API Logs', desc: 'Database and auth requests', href: 'https://supabase.com/dashboard/project/iambzzclljayqdxkeepy/logs/edge-logs' },
-            { label: 'Supabase Auth Logs', desc: 'Login and auth events', href: 'https://supabase.com/dashboard/project/iambzzclljayqdxkeepy/logs/auth-logs' },
+            { label: 'Supabase API Logs', desc: 'Database and auth requests', href: `https://supabase.com/dashboard/project/${projectRef}/logs/edge-logs` },
+            { label: 'Supabase Auth Logs', desc: 'Login and auth events', href: `https://supabase.com/dashboard/project/${projectRef}/logs/auth-logs` },
             { label: 'Vercel Function Logs', desc: 'Server-side function logs', href: 'https://vercel.com/organicnz/audiobookphile-client-react/logs' },
             { label: 'Vercel Deployments', desc: 'Build and deploy history', href: 'https://vercel.com/organicnz/audiobookphile-client-react' },
           ].map((item) => (

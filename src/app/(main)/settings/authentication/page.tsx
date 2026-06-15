@@ -6,6 +6,8 @@ export const dynamic = 'force-dynamic'
 
 export default async function AuthenticationPage() {
   const t = await getTypeSafeTranslations()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || 'YOUR_PROJECT_REF'
 
   return (
     <SettingsContent title={t('HeaderAuthentication')}>
@@ -22,7 +24,7 @@ export default async function AuthenticationPage() {
           ].map((item) => (
             <a
               key={item.path}
-              href={`https://supabase.com/dashboard/project/iambzzclljayqdxkeepy/${item.path}`}
+              href={`https://supabase.com/dashboard/project/${projectRef}/${item.path}`}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/5 backdrop-blur-md border border-white/10 hover:border-primary/50 flex items-center gap-4 rounded-2xl p-6 transition-all hover:scale-[1.02] active:scale-[0.98] group"
