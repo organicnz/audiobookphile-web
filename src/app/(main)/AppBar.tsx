@@ -39,7 +39,7 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
   const isAdmin = ['admin', 'root'].includes(user.type)
   const currentLibrary = libraries?.find((lib) => lib.id === currentLibraryId)
   const redirectLibraryId = currentLibraryId || lastCurrentLibraryId || userDefaultLibraryId
-  const redirectUrl = redirectLibraryId ? `/library/${redirectLibraryId}` : '/'
+  const redirectUrl = redirectLibraryId ? `/library/${redirectLibraryId}` : isAdmin ? '/settings' : '/account'
 
   return (
     <div className="sticky top-0 z-50 h-16 w-full">
