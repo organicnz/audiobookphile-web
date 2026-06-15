@@ -1,5 +1,5 @@
 'use client'
-import { Search, X } from 'lucide-react'
+import { Search, X, Sparkles } from 'lucide-react'
 import InputWrapper from '@/shared/ui/InputWrapper'
 import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
@@ -25,7 +25,7 @@ interface GlobalSearchInputProps {
 
 export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onItemSelect, onClear, usePortal = false }: GlobalSearchInputProps = {}) {
   const searchOptions = useMemo(() => ({ autoSelectFirst: false, libraryId }), [libraryId])
-  const { searchQuery, setSearchQuery, isSearching, searchResults, selectedLibraryId, handleSearch, searchError, clearSelection } =
+  const { searchQuery, setSearchQuery, isSearching, searchResults, selectedLibraryId, handleSearch, searchError, clearSelection, useSemanticSearch, setUseSemanticSearch } =
     useLibrarySearch(searchOptions)
   const t = useTypeSafeTranslations()
   const router = useRouter()
@@ -176,19 +176,35 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
       </InputWrapper>
 
       {/* Search Icon, Spinner or Clear Button */}
-      <div className="absolute end-0 top-0 flex h-full items-center pe-3">
+      <div className="absolute end-0 top-0 flex h-full items-center pe-2 gap-1">
+        <button
+          type="button"
+          onClick={() => setUseSemanticSearch(!useSemanticSearch)}
+          className={`flex items-center justify-center p-1.5 rounded-md transition-all duration-300 ${
+            useSemanticSearch 
+              ? 'bg-accent/20 text-accent shadow-[0_0_10px_rgba(var(--accent),0.3)]' 
+              : 'text-foreground/30 hover:text-foreground/70 hover:bg-white/5'
+          }`}
+          aria-label="Toggle Smart AI Search"
+          title="Toggle Smart AI Search"
+        >
+          <Sparkles size={16} strokeWidth={useSemanticSearch ? 2.5 : 2} />
+        </button>
+        
         {isSearching || isTyping ? (
           <LoadingSpinner size="la-sm" className="scale-75 text-primary opacity-80" />
         ) : searchQuery ? (
           <button 
             onClick={handleClear} 
-            className="cursor-pointer text-foreground/40 hover:text-foreground hover:bg-white/10 p-1 rounded-md transition-all" 
+            className="cursor-pointer text-foreground/40 hover:text-foreground hover:bg-white/10 p-1.5 rounded-md transition-all" 
             aria-label="Clear search"
           >
             <X size={16} strokeWidth={3} aria-hidden="true" />
           </button>
         ) : (
-          <Search size={16} strokeWidth={2.5} className="pointer-events-none text-foreground/30 group-focus-within:text-primary transition-colors duration-300" aria-hidden="true" />
+          <div className="p-1.5">
+            <Search size={16} strokeWidth={2.5} className="pointer-events-none text-foreground/30 group-focus-within:text-primary transition-colors duration-300" aria-hidden="true" />
+          </div>
         )}
       </div>
 

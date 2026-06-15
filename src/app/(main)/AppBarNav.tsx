@@ -12,7 +12,8 @@ import {
   Upload, 
   BarChart2, 
   LayoutGrid, 
-  LogOut 
+  LogOut,
+  Activity
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
@@ -73,6 +74,11 @@ export default function AppBarNav({ userCanUpload, isAdmin, username }: AppBarNa
         icon: Settings,
         onClick: () => router.push('/settings'),
         className: 'md:hidden'
+      }, {
+        id: 'admin',
+        text: 'Admin Dashboard',
+        icon: Activity,
+        onClick: () => router.push('/admin')
       })
     }
 
