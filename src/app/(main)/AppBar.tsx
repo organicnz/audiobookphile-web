@@ -8,7 +8,7 @@ import { useMediaContext } from '@/features/player/contexts/MediaContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { Library } from '@/types/api'
-import { Search, Upload, Settings, Library as LibraryIcon } from 'lucide-react'
+import { Search, Upload, Settings, Library as LibraryIcon, Activity } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
@@ -39,7 +39,7 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
   const isAdmin = ['admin', 'root'].includes(user.type)
   const currentLibrary = libraries?.find((lib) => lib.id === currentLibraryId)
   const redirectLibraryId = currentLibraryId || lastCurrentLibraryId || userDefaultLibraryId
-  const redirectUrl = redirectLibraryId ? `/library/${redirectLibraryId}` : '/settings'
+  const redirectUrl = redirectLibraryId ? `/library/${redirectLibraryId}` : '/'
 
   return (
     <div className="sticky top-0 z-50 h-16 w-full">
@@ -126,6 +126,9 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
               <div className="hidden items-center gap-1.5 lg:flex">
                 <Tooltip text={t('ButtonUpload')} position="bottom">
                   <IconBtn borderless ariaLabel={t('ButtonUpload')} to="/upload" icon={Upload} />
+                </Tooltip>
+                <Tooltip text="Admin Dashboard" position="bottom">
+                  <IconBtn borderless ariaLabel="Admin Dashboard" to="/admin" icon={Activity} />
                 </Tooltip>
                 <Tooltip text={t('HeaderSettings')} position="bottom">
                   <IconBtn borderless ariaLabel={t('HeaderSettings')} to="/settings" icon={Settings} />
