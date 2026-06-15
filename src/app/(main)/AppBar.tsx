@@ -39,7 +39,25 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
   const isAdmin = ['admin', 'root'].includes(user.type)
   const currentLibrary = libraries?.find((lib) => lib.id === currentLibraryId)
   const redirectLibraryId = currentLibraryId || lastCurrentLibraryId || userDefaultLibraryId
-  const redirectUrl = redirectLibraryId ? `/library/${redirectLibraryId}` : isAdmin ? '/settings' : '/account'
+  const redirectUrl = redirectLibraryId ? `/library/${redirectLibraryId}` : '/library'
+
+  const LogoContent = (
+    <>
+      <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white/5 p-1 shadow-inner transition-transform group-hover:scale-105 group-active:scale-95">
+        <Image 
+          src="/images/icon.svg" 
+          alt="" 
+          width={40} 
+          height={40} 
+          priority 
+          className="h-full w-full object-contain" 
+        />
+      </div>
+      <span className="hidden text-lg font-black tracking-tight text-foreground/90 transition-colors group-hover:text-foreground md:block">
+        audiobookphile
+      </span>
+    </>
+  )
 
   return (
     <div className="sticky top-0 z-50 h-16 w-full">
@@ -48,25 +66,23 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
         className="absolute inset-0 flex items-center justify-between gap-4 px-4 py-2 bg-primary/95 backdrop-blur-xl border-b border-white/5 shadow-2xl md:px-8"
       >
         <div className="flex items-center gap-4 min-w-0 flex-shrink-0">
-          <Link
-            href={redirectUrl}
-            aria-label={`audiobookphile - ${t('ButtonHome')}`}
-            className="group flex items-center gap-3"
-          >
-            <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white/5 p-1 shadow-inner transition-transform group-hover:scale-105 group-active:scale-95">
-              <Image 
-                src="/images/icon.svg" 
-                alt="" 
-                width={40} 
-                height={40} 
-                priority 
-                className="h-full w-full object-contain" 
-              />
-            </div>
-            <span className="hidden text-lg font-black tracking-tight text-foreground/90 transition-colors group-hover:text-foreground md:block">
-              audiobookphile
-            </span>
-          </Link>
+          {redirectLibraryId ? (
+            <Link
+              href={redirectUrl}
+              aria-label={`audiobookphile - ${t('ButtonHome')}`}
+              className="group flex items-center gap-3"
+            >
+              {LogoContent}
+            </Link>
+          ) : (
+            <a
+              href={redirectUrl}
+              aria-label={`audiobookphile - ${t('ButtonHome')}`}
+              className="group flex items-center gap-3"
+            >
+              {LogoContent}
+            </a>
+          )}
 
           <AnimatePresence mode="wait">
             {!isSearchMode && libraries && currentLibraryId && (
