@@ -42,8 +42,14 @@ export default function MediaCardCover({
 }: MediaCardCoverProps) {
   const [imageReady, setImageReady] = useState(false)
   const [showCoverBg, setShowCoverBg] = useState(false)
+  const [imageError, setImageError] = useState(false)
   const imgRef = useRef<HTMLImageElement>(null)
   const hasHandledLoad = useRef(false)
+
+  // Determine if we should even attempt to show the cover.
+  // If the DB explicitly says 'missing', or if the image failed to load, we don't have a cover.
+  const isKnownMissing = (libraryItem as any).media?.coverPath === 'missing'
+  const shouldAttemptCover = !imageError && !isKnownMissing
 
   const bookCoverSrc = useMemo(() => getLibraryItemCoverSrc(libraryItem, placeholderUrl), [libraryItem, placeholderUrl])
 
@@ -53,9 +59,15 @@ export default function MediaCardCover({
     if (bookCoverSrc !== prevSrc) {
       setPrevSrc(bookCoverSrc)
       setImageReady(false)
+      setImageError(false)
       hasHandledLoad.current = false
     }
   }, [bookCoverSrc, prevSrc])
+
+  const handleImageError = useCallback(() => {
+    setImageError(true)
+    setImageReady(false)
+  }, [])
 
   const handleImageLoaded = useCallback(
     (event: React.SyntheticEvent<HTMLImageElement>) => {
@@ -108,7 +120,7 @@ export default function MediaCardCover({
       </div>
 
       {/* Placeholder title when image is not ready */}
-      {libraryItem && !imageReady && (
+      {libraryItem && !imageReady && !imageError && shouldAttemptCover && (
         <div
           cy-id="titleImageNotReady"
           aria-hidden="true"
@@ -122,7 +134,7 @@ export default function MediaCardCover({
       )}
 
       {/* Cover image */}
-      {libraryItem && (
+      {libraryItem && shouldAttemptCover && (
         <motion.img
           ref={imgRef}
           cy-id="coverImage"
@@ -130,6 +142,7 @@ export default function MediaCardCover({
           aria-hidden="true"
           src={bookCoverSrc}
           onLoad={handleImageLoaded}
+          onError={handleImageError}
           animate={{ 
             opacity: imageReady ? 1 : 0,
             scale: isHovering ? 1.08 : 1
@@ -148,7 +161,7 @@ export default function MediaCardCover({
       )}
 
       {/* Placeholder cover title & author */}
-      {!hasCover && (
+      {!shouldAttemptCover && (
         <div 
           className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5 p-4 text-center"
           style={{ viewTransitionName: `cover-${libraryItem.id}` }}

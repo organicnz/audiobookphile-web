@@ -45,7 +45,7 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
     <>
       <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white/5 p-1 shadow-inner transition-transform group-hover:scale-105 group-active:scale-95">
         <Image 
-          src="/images/icon.svg" 
+          src="/images/logo.png" 
           alt="" 
           width={40} 
           height={40} 
