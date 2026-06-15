@@ -1,3 +1,5 @@
+'use client'
+
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
