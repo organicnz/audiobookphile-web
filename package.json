@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "types:sync": "supabase gen types typescript --linked > src/types/supabase.ts",
+    "types:sync": "cd ../audiobookphile-backend && supabase gen types typescript --linked > ../audiobookphile-web/src/types/supabase.ts",
     "cy:open": "cypress open",
     "cy:comp": "cypress open --component --browser chrome",
     "test": "cypress run --component --browser chrome",
