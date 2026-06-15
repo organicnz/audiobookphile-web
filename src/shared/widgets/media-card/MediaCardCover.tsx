@@ -46,28 +46,44 @@ export default function MediaCardCover({
   const imgRef = useRef<HTMLImageElement>(null)
   const hasHandledLoad = useRef(false)
 
+  const [retryCount, setRetryCount] = useState(0)
+
   // Determine if we should even attempt to show the cover.
   // We ALWAYS attempt to fetch the cover at least once, because the backend will dynamically
   // fetch it from third party APIs on the fly if it's missing.
   const shouldAttemptCover = !imageError
 
-  const bookCoverSrc = useMemo(() => getLibraryItemCoverSrc(libraryItem, placeholderUrl), [libraryItem, placeholderUrl])
+  const baseCoverSrc = useMemo(() => getLibraryItemCoverSrc(libraryItem, placeholderUrl), [libraryItem, placeholderUrl])
+  const bookCoverSrc = useMemo(() => {
+    if (!baseCoverSrc || retryCount === 0) return baseCoverSrc
+    const sep = baseCoverSrc.includes('?') ? '&' : '?'
+    return `${baseCoverSrc}${sep}retry=${retryCount}`
+  }, [baseCoverSrc, retryCount])
 
-  const [prevSrc, setPrevSrc] = useState(bookCoverSrc)
+  const [prevBaseSrc, setPrevBaseSrc] = useState(baseCoverSrc)
 
   useEffect(() => {
-    if (bookCoverSrc !== prevSrc) {
-      setPrevSrc(bookCoverSrc)
+    if (baseCoverSrc !== prevBaseSrc) {
+      setPrevBaseSrc(baseCoverSrc)
       setImageReady(false)
       setImageError(false)
+      setRetryCount(0)
       hasHandledLoad.current = false
     }
-  }, [bookCoverSrc, prevSrc])
+  }, [baseCoverSrc, prevBaseSrc])
 
   const handleImageError = useCallback(() => {
-    setImageError(true)
-    setImageReady(false)
-  }, [])
+    if (retryCount < 2) {
+      // Retry with a staggered backoff to avoid hammering the rate limit
+      const delay = (retryCount + 1) * 1500 + Math.random() * 1000
+      setTimeout(() => {
+        setRetryCount((c) => c + 1)
+      }, delay)
+    } else {
+      setImageError(true)
+      setImageReady(false)
+    }
+  }, [retryCount])
 
   const handleImageLoaded = useCallback(
     (event: React.SyntheticEvent<HTMLImageElement>) => {
@@ -141,6 +157,7 @@ export default function MediaCardCover({
           alt={`${title}, Cover`}
           aria-hidden="true"
           src={bookCoverSrc}
+          loading="lazy"
           onLoad={handleImageLoaded}
           onError={handleImageError}
           animate={{ 
