@@ -49,6 +49,9 @@ express-server
 .kiro/
 .snapshots/
 
-# Supabase — keep migrations tracked; exclude local runtime state
+# Supabase — keep migrations OUT of web repo
+supabase/migrations/
+supabase/seed.sql
+supabase/config.toml
 supabase/.temp
 supabase/.branches
