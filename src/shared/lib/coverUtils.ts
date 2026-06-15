@@ -38,20 +38,9 @@ export function getPlaceholderCoverUrl(): string {
   return '/images/book_placeholder.jpg'
 }
 
-/**
- * Get cover src for a library item, falling back to the provided placeholder
- * when no coverPath is available.
- */
 export function getLibraryItemCoverSrc(libraryItem: LibraryItem, placeholder: string): string {
-  const hasCover =
-    // Full library item media
-     
-    !!(libraryItem as any).media?.coverPath
-
-  if (!hasCover) {
-    return placeholder
-  }
-
+  // Always return the dynamic API URL so that the backend can attempt to fetch missing covers on the fly.
+  // The API will return a 404 if it truly cannot find one, at which point the frontend will fall back to the placeholder via the `onError` handler in MediaCardCover.
   const timestamp = 'updatedAt' in libraryItem ? libraryItem.updatedAt : undefined
   return getLibraryItemCoverUrl(libraryItem.id, timestamp ?? null)
 }
