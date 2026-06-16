@@ -44,15 +44,9 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
   const LogoContent = (
     <>
       <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white/5 p-1 shadow-inner transition-transform group-hover:scale-105 group-active:scale-95">
-        <img 
-          src="/images/logo.png" 
-          alt="Audiobookphile Logo" 
-          className="h-full w-full object-contain" 
-        />
+        <img src="/images/logo.png" alt="Audiobookphile Logo" className="h-full w-full object-contain" />
       </div>
-      <span className="hidden text-lg font-black tracking-tight text-foreground/90 transition-colors group-hover:text-foreground md:block">
-        audiobookphile
-      </span>
+      <span className="text-foreground/90 group-hover:text-foreground hidden text-lg font-black tracking-tight transition-colors md:block">audiobookphile</span>
     </>
   )
 
@@ -60,42 +54,29 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
     <div className="sticky top-0 z-50 h-16 w-full">
       <header
         cy-id="appbar"
-        className="absolute inset-0 flex items-center justify-between gap-4 px-4 py-2 bg-primary/95 backdrop-blur-xl border-b border-white/5 shadow-2xl md:px-8"
+        className="bg-primary/95 absolute inset-0 flex items-center justify-between gap-4 border-b border-white/5 px-4 py-2 shadow-2xl backdrop-blur-xl md:px-8"
       >
-        <div className="flex items-center gap-4 min-w-0 flex-shrink-0">
+        <div className="flex min-w-0 flex-shrink-0 items-center gap-4">
           {redirectLibraryId ? (
-            <Link
-              href={redirectUrl}
-              aria-label={`audiobookphile - ${t('ButtonHome')}`}
-              className="group flex items-center gap-3"
-            >
+            <Link href={redirectUrl} aria-label={`audiobookphile - ${t('ButtonHome')}`} className="group flex items-center gap-3">
               {LogoContent}
             </Link>
           ) : (
-            <a
-              href={redirectUrl}
-              aria-label={`audiobookphile - ${t('ButtonHome')}`}
-              className="group flex items-center gap-3"
-            >
+            <a href={redirectUrl} aria-label={`audiobookphile - ${t('ButtonHome')}`} className="group flex items-center gap-3">
               {LogoContent}
             </a>
           )}
 
           <AnimatePresence mode="wait">
             {!isSearchMode && libraries && currentLibraryId && (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="hidden sm:block"
-              >
+              <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="hidden sm:block">
                 <LibrariesDropdown currentLibraryId={currentLibraryId} libraries={libraries} />
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        <div className="flex flex-1 items-center justify-center min-w-0 max-w-2xl px-2">
+        <div className="flex max-w-2xl min-w-0 flex-1 items-center justify-center px-2">
           <AnimatePresence mode="wait">
             {isSearchMode || !currentLibrary ? (
               <motion.div
@@ -108,13 +89,7 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
                 <GlobalSearchInput autoFocus onSubmit={handleSearchSubmit} libraryId={currentLibraryId} />
               </motion.div>
             ) : (
-              <motion.div
-                key="default-mode"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="hidden w-full md:block"
-              >
+              <motion.div key="default-mode" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="hidden w-full md:block">
                 <GlobalSearchInput onSubmit={handleSearchSubmit} libraryId={currentLibraryId} />
               </motion.div>
             )}
@@ -123,31 +98,29 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
 
         <div className="flex items-center gap-2 md:gap-4">
           {!isSearchMode && currentLibrary && (
-            <IconBtn 
-              borderless 
-              ariaLabel={t('ButtonSearch')} 
-              onClick={handleSearchModeToggle} 
-              className="md:hidden" 
-              icon={Search} 
-            />
+            <IconBtn borderless ariaLabel={t('ButtonSearch')} onClick={handleSearchModeToggle} className="md:hidden" icon={Search} />
           )}
 
           <div className="flex items-center gap-1.5 border-s border-white/10 ps-2 md:ps-4">
             <NotificationWidget />
 
-            {isAdmin && (
-              <div className="hidden items-center gap-1.5 lg:flex">
+            <div className="hidden items-center gap-1.5 md:flex">
+              {userCanUpload && (
                 <Tooltip text={t('ButtonUpload')} position="bottom">
                   <IconBtn borderless ariaLabel={t('ButtonUpload')} to="/upload" icon={Upload} />
                 </Tooltip>
-                <Tooltip text="Admin Dashboard" position="bottom">
-                  <IconBtn borderless ariaLabel="Admin Dashboard" to="/admin" icon={Activity} />
-                </Tooltip>
-                <Tooltip text={t('HeaderSettings')} position="bottom">
-                  <IconBtn borderless ariaLabel={t('HeaderSettings')} to="/settings" icon={Settings} />
-                </Tooltip>
-              </div>
-            )}
+              )}
+              {isAdmin && (
+                <>
+                  <Tooltip text="Admin Dashboard" position="bottom">
+                    <IconBtn borderless ariaLabel="Admin Dashboard" to="/admin" icon={Activity} />
+                  </Tooltip>
+                  <Tooltip text={t('HeaderSettings')} position="bottom">
+                    <IconBtn borderless ariaLabel={t('HeaderSettings')} to="/settings" icon={Settings} />
+                  </Tooltip>
+                </>
+              )}
+            </div>
 
             <AppBarNav userCanUpload={userCanUpload} isAdmin={isAdmin} username={user.username} />
           </div>
@@ -156,4 +129,3 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
     </div>
   )
 }
-
