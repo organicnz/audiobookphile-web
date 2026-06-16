@@ -5,16 +5,7 @@ import IconBtn from '@/shared/ui/IconBtn'
 import Menu from '@/shared/ui/Menu'
 import { DropdownMenuItem } from '@/shared/ui/DropdownMenu'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { 
-  User, 
-  Menu as MenuIcon, 
-  Settings, 
-  Upload, 
-  BarChart2, 
-  LayoutGrid, 
-  LogOut,
-  Activity
-} from 'lucide-react'
+import { User, Menu as MenuIcon, Settings, Upload, BarChart2, LayoutGrid, LogOut, Activity } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 
@@ -68,28 +59,23 @@ export default function AppBarNav({ userCanUpload, isAdmin, username }: AppBarNa
     ]
 
     if (isAdmin) {
-      items.splice(2, 0, {
-        id: 'settings',
-        text: t('HeaderSettings'),
-        icon: Settings,
-        onClick: () => router.push('/settings'),
-        className: 'md:hidden'
-      }, {
-        id: 'admin',
-        text: 'Admin Dashboard',
-        icon: Activity,
-        onClick: () => router.push('/admin')
-      })
-    }
-
-    if (userCanUpload) {
-      items.splice(isAdmin ? 3 : 2, 0, {
-        id: 'upload',
-        text: t('ButtonUpload'),
-        icon: Upload,
-        onClick: () => router.push('/upload'),
-        className: 'md:hidden'
-      })
+      items.splice(
+        2,
+        0,
+        {
+          id: 'settings',
+          text: t('HeaderSettings'),
+          icon: Settings,
+          onClick: () => router.push('/settings'),
+          className: 'md:hidden'
+        },
+        {
+          id: 'admin',
+          text: 'Admin Dashboard',
+          icon: Activity,
+          onClick: () => router.push('/admin')
+        }
+      )
     }
 
     items.push(
@@ -108,30 +94,26 @@ export default function AppBarNav({ userCanUpload, isAdmin, username }: AppBarNa
 
   return (
     <div className="relative">
-      <Menu items={menuItems} trigger={(isOpen) => (
-        <>
-          {/* Desktop Trigger */}
-          <Btn
-            size="small"
-            ariaDescription={t('ButtonMenu')}
-            ariaExpanded={isOpen}
-            className="hidden min-w-[120px] justify-between ps-3 pe-2 md:flex bg-white/5 border-white/10 hover:bg-white/10"
-          >
-            <span className="block truncate text-sm font-medium">{username}</span>
-            <User size={16} className="ml-2 opacity-60" aria-hidden="true" />
-          </Btn>
+      <Menu
+        items={menuItems}
+        trigger={(isOpen) => (
+          <>
+            {/* Desktop Trigger */}
+            <Btn
+              size="small"
+              ariaDescription={t('ButtonMenu')}
+              ariaExpanded={isOpen}
+              className="hidden min-w-[120px] justify-between border-white/10 bg-white/5 ps-3 pe-2 hover:bg-white/10 md:flex"
+            >
+              <span className="block truncate text-sm font-medium">{username}</span>
+              <User size={16} className="ml-2 opacity-60" aria-hidden="true" />
+            </Btn>
 
-          {/* Mobile Trigger */}
-          <IconBtn 
-            borderless 
-            ariaLabel={t('ButtonMenu')} 
-            className="md:hidden" 
-            icon={MenuIcon} 
-          />
-        </>
-      )} />
+            {/* Mobile Trigger */}
+            <IconBtn borderless ariaLabel={t('ButtonMenu')} className="md:hidden" icon={MenuIcon} />
+          </>
+        )}
+      />
     </div>
   )
 }
-
-

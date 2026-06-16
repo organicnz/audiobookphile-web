@@ -91,12 +91,7 @@ export default function SideRail({ serverVersion, installSource }: { serverVersi
       href: `/library/${currentLibraryId}/add-podcast`,
       mediaType: 'podcast'
     },
-    {
-      icon: Upload,
-      label: t('ButtonUpload'),
-      href: `/upload`,
-      hidden: !userCanUpload
-    },
+
     {
       icon: Download,
       label: t('ButtonDownloadQueue'),

@@ -104,12 +104,13 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
           <div className="flex items-center gap-1.5 border-s border-white/10 ps-2 md:ps-4">
             <NotificationWidget />
 
+            {userCanUpload && (
+              <Tooltip text={t('ButtonUpload')} position="bottom">
+                <IconBtn borderless ariaLabel={t('ButtonUpload')} to="/upload" icon={Upload} />
+              </Tooltip>
+            )}
+
             <div className="hidden items-center gap-1.5 md:flex">
-              {userCanUpload && (
-                <Tooltip text={t('ButtonUpload')} position="bottom">
-                  <IconBtn borderless ariaLabel={t('ButtonUpload')} to="/upload" icon={Upload} />
-                </Tooltip>
-              )}
               {isAdmin && (
                 <>
                   <Tooltip text="Admin Dashboard" position="bottom">
