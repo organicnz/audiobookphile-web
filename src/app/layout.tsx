@@ -14,7 +14,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#f59e0b',
+  themeColor: '#f59e0b'
 }
 
 export const metadata: Metadata = {
@@ -24,14 +24,16 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Audiobookphile',
+    title: 'Audiobookphile'
   },
   openGraph: {
     title: 'Audiobookphile',
     description: 'A self-hosted audiobook and podcast server',
-    type: 'website',
+    type: 'website'
   }
 }
+
+import { PostHogProvider } from '@/shared/PostHogProvider'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale()
@@ -40,16 +42,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={`theme-${theme}`}>
       <body className="overflow-hidden" suppressHydrationWarning>
-        <NextIntlClientProvider>
-          <ToastProvider>
-            <CardSizeProvider>
-              <Providers>
-                {children}
-              </Providers>
-              <Analytics />
-            </CardSizeProvider>
-          </ToastProvider>
-        </NextIntlClientProvider>
+        <PostHogProvider>
+          <NextIntlClientProvider>
+            <ToastProvider>
+              <CardSizeProvider>
+                <Providers>{children}</Providers>
+                <Analytics />
+              </CardSizeProvider>
+            </ToastProvider>
+          </NextIntlClientProvider>
+        </PostHogProvider>
       </body>
     </html>
   )
