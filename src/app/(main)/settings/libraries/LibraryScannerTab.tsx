@@ -97,15 +97,17 @@ export default function LibraryScannerTab({ settings, onSettingsChange }: Librar
   }
 
   const renderItem = (source: MetadataSource, index: number) => (
-    <div className={`bg-white/5 border-white/10 flex w-full items-center border rounded-xl mb-2 px-3 transition-all duration-200 ${!source.include ? 'opacity-30 grayscale' : 'shadow-lg'}`}>
-      <div className="drag-handle cursor-grab active:cursor-grabbing p-2 hover:bg-white/10 rounded-lg transition-colors mr-2">
+    <div
+      className={`mb-2 flex w-full items-center rounded-xl border border-white/10 bg-white/5 px-3 transition-all duration-200 ${!source.include ? 'opacity-30 grayscale' : 'shadow-lg'}`}
+    >
+      <div className="drag-handle mr-2 cursor-grab rounded-lg p-2 transition-colors hover:bg-white/10 active:cursor-grabbing">
         <GripVertical size={18} className="opacity-30" />
       </div>
-      <div className="w-8 min-w-8 py-1 text-center font-black text-xs opacity-40">{source.include ? getSourcePriority(source.id) : ''}</div>
-      <div className="inline-flex grow items-center justify-between px-2 py-4 text-sm font-bold uppercase tracking-wider">
+      <div className="w-8 min-w-8 py-1 text-center text-xs font-black opacity-40">{source.include ? getSourcePriority(source.id) : ''}</div>
+      <div className="inline-flex grow items-center justify-between px-2 py-4 text-sm font-bold tracking-wider uppercase">
         {source.name}
         {source.include && (index === firstActiveIndex || index === lastActiveIndex) && (
-          <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ml-3">
+          <span className="bg-primary/10 text-primary ml-3 rounded-full px-3 py-1 text-[9px] font-black tracking-widest uppercase">
             {index === firstActiveIndex ? t('LabelHighestPriority') : t('LabelLowestPriority')}
           </span>
         )}

@@ -7,34 +7,43 @@ export const dynamic = 'force-dynamic'
 export default async function LogsPage() {
   const t = await getTypeSafeTranslations()
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || 'YOUR_PROJECT_REF'
+  const isSupabaseCloud = supabaseUrl.includes('.supabase.co')
+  const projectRef = isSupabaseCloud ? supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] : null
+  const isVercel = process.env.VERCEL === '1'
+
+  const links = []
+
+  if (isSupabaseCloud && projectRef) {
+    links.push({ label: 'Supabase API Logs', desc: 'Database and auth requests', href: `https://supabase.com/dashboard/project/${projectRef}/logs/edge-logs` })
+    links.push({ label: 'Supabase Auth Logs', desc: 'Login and auth events', href: `https://supabase.com/dashboard/project/${projectRef}/logs/auth-logs` })
+  } else {
+    links.push({ label: 'Local Studio', desc: 'Self-hosted Supabase dashboard', href: supabaseUrl.replace(':8000', ':54323').replace('/v1', '') })
+  }
+
+  if (isVercel) {
+    links.push({ label: 'Vercel Function Logs', desc: 'Server-side function logs', href: `https://vercel.com/dashboard` })
+    links.push({ label: 'Vercel Deployments', desc: 'Build and deploy history', href: `https://vercel.com/dashboard` })
+  }
 
   return (
     <SettingsContent title={t('HeaderLogs')}>
-      <div className="p-6 space-y-4">
-        <p className="text-foreground-muted text-sm">
-          Application logs are available in the Supabase dashboard and Vercel deployment logs.
-        </p>
+      <div className="space-y-4 p-6">
+        <p className="text-foreground-muted text-sm">Application logs are available in your deployment environment&apos;s dashboard.</p>
         <div className="grid gap-4 sm:grid-cols-2">
-          {[
-            { label: 'Supabase API Logs', desc: 'Database and auth requests', href: `https://supabase.com/dashboard/project/${projectRef}/logs/edge-logs` },
-            { label: 'Supabase Auth Logs', desc: 'Login and auth events', href: `https://supabase.com/dashboard/project/${projectRef}/logs/auth-logs` },
-            { label: 'Vercel Function Logs', desc: 'Server-side function logs', href: 'https://vercel.com/organicnz/audiobookphile-client-react/logs' },
-            { label: 'Vercel Deployments', desc: 'Build and deploy history', href: 'https://vercel.com/organicnz/audiobookphile-client-react' },
-          ].map((item) => (
+          {links.map((item) => (
             <a
-              key={item.href}
+              key={item.label}
               href={item.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white/5 backdrop-blur-md border border-white/10 hover:border-primary/50 flex items-center gap-4 rounded-2xl p-6 transition-all hover:scale-[1.02] active:scale-[0.98] group"
+              className="hover:border-primary/50 group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              <div className="bg-primary/20 p-3 rounded-xl group-hover:bg-primary/30 transition-colors">
+              <div className="bg-primary/20 group-hover:bg-primary/30 rounded-xl p-3 transition-colors">
                 <ExternalLink size={20} className="text-primary" />
               </div>
               <div>
-                <p className="text-white/90 text-sm font-black uppercase tracking-widest">{item.label}</p>
-                <p className="text-white/40 text-xs mt-1">{item.desc}</p>
+                <p className="text-sm font-black tracking-widest text-white/90 uppercase">{item.label}</p>
+                <p className="mt-1 text-xs text-white/40">{item.desc}</p>
               </div>
             </a>
           ))}

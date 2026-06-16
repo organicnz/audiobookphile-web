@@ -13,7 +13,7 @@ export default function AnalyticsPage() {
     totalItems: number
     activeSessions: number
   } | null>(null)
-  
+
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const { userIsAdmin } = useUser()
@@ -32,7 +32,7 @@ export default function AnalyticsPage() {
         const { data: resData, error: apiError } = await supabase.functions.invoke('admin-analytics')
         if (apiError) throw new Error(apiError.message || 'Failed to fetch analytics')
         if (resData?.error) throw new Error(resData.error)
-        
+
         setData(resData)
       } catch (err: any) {
         setError(err.message)
@@ -47,14 +47,14 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="rounded-lg bg-error/10 p-4 text-error">
+      <div className="bg-error/10 text-error rounded-lg p-4">
         <h3 className="font-semibold">Failed to load analytics</h3>
         <p className="text-sm">{error}</p>
       </div>
@@ -97,14 +97,14 @@ export default function AnalyticsPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {kpis.map((kpi) => (
-          <div key={kpi.title} className="rounded-xl border border-white/10 bg-primary-100/5 p-6 shadow-sm relative overflow-hidden">
+          <div key={kpi.title} className="bg-primary-100/5 relative overflow-hidden rounded-xl border border-white/10 p-6 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className={`p-3 rounded-lg ${kpi.color} bg-opacity-20`}>
+              <div className={`rounded-lg p-3 ${kpi.color} bg-opacity-20`}>
                 <kpi.icon className={`h-6 w-6 text-white`} />
               </div>
               <div>
-                <p className="text-sm font-medium text-foreground-muted">{kpi.title}</p>
-                <h3 className="text-3xl font-bold tracking-tighter mt-1">{kpi.value.toLocaleString()}</h3>
+                <p className="text-foreground-muted text-sm font-medium">{kpi.title}</p>
+                <h3 className="mt-1 text-3xl font-bold tracking-tighter">{kpi.value.toLocaleString()}</h3>
               </div>
             </div>
             {/* Decorative background circle */}

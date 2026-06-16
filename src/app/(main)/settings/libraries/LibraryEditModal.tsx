@@ -163,7 +163,6 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
     }
   }
 
-
   // Check if form is valid
   const isValid = useMemo(() => {
     const hasName = formData.name.trim() !== ''

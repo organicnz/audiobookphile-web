@@ -75,21 +75,27 @@ export default function LibrariesListRow({ item, handleDeleteLibrary, handleEdit
   )
 
   return (
-    <div className="hover:bg-white/5 border-white/5 border-b text-foreground/50 hover:text-foreground flex items-center gap-4 px-4 py-2 transition-all duration-200">
+    <div className="text-foreground/50 hover:text-foreground flex items-center gap-4 border-b border-white/5 px-4 py-2 transition-all duration-200 hover:bg-white/5">
       {isLibraryTaskRunning ? <LoadingSpinner size="la-sm" /> : <LibraryIcon icon={item.icon} className="opacity-80" />}
-      <Link className="text-foreground text-[13px] font-bold py-2 hover:text-primary transition-colors" href={`/library/${item.id}`}>
+      <Link className="text-foreground hover:text-primary py-2 text-[13px] font-bold transition-colors" href={`/library/${item.id}`}>
         {item.name}
       </Link>
       <div className="grow" />
       {!isLibraryTaskRunning && (
         <div className="flex items-center gap-2">
-          <Btn color="bg-white/5" className="h-auto px-4 py-1.5 text-[11px] font-black uppercase tracking-widest border border-white/10" size="small" onClick={handleScanLibrary} disabled={isLibraryTaskRunning}>
+          <Btn
+            color="bg-white/5"
+            className="h-auto border border-white/10 px-4 py-1.5 text-[11px] font-black tracking-widest uppercase"
+            size="small"
+            onClick={handleScanLibrary}
+            disabled={isLibraryTaskRunning}
+          >
             {t('ButtonScan')}
           </Btn>
           <ContextMenuDropdown usePortal borderless size="small" items={contextMenuItems} onAction={handleContextMenuActions} />
         </div>
       )}
-      <div className="drag-handle cursor-grab active:cursor-grabbing p-1 hover:bg-white/10 rounded-md transition-colors">
+      <div className="drag-handle cursor-grab rounded-md p-1 transition-colors hover:bg-white/10 active:cursor-grabbing">
         <GripVertical size={18} className="opacity-30" />
       </div>
     </div>

@@ -13,19 +13,29 @@ function getMimeType(filename: string): string {
   const ext = filename.split('.').pop()?.toLowerCase()
   switch (ext) {
     case 'm4b':
-    case 'm4a': return 'audio/mp4'
-    case 'mp3': return 'audio/mpeg'
-    case 'flac': return 'audio/flac'
+    case 'm4a':
+      return 'audio/mp4'
+    case 'mp3':
+      return 'audio/mpeg'
+    case 'flac':
+      return 'audio/flac'
     case 'ogg':
-    case 'oga': return 'audio/ogg'
-    case 'opus': return 'audio/opus'
-    case 'wav': return 'audio/wav'
+    case 'oga':
+      return 'audio/ogg'
+    case 'opus':
+      return 'audio/opus'
+    case 'wav':
+      return 'audio/wav'
     case 'webm':
-    case 'webma': return 'audio/webm'
-    case 'aac': return 'audio/aac'
+    case 'webma':
+      return 'audio/webm'
+    case 'aac':
+      return 'audio/aac'
     case 'mkv':
-    case 'mka': return 'audio/x-matroska'
-    default: return 'application/octet-stream'
+    case 'mka':
+      return 'audio/x-matroska'
+    default:
+      return 'application/octet-stream'
   }
 }
 
@@ -229,8 +239,14 @@ export async function upload(
   // Use the direct storage hostname to bypass the Kong API gateway size limits
   // Ref: https://supabase.com/docs/guides/storage/uploads/resumable-uploads
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const projectId = new URL(supabaseUrl).hostname.split('.')[0]
-  const tusEndpoint = `https://${projectId}.storage.supabase.co/storage/v1/upload/resumable`
+  let tusEndpoint = `${supabaseUrl}/storage/v1/upload/resumable`
+
+  // If using Supabase Cloud, bypass Kong to avoid the 50MB body size limit.
+  // If self-hosting, fallback to the standard URL path.
+  if (supabaseUrl.includes('.supabase.co')) {
+    const projectId = new URL(supabaseUrl).hostname.split('.')[0]
+    tusEndpoint = `https://${projectId}.storage.supabase.co/storage/v1/upload/resumable`
+  }
 
   // 1. Upload each file via TUS resumable protocol (required for files > 6MB)
   const uploadedPaths: string[] = []
@@ -247,13 +263,13 @@ export async function upload(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${cookie}`,
+          Authorization: `Bearer ${cookie}`
         },
         body: JSON.stringify({
           filename: storagePath,
           contentType: file.type || file.mime_type || 'application/octet-stream',
-          size: file.size,
-        }),
+          size: file.size
+        })
       })
 
       if (presignRes.status === 200) {
@@ -282,7 +298,7 @@ export async function upload(
 
         const contentType = file.type || file.mime_type || 'application/octet-stream'
         xhr.setRequestHeader('Content-Type', contentType)
-        
+
         if (providerPrefix !== 'b2://') {
           xhr.setRequestHeader('x-upsert', 'true')
         }
@@ -293,7 +309,7 @@ export async function upload(
             onProgress({
               percent: Math.round((chunkLoaded / totalSize) * 100),
               loaded: chunkLoaded,
-              total: totalSize,
+              total: totalSize
             })
           }
         }
@@ -321,7 +337,7 @@ export async function upload(
             reject(new Error(`Network error uploading ${file.name}`))
           }
         }
-        
+
         xhr.ontimeout = () => {
           if (attempt < MAX_RETRIES) {
             console.warn(`Upload timed out, retrying (${attempt}/${MAX_RETRIES})...`)
@@ -343,8 +359,8 @@ export async function upload(
   const body = JSON.stringify({
     bookId,
     title: item.title,
-    author: mediaType !== 'podcast' ? (item.author || '') : '',
-    series: mediaType !== 'podcast' ? (item.series || '') : '',
+    author: mediaType !== 'podcast' ? item.author || '' : '',
+    series: mediaType !== 'podcast' ? item.series || '' : '',
     library: libraryId,
     mediaType: mediaType || 'book',
     uploadedPaths,
@@ -352,19 +368,19 @@ export async function upload(
       name: f.name,
       size: f.size,
       type: f.type,
-      storagePath: uploadedPaths[i],
-    })),
+      storagePath: uploadedPaths[i]
+    }))
   })
 
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-finalize` : '/api/upload'
-  
+
   const response = await fetch(baseUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${cookie}`,
+      Authorization: `Bearer ${cookie}`
     },
-    body,
+    body
   })
 
   if (!response.ok) {

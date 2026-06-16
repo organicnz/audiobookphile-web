@@ -19,12 +19,12 @@ export default async function UserPage({ params }: { params: Promise<{ user: str
 
   return (
     <div className="mx-auto w-full max-w-4xl p-2 md:p-6">
-      <div className="bg-white/5 backdrop-blur-xl mb-8 rounded-3xl border border-white/10 p-6 shadow-2xl sm:p-8">
-        <Link href="/settings/users" className="text-white/40 hover:text-white mb-6 flex items-center gap-3 transition-colors group">
-          <div className="bg-white/5 p-2 rounded-xl group-hover:bg-white/10 transition-colors">
+      <div className="mb-8 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+        <Link href="/settings/users" className="group mb-6 flex items-center gap-3 text-white/40 transition-colors hover:text-white">
+          <div className="rounded-xl bg-white/5 p-2 transition-colors group-hover:bg-white/10">
             <ArrowLeft size={20} />
           </div>
-          <span className="text-sm font-black uppercase tracking-widest">{t('LabelBackToUsers')}</span>
+          <span className="text-sm font-black tracking-widest uppercase">{t('LabelBackToUsers')}</span>
         </Link>
         <UserClient user={user as any} />
       </div>

@@ -7,35 +7,38 @@ export const dynamic = 'force-dynamic'
 export default async function ApiKeysPage() {
   const t = await getTypeSafeTranslations()
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || 'YOUR_PROJECT_REF'
+  const isSupabaseCloud = supabaseUrl.includes('.supabase.co')
+  const projectRef = isSupabaseCloud ? supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] : null
+  const dashboardHref =
+    isSupabaseCloud && projectRef
+      ? `https://supabase.com/dashboard/project/${projectRef}/settings/api`
+      : supabaseUrl.replace(':8000', ':54323').replace('/v1', '')
 
   return (
     <SettingsContent title={t('HeaderAPIKeys' as any)}>
-      <div className="p-6 space-y-4">
-        <p className="text-foreground-muted text-sm">
-          API keys for this Supabase-backed deployment are managed in the Supabase dashboard.
-        </p>
-        <div className="bg-bg-light border-border rounded-lg border p-4 space-y-3">
+      <div className="space-y-4 p-6">
+        <p className="text-foreground-muted text-sm">API keys for this deployment are managed in your Supabase dashboard.</p>
+        <div className="bg-bg-light border-border space-y-3 rounded-lg border p-4">
           <h3 className="text-foreground font-medium">Supabase API Keys</h3>
           <p className="text-foreground-muted text-sm">
             Use the Supabase dashboard to manage your project API keys, create service role keys, and configure Row Level Security policies.
           </p>
           <a
-            href={`https://supabase.com/dashboard/project/${projectRef}/settings/api`}
+            href={dashboardHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-primary/20 border border-primary/30 inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-black uppercase tracking-widest text-primary hover:bg-primary/30 transition-all hover:scale-105 active:scale-95"
+            className="bg-primary/20 border-primary/30 text-primary hover:bg-primary/30 inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-black tracking-widest uppercase transition-all hover:scale-105 active:scale-95"
           >
             <ExternalLink size={16} />
-            Open Supabase API Settings
+            Open API Settings
           </a>
         </div>
-        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 space-y-3">
-          <h3 className="text-white/40 text-[11px] font-black uppercase tracking-widest">Project Reference</h3>
-          <code className="bg-black/40 block rounded-xl p-4 text-xs font-mono text-primary/80 border border-white/5">
-            {projectRef}
-          </code>
-        </div>
+        {projectRef && (
+          <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+            <h3 className="text-[11px] font-black tracking-widest text-white/40 uppercase">Project Reference</h3>
+            <code className="text-primary/80 block rounded-xl border border-white/5 bg-black/40 p-4 font-mono text-xs">{projectRef}</code>
+          </div>
+        )}
       </div>
     </SettingsContent>
   )

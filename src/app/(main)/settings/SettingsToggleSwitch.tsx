@@ -16,7 +16,7 @@ export default function SettingsToggleSwitch(props: SettingsToggleSwitchProps) {
       <ToggleSwitch label={props.label} className="pr-0" value={props.value} onChange={props.onChange} disabled={props.disabled ?? false} />
       {props.tooltip && (
         <Tooltip text={props.tooltip} position="right" maxWidth={300} addTabIndex={true}>
-          <div className="flex items-center justify-center text-foreground/40 hover:text-white transition-colors cursor-default">
+          <div className="text-foreground/40 flex cursor-default items-center justify-center transition-colors hover:text-white">
             <Info size={16} strokeWidth={2.5} />
           </div>
         </Tooltip>

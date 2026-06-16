@@ -13,12 +13,17 @@ export default async function SettingsPage() {
   const { libraries } = await getLibraries().catch(() => ({ libraries: [] }))
 
   const cards = [
-    { href: '/settings/libraries', icon: 'library_books', label: t('HeaderLibraries'), desc: `${libraries.length} librar${libraries.length !== 1 ? 'ies' : 'y'}` },
+    {
+      href: '/settings/libraries',
+      icon: 'library_books',
+      label: t('HeaderLibraries'),
+      desc: `${libraries.length} librar${libraries.length !== 1 ? 'ies' : 'y'}`
+    },
     { href: '/settings/users', icon: 'group', label: t('HeaderUsers'), desc: 'Manage user accounts' },
     { href: '/settings/item-metadata-utils', icon: 'tune', label: t('HeaderItemMetadataUtils'), desc: 'Genres, tags, providers' },
     { href: '/settings/listening-sessions', icon: 'headphones', label: t('HeaderListeningSessions'), desc: 'Playback history' },
     { href: '/settings/backups', icon: 'backup', label: t('HeaderBackups'), desc: 'Database backups' },
-    { href: '/settings/api-keys', icon: 'key', label: t('HeaderApiKeys'), desc: 'API access tokens' },
+    { href: '/settings/api-keys', icon: 'key', label: t('HeaderApiKeys'), desc: 'API access tokens' }
   ]
 
   return (
@@ -28,19 +33,19 @@ export default async function SettingsPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((card) => {
               const Icon = iconMap[card.icon] || Settings
-              
+
               return (
                 <Link
                   key={card.href}
                   href={card.href}
-                  className="bg-white/5 border-white/10 hover:bg-white/10 hover:border-primary/50 group flex items-center gap-5 rounded-2xl border p-5 transition-all duration-300 shadow-lg backdrop-blur-md"
+                  className="hover:border-primary/50 group flex items-center gap-5 rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg backdrop-blur-md transition-all duration-300 hover:bg-white/10"
                 >
-                  <div className="bg-primary/10 text-primary group-hover:scale-110 flex h-14 w-14 items-center justify-center rounded-2xl transition-all duration-300">
+                  <div className="bg-primary/10 text-primary flex h-14 w-14 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110">
                     <Icon size={28} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <p className="text-white/90 text-[13px] font-black uppercase tracking-widest">{card.label}</p>
-                    <p className="text-white/30 text-[11px] font-medium mt-1 uppercase tracking-wider">{card.desc}</p>
+                    <p className="text-[13px] font-black tracking-widest text-white/90 uppercase">{card.label}</p>
+                    <p className="mt-1 text-[11px] font-medium tracking-wider text-white/30 uppercase">{card.desc}</p>
                   </div>
                 </Link>
               )

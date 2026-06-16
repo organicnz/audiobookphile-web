@@ -285,7 +285,7 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
             />
             <label htmlFor="backups-to-keep-input">{t('LabelBackupsNumberToKeep')}</label>
             <Tooltip text={t('LabelBackupsNumberToKeepHelp')} maxWidth={300}>
-              <div className="flex items-center justify-center text-foreground/40 hover:text-white transition-colors cursor-default">
+              <div className="text-foreground/40 flex cursor-default items-center justify-center transition-colors hover:text-white">
                 <Info size={16} strokeWidth={2.5} />
               </div>
             </Tooltip>
@@ -303,7 +303,7 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
             />
             <label htmlFor="max-backup-size-input">{t('LabelBackupsMaxBackupSize')}</label>
             <Tooltip text={t('LabelBackupsMaxBackupSizeHelp')} maxWidth={300}>
-              <div className="flex items-center justify-center text-foreground/40 hover:text-white transition-colors cursor-default">
+              <div className="text-foreground/40 flex cursor-default items-center justify-center transition-colors hover:text-white">
                 <Info size={16} strokeWidth={2.5} />
               </div>
             </Tooltip>
@@ -420,7 +420,7 @@ function BackupsTable({ backups, dateFormat, timeFormat, onRestore, onDownload, 
               </Btn>
             ) : (
               <Tooltip text={LEGACY_BACKUP_UNSUPPORTED_HINT} position="bottom" maxWidth={320}>
-                <div className="flex items-center justify-center text-error opacity-60 hover:opacity-100 transition-opacity">
+                <div className="text-error flex items-center justify-center opacity-60 transition-opacity hover:opacity-100">
                   <AlertCircle size={20} strokeWidth={2.5} role="img" aria-label={LEGACY_BACKUP_UNSUPPORTED_HINT} />
                 </div>
               </Tooltip>

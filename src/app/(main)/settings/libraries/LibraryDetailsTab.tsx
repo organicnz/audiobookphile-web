@@ -80,19 +80,22 @@ export default function LibraryDetailsTab({
 
       {/* Folders Section */}
       <div className="mt-8">
-        <h3 className="text-white/40 mb-3 text-[10px] font-black uppercase tracking-widest">Storage Bucket Prefixes</h3>
+        <h3 className="mb-3 text-[10px] font-black tracking-widest text-white/40 uppercase">Storage Bucket Prefixes</h3>
 
         <div className="space-y-3">
           {/* Committed folder paths */}
           {formData.folders.map((folder, index) => (
-            <div key={index} className="flex items-center gap-3 p-2 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-sm group hover:border-white/20 transition-all">
-              <div className="bg-primary/20 p-2 rounded-xl border border-primary/20">
+            <div
+              key={index}
+              className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-2 shadow-sm backdrop-blur-md transition-all hover:border-white/20"
+            >
+              <div className="bg-primary/20 border-primary/20 rounded-xl border p-2">
                 <Folder size={18} className="text-primary fill-current" />
               </div>
               <TextInput value={folder.fullPath} readOnly borderless className="flex-1 text-sm font-medium text-white/80" />
               <button
                 type="button"
-                className="p-2 text-white/20 hover:text-error hover:bg-error/10 rounded-xl transition-all"
+                className="hover:text-error hover:bg-error/10 rounded-xl p-2 text-white/20 transition-all"
                 onClick={() => onRemoveFolder(index)}
                 aria-label={t('ButtonRemove')}
               >
@@ -102,8 +105,8 @@ export default function LibraryDetailsTab({
           ))}
 
           {/* Always-visible new folder input */}
-          <div className="flex items-center gap-3 p-2 bg-white/5 backdrop-blur-md rounded-2xl border border-dashed border-white/10 hover:border-white/20 transition-all">
-            <div className="bg-success/20 p-2 rounded-xl border border-success/20">
+          <div className="flex items-center gap-3 rounded-2xl border border-dashed border-white/10 bg-white/5 p-2 backdrop-blur-md transition-all hover:border-white/20">
+            <div className="bg-success/20 border-success/20 rounded-xl border p-2">
               <FolderPlus size={18} className="text-success fill-current" />
             </div>
             <TextInput

@@ -51,9 +51,9 @@ export default function BackupLocation({ backupLocation, backupPathEnvSet }: Bac
 
   return (
     <div className="mb-4">
-      <div className="flex items-center gap-3 mb-2">
+      <div className="mb-2 flex items-center gap-3">
         <Folder size={18} className="text-primary drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]" />
-        <p className="text-white/40 text-[11px] font-black uppercase tracking-widest">{t('LabelBackupLocation')}</p>
+        <p className="text-[11px] font-black tracking-widest text-white/40 uppercase">{t('LabelBackupLocation')}</p>
       </div>
       {isEditing ? (
         <div>
@@ -78,7 +78,7 @@ export default function BackupLocation({ backupLocation, backupPathEnvSet }: Bac
             ariaLabel={t('LabelEdit')}
             borderless
             size="small"
-            className="text-white/40 hover:text-primary transition-colors cursor-pointer"
+            className="hover:text-primary cursor-pointer text-white/40 transition-colors"
             onClick={() => {
               setIsEditing(true)
             }}

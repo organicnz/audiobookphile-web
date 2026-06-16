@@ -7,32 +7,39 @@ export const dynamic = 'force-dynamic'
 export default async function EmailPage() {
   const t = await getTypeSafeTranslations()
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] || 'YOUR_PROJECT_REF'
+  const isSupabaseCloud = supabaseUrl.includes('.supabase.co')
+  const projectRef = isSupabaseCloud ? supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] : null
+
+  const getHref = (path: string) => {
+    return isSupabaseCloud && projectRef
+      ? `https://supabase.com/dashboard/project/${projectRef}/${path}`
+      : supabaseUrl.replace(':8000', ':54323').replace('/v1', '')
+  }
 
   return (
     <SettingsContent title={t('HeaderEmail')}>
-      <div className="p-6 space-y-4">
+      <div className="space-y-4 p-6">
         <p className="text-foreground-muted text-sm">
-          Email sending is handled by Supabase Auth. Configure SMTP settings and email templates in the Supabase dashboard.
+          Email sending is handled by Supabase Auth. Configure SMTP settings and email templates in your dashboard.
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           {[
             { label: 'Custom SMTP', desc: 'Configure your email provider', path: 'auth/smtp' },
-            { label: 'Email Templates', desc: 'Customize auth emails', path: 'auth/templates' },
+            { label: 'Email Templates', desc: 'Customize auth emails', path: 'auth/templates' }
           ].map((item) => (
             <a
               key={item.path}
-              href={`https://supabase.com/dashboard/project/${projectRef}/${item.path}`}
+              href={getHref(item.path)}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white/5 backdrop-blur-md border border-white/10 hover:border-primary/50 flex items-center gap-4 rounded-2xl p-6 transition-all hover:scale-[1.02] active:scale-[0.98] group"
+              className="hover:border-primary/50 group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              <div className="bg-primary/20 p-3 rounded-xl group-hover:bg-primary/30 transition-colors">
+              <div className="bg-primary/20 group-hover:bg-primary/30 rounded-xl p-3 transition-colors">
                 <ExternalLink size={20} className="text-primary" />
               </div>
               <div>
-                <p className="text-white/90 text-sm font-black uppercase tracking-widest">{item.label}</p>
-                <p className="text-white/40 text-xs mt-1">{item.desc}</p>
+                <p className="text-sm font-black tracking-widest text-white/90 uppercase">{item.label}</p>
+                <p className="mt-1 text-xs text-white/40">{item.desc}</p>
               </div>
             </a>
           ))}
