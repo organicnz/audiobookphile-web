@@ -1,4 +1,5 @@
 import { createServiceRoleClient } from '@/shared/utils/supabase/service-role'
+import { verifyAdminOrThrow } from '@/shared/utils/supabase/server'
 import {
   listSupabaseStorageObjects,
   listB2Objects,
@@ -6,7 +7,7 @@ import {
   computeSyncDiff,
   inferLibraryId,
   importOrphanedGroup,
-  type SyncReport,
+  type SyncReport
 } from '@/shared/lib/storageSync'
 
 // ---------------------------------------------------------------------------
@@ -17,15 +18,10 @@ export async function buildSyncReport(db: ReturnType<typeof createServiceRoleCli
   console.log('[storage-sync] Building sync report...')
 
   // 1. List storage objects from both backends
-  const [supabaseAudio, b2Objects] = await Promise.all([
-    listSupabaseStorageObjects(db, 'audio'),
-    listB2Objects(),
-  ])
+  const [supabaseAudio, b2Objects] = await Promise.all([listSupabaseStorageObjects(db, 'audio'), listB2Objects()])
 
   const allStorageObjects = [...supabaseAudio, ...b2Objects]
-  console.log(
-    `[storage-sync] Found ${supabaseAudio.length} Supabase objects, ${b2Objects.length} B2 objects`
-  )
+  console.log(`[storage-sync] Found ${supabaseAudio.length} Supabase objects, ${b2Objects.length} B2 objects`)
 
   // 2. Extract all storage paths from the DB
   const dbPaths = await getDbStoragePaths(db)
@@ -33,9 +29,7 @@ export async function buildSyncReport(db: ReturnType<typeof createServiceRoleCli
 
   // 3. Compute diff
   const report = computeSyncDiff(allStorageObjects, dbPaths)
-  console.log(
-    `[storage-sync] Report: ${report.orphanedGroups.length} orphaned groups, ${report.missingFiles.length} missing`
-  )
+  console.log(`[storage-sync] Report: ${report.orphanedGroups.length} orphaned groups, ${report.missingFiles.length} missing`)
 
   return report
 }
@@ -45,13 +39,14 @@ export async function buildSyncReport(db: ReturnType<typeof createServiceRoleCli
 // ---------------------------------------------------------------------------
 
 export async function handleImportOrphans(db: ReturnType<typeof createServiceRoleClient>) {
+  await verifyAdminOrThrow()
   const report = await buildSyncReport(db)
 
   if (report.orphanedGroups.length === 0) {
     return {
       message: 'No orphaned files found — storage and DB are in sync.',
       imported: 0,
-      status: 200,
+      status: 200
     }
   }
 
@@ -79,7 +74,7 @@ export async function handleImportOrphans(db: ReturnType<typeof createServiceRol
     imported: successCount,
     errors: errorCount,
     details: results,
-    status: 200,
+    status: 200
   }
 }
 
@@ -88,13 +83,14 @@ export async function handleImportOrphans(db: ReturnType<typeof createServiceRol
 // ---------------------------------------------------------------------------
 
 export async function handleMarkMissing(db: ReturnType<typeof createServiceRoleClient>) {
+  await verifyAdminOrThrow()
   const report = await buildSyncReport(db)
 
   if (report.missingFiles.length === 0) {
     return {
       message: 'No missing files found — all DB records have valid storage files.',
       marked: 0,
-      status: 200,
+      status: 200
     }
   }
 
@@ -105,7 +101,7 @@ export async function handleMarkMissing(db: ReturnType<typeof createServiceRoleC
     .from('library_items')
     .update({
       is_missing: true,
-      last_storage_check: new Date().toISOString(),
+      last_storage_check: new Date().toISOString()
     })
     .in('id', missingItemIds)
 
@@ -123,7 +119,7 @@ export async function handleMarkMissing(db: ReturnType<typeof createServiceRoleC
       .from('library_items')
       .update({
         is_missing: false,
-        last_storage_check: new Date().toISOString(),
+        last_storage_check: new Date().toISOString()
       })
       .in('id', toReset)
   }
@@ -133,7 +129,7 @@ export async function handleMarkMissing(db: ReturnType<typeof createServiceRoleC
     marked: missingItemIds.length,
     reset: toReset.length,
     missingItems: report.missingFiles,
-    status: 200,
+    status: 200
   }
 }
 
@@ -142,18 +138,19 @@ export async function handleMarkMissing(db: ReturnType<typeof createServiceRoleC
 // ---------------------------------------------------------------------------
 
 export async function handleCleanupOrphans(db: ReturnType<typeof createServiceRoleClient>) {
+  await verifyAdminOrThrow()
   const report = await buildSyncReport(db)
 
   if (report.orphanedGroups.length === 0) {
     return {
       message: 'No orphaned files found — storage and DB are in sync.',
       deleted: 0,
-      status: 200,
+      status: 200
     }
   }
 
   // Flat map the groups to individual files for deletion
-  const orphanedFiles = report.orphanedGroups.flatMap(group => group.files)
+  const orphanedFiles = report.orphanedGroups.flatMap((group) => group.files)
 
   // Separate by source
   const supabaseOrphans = orphanedFiles.filter((f) => f.source === 'supabase')
@@ -185,8 +182,8 @@ export async function handleCleanupOrphans(db: ReturnType<typeof createServiceRo
       region: process.env.B2_REGION || 'us-west-004',
       credentials: {
         accessKeyId: process.env.B2_KEY_ID!,
-        secretAccessKey: process.env.B2_APP_KEY!,
-      },
+        secretAccessKey: process.env.B2_APP_KEY!
+      }
     })
 
     for (const orphan of b2Orphans) {
@@ -194,7 +191,7 @@ export async function handleCleanupOrphans(db: ReturnType<typeof createServiceRo
         await s3Client.send(
           new DeleteObjectCommand({
             Bucket: process.env.B2_BUCKET_NAME!,
-            Key: orphan.storagePath,
+            Key: orphan.storagePath
           })
         )
         deletedCount++
@@ -208,6 +205,6 @@ export async function handleCleanupOrphans(db: ReturnType<typeof createServiceRo
     message: `Deleted ${deletedCount} orphaned files. ${errors.length} errors.`,
     deleted: deletedCount,
     errors: errors.length > 0 ? errors : undefined,
-    status: 200,
+    status: 200
   }
 }
