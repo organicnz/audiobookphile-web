@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: false
+  commands:
+    lint-and-format:
+      glob: "*.{js,jsx,ts,tsx}"
+      stage_fixed: true
+      run: ./scripts/pre-commit.sh {staged_files}
+    format-other:
+      glob: "*.{json,css,md}"
+      stage_fixed: true
+      run: ./scripts/format-other.sh {staged_files}

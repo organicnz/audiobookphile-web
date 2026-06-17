@@ -21,7 +21,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "sync:ios": "bun run scripts/generate-swift-models.ts",
-    "prepare": "husky"
+    "prepare": "lefthook install"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1047.0",
@@ -75,8 +75,6 @@
     "eslint": "^9.36.0",
     "eslint-config-next": "^16.2.4",
     "eslint-config-prettier": "^10.1.8",
-    "husky": "^9.1.7",
-    "lint-staged": "^17.0.7",
     "prettier-plugin-sort-json": "^4.1.1",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "size-limit": "^12.1.0",
@@ -105,14 +103,5 @@
       "path": ".next/static/chunks/**/*.js",
       "limit": "500 kB"
     }
-  ],
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,css,md}": [
-      "prettier --write"
-    ]
-  }
+  ]
 }
