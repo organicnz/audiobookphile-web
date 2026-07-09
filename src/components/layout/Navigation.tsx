@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Compass, PlusSquare, Users, Activity, LogOut } from 'lucide-react'
+import { Home, Compass, PlusSquare, Users, Activity, LogOut, ShieldAlert } from 'lucide-react'
 import { logout } from '@/app/login/actions'
 
 const navItems = [
@@ -13,18 +13,20 @@ const navItems = [
   { name: 'Progress', href: '/progress', icon: Activity },
 ]
 
-export function Navigation() {
+export function Navigation({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname()
 
   // Don't show nav on auth pages
   if (pathname === '/login') return null
+
+  const finalNavItems = isAdmin ? [...navItems, { name: 'Admin', href: '/admin/email', icon: ShieldAlert }] : navItems
 
   return (
     <>
       {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 z-50 w-full h-20 bg-sidebar backdrop-blur-3xl border-t border-sidebar-border md:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
         <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
-          {navItems.map((item) => {
+          {finalNavItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname.startsWith(item.href)
             return (
@@ -61,7 +63,7 @@ export function Navigation() {
             <span className="text-2xl font-semibold text-off-white tracking-tight">Aficionado</span>
           </div>
           <ul className="space-y-2 font-medium flex-1">
-            {navItems.map((item) => {
+            {finalNavItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname.startsWith(item.href)
               return (

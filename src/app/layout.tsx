@@ -18,11 +18,24 @@ export const metadata: Metadata = {
   description: "A short-form, cross-platform social app and digital wellness tool.",
 };
 
-export default function RootLayout({
+import { createClient } from "@/utils/supabase/server";
+
+const ADMIN_EMAILS = [
+  'devastatingdebater@gmail.com',
+  'tamerlanium@gmail.com',
+  'support@aficionado.fans',
+  'contact@aficionado.fans'
+]
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isAdmin = user?.email ? ADMIN_EMAILS.includes(user.email.toLowerCase()) : false
+
   return (
     <html lang="en" className="dark h-full antialiased">
       <body
@@ -35,7 +48,7 @@ export default function RootLayout({
           <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] rounded-full bg-primary/10 blur-[100px] mix-blend-screen animate-float-delayed"></div>
         </div>
 
-        <Navigation />
+        <Navigation isAdmin={isAdmin} />
         <main className="flex-1 md:ml-64 pb-20 md:pb-0 z-0">
           {children}
         </main>
