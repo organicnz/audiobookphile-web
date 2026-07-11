@@ -31,25 +31,57 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  const {
+    data: aalData,
+  } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+
+  const currentLevel = aalData?.currentLevel
+  const nextLevel = aalData?.nextLevel
+
   // Define protected routes that require authentication
   const isProtectedRoute = 
     request.nextUrl.pathname.startsWith('/home') ||
     request.nextUrl.pathname.startsWith('/explore') ||
     request.nextUrl.pathname.startsWith('/create') ||
     request.nextUrl.pathname.startsWith('/circles') ||
-    request.nextUrl.pathname.startsWith('/progress')
+    request.nextUrl.pathname.startsWith('/progress') ||
+    request.nextUrl.pathname.startsWith('/settings')
 
-  if (!user && isProtectedRoute) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+  if (isProtectedRoute) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+
+    if (nextLevel === 'aal2' && currentLevel !== 'aal2') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login/mfa'
+      return NextResponse.redirect(url)
+    }
   }
 
   // Redirect logged-in users away from auth pages
-  if (user && request.nextUrl.pathname.startsWith('/login')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/home'
-    return NextResponse.redirect(url)
+  if (user) {
+    if (request.nextUrl.pathname === '/login') {
+      // If they need MFA, send to MFA page, else to home
+      const url = request.nextUrl.clone()
+      if (nextLevel === 'aal2' && currentLevel !== 'aal2') {
+        url.pathname = '/login/mfa'
+      } else {
+        url.pathname = '/home'
+      }
+      return NextResponse.redirect(url)
+    }
+
+    if (request.nextUrl.pathname === '/login/mfa') {
+      // If they don't need MFA (or already did it), redirect to home
+      if (nextLevel !== 'aal2' || currentLevel === 'aal2') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/home'
+        return NextResponse.redirect(url)
+      }
+    }
   }
 
   return supabaseResponse

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Compass, PlusSquare, Users, Activity, LogOut, ShieldAlert } from 'lucide-react'
+import { Home, Compass, PlusSquare, Users, Activity, LogOut, ShieldAlert, Settings } from 'lucide-react'
 import { logout } from '@/app/login/actions'
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { name: 'Create', href: '/create', icon: PlusSquare },
   { name: 'Circles', href: '/circles', icon: Users },
   { name: 'Progress', href: '/progress', icon: Activity },
+  { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
 export function Navigation({ isAdmin = false }: { isAdmin?: boolean }) {

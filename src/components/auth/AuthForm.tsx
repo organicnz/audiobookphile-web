@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useActionState, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
+import { authAction } from '@/app/login/actions'
+import { useFormStatus } from 'react-dom'
 
 // Simple Google Icon SVG
 const GoogleIcon = () => (
@@ -22,79 +24,46 @@ const GithubIcon = () => (
 
 type AuthMode = 'login' | 'signup' | 'magic_link' | 'forgot_password'
 
+function SubmitButton({ mode }: { mode: AuthMode }) {
+  const { pending } = useFormStatus()
+  
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-full text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_14px_0_rgba(212,175,55,0.39)] hover:shadow-[0_6px_20px_rgba(212,175,55,0.5)] hover:-translate-y-0.5 active:scale-95"
+    >
+      {pending ? 'Processing...' : (
+        mode === 'login' ? 'Sign In' :
+        mode === 'signup' ? 'Create Account' :
+        mode === 'magic_link' ? 'Send Magic Link' :
+        'Send Reset Link'
+      )}
+    </button>
+  )
+}
+
 export function AuthForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const defaultMessage = searchParams.get('message')
 
+  const [state, formAction] = useActionState(authAction, null)
   const [mode, setMode] = useState<AuthMode>('login')
   const [userType, setUserType] = useState<'aficionado' | 'fan'>('fan')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState(defaultMessage || '')
-  const [success, setSuccess] = useState('')
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setMessage('')
-    setSuccess('')
-
-    try {
-      const res = await fetch(`${supabaseUrl}/functions/v1/auth`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          action: mode, 
-          email, 
-          password,
-          ...(mode === 'signup' && { userType })
-        })
-      })
-
-      if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData.error || 'Authentication failed')
-      }
-
-      const data = await res.json()
-
-      if (mode === 'login' || mode === 'signup') {
-        // Exchange successful, set session using browser client
-        const supabase = createClient()
-        if (data.session) {
-          await supabase.auth.setSession({
-            access_token: data.session.access_token,
-            refresh_token: data.session.refresh_token
-          })
-          router.push('/home')
-          router.refresh()
-        }
-      } else if (mode === 'magic_link') {
-        setSuccess('Magic link sent! Check your email.')
-      } else if (mode === 'forgot_password') {
-        setSuccess('Password reset instructions sent to your email.')
-      }
-    } catch (err: any) {
-      setMessage(err.message || 'An error occurred')
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleOAuth = async (provider: 'google' | 'github') => {
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`
       }
     })
-    if (error) setMessage(error.message)
   }
+
+  // Combine URL param message, action error, and action success
+  const errorMsg = state?.error || (defaultMessage && !state?.success ? defaultMessage : null)
+  const successMsg = state?.success
 
   return (
     <div className="w-full max-w-md space-y-8 liquid-glass p-8 relative overflow-hidden">
@@ -119,17 +88,20 @@ export function AuthForm() {
       </div>
 
       <div className="flex justify-center space-x-2 border-b border-white/10 pb-4">
-        <button onClick={() => { setMode('login'); setMessage(''); setSuccess('') }} className={`text-sm font-medium transition-colors ${mode === 'login' ? 'text-primary' : 'text-muted-foreground hover:text-white'}`}>Login</button>
+        <button onClick={() => setMode('login')} className={`text-sm font-medium transition-colors ${mode === 'login' ? 'text-primary' : 'text-muted-foreground hover:text-white'}`}>Login</button>
         <span className="text-muted-foreground/30">•</span>
-        <button onClick={() => { setMode('signup'); setMessage(''); setSuccess('') }} className={`text-sm font-medium transition-colors ${mode === 'signup' ? 'text-primary' : 'text-muted-foreground hover:text-white'}`}>Sign Up</button>
+        <button onClick={() => setMode('signup')} className={`text-sm font-medium transition-colors ${mode === 'signup' ? 'text-primary' : 'text-muted-foreground hover:text-white'}`}>Sign Up</button>
       </div>
 
-      {success ? (
+      {successMsg ? (
         <div className="text-primary text-sm text-center p-4 bg-primary/10 border border-primary/20 rounded-lg animate-fade-in-up">
-          {success}
+          {successMsg}
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form action={formAction} className="mt-8 space-y-6">
+          <input type="hidden" name="mode" value={mode} />
+          {mode === 'signup' && <input type="hidden" name="userType" value={userType} />}
+          
           <div className="rounded-md shadow-sm space-y-4">
             <div>
               <label htmlFor="email-address" className="sr-only">Email address</label>
@@ -139,8 +111,6 @@ export function AuthForm() {
                 type="email"
                 autoComplete="email"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="appearance-none rounded-xl relative block w-full px-3 py-3 border border-white/10 bg-white/5 text-off-white placeholder-muted-foreground focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all"
                 placeholder="Email address"
               />
@@ -182,8 +152,6 @@ export function AuthForm() {
                   type="password"
                   autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   className="appearance-none rounded-xl relative block w-full px-3 py-3 border border-white/10 bg-white/5 text-off-white placeholder-muted-foreground focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all"
                   placeholder="Password"
                 />
@@ -191,42 +159,31 @@ export function AuthForm() {
             )}
           </div>
 
-          {message && (
+          {errorMsg && (
             <div className="text-destructive text-sm text-center p-3 bg-destructive/10 border border-destructive/20 rounded-lg animate-fade-in-up">
-              {message}
+              {errorMsg}
             </div>
           )}
 
           <div className="flex items-center justify-between mt-4">
             {mode === 'login' && (
               <>
-                <button type="button" onClick={() => { setMode('forgot_password'); setMessage('') }} className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                <button type="button" onClick={() => setMode('forgot_password')} className="text-xs text-muted-foreground hover:text-primary transition-colors">
                   Forgot your password?
                 </button>
-                <button type="button" onClick={() => { setMode('magic_link'); setMessage('') }} className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                <button type="button" onClick={() => setMode('magic_link')} className="text-xs text-muted-foreground hover:text-primary transition-colors">
                   Use Magic Link
                 </button>
               </>
             )}
             {(mode === 'magic_link' || mode === 'forgot_password') && (
-              <button type="button" onClick={() => { setMode('login'); setMessage('') }} className="text-xs text-muted-foreground hover:text-primary transition-colors">
+              <button type="button" onClick={() => setMode('login')} className="text-xs text-muted-foreground hover:text-primary transition-colors">
                 Back to Login
               </button>
             )}
           </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-full text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_14px_0_rgba(212,175,55,0.39)] hover:shadow-[0_6px_20px_rgba(212,175,55,0.5)] hover:-translate-y-0.5 active:scale-95"
-          >
-            {isLoading ? 'Processing...' : (
-              mode === 'login' ? 'Sign In' :
-              mode === 'signup' ? 'Create Account' :
-              mode === 'magic_link' ? 'Send Magic Link' :
-              'Send Reset Link'
-            )}
-          </button>
+          <SubmitButton mode={mode} />
         </form>
       )}
 
