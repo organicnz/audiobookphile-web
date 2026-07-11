@@ -13,9 +13,17 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 /**
  * Returns a Supabase client that uses the service role key.
  * Bypasses RLS — use only for admin operations (uploads, user management, etc.).
+ *
+ * Environment variable lookup order:
+ *  1. `SUPABASE_SERVICE_ROLE_KEY` — canonical name; set this in all environments.
+ *  2. `SUPABASE_SERVICE_KEY`      — legacy alias accepted via the `??` fallback to
+ *     support existing Vercel projects that were configured with the shorter name.
  */
 export function createServiceRoleClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  // Prefer the canonical SUPABASE_SERVICE_ROLE_KEY; fall back to the legacy
+  // SUPABASE_SERVICE_KEY alias so that existing Vercel deployments are not broken
+  // during a rename transition. Both variable names are intentionally supported.
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SERVICE_KEY
 
   if (!supabaseUrl) {
@@ -29,7 +37,7 @@ export function createServiceRoleClient() {
     auth: {
       // Disable automatic session persistence — this is a server-only client.
       persistSession: false,
-      autoRefreshToken: false,
-    },
+      autoRefreshToken: false
+    }
   })
 }

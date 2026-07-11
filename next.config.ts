@@ -1,6 +1,6 @@
+import withPWAInit from '@ducanh2912/next-pwa'
 import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
-import withPWAInit from '@ducanh2912/next-pwa'
 
 const withNextIntl = createNextIntlPlugin('./src/shared/lib/i18n.ts')
 
@@ -11,6 +11,15 @@ const withPWA = withPWAInit({
 })
 
 const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: NextConfig }) => {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    throw new Error(
+      '[next.config.ts] Missing required environment variable: NEXT_PUBLIC_SUPABASE_URL\n' +
+        'All /api/* proxy rewrites will point to "undefined/functions/v1/..." without it.\n' +
+        'Add it to your .env.local (development) or Vercel environment variables (Production/Preview/Development).\n' +
+        'See .env.example for the full list of required variables.'
+    )
+  }
+
   const baseConfig: NextConfig = {
     ...defaultConfig,
     redirects: async () => [
@@ -32,7 +41,10 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
           { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,DELETE,PATCH,POST,PUT,OPTIONS' },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET,DELETE,PATCH,POST,PUT,OPTIONS'
+          },
           {
             key: 'Access-Control-Allow-Headers',
             value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
