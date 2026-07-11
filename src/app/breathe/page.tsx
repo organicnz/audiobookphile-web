@@ -64,7 +64,7 @@ export default function BreathePage() {
           style={{
             width: '100%',
             height: '100%',
-            background: 'radial-gradient(circle, rgba(71,168,189,0.8) 0%, rgba(37,44,74,0.4) 70%, transparent 100%)',
+            background: 'radial-gradient(circle, rgba(0,240,181,0.8) 0%, rgba(18,42,59,0.4) 70%, transparent 100%)',
             transition: 'transform 4s cubic-bezier(0.4, 0, 0.2, 1)',
             transform: phase === 'inhale' ? 'scale(1.5)' : phase === 'exhale' ? 'scale(0.8)' : 'scale(1)'
           }}
@@ -72,17 +72,17 @@ export default function BreathePage() {
         
         {/* Core solid orb */}
         <div 
-          className="absolute rounded-full border border-white/20 shadow-[0_0_40px_rgba(71,168,189,0.3)]"
+          className="absolute rounded-full border border-white/20 shadow-[0_0_40px_rgba(0,240,181,0.3)]"
           style={{
             width: '120px',
             height: '120px',
-            background: 'linear-gradient(135deg, rgba(71,168,189,0.6) 0%, rgba(37,44,74,0.9) 100%)',
+            background: 'linear-gradient(135deg, rgba(0,240,181,0.6) 0%, rgba(18,42,59,0.9) 100%)',
             backdropFilter: 'blur(8px)',
             transition: 'transform 4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 4s ease',
             transform: phase === 'inhale' ? 'scale(1.2)' : phase === 'exhale' ? 'scale(0.8)' : 'scale(1)',
             boxShadow: phase === 'inhale' 
-              ? '0 0 80px rgba(71,168,189,0.6), inset 0 0 20px rgba(255,255,255,0.4)' 
-              : '0 0 20px rgba(71,168,189,0.2), inset 0 0 5px rgba(255,255,255,0.1)'
+              ? '0 0 80px rgba(0,240,181,0.6), inset 0 0 20px rgba(255,255,255,0.4)' 
+              : '0 0 20px rgba(0,240,181,0.2), inset 0 0 5px rgba(255,255,255,0.1)'
           }}
         />
 
@@ -95,7 +95,7 @@ export default function BreathePage() {
         {phase === 'idle' ? (
           <button 
             onClick={() => setPhase('inhale')}
-            className="px-8 py-3 rounded-full bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 hover:shadow-[0_0_20px_rgba(71,168,189,0.3)] transition-all duration-300"
+            className="px-8 py-3 rounded-full bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 hover:shadow-[0_0_20px_rgba(0,240,181,0.3)] transition-all duration-300"
           >
             Start Breathing
           </button>

@@ -47,7 +47,7 @@ export default async function ExplorePage() {
 
         <section>
           <div className="flex items-center gap-2 mb-6">
-            <Hash className="w-5 h-5 text-deep-plum" />
+            <Hash className="w-5 h-5 text-bio-emerald" />
             <h2 className="text-xl font-semibold text-off-white">Featured Circles</h2>
           </div>
           

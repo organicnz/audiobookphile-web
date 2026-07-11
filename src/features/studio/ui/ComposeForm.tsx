@@ -13,7 +13,7 @@ function SubmitButton() {
     <button 
       type="submit" 
       disabled={pending}
-      className="flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-all font-medium shadow-[0_4px_14px_0_rgba(71,168,189,0.39)] hover:shadow-[0_6px_20px_rgba(71,168,189,0.5)] active:scale-95 disabled:opacity-50 disabled:active:scale-100"
+      className="flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-all font-medium shadow-[0_4px_14px_0_rgba(0,240,181,0.39)] hover:shadow-[0_6px_20px_rgba(0,240,181,0.5)] active:scale-95 disabled:opacity-50 disabled:active:scale-100"
     >
       <span>{pending ? 'Publishing...' : 'Publish'}</span>
       <Send className="w-4 h-4" />

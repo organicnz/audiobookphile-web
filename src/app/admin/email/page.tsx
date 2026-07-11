@@ -60,7 +60,7 @@ function SubmitButton() {
     <Button
       type="submit"
       disabled={pending}
-      className="px-8 gap-2 bg-gradient-to-r from-deep-plum to-primary hover:opacity-90 transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] active:scale-[0.97]"
+      className="px-8 gap-2 bg-gradient-to-r from-ocean-muted to-primary hover:opacity-90 transition-all duration-300 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)] active:scale-[0.97]"
     >
       {pending ? (
         <Loader2 className="w-4 h-4 animate-spin" />

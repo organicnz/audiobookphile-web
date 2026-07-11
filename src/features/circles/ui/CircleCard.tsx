@@ -11,7 +11,7 @@ export function CircleCard({ circle, index }: { circle: any, index: number }) {
     >
       <CardContent className="p-6 flex items-center justify-between">
         <div className="flex items-center gap-5">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-deep-plum to-charcoal flex items-center justify-center border border-white/10 shadow-inner">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-ocean-muted to-ocean-deep flex items-center justify-center border border-white/10 shadow-inner">
             <Users className="w-6 h-6 text-primary" />
           </div>
           <div>

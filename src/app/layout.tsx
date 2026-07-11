@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/shared/ui/layout/Navigation";
+import { BreatheFab } from "@/shared/ui/layout/BreatheFab";
+import { createClient } from "@/shared/lib/supabase/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,11 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aficionado - Wellness & Community",
-  description: "A short-form, cross-platform social app and digital wellness tool.",
+  title: "Aficionado — Wellness & Community",
+  description: "A short-form, anti-dopamine social app and digital wellness platform. Finite feeds. Mindful interactions. Heal together.",
 };
-
-import { createClient } from "@/shared/lib/supabase/server";
 
 const ADMIN_EMAILS = [
   'devastatingdebater@gmail.com',
@@ -26,8 +26,6 @@ const ADMIN_EMAILS = [
   'support@aficionado.fans',
   'contact@aficionado.fans'
 ]
-
-import { BreatheFab } from "@/shared/ui/layout/BreatheFab";
 
 export default async function RootLayout({
   children,
@@ -45,9 +43,9 @@ export default async function RootLayout({
       >
         {/* Ambient Glowing Background Orbs */}
         <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-background">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-secondary/30 blur-[120px] mix-blend-screen animate-breathe-calm"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-primary/15 blur-[150px] mix-blend-screen animate-float"></div>
-          <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] rounded-full bg-[var(--color-bio-emerald)]/10 blur-[100px] mix-blend-screen animate-heartbeat-resting"></div>
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-secondary/30 blur-[120px] mix-blend-screen animate-breathe-calm" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-primary/15 blur-[150px] mix-blend-screen animate-float" />
+          <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] rounded-full bg-bio-emerald/10 blur-[100px] mix-blend-screen animate-heartbeat-resting" />
         </div>
 
         <BreatheFab />

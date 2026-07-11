@@ -32,7 +32,7 @@ export function KintsugiTimeline({ checkIns }: KintsugiTimelineProps) {
           <path 
             d="M 0,50 Q 20,40 40,50 T 80,50 T 120,50 T 160,60 T 200,50 T 240,40 T 280,50" 
             fill="none" 
-            stroke="rgba(71,168,189,0.3)" 
+            stroke="rgba(0,240,181,0.3)" 
             strokeWidth="2"
             vectorEffect="non-scaling-stroke"
             className="animate-pulse-slow"
@@ -44,7 +44,7 @@ export function KintsugiTimeline({ checkIns }: KintsugiTimelineProps) {
             <div key={day.id} className="relative flex flex-col items-center group">
               {day.isRepaired ? (
                 <>
-                  <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-primary shadow-[0_0_15px_rgba(71,168,189,0.8)] z-10 transition-transform group-hover:scale-150"></div>
+                  <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-primary shadow-[0_0_15px_rgba(0,240,181,0.8)] z-10 transition-transform group-hover:scale-150"></div>
                   {/* Golden repair joint effect */}
                   <div className="absolute top-1/2 -translate-y-1/2 w-8 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-50 rotate-45"></div>
                   <div className="absolute top-1/2 -translate-y-1/2 w-8 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-50 -rotate-45"></div>

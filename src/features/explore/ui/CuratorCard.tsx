@@ -19,7 +19,7 @@ export function CuratorCard({ creator, index }: CuratorCardProps) {
       style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
     >
       <CardContent className="p-5 flex items-center gap-4">
-        <Avatar className="w-12 h-12 border border-white/10 shadow-[0_0_15px_rgba(71,168,189,0.3)]">
+        <Avatar className="w-12 h-12 border border-white/10 shadow-[0_0_15px_rgba(0,240,181,0.3)]">
           <AvatarImage src={creator.avatar_url || ''} alt="Avatar" />
           <AvatarFallback className="bg-white/10">
             <UserCircle2 className="w-6 h-6 text-muted-foreground" />

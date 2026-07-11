@@ -50,7 +50,7 @@ export default async function AdminLayout({
         <div className="glass-panel p-8 rounded-2xl relative overflow-hidden">
           {/* Subtle gradient background flair */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] -z-10 mix-blend-screen pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-deep-plum/10 rounded-full blur-[60px] -z-10 mix-blend-screen pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-ocean-muted/10 rounded-full blur-[60px] -z-10 mix-blend-screen pointer-events-none" />
           
           {children}
         </div>
