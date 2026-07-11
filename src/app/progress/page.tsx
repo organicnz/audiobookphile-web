@@ -20,9 +20,10 @@ export default async function ProgressPage() {
 
   return (
     <div className="max-w-3xl px-4 py-8 mx-auto lg:py-12">
-      <header className="mb-8">
+      <header className="mb-8 animate-fade-in-up">
+        <p className="text-sm font-medium text-primary/80 uppercase tracking-widest mb-1">Your Journey</p>
         <h1 className="text-3xl font-bold tracking-tight text-off-white">Wellness Cockpit</h1>
-        <p className="mt-2 text-muted-foreground">Track your journey and celebrate milestones.</p>
+        <p className="mt-2 text-muted-foreground text-sm">Track your journey and celebrate milestones — not streaks.</p>
       </header>
 
       <StatCards totalCheckIns={totalCheckIns} resilienceScore={resilienceScore} />

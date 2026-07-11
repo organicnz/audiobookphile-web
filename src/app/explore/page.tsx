@@ -20,9 +20,10 @@ export default async function ExplorePage() {
 
   return (
     <div className="max-w-3xl px-4 py-8 mx-auto lg:py-12">
-      <header className="mb-8">
+      <header className="mb-8 animate-fade-in-up">
+        <p className="text-sm font-medium text-primary/80 uppercase tracking-widest mb-1">Curated For You</p>
         <h1 className="text-3xl font-bold tracking-tight text-off-white">Daily Discovery</h1>
-        <p className="mt-2 text-muted-foreground">A finite, curated selection for today. No endless scrolling.</p>
+        <p className="mt-2 text-muted-foreground text-sm">A finite selection for today. No endless scrolling — by design.</p>
       </header>
 
       <DiscoverySearch />
@@ -64,11 +65,14 @@ export default async function ExplorePage() {
         
         {/* Anti-Dopamine Stopper */}
         <div className="pt-16 pb-8 text-center animate-fade-in-up" style={{ animationDelay: '800ms', animationFillMode: 'both' }}>
-          <div className="w-12 h-1 bg-white/10 mx-auto rounded-full mb-6"></div>
+          <div className="w-16 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent mx-auto rounded-full mb-6"></div>
           <h3 className="text-lg font-medium text-off-white mb-2">You're all caught up.</h3>
-          <p className="text-muted-foreground text-sm max-w-md mx-auto">
-            We don't do infinite feeds here. You've seen today's curation. Put down your phone, take a deep breath, and go live your life.
+          <p className="text-muted-foreground text-sm max-w-md mx-auto mb-6">
+            That's everything for today. We intentionally limit your feed to protect your mental health. Go outside, call a friend, or just breathe.
           </p>
+          <a href="/breathe" className="text-xs text-primary/60 hover:text-primary transition-colors">
+            → Take a breathing break
+          </a>
         </div>
       </div>
     </div>
