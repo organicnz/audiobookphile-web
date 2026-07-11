@@ -34,6 +34,9 @@ export async function verifyMfa(prevState: any, formData: FormData) {
       const errorData = await res.json()
       return { error: errorData.error || 'Invalid code. Please try again.' }
     }
+
+    // Force Next.js to update the browser's cookies with the new aal2 session
+    await supabase.auth.refreshSession()
   } catch (err: any) {
     return { error: err.message || 'An error occurred during verification' }
   }

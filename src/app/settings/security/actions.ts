@@ -66,6 +66,9 @@ export async function verifyAndEnableMfa(prevState: any, formData: FormData) {
       return { error: errorData.error || 'Invalid code', success: false }
     }
 
+    // Force Next.js to update the browser's cookies with the new aal2 session
+    await supabase.auth.refreshSession()
+
     revalidatePath('/settings/security')
     return { success: true, error: null }
   } catch (err: any) {
