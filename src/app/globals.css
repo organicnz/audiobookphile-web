@@ -11,10 +11,10 @@
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   
-  --color-matte-black: #121212;
-  --color-charcoal: #1C1C1E;
-  --color-deep-plum: #2C1A30;
-  --color-muted-gold: #D4AF37;
+  --color-matte-black: #0B132B;
+  --color-charcoal: #141C3A;
+  --color-deep-plum: #252C4A;
+  --color-muted-gold: #47A8BD;
   --color-off-white: #F5F5F7;
   
   --color-sidebar-ring: var(--sidebar-ring);
@@ -109,48 +109,48 @@
 }
 
 :root, .dark {
-  --background: #121212;
+  --background: #0B132B;
   --foreground: #F5F5F7;
   
-  --card: #1C1C1E;
+  --card: #141C3A;
   --card-foreground: #F5F5F7;
   
-  --popover: #1C1C1E;
+  --popover: #141C3A;
   --popover-foreground: #F5F5F7;
   
-  --primary: #D4AF37;
-  --primary-foreground: #121212;
+  --primary: #47A8BD;
+  --primary-foreground: #0B132B;
   
-  --secondary: #2C1A30;
+  --secondary: #252C4A;
   --secondary-foreground: #F5F5F7;
   
-  --muted: #1C1C1E;
+  --muted: #1A2242;
   --muted-foreground: #A0A0A5;
   
-  --accent: #2C1A30;
+  --accent: #252C4A;
   --accent-foreground: #F5F5F7;
   
   --destructive: #EF4444;
   --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.15);
-  --ring: #D4AF37;
+  --ring: #47A8BD;
   
-  --chart-1: #D4AF37;
-  --chart-2: #2C1A30;
+  --chart-1: #47A8BD;
+  --chart-2: #252C4A;
   --chart-3: #A0A0A5;
   --chart-4: #4A4A52;
-  --chart-5: #1C1C1E;
+  --chart-5: #1A2242;
   
   --radius: 0.75rem;
   
-  --sidebar: rgba(18, 18, 18, 0.8);
+  --sidebar: rgba(11, 19, 43, 0.8);
   --sidebar-foreground: #F5F5F7;
-  --sidebar-primary: #D4AF37;
-  --sidebar-primary-foreground: #121212;
+  --sidebar-primary: #47A8BD;
+  --sidebar-primary-foreground: #0B132B;
   --sidebar-accent: rgba(255, 255, 255, 0.05);
   --sidebar-accent-foreground: #F5F5F7;
   --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #D4AF37;
+  --sidebar-ring: #47A8BD;
 }
 
 @layer base {
@@ -166,7 +166,7 @@
 }
 
 @utility liquid-glass {
-  background: linear-gradient(135deg, rgba(44, 26, 48, 0.15) 0%, rgba(28, 28, 30, 0.4) 50%, rgba(18, 18, 18, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(37, 44, 74, 0.15) 0%, rgba(20, 28, 58, 0.4) 50%, rgba(11, 19, 43, 0.6) 100%);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -178,9 +178,9 @@
 @utility liquid-glass-hover {
   @apply liquid-glass;
   &:hover {
-    background: linear-gradient(135deg, rgba(64, 40, 70, 0.2) 0%, rgba(38, 38, 40, 0.5) 50%, rgba(28, 28, 30, 0.7) 100%);
-    border-color: rgba(212, 175, 55, 0.4);
-    box-shadow: 0 16px 48px 0 rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.3), 0 0 20px rgba(212, 175, 55, 0.1);
+    background: linear-gradient(135deg, rgba(55, 66, 110, 0.2) 0%, rgba(30, 42, 80, 0.5) 50%, rgba(15, 25, 55, 0.7) 100%);
+    border-color: rgba(71, 168, 189, 0.4);
+    box-shadow: 0 16px 48px 0 rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.3), 0 0 20px rgba(71, 168, 189, 0.15);
     transform: translateY(-4px);
   }
 }
