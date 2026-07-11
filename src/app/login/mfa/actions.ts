@@ -12,7 +12,6 @@ export async function verifyMfa(prevState: any, formData: FormData) {
     return { error: 'Missing required fields' }
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
@@ -21,18 +20,15 @@ export async function verifyMfa(prevState: any, formData: FormData) {
   }
 
   try {
-    const res = await fetch(`${supabaseUrl}/functions/v1/mfa`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
-      },
-      body: JSON.stringify({ action: 'challengeAndVerify', factorId, code })
+    const { data, error } = await supabase.functions.invoke('mfa', {
+      body: { action: 'challengeAndVerify', factorId, code }
     })
 
-    if (!res.ok) {
-      const errorData = await res.json()
-      return { error: errorData.error || 'Invalid code. Please try again.' }
+    if (error) {
+      return { error: error.message || 'Invalid code. Please try again.' }
+    }
+    if (data?.error) {
+      return { error: data.error || 'Invalid code. Please try again.' }
     }
 
     // Force Next.js to update the browser's cookies with the new aal2 session

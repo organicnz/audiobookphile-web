@@ -4,32 +4,27 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function enrollMfa(prevState: any, formData: FormData) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) return { error: 'Not authenticated', qrCode: null, secret: null, factorId: null }
 
   try {
-    const res = await fetch(`${supabaseUrl}/functions/v1/mfa`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
-      },
-      body: JSON.stringify({ action: 'enroll' })
+    const { data: responseData, error } = await supabase.functions.invoke('mfa', {
+      body: { action: 'enroll' }
     })
 
-    if (!res.ok) {
-      const errorData = await res.json()
-      return { error: errorData.error || 'Failed to enroll', qrCode: null, secret: null, factorId: null }
+    if (error) {
+      return { error: error.message || 'Failed to enroll', qrCode: null, secret: null, factorId: null }
+    }
+    if (responseData?.error) {
+      return { error: responseData.error || 'Failed to enroll', qrCode: null, secret: null, factorId: null }
     }
 
-    const { data } = await res.json()
     return {
-      qrCode: data.totp.qr_code,
-      secret: data.totp.secret,
-      factorId: data.id,
+      qrCode: responseData.data.totp.qr_code,
+      secret: responseData.data.totp.secret,
+      factorId: responseData.data.id,
       error: null
     }
   } catch (err: any) {
@@ -45,25 +40,21 @@ export async function verifyAndEnableMfa(prevState: any, formData: FormData) {
     return { error: 'Missing code or factor ID', success: false }
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) return { error: 'Not authenticated', success: false }
 
   try {
-    const res = await fetch(`${supabaseUrl}/functions/v1/mfa`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
-      },
-      body: JSON.stringify({ action: 'challengeAndVerify', factorId, code })
+    const { data, error } = await supabase.functions.invoke('mfa', {
+      body: { action: 'challengeAndVerify', factorId, code }
     })
 
-    if (!res.ok) {
-      const errorData = await res.json()
-      return { error: errorData.error || 'Invalid code', success: false }
+    if (error) {
+      return { error: error.message || 'Invalid code', success: false }
+    }
+    if (data?.error) {
+      return { error: data.error || 'Invalid code', success: false }
     }
 
     // Force Next.js to update the browser's cookies with the new aal2 session
@@ -83,25 +74,21 @@ export async function unenrollMfa(prevState: any, formData: FormData) {
     return { error: 'Missing factor ID', success: false }
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) return { error: 'Not authenticated', success: false }
 
   try {
-    const res = await fetch(`${supabaseUrl}/functions/v1/mfa`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
-      },
-      body: JSON.stringify({ action: 'unenroll', factorId })
+    const { data, error } = await supabase.functions.invoke('mfa', {
+      body: { action: 'unenroll', factorId }
     })
 
-    if (!res.ok) {
-      const errorData = await res.json()
-      return { error: errorData.error || 'Failed to unenroll', success: false }
+    if (error) {
+      return { error: error.message || 'Failed to unenroll', success: false }
+    }
+    if (data?.error) {
+      return { error: data.error || 'Failed to unenroll', success: false }
     }
 
     revalidatePath('/settings/security')
@@ -110,3 +97,4 @@ export async function unenrollMfa(prevState: any, formData: FormData) {
     return { error: err.message, success: false }
   }
 }
+
