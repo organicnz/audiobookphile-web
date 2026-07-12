@@ -299,7 +299,7 @@ export async function upload(
         const contentType = file.type || file.mime_type || 'application/octet-stream'
         xhr.setRequestHeader('Content-Type', contentType)
 
-        if (providerPrefix !== 'b2://') {
+        if (providerPrefix === 'supabase://') {
           xhr.setRequestHeader('x-upsert', 'true')
         }
 
