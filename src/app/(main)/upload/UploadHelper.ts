@@ -178,7 +178,12 @@ export function getItemsFromFilelist(filelist: FileList, mediaType: Library['med
         if (dir === '.') dir = ''
 
         if (!itemMap[dir]) {
-          itemMap[dir] = { path: dir, ignoredFiles: [], itemFiles: [], otherFiles: [] }
+          itemMap[dir] = {
+            path: dir,
+            ignoredFiles: [],
+            itemFiles: [],
+            otherFiles: []
+          }
         }
         itemMap[dir].itemFiles.push(fileWithMeta)
       } else {
@@ -212,7 +217,6 @@ export function getItemsFromFilelist(filelist: FileList, mediaType: Library['med
 }
 
 /**
- *
  * Uploads files directly to Supabase Storage from the browser (bypasses
  * the Next.js API route body limit), then calls /api/upload with just the
  * metadata to create the DB records.
@@ -297,9 +301,13 @@ export async function upload(
         xhr.open('PUT', uploadUrl, true)
 
         const contentType = file.type || file.mime_type || 'application/octet-stream'
-        xhr.setRequestHeader('Content-Type', contentType)
 
+        // For B2 presigned URLs, Content-Type is embedded in the URL params but NOT
+        // included in X-Amz-SignedHeaders. Sending it as a request header causes B2 to
+        // return a 403 (signature mismatch) which has no CORS headers, making the browser
+        // report it as a CORS error. Only set Content-Type for Supabase uploads.
         if (providerPrefix === 'supabase://') {
+          xhr.setRequestHeader('Content-Type', contentType)
           xhr.setRequestHeader('x-upsert', 'true')
         }
 
@@ -384,7 +392,9 @@ export async function upload(
   })
 
   if (!response.ok) {
-    const err = await response.json().catch(() => ({ error: `HTTP ${response.status}` }))
+    const err = await response.json().catch(() => ({
+      error: `HTTP ${response.status}`
+    }))
     throw new Error(err.error || `Upload failed with status ${response.status}`)
   }
 
