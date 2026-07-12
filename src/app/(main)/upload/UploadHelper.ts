@@ -261,6 +261,11 @@ export async function upload(
     // Attempt to get a presigned URL for B2 or Supabase (based on size)
     let uploadUrl = ''
     let providerPrefix = ''
+    let multipartData: {
+      uploadId: string
+      partUrls: string[]
+      partSize: number
+    } | null = null
     try {
       const presignUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-presign` : '/api/upload/presign'
       const presignRes = await fetch(presignUrl, {
@@ -278,8 +283,17 @@ export async function upload(
 
       if (presignRes.status === 200) {
         const data = await presignRes.json()
-        uploadUrl = data.url
         providerPrefix = data.provider_prefix || ''
+        if (data.multipart) {
+          multipartData = {
+            uploadId: data.uploadId,
+            partUrls: data.partUrls,
+            partSize: data.partSize
+          }
+          uploadUrl = '__multipart__'
+        } else {
+          uploadUrl = data.url
+        }
       } else if (presignRes.status !== 501) {
         throw new Error(`Presign failed: ${presignRes.status}`)
       }
@@ -292,6 +306,77 @@ export async function upload(
         return reject(new Error(`Failed to obtain a valid presigned upload URL for ${file.name}`))
       }
 
+      // --- Multipart upload path (B2 files > 50 MB) ---
+      if (uploadUrl === '__multipart__' && multipartData) {
+        const { uploadId, partUrls, partSize } = multipartData
+        const parts: { PartNumber: number; ETag: string }[] = []
+        let partUploadedBytes = 0
+        try {
+          for (let i = 0; i < partUrls.length; i++) {
+            const partNumber = i + 1
+            const start = i * partSize
+            const end = Math.min(start + partSize, file.size)
+            const chunk = (file as File).slice(start, end)
+            await new Promise<void>((res, rej) => {
+              const xhr = new XMLHttpRequest()
+              xhr.open('PUT', partUrls[i], true)
+              xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable && onProgress) {
+                  const loaded = uploadedBytes + partUploadedBytes + event.loaded
+                  onProgress({
+                    percent: Math.round((loaded / totalSize) * 100),
+                    loaded,
+                    total: totalSize
+                  })
+                }
+              }
+              xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                  const etag = xhr.getResponseHeader('ETag') || `"${partNumber}"`
+                  parts.push({ PartNumber: partNumber, ETag: etag })
+                  partUploadedBytes += chunk.size
+                  res()
+                } else {
+                  rej(new Error(`Part ${partNumber} failed: HTTP ${xhr.status}`))
+                }
+              }
+              xhr.onerror = () => rej(new Error(`Part ${partNumber} network error`))
+              xhr.timeout = 3600000
+              xhr.send(chunk)
+            })
+          }
+          // Complete the multipart upload server-side
+          const presignUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+            ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-presign`
+            : '/api/upload/presign'
+          const completeRes = await fetch(presignUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${cookie}`
+            },
+            body: JSON.stringify({
+              action: 'complete-multipart',
+              filename: storagePath,
+              uploadId,
+              parts
+            })
+          })
+          if (!completeRes.ok) {
+            const err = (await completeRes.json().catch(() => ({}))) as {
+              error?: string
+            }
+            return reject(new Error(`Complete multipart failed: ${err.error ?? completeRes.status}`))
+          }
+          uploadedBytes += file.size
+          uploadedPaths.push(providerPrefix + storagePath)
+          return resolve()
+        } catch (err: unknown) {
+          return reject(err instanceof Error ? err : new Error(String(err)))
+        }
+      }
+
+      // --- Single-part upload path ---
       const MAX_RETRIES = 3
       let attempt = 0
 
