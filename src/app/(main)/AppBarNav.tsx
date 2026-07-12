@@ -90,7 +90,7 @@ export default function AppBarNav({ userCanUpload, isAdmin, username }: AppBarNa
     )
 
     return items
-  }, [username, t, isAdmin, userCanUpload, router, handleLogout])
+  }, [username, t, isAdmin, router, handleLogout])
 
   return (
     <div className="relative">

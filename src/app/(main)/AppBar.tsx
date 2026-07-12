@@ -44,7 +44,7 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
   const LogoContent = (
     <>
       <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white/5 p-1 shadow-inner transition-transform group-hover:scale-105 group-active:scale-95">
-        <img src="/images/logo.png" alt="Audiobookphile Logo" className="h-full w-full object-contain" />
+        <Image src="/images/logo.png" alt="Audiobookphile Logo" fill sizes="40px" className="object-contain" priority />
       </div>
       <span className="text-foreground/90 group-hover:text-foreground hidden text-lg font-black tracking-tight transition-colors md:block">audiobookphile</span>
     </>

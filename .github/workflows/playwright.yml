@@ -19,6 +19,9 @@ jobs:
       run: bunx playwright install --with-deps
     - name: Run Playwright tests
       run: bunx playwright test
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321' }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy' }}
     - uses: actions/upload-artifact@v4
       if: always()
       with:
