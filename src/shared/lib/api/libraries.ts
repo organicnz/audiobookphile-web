@@ -1,5 +1,16 @@
-import { Author, AuthorImagePayload, AuthorQuickMatchPayload, AuthorResponse, AuthorUpdateResponse, BookSearchResult, Collection, CreateApiKeyPayload, CreateCustomMetadataProviderPayload, CreateCustomMetadataProviderResponse, CreateUpdateApiKeyResponse, FetchPodcastFeedResponse, FFProbeData, GetApiKeysResponse, GetAuthorsResponse, GetBackupsResponse, GetCollectionsResponse, GetCustomMetadataProvidersResponse, GetFilesystemPathsResponse, GetLibrariesResponse, GetLibraryItemsResponse, GetListeningSessionsResponse, GetLoggerDataResponse, GetNarratorsResponse, GetOpenListeningSessionsResponse, GetPlaylistsResponse, GetRssFeedsResponse, GetSeriesResponse, GetUsersResponse, Library, LibraryFilterData, LibraryItem, MediaItemShare, MetadataProvidersResponse, MutateBackupsResponse, OpenMediaItemSharePayload, OpenRssFeedPayload, OpenRssFeedResponse, PersonalizedShelf, Playlist, PlaylistItemPayload, PodcastSearchResult, RssPodcastEpisode, SaveLibraryOrderApiResponse, SearchLibraryResponse, Series, ServerStatus, TasksResponse, UpdateAuthorPayload, UpdateLibraryItemMediaPayload, UpdateLibraryItemMediaResponse, UploadCoverResponse, User, UserLoginResponse } from '@/types/api'
-import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
+import {
+  GetAuthorsResponse,
+  GetCollectionsResponse,
+  GetLibrariesResponse,
+  GetLibraryItemsResponse,
+  GetPlaylistsResponse,
+  GetSeriesResponse,
+  Library,
+  LibraryFilterData,
+  LibraryItem,
+  PersonalizedShelf,
+  SaveLibraryOrderApiResponse
+} from '@/types/api'
 import { cache } from 'react'
 import { apiRequest } from './client'
 
@@ -81,7 +92,9 @@ export const getLibrary = cache(async (libraryId: string): Promise<Library> => {
 })
 
 export const getLibraryPersonalized = cache(async (libraryId: string): Promise<PersonalizedShelf[]> => {
-  return await apiRequest<PersonalizedShelf[]>(`/api/libraries/${libraryId}/personalized?include=rssfeed,share`, {})
+  return await apiRequest<PersonalizedShelf[]>(`/api/libraries/${libraryId}/personalized?include=rssfeed,share`, {
+    cache: 'no-store'
+  })
 })
 
 export const getLibraryItems = cache(async (libraryId: string, queryParams?: string): Promise<GetLibraryItemsResponse> => {
@@ -96,9 +109,9 @@ export const getLibraryItems = cache(async (libraryId: string, queryParams?: str
  */
 export const getLibraryItem = cache(async (itemId: string, expanded?: boolean, include?: string): Promise<LibraryItem> => {
   const params = new URLSearchParams()
-        params.set('expanded', expanded ? '1' : '0')
-        if (include) params.set('include', include)
-        return await apiRequest<LibraryItem>(`/api/items/${itemId}?${params.toString()}`, {})
+  params.set('expanded', expanded ? '1' : '0')
+  if (include) params.set('include', include)
+  return await apiRequest<LibraryItem>(`/api/items/${itemId}?${params.toString()}`, {})
 })
 
 export const getLibrarySeries = cache(async (libraryId: string, queryParams?: string): Promise<GetSeriesResponse> => {
