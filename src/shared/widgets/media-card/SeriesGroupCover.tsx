@@ -25,12 +25,20 @@ interface CoverData {
   showCoverBg: boolean
 }
 
+interface CoverLoadingState {
+  retryCount: number
+  failed: boolean
+}
+
 const MAX_COVERS = 10
+const MAX_RETRIES = 2
 
 export default function SeriesGroupCover({ name, books, width, height, bookCoverAspectRatio }: SeriesGroupCoverProps) {
   const { sizeMultiplier } = useCardSize()
   const [coverData, setCoverData] = useState<CoverData[]>([])
   const [noValidCovers, setNoValidCovers] = useState(false)
+  // Track retry/failure state per book id — survives across re-renders without resetting
+  const [loadingStates, setLoadingStates] = useState<Map<string, CoverLoadingState>>(new Map())
   const mountedRef = useRef(true)
   const placeholderUrl = useMemo(() => getPlaceholderCoverUrl(), [])
 
@@ -69,10 +77,35 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
     }
   }, [])
 
+  // Mark a cover as failed after exhausting retries
+  const markFailed = useCallback((bookId: string) => {
+    if (!mountedRef.current) return
+    setLoadingStates((prev) => {
+      const next = new Map(prev)
+      next.set(bookId, { retryCount: MAX_RETRIES, failed: true })
+      return next
+    })
+  }, [])
+
+  // Increment retry count for a cover
+  const incrementRetry = useCallback((bookId: string) => {
+    if (!mountedRef.current) return
+    setLoadingStates((prev) => {
+      const next = new Map(prev)
+      const current = next.get(bookId)
+      next.set(bookId, { retryCount: (current?.retryCount ?? 0) + 1, failed: false })
+      return next
+    })
+  }, [])
+
   useEffect(() => {
     async function loadCovers() {
-      // Filter books that have covers
+      // Filter books that have covers and haven't permanently failed
       const validBooks = books
+        .filter((book) => {
+          const state = loadingStates.get(book.id)
+          return !state?.failed
+        })
         .map((book) => ({
           id: book.id,
           coverUrl: getLibraryItemCoverSrc(book, placeholderUrl)
@@ -107,7 +140,32 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
     }
 
     loadCovers()
-  }, [books, checkImageAspectRatio, placeholderUrl])
+  }, [books, checkImageAspectRatio, placeholderUrl, loadingStates])
+
+  // Handle image load error with retry-with-backoff (mirrors MediaCardCover pattern)
+  const handleImageError = useCallback(
+    (bookId: string, coverUrl: string) => {
+      const state = loadingStates.get(bookId)
+      const retryCount = state?.retryCount ?? 0
+
+      if (retryCount < MAX_RETRIES) {
+        // Retry with a staggered backoff to avoid hammering the rate limit
+        const delay = (retryCount + 1) * 1500 + Math.random() * 1000
+        setTimeout(() => {
+          incrementRetry(bookId)
+          // Re-trigger image load by bumping a retry param
+          const img = document.querySelector<HTMLImageElement>(`img[data-cover-id="${bookId}"]`)
+          if (img) {
+            const sep = coverUrl.includes('?') ? '&' : '?'
+            img.src = `${coverUrl}${sep}retry=${retryCount + 1}`
+          }
+        }, delay)
+      } else {
+        markFailed(bookId)
+      }
+    },
+    [loadingStates, incrementRetry, markFailed]
+  )
 
   // Fallback when no valid covers
   if (noValidCovers) {
@@ -130,6 +188,8 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
         const zIndex = coverData.length - index
         const isLastCover = index === coverData.length - 1
         const displayWidth = coverData.length === 1 ? width : coverWidth
+        const state = loadingStates.get(cover.id)
+        const retryCount = state?.retryCount ?? 0
 
         return (
           <div
@@ -158,9 +218,11 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
             {/* Cover image */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={cover.coverUrl}
+              data-cover-id={cover.id}
+              src={retryCount > 0 ? `${cover.coverUrl}${cover.coverUrl.includes('?') ? '&' : '?'}retry=${retryCount}` : cover.coverUrl}
               alt=""
               aria-hidden="true"
+              onError={() => handleImageError(cover.id, cover.coverUrl)}
               className={mergeClasses('absolute start-0 top-0 h-full w-full', cover.showCoverBg ? 'object-contain' : 'object-cover')}
             />
           </div>
