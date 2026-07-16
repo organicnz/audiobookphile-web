@@ -21,7 +21,6 @@ import { Author, BookshelfView, LibraryItem, MediaItemShare, MediaProgress, Pers
 import { useCallback, useEffect, useState, useTransition } from 'react'
 import { requestScanLibrary } from '../../settings/libraries/actions'
 
-
 interface LibraryClientProps {
   personalized: PersonalizedShelf[]
 }
@@ -166,21 +165,21 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
       {/* Controls Bar */}
       {shelves.length > 0 && (
         <div className="px-4e md:px-8e mb-4 flex justify-end">
-          <div className="bg-primary/10 rounded-full p-1 flex items-center gap-1 border border-primary/20">
+          <div className="bg-primary/10 border-primary/20 flex items-center gap-1 rounded-full border p-1">
             <Tooltip text="Row View">
-              <IconBtn 
+              <IconBtn
                 size="small"
-                borderless 
-                className={`p-1.5 rounded-full transition-colors ${localViewMode === 'row' ? 'bg-primary text-primary-foreground' : 'text-foreground-muted hover:text-foreground'}`}
+                borderless
+                className={`rounded-full p-1.5 transition-colors ${localViewMode === 'row' ? 'bg-primary text-primary-foreground' : 'text-foreground-muted hover:text-foreground'}`}
                 onClick={() => setLocalViewMode('row')}
                 icon={List}
               />
             </Tooltip>
             <Tooltip text="Grid View">
-              <IconBtn 
+              <IconBtn
                 size="small"
-                borderless 
-                className={`p-1.5 rounded-full transition-colors ${localViewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-foreground-muted hover:text-foreground'}`}
+                borderless
+                className={`rounded-full p-1.5 transition-colors ${localViewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-foreground-muted hover:text-foreground'}`}
                 onClick={() => setLocalViewMode('grid')}
                 icon={LayoutGrid}
               />
@@ -198,7 +197,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
 
       {/* bookshelf rows */}
       {shelves.map((shelf) => {
-        const Wrapper = localViewMode === 'grid' ? BookShelfGrid : (homeBookshelfView === BookshelfView.STANDARD ? BookShelfRow : ItemSlider)
+        const Wrapper = localViewMode === 'grid' ? BookShelfGrid : homeBookshelfView === BookshelfView.STANDARD ? BookShelfRow : ItemSlider
 
         return (
           <Wrapper key={shelf.id} title={shelf.label}>
@@ -206,7 +205,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
               if (shelf.type === 'book' || shelf.type === 'podcast') {
                 const EntityMediaCard = shelf.type === 'book' ? BookMediaCard : PodcastMediaCard
                 const libraryItem = entity as LibraryItem
-                const mediaProgress = libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined
+                const mediaProgress = libraryItem.userMediaProgress ?? (libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined)
 
                 return (
                   <div key={entity.id + '-' + shelf.id} className="mx-2e shrink-0">
@@ -221,6 +220,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
                       mediaProgress={mediaProgress}
                       shelfEntities={shelf.entities}
                       entityIndex={entityIndex}
+                      continueListeningShelf={shelf.id === 'continue-listening' || shelf.id === 'continue-reading'}
                     />
                   </div>
                 )
@@ -229,7 +229,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
                 const libraryItems = series.books || []
                 const mediaItemProgressMap = new Map<string, MediaProgress>()
                 libraryItems.forEach((libraryItem) => {
-                  const mediaProgress = libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined
+                  const mediaProgress = libraryItem.userMediaProgress ?? (libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined)
                   if (mediaProgress) {
                     const key = mediaProgress.mediaItemId ?? libraryItem.media?.id
                     if (key) mediaItemProgressMap.set(key, mediaProgress)
@@ -252,7 +252,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
                 if (!episode) {
                   return null
                 }
-                const mediaProgress = getMediaItemProgress(episode.id)
+                const mediaProgress = libraryItem.userMediaProgress ?? getMediaItemProgress(episode.id)
                 return (
                   <div key={episode.id + '-' + shelf.id} className="mx-2e shrink-0">
                     <PodcastEpisodeCard
