@@ -1,4 +1,19 @@
-import { z } from "zod";
+/**
+ * ⚠️  COPY — DO NOT EDIT DIRECTLY
+ *
+ * This file is a copy of:
+ *   audiobookphile-backend/src/types/schemas.ts
+ *
+ * The backend file is the single source of truth for all Zod schemas
+ * shared between the backend edge functions and the web application.
+ *
+ * To make changes:
+ *   1. Edit  audiobookphile-backend/src/types/schemas.ts  first.
+ *   2. Copy the updated file to this location.
+ *   3. Commit both changes together so the copies stay in sync.
+ */
+import type { BookMetadataFlat } from '@/types/api/models'
+import { z } from 'zod'
 
 export const AudioMetadataSchema = z.object({
   filename: z.string().nullish(),
@@ -9,8 +24,8 @@ export const AudioMetadataSchema = z.object({
   mtimeMs: z.number().nullish(),
   ctimeMs: z.number().nullish(),
   birthtimeMs: z.number().nullish(),
-  duration: z.number().nullish(),
-});
+  duration: z.number().nullish()
+})
 
 export const AudioFileSchema = z.object({
   id: z.string(),
@@ -22,14 +37,16 @@ export const AudioFileSchema = z.object({
   language: z.string().nullish(),
   codec: z.string().nullish(),
   mimeType: z.string(),
-});
+  addedAt: z.number().nullish(),
+  updatedAt: z.number().nullish()
+})
 
 export const ChapterSchema = z.object({
   id: z.number(),
   title: z.string(),
   start: z.number(),
-  end: z.number(),
-});
+  end: z.number()
+})
 
 export const FileMetadataSchema = z.object({
   filename: z.string().nullish(),
@@ -39,8 +56,8 @@ export const FileMetadataSchema = z.object({
   size: z.number().nullish(),
   mtimeMs: z.number().nullish(),
   ctimeMs: z.number().nullish(),
-  birthtimeMs: z.number().nullish(),
-});
+  birthtimeMs: z.number().nullish()
+})
 
 export const LibraryFileSchema = z.object({
   id: z.string(),
@@ -48,13 +65,15 @@ export const LibraryFileSchema = z.object({
   metadata: FileMetadataSchema.nullish(),
   isSupplementary: z.boolean().nullish(),
   fileType: z.string().nullish(),
-});
+  addedAt: z.number().nullish(),
+  updatedAt: z.number().nullish()
+})
 
 export const EbookFileSchema = z.object({
   ino: z.string(),
   metadata: FileMetadataSchema,
-  ebookFormat: z.string(),
-});
+  ebookFormat: z.string()
+})
 
 export const BookMetadataSchema = z.object({
   title: z.string(),
@@ -72,8 +91,8 @@ export const BookMetadataSchema = z.object({
   asin: z.string().nullish(),
   language: z.string().nullish(),
   explicit: z.boolean(),
-  abridged: z.boolean().nullish(),
-});
+  abridged: z.boolean().nullish()
+})
 
 export const BookMediaSchema = z.object({
   libraryFiles: z.array(LibraryFileSchema).nullish(),
@@ -86,8 +105,8 @@ export const BookMediaSchema = z.object({
   audioFiles: z.array(AudioFileSchema).nullish(),
   tracks: z.array(AudioFileSchema).nullish(),
   numTracks: z.number().optional(),
-  ebookFile: EbookFileSchema.nullish(),
-});
+  ebookFile: EbookFileSchema.nullish()
+})
 
 export const MediaProgressSchema = z.object({
   id: z.string(),
@@ -100,8 +119,8 @@ export const MediaProgressSchema = z.object({
   hideFromContinueListening: z.boolean().nullish(),
   lastUpdate: z.number(),
   startedAt: z.number().nullish(),
-  finishedAt: z.number().nullish(),
-});
+  finishedAt: z.number().nullish()
+})
 
 export const MobileBookSchema = z.object({
   id: z.string(),
@@ -121,23 +140,23 @@ export const MobileBookSchema = z.object({
   mediaType: z.string().optional(),
   libraryFiles: z.array(LibraryFileSchema).nullish(),
   media: BookMediaSchema,
-  userMediaProgress: MediaProgressSchema.nullish(),
-});
+  userMediaProgress: MediaProgressSchema.nullish()
+})
 
 export const LibraryFolderSchema = z.object({
   id: z.string(),
   fullPath: z.string().nullish(),
   libraryId: z.string().nullish(),
-  addedAt: z.number().nullish(),
-});
+  addedAt: z.number().nullish()
+})
 
 export const LibrarySettingsSchema = z.object({
   coverAspectRatio: z.number().nullish(),
   disableWatcher: z.boolean().nullish(),
   skipMatchingMediaWithAsin: z.boolean().nullish(),
   skipMatchingMediaWithIsbn: z.boolean().nullish(),
-  autoScanCronExpression: z.string().nullish(),
-});
+  autoScanCronExpression: z.string().nullish()
+})
 
 export const MobileLibrarySchema = z.object({
   id: z.string(),
@@ -150,19 +169,23 @@ export const MobileLibrarySchema = z.object({
   settings: LibrarySettingsSchema.nullish(),
   createdAt: z.number().nullish(),
   updatedAt: z.number().nullish(),
-  lastUpdate: z.number().nullish(),
-});
+  lastUpdate: z.number().nullish()
+})
 
-export type AudioMetadataModel = z.infer<typeof AudioMetadataSchema>;
-export type AudioFileModel = z.infer<typeof AudioFileSchema>;
-export type ChapterModel = z.infer<typeof ChapterSchema>;
-export type FileMetadataModel = z.infer<typeof FileMetadataSchema>;
-export type LibraryFileModel = z.infer<typeof LibraryFileSchema>;
-export type EbookFileModel = z.infer<typeof EbookFileSchema>;
-export type BookMetadataModel = z.infer<typeof BookMetadataSchema>;
-export type BookMediaModel = z.infer<typeof BookMediaSchema>;
-export type MediaProgressModel = z.infer<typeof MediaProgressSchema>;
-export type MobileBookModel = z.infer<typeof MobileBookSchema>;
-export type LibraryFolderModel = z.infer<typeof LibraryFolderSchema>;
-export type LibrarySettingsModel = z.infer<typeof LibrarySettingsSchema>;
-export type MobileLibraryModel = z.infer<typeof MobileLibrarySchema>;
+export type AudioMetadataModel = z.infer<typeof AudioMetadataSchema>
+export type AudioFileModel = z.infer<typeof AudioFileSchema>
+export type ChapterModel = z.infer<typeof ChapterSchema>
+export type FileMetadataModel = z.infer<typeof FileMetadataSchema>
+export type LibraryFileModel = z.infer<typeof LibraryFileSchema>
+export type EbookFileModel = z.infer<typeof EbookFileSchema>
+/**
+ * BookMetadataModel is pinned to BookMetadataFlat.
+ * If BookMetadataSchema and BookMetadataFlat drift, this assignment will fail at compile time.
+ */
+export type BookMetadataModel = BookMetadataFlat
+export type BookMediaModel = z.infer<typeof BookMediaSchema>
+export type MediaProgressModel = z.infer<typeof MediaProgressSchema>
+export type MobileBookModel = z.infer<typeof MobileBookSchema>
+export type LibraryFolderModel = z.infer<typeof LibraryFolderSchema>
+export type LibrarySettingsModel = z.infer<typeof LibrarySettingsSchema>
+export type MobileLibraryModel = z.infer<typeof MobileLibrarySchema>

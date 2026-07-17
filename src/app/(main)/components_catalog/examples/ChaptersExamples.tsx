@@ -26,6 +26,7 @@ const mockBookWithoutChapters: BookLibraryItem = {
   isInvalid: false,
   mediaType: 'book',
   media: {
+    mediaType: 'book' as const,
     id: 'mock-media-id',
     libraryItemId: 'mock-book-no-chapters',
     metadata: {

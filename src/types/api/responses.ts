@@ -1,7 +1,22 @@
-import { User } from "./auth"
-import { Library, Author, LibraryItem, Series, Collection, Playlist } from '.'
-import { ApiKey } from "./auth"
-import { DirectoryEntry, RssFeed, MediaItemShare, PlaybackSession, ServerSettings, EReaderDevice, CustomMetadataProvider, Backup, BookLibraryItem, PodcastLibraryItem, MetadataProvider, Task, NarratorObject, LoggerDataLog, RssPodcast } from "./models"
+import { Author, Collection, Library, LibraryItem, Playlist, Series } from '.'
+import { ApiKey, User } from './auth'
+import {
+  Backup,
+  BookLibraryItem,
+  CustomMetadataProvider,
+  DirectoryEntry,
+  EReaderDevice,
+  LoggerDataLog,
+  MediaItemShare,
+  MetadataProvider,
+  NarratorObject,
+  PlaybackSession,
+  PodcastLibraryItem,
+  RssFeed,
+  RssPodcast,
+  ServerSettings,
+  Task
+} from './models'
 
 export interface GetFilesystemPathsResponse {
   directories: DirectoryEntry[]
@@ -135,18 +150,34 @@ export interface GetNarratorsResponse {
   narrators: NarratorObject[]
 }
 
-export interface GetAuthorsResponse {
-  // When paginated (limit/page query params), uses 'results' instead of 'authors'
-  authors?: Author[]
-  results?: Author[]
-  total?: number
-  limit?: number
-  page?: number
+/** Non-paginated authors response — returned when no limit/page query params are passed */
+export interface GetAuthorsListResponse {
+  authors: Author[]
   sortBy?: string
   sortDesc?: boolean
   filterBy?: string
   minified?: boolean
   include?: string
+}
+
+/** Paginated authors response — returned when limit/page query params are passed */
+export interface GetAuthorsPaginatedResponse {
+  results: Author[]
+  total: number
+  limit: number
+  page: number
+  sortBy?: string
+  sortDesc?: boolean
+  filterBy?: string
+  minified?: boolean
+  include?: string
+}
+
+export type GetAuthorsResponse = GetAuthorsListResponse | GetAuthorsPaginatedResponse
+
+/** Type guard — narrows to non-paginated shape */
+export function isGetAuthorsListResponse(r: GetAuthorsResponse): r is GetAuthorsListResponse {
+  return 'authors' in r
 }
 
 export interface GetSeriesResponse {

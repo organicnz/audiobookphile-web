@@ -1,25 +1,36 @@
 'use client'
 
-import BookShelfRow from '@/features/library/components/BookShelfRow'
-import ItemSlider from '@/shared/widgets/ItemSlider'
-import { AuthorCard } from '@/shared/widgets/media-card/AuthorCard'
-import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
-import LibraryEmptyState from './LibraryEmptyState'
 import BookShelfGrid from '@/features/library/components/BookShelfGrid'
-import { LayoutGrid, List } from 'lucide-react'
-import IconBtn from '@/shared/ui/IconBtn'
-import Tooltip from '@/shared/ui/Tooltip'
-import PodcastEpisodeCard from '@/shared/widgets/media-card/PodcastEpisodeCard'
-import PodcastMediaCard from '@/shared/widgets/media-card/PodcastMediaCard'
-import { SeriesCard } from '@/shared/widgets/media-card/SeriesCard'
+import BookShelfRow from '@/features/library/components/BookShelfRow'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { Author, BookshelfView, LibraryItem, MediaItemShare, MediaProgress, PersonalizedShelf, PersonalizedShelfType, RssFeed, Series } from '@/types/api'
+import IconBtn from '@/shared/ui/IconBtn'
+import Tooltip from '@/shared/ui/Tooltip'
+import ItemSlider from '@/shared/widgets/ItemSlider'
+import { AuthorCard } from '@/shared/widgets/media-card/AuthorCard'
+import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
+import PodcastEpisodeCard from '@/shared/widgets/media-card/PodcastEpisodeCard'
+import PodcastMediaCard from '@/shared/widgets/media-card/PodcastMediaCard'
+import { SeriesCard } from '@/shared/widgets/media-card/SeriesCard'
+import {
+  Author,
+  BookshelfEntity,
+  BookshelfView,
+  LibraryItem,
+  MediaItemShare,
+  MediaProgress,
+  PersonalizedShelf,
+  PersonalizedShelfType,
+  RssFeed,
+  Series
+} from '@/types/api'
+import { LayoutGrid, List } from 'lucide-react'
 import { useCallback, useEffect, useState, useTransition } from 'react'
 import { requestScanLibrary } from '../../settings/libraries/actions'
+import LibraryEmptyState from './LibraryEmptyState'
 
 interface LibraryClientProps {
   personalized: PersonalizedShelf[]
@@ -218,7 +229,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
                       ereaderDevices={ereaderDevices}
                       showSubtitles={true}
                       mediaProgress={mediaProgress}
-                      shelfEntities={shelf.entities}
+                      shelfEntities={shelf.entities as unknown as (BookshelfEntity | null)[]}
                       entityIndex={entityIndex}
                       continueListeningShelf={shelf.id === 'continue-listening' || shelf.id === 'continue-reading'}
                     />

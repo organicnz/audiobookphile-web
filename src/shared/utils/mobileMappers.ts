@@ -1,4 +1,120 @@
-export function mapLibraryForMobile(lib: any): any {
+import type { MobileBookModel, MobileLibraryModel } from '@/types/schemas'
+
+// Safe date helper — handles null/undefined from Supabase rows
+function toMs(value: string | null | undefined, fallback = 0): number {
+  if (!value) return fallback
+  const ms = new Date(value).getTime()
+  return isNaN(ms) ? fallback : ms
+}
+
+export interface MobileProgressInput {
+  id: string
+  episode_id?: string | null
+  duration?: number | null
+  progress?: number | null
+  current_time_pos?: number | null
+  current_time?: number | null
+  is_finished?: boolean | null
+  hide_from_continue_listening?: boolean | null
+  last_update?: string | null
+  updated_at?: string | null
+  started_at?: string | null
+  created_at?: string | null
+  finished_at?: string | null
+}
+
+export interface MobileBookInput {
+  id: string
+  library_id?: string | null
+  folder_id?: string | null
+  path?: string | null
+  rel_path?: string | null
+  is_file?: boolean | null
+  is_missing?: boolean | null
+  is_invalid?: boolean | null
+  media_type?: string | null
+  cover_path?: string | null
+  title?: string | null
+  subtitle?: string | null
+  added_at?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+  mtime?: string | null
+  ctime?: string | null
+  birthtime?: string | null
+  duration?: number | null
+  size?: number | null
+  books?: {
+    id?: string
+    title?: string | null
+    subtitle?: string | null
+    description?: string | null
+    published_year?: string | null
+    published_date?: string | null
+    publisher?: string | null
+    isbn?: string | null
+    asin?: string | null
+    language?: string | null
+    explicit?: boolean | null
+    abridged?: boolean | null
+    cover_path?: string | null
+    tags?: unknown[] | null
+    genres?: unknown[] | null
+    narrators?: unknown[] | null
+    audio_files?: unknown[] | null
+    chapters?: unknown[] | null
+    ebook_file?: unknown | null
+    duration?: number | null
+    size?: number | null
+    book_authors?: Array<{
+      authors?: { id: string; name: string; name_lf?: string } | null
+    }> | null
+    book_series?: Array<{
+      series?: { id: string; name: string } | null
+      sequence?: string | null
+    }> | null
+  } | null
+}
+
+export interface MobileLibraryInput {
+  id: string
+  name?: string | null
+  display_order?: number | null
+  icon?: string | null
+  media_type?: string | null
+  provider?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+  last_update?: string | null
+  settings?: {
+    coverAspectRatio?: number | null
+    cover_aspect_ratio?: number | null
+    disableWatcher?: boolean | null
+    disable_watcher?: boolean | null
+    skipMatchingMediaWithAsin?: boolean | null
+    skip_matching_media_with_asin?: boolean | null
+    skipMatchingMediaWithIsbn?: boolean | null
+    skip_matching_media_with_isbn?: boolean | null
+    autoScanCronExpression?: string | null
+    auto_scan_cron_expression?: string | null
+  } | null
+  library_folders?: Array<{
+    id: string
+    library_id?: string | null
+    path?: string | null
+    created_at?: string | null
+    added_at?: string | null
+  }> | null
+}
+
+export function mapLibraryForMobile(lib: MobileLibraryInput): MobileLibraryModel {
+  // NOTE: This function produces dual snake_case + camelCase output for mobile
+  // client compatibility. The return is cast to MobileLibraryModel since the Zod
+  // schema only validates the camelCase subset. All fields are present at runtime.
+  return _mapLibraryForMobile(lib) as MobileLibraryModel
+}
+
+function _mapLibraryForMobile(lib: MobileLibraryInput): unknown {
   return {
     id: lib.id,
     name: lib.name || 'Library',
@@ -20,23 +136,32 @@ export function mapLibraryForMobile(lib: any): any {
       auto_scan_cron_expression: lib.settings?.autoScanCronExpression ?? lib.settings?.auto_scan_cron_expression ?? null,
       autoScanCronExpression: lib.settings?.autoScanCronExpression ?? lib.settings?.auto_scan_cron_expression ?? null
     },
-    folders: lib.library_folders?.map((f: any) => ({
-      id: f.id,
-      full_path: f.path || '',
-      fullPath: f.path || '',
-      library_id: f.library_id,
-      libraryId: f.library_id,
-      added_at: new Date(f.created_at || f.added_at).getTime(),
-      addedAt: new Date(f.created_at || f.added_at).getTime()
-    })) || [],
-    created_at: new Date(lib.created_at).getTime(),
-    createdAt: new Date(lib.created_at).getTime(),
-    last_update: new Date(lib.updated_at || lib.last_update || lib.created_at).getTime(),
-    lastUpdate: new Date(lib.updated_at || lib.last_update || lib.created_at).getTime()
+    folders:
+      lib.library_folders?.map((f: any) => ({
+        id: f.id,
+        full_path: f.path || '',
+        fullPath: f.path || '',
+        library_id: f.library_id,
+        libraryId: f.library_id,
+        added_at: toMs(f.created_at || f.added_at),
+        addedAt: toMs(f.created_at || f.added_at)
+      })) || [],
+    created_at: toMs(lib.created_at),
+    createdAt: toMs(lib.created_at),
+    last_update: toMs(lib.updated_at ?? lib.last_update ?? lib.created_at),
+    lastUpdate: toMs(lib.updated_at ?? lib.last_update ?? lib.created_at)
   }
 }
 
-export function mapBookForMobile(item: any, progressRecord: any): any {
+export function mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgressInput | null): MobileBookModel {
+  // NOTE: This function produces dual snake_case + camelCase output for mobile
+  // client compatibility. The return is cast to MobileBookModel since the Zod
+  // schema only validates the camelCase subset. All fields are present at runtime.
+
+  return _mapBookForMobile(item, progressRecord) as MobileBookModel
+}
+
+function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgressInput | null): unknown {
   // 1. Authors
   const authors = item.books?.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || []
   const authorNames = authors.map((a: any) => a.name)
@@ -45,7 +170,7 @@ export function mapBookForMobile(item: any, progressRecord: any): any {
 
   // 2. Narrators
   const narrators = item.books?.narrators || []
-  const narratorName = Array.isArray(narrators) ? narrators.join(', ') : (narrators || null)
+  const narratorName = Array.isArray(narrators) ? narrators.join(', ') : narrators || null
 
   // 3. Series
   const bookSeries = item.books?.book_series || []
@@ -54,73 +179,81 @@ export function mapBookForMobile(item: any, progressRecord: any): any {
 
   // 4. Audio Files
   const audioFilesList = item.books?.audio_files || []
-  const audioFiles = audioFilesList.map((af: any) => {
-    const meta = af.metadata || {}
-    const filename = af.filename || meta.filename || ''
-    const size = Number(af.size || meta.size) || 0
-    const path = af.path || meta.path || af.storage_path || ''
-    const rel_path = af.relPath || af.rel_path || meta.relPath || meta.rel_path || af.storage_path || af.path || ''
-    
-    return {
-      ino: af.id || af.ino,
-      index: af.track_index !== undefined ? af.track_index : (af.index !== undefined ? af.index : 0),
-      filename: filename,
-      duration: Number(af.duration) || 0,
-      size: size,
-      mime_type: af.mime_type || af.mimeType || 'audio/mpeg',
-      mimeType: af.mime_type || af.mimeType || 'audio/mpeg',
-      bit_rate: af.bit_rate || af.bitRate || null,
-      bitRate: af.bit_rate || af.bitRate || null,
-      codec: af.codec || null,
-      language: af.language || null,
-      metadata: {
-        filename: filename,
-        ext: filename.split('.').pop() || '',
-        path: path,
-        rel_path: rel_path,
-        relPath: rel_path,
-        size: size,
-        mtime_ms: Number(meta.mtimeMs || meta.mtime_ms) || new Date().getTime(),
-        mtimeMs: Number(meta.mtimeMs || meta.mtime_ms) || new Date().getTime(),
-        ctime_ms: Number(meta.ctimeMs || meta.ctime_ms) || new Date().getTime(),
-        ctimeMs: Number(meta.ctimeMs || meta.ctime_ms) || new Date().getTime(),
-        birthtime_ms: Number(meta.birthtimeMs || meta.birthtime_ms) || new Date().getTime(),
-        birthtimeMs: Number(meta.birthtimeMs || meta.birthtime_ms) || new Date().getTime()
-      }
-    }
-  }).sort((a: any, b: any) => a.index - b.index) || []
+  const audioFiles =
+    audioFilesList
+      .map((af: any) => {
+        const meta = af.metadata || {}
+        const filename = af.filename || meta.filename || ''
+        const size = Number(af.size || meta.size) || 0
+        const path = af.path || meta.path || af.storage_path || ''
+        const rel_path = af.relPath || af.rel_path || meta.relPath || meta.rel_path || af.storage_path || af.path || ''
+
+        return {
+          ino: af.id || af.ino,
+          index: af.track_index !== undefined ? af.track_index : af.index !== undefined ? af.index : 0,
+          filename: filename,
+          duration: Number(af.duration) || 0,
+          size: size,
+          mime_type: af.mime_type || af.mimeType || 'audio/mpeg',
+          mimeType: af.mime_type || af.mimeType || 'audio/mpeg',
+          bit_rate: af.bit_rate || af.bitRate || null,
+          bitRate: af.bit_rate || af.bitRate || null,
+          codec: af.codec || null,
+          language: af.language || null,
+          metadata: {
+            filename: filename,
+            ext: filename.split('.').pop() || '',
+            path: path,
+            rel_path: rel_path,
+            relPath: rel_path,
+            size: size,
+            mtime_ms: Number(meta.mtimeMs || meta.mtime_ms) || new Date().getTime(),
+            mtimeMs: Number(meta.mtimeMs || meta.mtime_ms) || new Date().getTime(),
+            ctime_ms: Number(meta.ctimeMs || meta.ctime_ms) || new Date().getTime(),
+            ctimeMs: Number(meta.ctimeMs || meta.ctime_ms) || new Date().getTime(),
+            birthtime_ms: Number(meta.birthtimeMs || meta.birthtime_ms) || new Date().getTime(),
+            birthtimeMs: Number(meta.birthtimeMs || meta.birthtime_ms) || new Date().getTime()
+          }
+        }
+      })
+      .sort((a: any, b: any) => a.index - b.index) || []
 
   // 5. Chapters
   const chaptersList = item.books?.chapters || []
-  const chapters = chaptersList.map((ch: any) => ({
-    id: ch.chapter_index !== undefined ? ch.chapter_index : ch.id,
-    title: ch.title,
-    start: Number(ch.start_time !== undefined ? ch.start_time : ch.start) || 0,
-    end: Number(ch.end_time !== undefined ? ch.end_time : ch.end) || 0
-  })).sort((a: any, b: any) => a.id - b.id) || []
+  const chapters =
+    chaptersList
+      .map((ch: any) => ({
+        id: ch.chapter_index !== undefined ? ch.chapter_index : ch.id,
+        title: ch.title,
+        start: Number(ch.start_time !== undefined ? ch.start_time : ch.start) || 0,
+        end: Number(ch.end_time !== undefined ? ch.end_time : ch.end) || 0
+      }))
+      .sort((a: any, b: any) => a.id - b.id) || []
 
   // 6. User Media Progress
-  const userMediaProgress = progressRecord ? {
-    id: progressRecord.id,
-    library_item_id: item.id,
-    libraryItemId: item.id,
-    episode_id: progressRecord.episode_id || null,
-    episodeId: progressRecord.episode_id || null,
-    duration: Number(progressRecord.duration) || Number(item.books?.duration || item.duration) || 0,
-    progress: Number(progressRecord.progress) || 0,
-    current_time: Number(progressRecord.current_time_pos) || Number(progressRecord.current_time) || 0,
-    currentTime: Number(progressRecord.current_time_pos) || Number(progressRecord.current_time) || 0,
-    is_finished: progressRecord.is_finished || false,
-    isFinished: progressRecord.is_finished || false,
-    hide_from_continue_listening: progressRecord.hide_from_continue_listening ?? false,
-    hideFromContinueListening: progressRecord.hide_from_continue_listening ?? false,
-    last_update: new Date(progressRecord.last_update || progressRecord.updated_at).getTime(),
-    lastUpdate: new Date(progressRecord.last_update || progressRecord.updated_at).getTime(),
-    started_at: new Date(progressRecord.started_at || progressRecord.created_at || progressRecord.last_update).getTime(),
-    startedAt: new Date(progressRecord.started_at || progressRecord.created_at || progressRecord.last_update).getTime(),
-    finished_at: progressRecord.is_finished ? new Date(progressRecord.finished_at || progressRecord.last_update).getTime() : null,
-    finishedAt: progressRecord.is_finished ? new Date(progressRecord.finished_at || progressRecord.last_update).getTime() : null
-  } : null
+  const userMediaProgress = progressRecord
+    ? {
+        id: progressRecord.id,
+        library_item_id: item.id,
+        libraryItemId: item.id,
+        episode_id: progressRecord.episode_id || null,
+        episodeId: progressRecord.episode_id || null,
+        duration: Number(progressRecord.duration) || Number(item.books?.duration || item.duration) || 0,
+        progress: Number(progressRecord.progress) || 0,
+        current_time: Number(progressRecord.current_time_pos) || Number(progressRecord.current_time) || 0,
+        currentTime: Number(progressRecord.current_time_pos) || Number(progressRecord.current_time) || 0,
+        is_finished: progressRecord.is_finished || false,
+        isFinished: progressRecord.is_finished || false,
+        hide_from_continue_listening: progressRecord.hide_from_continue_listening ?? false,
+        hideFromContinueListening: progressRecord.hide_from_continue_listening ?? false,
+        last_update: toMs(progressRecord.last_update ?? progressRecord.updated_at),
+        lastUpdate: toMs(progressRecord.last_update ?? progressRecord.updated_at),
+        started_at: toMs(progressRecord.started_at ?? progressRecord.created_at ?? progressRecord.last_update),
+        startedAt: toMs(progressRecord.started_at ?? progressRecord.created_at ?? progressRecord.last_update),
+        finished_at: progressRecord.is_finished ? toMs(progressRecord.finished_at ?? progressRecord.last_update) : null,
+        finishedAt: progressRecord.is_finished ? toMs(progressRecord.finished_at ?? progressRecord.last_update) : null
+      }
+    : null
 
   return {
     id: item.id,
@@ -134,16 +267,16 @@ export function mapBookForMobile(item: any, progressRecord: any): any {
     relPath: item.rel_path || item.path || '',
     is_file: item.is_file ?? false,
     isFile: item.is_file ?? false,
-    mtime_ms: new Date(item.updated_at || item.mtime).getTime(),
-    mtimeMs: new Date(item.updated_at || item.mtime).getTime(),
-    ctime_ms: new Date(item.created_at || item.ctime).getTime(),
-    ctimeMs: new Date(item.created_at || item.ctime).getTime(),
-    birthtime_ms: new Date(item.created_at || item.birthtime).getTime(),
-    birthtimeMs: new Date(item.created_at || item.birthtime).getTime(),
-    added_at: new Date(item.added_at || item.created_at).getTime(),
-    addedAt: new Date(item.added_at || item.created_at).getTime(),
-    updated_at: new Date(item.updated_at).getTime(),
-    updatedAt: new Date(item.updated_at).getTime(),
+    mtime_ms: toMs(item.updated_at ?? item.mtime),
+    mtimeMs: toMs(item.updated_at ?? item.mtime),
+    ctime_ms: toMs(item.created_at ?? item.ctime),
+    ctimeMs: toMs(item.created_at ?? item.ctime),
+    birthtime_ms: toMs(item.created_at ?? item.birthtime),
+    birthtimeMs: toMs(item.created_at ?? item.birthtime),
+    added_at: toMs(item.added_at ?? item.created_at),
+    addedAt: toMs(item.added_at ?? item.created_at),
+    updated_at: toMs(item.updated_at),
+    updatedAt: toMs(item.updated_at),
     is_missing: item.is_missing ?? false,
     isMissing: item.is_missing ?? false,
     is_invalid: item.is_invalid ?? false,
@@ -151,6 +284,7 @@ export function mapBookForMobile(item: any, progressRecord: any): any {
     media_type: item.media_type || 'book',
     mediaType: item.media_type || 'book',
     media: {
+      mediaType: 'book' as const,
       library_files: audioFiles.map((af: any) => ({
         ino: af.ino,
         metadata: af.metadata,

@@ -1,12 +1,12 @@
 import { LibraryItem } from '.'
-import { BookMedia, PodcastMedia, BookMetadata, PodcastMetadata, BookLibraryItem, PodcastLibraryItem } from "./models"
+import { BookLibraryItem, BookMedia, BookMetadata, PodcastLibraryItem, PodcastMedia, PodcastMetadata } from './models'
 
 export function isBookMedia(media: BookMedia | PodcastMedia): media is BookMedia {
-  return 'audioFiles' in media || 'numTracks' in media
+  return media.mediaType === 'book'
 }
 
 export function isPodcastMedia(media: BookMedia | PodcastMedia): media is PodcastMedia {
-  return 'episodes' in media || 'numEpisodes' in media
+  return media.mediaType === 'podcast'
 }
 
 export function isBookMetadata(metadata: BookMetadata | PodcastMetadata): metadata is BookMetadata {

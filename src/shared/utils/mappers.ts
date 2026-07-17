@@ -1,10 +1,44 @@
 import { BookMedia, Library, LibraryItem, LibrarySettings, PodcastMedia } from '@/types/api'
+import type { Database } from '@/types/supabase'
+
+// ─── Supabase Row type aliases (local to this module) ───────────────────────
+
+type LibraryRow = Database['public']['Tables']['libraries']['Row'] & {
+  library_folders?: Array<Database['public']['Tables']['library_folders']['Row']>
+  folders?: Array<Database['public']['Tables']['library_folders']['Row']>
+}
+
+type BooksRowWithJoins = Database['public']['Tables']['books']['Row'] & {
+  book_authors?: Array<{
+    authors: Database['public']['Tables']['authors']['Row'] | null
+  }> | null
+  book_series?: Array<{
+    series: Database['public']['Tables']['series']['Row'] | null
+    sequence: string | null
+  }> | null
+  // library_item_id is resolved via joins at runtime, not in the books Row itself
+  library_item_id?: string | null
+  // size is not in books Row but may be present via join context
+  size?: number | null
+}
+
+type PodcastEpisodesRow = Database['public']['Tables']['podcast_episodes']['Row']
+
+type LibraryItemRow = Database['public']['Tables']['library_items']['Row'] & {
+  books?: BooksRowWithJoins | null
+  podcast_episodes?: PodcastEpisodesRow[] | null
+  // folder_id and scan_version are not in the DB schema but may be present from legacy/join paths
+  folder_id?: string | null
+  scan_version?: string | null
+}
+
+type LibrarySettingsJson = Database['public']['Tables']['libraries']['Row']['settings']
 
 /**
  * Maps a raw Supabase library row (snake_case) to the canonical Library interface (camelCase).
  */
-export function mapLibrary(row: any): Library {
-  if (!row) return row
+export function mapLibrary(row: LibraryRow): Library {
+  if (!row) return row as unknown as Library
 
   return {
     id: row.id,
@@ -15,51 +49,52 @@ export function mapLibrary(row: any): Library {
     createdAt: row.created_at ? new Date(row.created_at).getTime() : 0,
     updatedAt: row.updated_at ? new Date(row.updated_at).getTime() : 0,
     settings: mapLibrarySettings(row.settings),
-    folders: (row.library_folders || row.folders || []).map((f: any) => ({
+    folders: (row.library_folders || row.folders || []).map((f) => ({
       id: f.id,
-      libraryId: f.library_id,
+      libraryId: f.library_id ?? '',
       fullPath: f.path || '',
-      updatedAt: f.updated_at ? new Date(f.updated_at).getTime() : 0,
-    })),
+      updatedAt: f.updated_at ? new Date(f.updated_at).getTime() : 0
+    }))
   }
 }
 
 /**
  * Maps a raw Supabase library item row to the canonical LibraryItem interface.
  */
-export function mapLibraryItem(row: any): LibraryItem {
-  if (!row) return row
+export function mapLibraryItem(row: LibraryItemRow): LibraryItem {
+  if (!row) return row as unknown as LibraryItem
 
   return {
     id: row.id,
-    ino: row.ino,
-    libraryId: row.library_id,
-    folderId: row.folder_id,
-    path: row.path,
-    relPath: row.rel_path,
-    isFile: row.is_file,
-    isMissing: row.is_missing,
-    isInvalid: row.is_invalid,
-    mediaType: row.media_type,
+    ino: row.ino ?? '',
+    libraryId: row.library_id ?? '',
+    folderId: row.folder_id ?? undefined,
+    path: row.path ?? '',
+    relPath: row.rel_path ?? '',
+    isFile: row.is_file ?? false,
+    isMissing: row.is_missing ?? false,
+    isInvalid: row.is_invalid ?? false,
+    mediaType: (row.media_type as 'book' | 'podcast') ?? 'book',
     mtimeMs: row.mtime ? new Date(row.mtime).getTime() : 0,
     ctimeMs: row.ctime ? new Date(row.ctime).getTime() : 0,
     birthtimeMs: row.birthtime ? new Date(row.birthtime).getTime() : 0,
     addedAt: row.created_at ? new Date(row.created_at).getTime() : 0,
     updatedAt: row.updated_at ? new Date(row.updated_at).getTime() : 0,
     lastScan: row.last_scan ? new Date(row.last_scan).getTime() : undefined,
-    scanVersion: row.scan_version,
+    scanVersion: row.scan_version ?? undefined,
     // Add nested joins if they exist
     // Supabase returns a single object (not array) for FK joins via media_id → books.id
     media: row.books
       ? mapBook(Array.isArray(row.books) ? row.books[0] : row.books)
       : row.podcast_episodes?.length
         ? mapPodcast(row.podcast_episodes[0])
-        : createSkeletonBook(row),
+        : createSkeletonBook(row)
   }
 }
 
-function createSkeletonBook(row: any): BookMedia {
+function createSkeletonBook(row: Pick<LibraryItemRow, 'id' | 'title'>): BookMedia {
   return {
+    mediaType: 'book',
     libraryItemId: row.id,
     tags: [],
     metadata: {
@@ -69,141 +104,167 @@ function createSkeletonBook(row: any): BookMedia {
       series: [],
       genres: [],
       explicit: false,
-      abridged: false,
-    },
+      abridged: false
+    }
   }
 }
 
-function mapBook(book: any): BookMedia {
-  if (!book) return createSkeletonBook({})
+function mapBook(book: BooksRowWithJoins): BookMedia {
+  if (!book) {
+    return createSkeletonBook({} as Pick<LibraryItemRow, 'id' | 'title'>)
+  }
 
-  const audioFiles = book.audio_files || []
+  const audioFiles = (book.audio_files as unknown[] | null) || []
 
   // Map raw audio_files JSONB to AudioTrack shape for the tracks table
-  const tracks = (Array.isArray(audioFiles) ? audioFiles : []).map((af: any, i: number) => {
-    if (!af || typeof af !== 'object') return null
-    return {
-      ...af,
-      metadata: af.metadata || { filename: '', ext: '', path: '', relPath: '', size: 0, mtimeMs: 0, ctimeMs: 0, birthtimeMs: 0 },
-      index: af.index ?? i,
-      startOffset: 0,
-      duration: af.duration ?? 0,
-      title: af.metadata?.filename ?? `Track ${i + 1}`,
-      contentUrl: af.metadata?.path ?? '',
-      mimeType: af.mimeType ?? 'audio/mpeg',
-      codec: af.codec ?? '',
-      timeBase: af.timeBase ?? '1/1000',
-      channels: af.channels ?? 2,
-      channelLayout: af.channelLayout ?? 'stereo',
-      chapters: af.chapters ?? [],
-      embeddedCoverArt: af.embeddedCoverArt ?? null,
-      metaTags: af.metaTags ?? {},
-      isDirectPlaySupported: true,
-    }
-  }).filter(Boolean)
+  const tracks = (Array.isArray(audioFiles) ? audioFiles : [])
+    .map((af: unknown, i: number) => {
+      if (!af || typeof af !== 'object') return null
+      const a = af as Record<string, unknown>
+      const meta = a.metadata && typeof a.metadata === 'object' ? (a.metadata as Record<string, unknown>) : {}
+      return {
+        ...a,
+        metadata: a.metadata || {
+          filename: '',
+          ext: '',
+          path: '',
+          relPath: '',
+          size: 0,
+          mtimeMs: 0,
+          ctimeMs: 0,
+          birthtimeMs: 0
+        },
+        index: (a.index as number) ?? i,
+        startOffset: 0,
+        duration: (a.duration as number) ?? 0,
+        title: (meta?.filename as string) ?? `Track ${i + 1}`,
+        contentUrl: (meta?.path as string) ?? '',
+        mimeType: (a.mimeType as string) ?? 'audio/mpeg',
+        codec: (a.codec as string) ?? '',
+        timeBase: (a.timeBase as string) ?? '1/1000',
+        channels: (a.channels as number) ?? 2,
+        channelLayout: (a.channelLayout as string) ?? 'stereo',
+        chapters: (a.chapters as unknown[]) ?? [],
+        embeddedCoverArt: (a.embeddedCoverArt as string | null) ?? null,
+        metaTags: (a.metaTags as Record<string, unknown>) ?? {},
+        isDirectPlaySupported: true
+      }
+    })
+    .filter(Boolean)
 
   return {
+    mediaType: 'book' as const,
     id: book.id,
     libraryItemId: book.library_item_id ?? book.id,
-    coverPath: book.cover_path,
-    tags: book.tags || [],
-    audioFiles,
-    tracks,
+    coverPath: book.cover_path ?? undefined,
+    tags: (book.tags as string[]) || [],
+    audioFiles: audioFiles as never,
+    tracks: tracks.filter(Boolean) as never,
     numTracks: tracks.length,
     numAudioFiles: audioFiles.length,
-    chapters: book.chapters || [],
+    chapters: (book.chapters as never) || [],
     metadata: {
       title: book.title || 'Unknown',
-      subtitle: book.subtitle,
-      authors: (book.book_authors || []).map((ba: any) => ({
-        id: ba.authors?.id,
-        name: ba.authors?.name || 'Unknown Author',
+      subtitle: book.subtitle ?? undefined,
+      authors: (book.book_authors || []).map((ba) => ({
+        id: ba.authors?.id ?? '',
+        name: ba.authors?.name || 'Unknown Author'
       })),
-      narrators: book.narrators || [],
-      series: (book.book_series || []).map((bs: any) => ({
-        id: bs.series?.id,
+      narrators: (book.narrators as string[]) || [],
+      series: (book.book_series || []).map((bs) => ({
+        id: bs.series?.id ?? '',
         name: bs.series?.name || 'Unknown Series',
-        sequence: bs.sequence,
+        sequence: bs.sequence ?? undefined
       })),
-      genres: book.genres || [],
-      publishedYear: book.published_year,
-      publishedDate: book.published_date,
-      publisher: book.publisher,
-      description: book.description,
-      isbn: book.isbn,
-      asin: book.asin,
-      language: book.language,
+      genres: (book.genres as string[]) || [],
+      publishedYear: book.published_year ?? undefined,
+      publishedDate: book.published_date ?? undefined,
+      publisher: book.publisher ?? undefined,
+      description: book.description ?? undefined,
+      isbn: book.isbn ?? undefined,
+      asin: book.asin ?? undefined,
+      language: book.language ?? undefined,
       explicit: !!book.explicit,
-      abridged: !!book.abridged,
-    },
+      abridged: !!book.abridged
+    }
   }
 }
 
-function mapPodcast(podcast: any): PodcastMedia {
+function mapPodcast(podcast: PodcastEpisodesRow): PodcastMedia {
   if (!podcast) {
     return {
+      mediaType: 'podcast' as const,
       metadata: {
         title: 'Unknown Podcast',
         author: 'Unknown',
         description: '',
         genres: [],
-        explicit: false,
+        explicit: false
       },
-      tags: [],
+      tags: []
     }
   }
-  
+
+  const p = podcast as PodcastEpisodesRow & Record<string, unknown>
+
   return {
+    mediaType: 'podcast' as const,
     id: podcast.id,
-    libraryItemId: podcast.library_item_id,
-    coverPath: podcast.cover_path,
-    tags: podcast.tags || [],
-    episodes: (podcast.podcast_episodes || []).map((ep: any) => {
-      if (!ep || typeof ep !== 'object') return null
-      return {
-        ...ep,
-        libraryItemId: ep.library_item_id,
-        podcastId: ep.podcast_id,
-        pubDate: ep.published_at ? new Date(ep.published_at).toISOString() : undefined,
-        publishedAt: ep.published_at ? new Date(ep.published_at).getTime() : 0,
-        addedAt: ep.created_at ? new Date(ep.created_at).getTime() : 0,
-        updatedAt: ep.updated_at ? new Date(ep.updated_at).getTime() : 0,
-      }
-    }).filter(Boolean),
+    libraryItemId: p.library_item_id as string | undefined,
+    coverPath: p.cover_path as string | undefined,
+    tags: (p.tags as string[]) || [],
+    episodes: ((p.podcast_episodes as unknown[]) || [])
+      .map((ep: unknown) => {
+        if (!ep || typeof ep !== 'object') return null
+        const e = ep as Record<string, unknown>
+        return {
+          ...e,
+          libraryItemId: e.library_item_id as string,
+          podcastId: e.podcast_id as string,
+          pubDate: e.published_at ? new Date(e.published_at as string).toISOString() : undefined,
+          publishedAt: e.published_at ? new Date(e.published_at as string).getTime() : 0,
+          addedAt: e.created_at ? new Date(e.created_at as string).getTime() : 0,
+          updatedAt: e.updated_at ? new Date(e.updated_at as string).getTime() : 0
+        }
+      })
+      .filter(Boolean) as never,
     metadata: {
-      title: podcast.title || 'Unknown',
-      author: podcast.author,
-      description: podcast.description,
-      genres: podcast.genres || [],
-      explicit: !!podcast.explicit,
+      title: (p.title as string) || 'Unknown',
+      author: p.author as string | undefined,
+      description: podcast.description ?? undefined,
+      genres: (p.genres as string[]) || [],
+      explicit: !!(p.explicit as boolean | null)
     },
-    numEpisodes: podcast.num_episodes,
+    numEpisodes: p.num_episodes as number | undefined
   }
 }
 
 /**
  * Maps raw library settings to the canonical LibrarySettings interface.
  */
-export function mapLibrarySettings(settings: any): LibrarySettings {
+export function mapLibrarySettings(settings: LibrarySettingsJson): LibrarySettings {
   if (!settings) {
     return {
       coverAspectRatio: 1,
-      disableWatcher: false,
+      disableWatcher: false
     } as LibrarySettings
   }
 
+  // Supabase types Json as a deep recursive type; cast to a plain record for field access
+  const s = settings as Record<string, unknown>
+
   return {
-    coverAspectRatio: settings.cover_aspect_ratio ?? 1,
-    disableWatcher: settings.disable_watcher ?? false,
-    skipMatchingMediaWithAsin: settings.skip_matching_media_with_asin,
-    skipMatchingMediaWithIsbn: settings.skip_matching_media_with_isbn,
-    autoScanCronExpression: settings.auto_scan_cron_expression,
-    audiobooksOnly: settings.audiobooks_only,
-    hideSingleBookSeries: settings.hide_single_book_series,
-    onlyShowLaterBooksInContinueSeries: settings.only_show_later_books_in_continue_series,
-    metadataPrecedence: settings.metadata_precedence,
-    markAsFinishedTimeRemaining: settings.mark_as_finished_time_remaining,
-    markAsFinishedPercentComplete: settings.mark_as_finished_percent_complete,
-    podcastSearchRegion: settings.podcast_search_region,
+    coverAspectRatio: ((s.cover_aspect_ratio as number) ?? 1) as 0 | 1,
+    disableWatcher: (s.disable_watcher as boolean) ?? false,
+    skipMatchingMediaWithAsin: s.skip_matching_media_with_asin as boolean | undefined,
+    skipMatchingMediaWithIsbn: s.skip_matching_media_with_isbn as boolean | undefined,
+    autoScanCronExpression: s.auto_scan_cron_expression as string | undefined,
+    audiobooksOnly: s.audiobooks_only as boolean | undefined,
+    hideSingleBookSeries: s.hide_single_book_series as boolean | undefined,
+    onlyShowLaterBooksInContinueSeries: s.only_show_later_books_in_continue_series as boolean | undefined,
+    metadataPrecedence: s.metadata_precedence as string[] | undefined,
+    markAsFinishedTimeRemaining: s.mark_as_finished_time_remaining as number | undefined,
+    markAsFinishedPercentComplete: s.mark_as_finished_percent_complete as number | undefined,
+    podcastSearchRegion: s.podcast_search_region as string | undefined
   }
 }

@@ -1,5 +1,5 @@
-import { AuthMethod } from "./auth"
-import { BookshelfView, LogLevel, PersonalizedShelfType, PlayMethod } from "./enums"
+import { AuthMethod } from './auth'
+import { BookshelfView, LogLevel, PersonalizedShelfType, PlayMethod } from './enums'
 
 export interface ServerStatus {
   serverVersion: string
@@ -383,7 +383,35 @@ export interface EBookFile {
   updatedAt: number
 }
 
+/**
+ * Flat string representation of book metadata — used by the mobile/Zod path.
+ * Authors, narrators, and series are pre-joined as strings, not arrays.
+ * Matches `BookMetadataSchema` in `src/types/schemas.ts`.
+ *
+ * Compare with `BookMetadata`, which uses structured `Author[]`, `string[]`, `Series[]`
+ * for the ABS/web path.
+ */
+export interface BookMetadataFlat {
+  title: string
+  subtitle?: string | null
+  authorName?: string | null
+  authorNameLF?: string | null
+  narratorName?: string | null
+  seriesName?: string | null
+  genres: string[]
+  publishedYear?: string | null
+  publishedDate?: string | null
+  publisher?: string | null
+  description?: string | null
+  isbn?: string | null
+  asin?: string | null
+  language?: string | null
+  explicit: boolean
+  abridged?: boolean | null
+}
+
 export interface BookMedia {
+  mediaType: 'book'
   id?: string
   libraryItemId?: string
   metadata: BookMetadata
@@ -402,6 +430,7 @@ export interface BookMedia {
 }
 
 export interface PodcastMedia {
+  mediaType: 'podcast'
   id?: string
   libraryItemId?: string
   metadata: PodcastMetadata
@@ -513,12 +542,12 @@ export interface LibraryItem {
 
 export interface BookLibraryItem extends LibraryItem {
   mediaType: 'book'
-  media: BookMedia
+  media: MediaByType<'book'>
 }
 
 export interface PodcastLibraryItem extends LibraryItem {
   mediaType: 'podcast'
-  media: PodcastMedia
+  media: MediaByType<'podcast'>
 }
 
 export interface LibraryItemQueryParams {
@@ -632,25 +661,43 @@ export interface Backup {
   serverVersion: string | null
 }
 
-export interface PersonalizedShelf {
-  id:
-    | 'continue-listening'
-    | 'continue-reading'
-    | 'continue-series'
-    | 'newest-episodes'
-    | 'recently-added'
-    | 'recent-series'
-    | 'discover'
-    | 'listen-again'
-    | 'read-again'
-    | 'newest-authors'
+export interface BookShelf {
+  id: 'continue-listening' | 'continue-reading' | 'continue-series' | 'recently-added' | 'discover' | 'listen-again' | 'read-again'
   label: string
   labelStringKey: string
   type: PersonalizedShelfType
-  /** type depends on shelf type */
-  entities: LibraryItem[] | Series[] | Author[]
+  entities: (LibraryItem | CollapsedSeries)[]
   total: number
 }
+
+export interface EpisodeShelf {
+  id: 'newest-episodes'
+  label: string
+  labelStringKey: string
+  type: PersonalizedShelfType
+  entities: LibraryItem[]
+  total: number
+}
+
+export interface SeriesShelf {
+  id: 'recent-series'
+  label: string
+  labelStringKey: string
+  type: PersonalizedShelfType
+  entities: Series[]
+  total: number
+}
+
+export interface AuthorShelf {
+  id: 'newest-authors'
+  label: string
+  labelStringKey: string
+  type: PersonalizedShelfType
+  entities: Author[]
+  total: number
+}
+
+export type PersonalizedShelf = BookShelf | EpisodeShelf | SeriesShelf | AuthorShelf
 
 export interface MetadataProvider {
   /** Provider identifier (e.g. 'google', 'audible', 'itunes') */
@@ -882,7 +929,7 @@ export interface RssPodcast {
   numEpisodes?: number
 }
 
-export type BookshelfEntity = LibraryItem | Series | Collection | Playlist | Author
+export type BookshelfEntity = LibraryItem | Series | Collection | Playlist | Author | PodcastEpisode
 
 export type FFProbeData = Record<string, unknown>
 

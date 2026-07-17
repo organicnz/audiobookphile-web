@@ -1,14 +1,14 @@
 'use client'
 
+import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { updateLibraryItemMediaAction } from '@/features/player/actions/mediaActions'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import LibraryItemModal, { useLibraryItemModal, type LibraryItemModalItemSource } from '@/shared/modals/LibraryItemModal'
 import Btn from '@/shared/ui/Btn'
 import LoadingIndicator from '@/shared/ui/LoadingIndicator'
 import BookDetailsEdit, { BookDetailsEditRef, BookUpdatePayload } from '@/shared/widgets/BookDetailsEdit'
 import PodcastDetailsEdit, { PodcastDetailsEditRef, PodcastUpdatePayload } from '@/shared/widgets/PodcastDetailsEdit'
-import { useLibrary } from '@/features/library/contexts/LibraryContext'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import type { BookMedia, BookMetadata, PodcastMedia, PodcastMetadata } from '@/types/api'
 import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition, type TransitionStartFunction } from 'react'
@@ -22,7 +22,7 @@ function createPlaceholderBookLibraryItem(id: string, libraryId: string): BookLi
     explicit: false,
     abridged: false
   }
-  const media: BookMedia = { metadata, tags: [] }
+  const media: BookMedia = { mediaType: 'book', metadata, tags: [] }
   return {
     id,
     ino: '',
@@ -48,7 +48,7 @@ function createPlaceholderPodcastLibraryItem(id: string, libraryId: string): Pod
     explicit: false,
     type: 'episodic'
   }
-  const media: PodcastMedia = { metadata, tags: [] }
+  const media: PodcastMedia = { mediaType: 'podcast', metadata, tags: [] }
   return {
     id,
     ino: '',
