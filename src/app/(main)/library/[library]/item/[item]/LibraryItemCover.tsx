@@ -13,6 +13,7 @@ import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { BookLibraryItem, BookMetadata, LibraryItem, MediaProgress, PodcastLibraryItem } from '@/types/api'
 import { isPodcastLibraryItem } from '@/types/api'
 import { useCallback, useMemo, useState } from 'react'
+import { Play, Pencil } from 'lucide-react'
 
 interface LibraryItemCoverProps {
   libraryItem: BookLibraryItem | PodcastLibraryItem
@@ -123,14 +124,14 @@ export default function LibraryItemCover({ libraryItem, canUpdate = false, class
                 }}
                 ariaLabel={t('ButtonPlay')}
               >
-                play_arrow
+                <Play size={48} fill="currentColor" />
               </IconBtn>
             </div>
 
             {canUpdate && onEdit && (
               <MediaOverlayIconBtn
                 position="bottom-end"
-                icon="edit"
+                icon={Pencil}
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()

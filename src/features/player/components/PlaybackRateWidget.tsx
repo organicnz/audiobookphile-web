@@ -7,6 +7,7 @@ import { arrow as arrowMw, autoUpdate, flip, offset, shift, useFloating } from '
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import IconBtn from '../../../shared/ui/IconBtn'
+import { Plus, Minus } from 'lucide-react'
 
 interface PlaybackRateWidgetProps {
   playerHandler: UsePlayerHandlerReturn
@@ -163,7 +164,7 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
       {/* Increment/decrement row */}
       <div className="flex items-center gap-2">
         {/* Minus button */}
-        <IconBtn onClick={handleDecrement}>remove</IconBtn>
+        <IconBtn onClick={handleDecrement} icon={Minus} />
 
         {/* Current rate display */}
         <div className="text-foreground flex min-w-[100px] flex-1 items-center justify-center text-3xl font-semibold tabular-nums">
@@ -171,7 +172,7 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
         </div>
 
         {/* Plus button */}
-        <IconBtn onClick={handleIncrement}>add</IconBtn>
+        <IconBtn onClick={handleIncrement} icon={Plus} />
       </div>
 
       {/* Arrow */}

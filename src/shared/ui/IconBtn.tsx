@@ -3,7 +3,6 @@
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import { LucideIcon } from 'lucide-react'
-import { getLegacyIcon } from '@/shared/lib/icon-mapping'
 import React, { memo } from 'react'
 import ButtonBase from './ButtonBase'
 
@@ -80,19 +79,6 @@ export default function IconBtn({
     onClick?.(e)
   }
 
-  // getLegacyIcon moved to @/shared/lib/icon-mapping
-
-  let EffectiveIcon = Icon
-  let childrenContent = children
-
-  if (!EffectiveIcon && typeof children === 'string') {
-    const mapped = getLegacyIcon(children.trim())
-    if (mapped) {
-      EffectiveIcon = mapped
-      childrenContent = null
-    }
-  }
-
   return (
     <ButtonBase
       ref={ref}
@@ -120,11 +106,11 @@ export default function IconBtn({
       )}
       {!loading && (
         <>
-          {EffectiveIcon ? (
-            <EffectiveIcon size={iconSize} className={mergeClasses('shrink-0', iconClass)} aria-hidden="true" />
+          {Icon ? (
+            <Icon size={iconSize} className={mergeClasses('shrink-0', iconClass)} aria-hidden="true" />
           ) : (
-            <span cy-id="icon-btn-icon" className={mergeClasses(outlined ? 'material-symbols' : 'material-symbols fill', iconClass)} aria-hidden="true">
-              {childrenContent}
+            <span cy-id="icon-btn-icon" className={mergeClasses(iconClass)} aria-hidden="true">
+              {children}
             </span>
           )}
         </>

@@ -246,7 +246,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
                               <TextInput value={item.author} onChange={(value) => handleItemPropertyChange(index, 'author', value)} />
                             </div>
                             <Tooltip text={t('LabelUploaderItemFetchMetadataHelp')}>
-                              <IconBtn onClick={() => handleFetchMetadata(index)}>sync</IconBtn>
+                              <IconBtn onClick={() => handleFetchMetadata(index)} icon={RefreshCw} />
                             </Tooltip>
                           </div>
                         </div>

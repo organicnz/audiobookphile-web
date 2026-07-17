@@ -14,6 +14,7 @@ import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import type { Author } from '@/types/api'
 import { useRouter } from 'next/navigation'
 import { memo, useCallback, useId, useState } from 'react'
+import { Search, Edit2, CheckCircle2, Circle } from 'lucide-react'
 
 export interface AuthorCardProps {
   /** The author to display */
@@ -132,7 +133,7 @@ function AuthorCard(props: AuthorCardProps) {
                   <MediaOverlayIconBtn
                     cyId="selectButton"
                     position="top-start"
-                    icon={selected ? 'radio_button_checked' : 'radio_button_unchecked'}
+                    icon={selected ? CheckCircle2 : Circle}
                     onClick={handleSelectClick}
                     ariaLabel={selected ? t('ButtonDeselect') : t('ButtonSelect')}
                     selected={selected}
@@ -141,12 +142,12 @@ function AuthorCard(props: AuthorCardProps) {
 
                 {/* Quick Match button (top-left) */}
                 {!isSelectionMode && userCanUpdate && (
-                  <MediaOverlayIconBtn cyId="quickMatch" position="top-start" icon="search" onClick={handleQuickMatchClick} ariaLabel={t('ButtonQuickMatch')} />
+                  <MediaOverlayIconBtn cyId="quickMatch" position="top-start" icon={Search} onClick={handleQuickMatchClick} ariaLabel={t('ButtonQuickMatch')} />
                 )}
 
                 {/* Edit button (top-right) */}
                 {!isSelectionMode && userCanUpdate && (
-                  <MediaOverlayIconBtn cyId="editButton" position="top-end" icon="edit" onClick={handleEditClick} ariaLabel={t('ButtonEdit')} />
+                  <MediaOverlayIconBtn cyId="editButton" position="top-end" icon={Edit2} onClick={handleEditClick} ariaLabel={t('ButtonEdit')} />
                 )}
               </MediaCardOverlayContainer>
             )}

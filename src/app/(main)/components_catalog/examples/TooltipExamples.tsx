@@ -7,6 +7,7 @@ import TextInput from '@/shared/ui/TextInput'
 import Tooltip from '@/shared/ui/Tooltip'
 import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
+import { Settings } from 'lucide-react'
 
 export function TooltipExamples() {
   const [isTooltipModalOpen, setIsTooltipModalOpen] = useState(false)
@@ -54,7 +55,7 @@ export function TooltipExamples() {
         <Example title="With Icon Button">
           <div className="space-y-4">
             <Tooltip text="Settings">
-              <IconBtn size="medium">settings</IconBtn>
+              <IconBtn size="medium" icon={Settings} />
             </Tooltip>
           </div>
         </Example>

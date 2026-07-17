@@ -6,6 +6,7 @@ import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
+import { MailCheck } from 'lucide-react'
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState('')
@@ -32,7 +33,7 @@ export default function ForgotPasswordForm() {
 
   if (success) {
     return (
-      <AuthCard title="Check your email" icon="mark_email_read">
+      <AuthCard title="Check your email" icon={MailCheck}>
         <p className="text-foreground-muted mb-6 text-sm">
           We sent a password reset link to <strong>{email}</strong>. Check your inbox and follow the link to reset your password.
         </p>

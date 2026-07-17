@@ -1,6 +1,6 @@
 'use client'
 
-import { isValidIcon } from '@/shared/lib/absicons'
+import { isValidIcon, ABS_TO_LUCIDE_MAP } from '@/shared/lib/absicons'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface LibraryIconProps {
@@ -30,6 +30,9 @@ export default function LibraryIcon({
   const classList = mergeClasses('flex items-center justify-center', sizeClasses, fontSize, className)
 
   const iconToUse = isValidIcon(icon) ? icon : 'audiobookphile'
+  const IconComponent = ABS_TO_LUCIDE_MAP[iconToUse]
+  // determine pixel size equivalent for lucide
+  const lucideSize = size === 6 ? 24 : 20
 
   // Generate default aria-label if not provided
   const defaultAriaLabel = (() => {
@@ -48,7 +51,7 @@ export default function LibraryIcon({
       aria-label={decorative ? undefined : defaultAriaLabel}
       aria-hidden={decorative}
     >
-      <span cy-id="library-icon-span" className={`abs-icons icon-${iconToUse}`} />
+      <IconComponent size={lucideSize} className="shrink-0" />
     </div>
   )
 }

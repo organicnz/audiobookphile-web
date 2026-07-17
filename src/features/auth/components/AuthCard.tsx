@@ -2,16 +2,15 @@
 
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import { motion } from 'framer-motion'
-import { MailQuestion, MailCheck, Lock, User, LucideIcon } from 'lucide-react'
-import { getLegacyIcon } from '@/shared/lib/icon-mapping'
+import { LucideIcon } from 'lucide-react'
 
 interface AuthCardProps {
   /** Card title */
   title: string
   /** Optional subtitle shown below the title */
   subtitle?: string
-  /** Optional material-symbols icon name or LucideIcon shown above the title */
-  icon?: string | LucideIcon
+  /** Optional LucideIcon shown above the title */
+  icon?: LucideIcon
   /** Render as a <form> element when provided; plain <div> otherwise */
   onSubmit?: (e: React.FormEvent) => void
   children: React.ReactNode
@@ -31,13 +30,8 @@ export default function AuthCard({ title, subtitle, icon, onSubmit, children, cl
 
   const getIcon = () => {
     if (!icon) return null
-    if (typeof icon !== 'string') {
-      const IconComp = icon
-      return <IconComp size={48} className="text-accent mx-auto mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
-    }
-
-    const MappedIcon = getLegacyIcon(icon) || MailQuestion
-    return <MappedIcon size={48} className="text-accent mx-auto mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
+    const IconComp = icon
+    return <IconComp size={48} className="text-accent mx-auto mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
   }
 
   const header = (

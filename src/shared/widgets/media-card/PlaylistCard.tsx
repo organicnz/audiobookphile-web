@@ -17,6 +17,7 @@ import { BookshelfView } from '@/types/api'
 import { useRouter } from 'next/navigation'
 import { memo, useCallback, useId, useMemo, useState } from 'react'
 import LoadingSpinner from '../LoadingSpinner'
+import { Edit2, CheckCircle2, Circle } from 'lucide-react'
 
 export interface PlaylistCardProps {
   /** The playlist to display */
@@ -121,7 +122,7 @@ function PlaylistCard(props: PlaylistCardProps) {
                   <MediaOverlayIconBtn
                     cyId="selectButton"
                     position="top-start"
-                    icon={selected ? 'radio_button_checked' : 'radio_button_unchecked'}
+                    icon={selected ? CheckCircle2 : Circle}
                     onClick={handleSelectClick}
                     ariaLabel={selected ? t('ButtonDeselect') : t('ButtonSelect')}
                     selected={selected}
@@ -130,7 +131,7 @@ function PlaylistCard(props: PlaylistCardProps) {
 
                 {/* Edit button */}
                 {userCanUpdate && !isSelectionMode && (
-                  <MediaOverlayIconBtn cyId="editButton" position="top-end" icon="edit" onClick={handleEditClick} ariaLabel={t('ButtonEdit')} />
+                  <MediaOverlayIconBtn cyId="editButton" position="top-end" icon={Edit2} onClick={handleEditClick} ariaLabel={t('ButtonEdit')} />
                 )}
 
                 {/* More menu button */}

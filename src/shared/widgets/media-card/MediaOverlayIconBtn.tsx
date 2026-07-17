@@ -1,11 +1,10 @@
 import IconBtn from '@/shared/ui/IconBtn'
-import { getLegacyIcon } from '@/shared/lib/icon-mapping'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { LucideIcon, Circle } from 'lucide-react'
+import { LucideIcon } from 'lucide-react'
 import React from 'react'
 
 export interface MediaOverlayIconBtnProps {
-  icon: LucideIcon | string
+  icon: LucideIcon
   onClick: (event: React.MouseEvent) => void
   ariaLabel: string
   position?: 'top-start' | 'top-end' | 'bottom-start' | 'bottom-end'
@@ -34,7 +33,7 @@ export default function MediaOverlayIconBtn({
     'bottom-end': 'bottom-2 end-2'
   }
 
-  const EffectiveIcon = typeof icon === 'string' ? getLegacyIcon(icon) || Circle : icon
+  const EffectiveIcon = icon
 
   return (
     <div cy-id={cyId} className={mergeClasses('absolute z-40', positionClasses[position])}>

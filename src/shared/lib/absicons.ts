@@ -1,35 +1,58 @@
+import {
+  AudioLines,
+  Library,
+  Mic,
+  Radio,
+  Podcast,
+  Database,
+  Headphones,
+  Music,
+  Video,
+  MicVocal,
+  Book,
+  BookOpen,
+  Image as FileImage,
+  HardDrive,
+  Rocket,
+  Power,
+  Star,
+  Heart,
+  Rss
+} from 'lucide-react'
+
 /**
- * Available icon names defined in absicons.css
- * These are all the icon classes that can be used with the absicons font
+ * Mapping from legacy absicons names to Lucide components.
+ * This maintains backwards compatibility with database strings while migrating UI.
  */
-export const AVAILABLE_ICONS = [
-  'audiobookphile',
-  'books-1',
-  'microphone-1',
-  'radio',
-  'podcast',
-  'database',
-  'microphone-2',
-  'headphones',
-  'music',
-  'video',
-  'microphone-3',
-  'book-1',
-  'books-2',
-  'file-picture',
-  'database-1',
-  'rocket',
-  'power',
-  'star',
-  'heart',
-  'rss'
-] as const
+export const ABS_TO_LUCIDE_MAP = {
+  audiobookphile: AudioLines,
+  'books-1': Library,
+  'microphone-1': Mic,
+  radio: Radio,
+  podcast: Podcast,
+  database: Database,
+  'microphone-2': Mic, // Mic2 replaced with Mic as standard
+  headphones: Headphones,
+  music: Music,
+  video: Video,
+  'microphone-3': MicVocal,
+  'book-1': Book,
+  'books-2': BookOpen,
+  'file-picture': FileImage,
+  'database-1': HardDrive,
+  rocket: Rocket,
+  power: Power,
+  star: Star,
+  heart: Heart,
+  rss: Rss
+} as const
 
-export type AvailableIcon = (typeof AVAILABLE_ICONS)[number]
+export const AVAILABLE_ICONS = Object.keys(ABS_TO_LUCIDE_MAP) as (keyof typeof ABS_TO_LUCIDE_MAP)[]
+export type AvailableIcon = keyof typeof ABS_TO_LUCIDE_MAP
 
 /**
- * Validates if an icon name is available in the absicons font
+ * Validates if an icon name is available in the legacy mapping
  */
 export function isValidIcon(icon: string): icon is AvailableIcon {
-  return AVAILABLE_ICONS.includes(icon as AvailableIcon)
+  return icon in ABS_TO_LUCIDE_MAP
 }

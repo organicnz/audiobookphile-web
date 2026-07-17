@@ -15,6 +15,7 @@ import type { MediaProgress, Series } from '@/types/api'
 import { BookshelfView } from '@/types/api'
 import { useRouter } from 'next/navigation'
 import { memo, useId, useMemo, useState } from 'react'
+import { CheckCircle2, Circle } from 'lucide-react'
 
 export interface SeriesCardProps {
   /** The series to display */
@@ -222,7 +223,7 @@ function SeriesCard(props: SeriesCardProps) {
               <MediaOverlayIconBtn
                 cyId="selectButton"
                 position="top-start"
-                icon={selected ? 'radio_button_checked' : 'radio_button_unchecked'}
+                icon={selected ? CheckCircle2 : Circle}
                 onClick={handleSelectClick}
                 ariaLabel={selected ? t('ButtonDeselect') : t('ButtonSelect')}
                 selected={selected}
