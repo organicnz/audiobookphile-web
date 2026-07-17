@@ -152,6 +152,7 @@ export function UserProvider({ children, initialUser }: { children: ReactNode; i
     seriesHideFromContinueListening: [],
     librariesAccessible: [],
     itemTagsSelected: [],
+    itemTagsAccessible: [],
     hasOpenIDLink: false,
     token: '',
     createdAt: 0
