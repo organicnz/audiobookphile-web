@@ -50,7 +50,6 @@ export async function updateLibrary(libraryId: string, updatedLibrary: Library):
 /**
  * Delete a library
  * @param libraryId - Library ID
- * @param newLibrary - New library object
  * Returns: Library object
  */
 export async function deleteLibrary(libraryId: string): Promise<Library> {
@@ -61,8 +60,8 @@ export async function deleteLibrary(libraryId: string): Promise<Library> {
 
 /**
  * Scan a library
- * @param libraryItemId - Library item ID
- * @param force - force a scan
+ * @param libraryId - Library ID
+ * @param force - Force a full rescan even if nothing changed
  * Returns: void (success) or throws error
  */
 export async function scanLibrary(libraryId: string, force: boolean = false): Promise<void> {
@@ -73,8 +72,8 @@ export async function scanLibrary(libraryId: string, force: boolean = false): Pr
 
 /**
  * Save the order of libraries
- * @param libraryItemId - Library item ID
- * Returns: void (success) or throws error TODO
+ * @param reorderObjects - Array of `{ id, newOrder }` pairs
+ * Returns: Updated libraries list
  */
 export async function saveLibraryOrder(reorderObjects: { id: string; newOrder: number }[]): Promise<SaveLibraryOrderApiResponse> {
   return apiRequest<SaveLibraryOrderApiResponse>('/api/libraries/order', {
