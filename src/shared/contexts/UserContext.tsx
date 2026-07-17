@@ -50,6 +50,8 @@ export interface AppUser {
   /** @deprecated */
   itemTagsSelected: string[]
   /** @deprecated */
+  itemTagsAccessible: string[]
+  /** @deprecated */
   hasOpenIDLink: boolean
   /** @deprecated */
   token: string

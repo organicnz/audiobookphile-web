@@ -50,7 +50,7 @@ const getInitialFormData = (user: User | null): UserFormData => {
       isActive: user.isActive,
       permissions: { ...user.permissions },
       librariesAccessible: user.librariesAccessible,
-      itemTagsSelected: user.itemTagsSelected
+      itemTagsSelected: user.itemTagsAccessible || user.itemTagsSelected || []
     }
   }
 
