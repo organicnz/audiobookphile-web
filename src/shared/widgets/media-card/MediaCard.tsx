@@ -287,93 +287,93 @@ function MediaCard(props: MediaCardProps) {
 
   return (
     <>
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8, scale: 1.03 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ 
-        type: 'spring',
-        stiffness: 400,
-        damping: 25,
-        delay: entityIndex ? (entityIndex % 20) * 0.02 : 0 
-      }}
-      style={{ willChange: 'transform, opacity' }}
-      className="h-full group"
-    >
-      <MediaCardFrame
-        width={coverWidth}
-        height={coverHeight}
-        onClick={!processing ? handleCardClick : undefined}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-        cardId={cardId}
-        cy-id="MediaCard"
-        footer={
-          (isAlternativeBookshelfView || isAuthorBookshelfView) && (
-            <MediaCardDetailView
-              displayTitle={displayTitle}
-              displaySubtitle={displaySubtitle}
-              displayLineTwo={displayLineTwo}
-              isExplicit={isExplicit}
-              showSubtitles={showSubtitles}
-              orderBy={orderBy}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -8, scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{
+          type: 'spring',
+          stiffness: 400,
+          damping: 25,
+          delay: entityIndex ? (entityIndex % 20) * 0.02 : 0
+        }}
+        style={{ willChange: 'transform, opacity' }}
+        className="group h-full"
+      >
+        <MediaCardFrame
+          width={coverWidth}
+          height={coverHeight}
+          onClick={!processing ? handleCardClick : undefined}
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          cardId={cardId}
+          cy-id="MediaCard"
+          footer={
+            (isAlternativeBookshelfView || isAuthorBookshelfView) && (
+              <MediaCardDetailView
+                displayTitle={displayTitle}
+                displaySubtitle={displaySubtitle}
+                displayLineTwo={displayLineTwo}
+                isExplicit={isExplicit}
+                showSubtitles={showSubtitles}
+                orderBy={orderBy}
+                libraryItem={libraryItem}
+                media={media}
+                dateFormat={dateFormat}
+                timeFormat={timeFormat}
+                lastUpdated={lastUpdated}
+                startedAt={startedAt}
+                finishedAt={finishedAt}
+              />
+            )
+          }
+          cover={
+            <MediaCardCover
               libraryItem={libraryItem}
-              media={media}
-              dateFormat={dateFormat}
-              timeFormat={timeFormat}
-              lastUpdated={lastUpdated}
-              startedAt={startedAt}
-              finishedAt={finishedAt}
+              coverAspect={coverAspect}
+              placeholderUrl={placeholderUrl}
+              hasCover={hasCover}
+              title={title}
+              titleCleaned={titleCleaned}
+              authorCleaned={authorCleaned}
+              isPodcast={isPodcast}
+              userProgressPercent={userProgressPercent}
+              itemIsFinished={itemIsFinished}
+              isHovering={isHovering}
             />
-          )
-        }
-        cover={
-          <MediaCardCover
-            libraryItem={libraryItem}
-            coverAspect={coverAspect}
-            placeholderUrl={placeholderUrl}
-            hasCover={hasCover}
-            title={title}
-            titleCleaned={titleCleaned}
-            authorCleaned={authorCleaned}
-            isPodcast={isPodcast}
-            userProgressPercent={userProgressPercent}
-            itemIsFinished={itemIsFinished}
-            isHovering={isHovering}
-          />
-        }
-        overlay={
-          <MediaCardOverlay
-            isHovering={isHovering}
-            isSelectionMode={isSelectionMode}
-            selected={selected}
-            processing={processing}
-            isPending={isPending}
-            isMoreMenuOpen={isMoreMenuOpen}
-            showPlayButton={showPlayButton}
-            showReadButton={showReadButton}
-            isItemPlaying={isItemPlaying}
-            playIconFontSize={playIconFontSize}
-            moreMenuItems={moreMenuItems}
-            rssFeed={rssFeed}
-            mediaItemShare={mediaItemShare}
-            showError={showError}
-            errorText={errorText}
-            showSelectRadioButton={!isAuthorBookshelfView}
-            renderOverlayBadges={renderOverlayBadges}
-            renderBadges={renderBadges}
-            renderSeriesNameOverlay={renderSeriesNameOverlay}
-            onPlay={handlePlay}
-            onRead={handleReadEBook}
-            onEdit={handleOpenEdit}
-            onMoreAction={handleMoreAction}
-            onMoreMenuOpenChange={handleMoreMenuOpenChange}
-            onSelect={onSelect}
-          />
-        }
-      />
-    </motion.div>
+          }
+          overlay={
+            <MediaCardOverlay
+              isHovering={isHovering}
+              isSelectionMode={isSelectionMode}
+              selected={selected}
+              processing={processing}
+              isPending={isPending}
+              isMoreMenuOpen={isMoreMenuOpen}
+              showPlayButton={showPlayButton}
+              showReadButton={showReadButton}
+              isItemPlaying={isItemPlaying}
+              playIconFontSize={playIconFontSize}
+              moreMenuItems={moreMenuItems}
+              rssFeed={rssFeed}
+              mediaItemShare={mediaItemShare}
+              showError={showError}
+              errorText={errorText}
+              showSelectRadioButton={!isAuthorBookshelfView}
+              renderOverlayBadges={renderOverlayBadges}
+              renderBadges={renderBadges}
+              renderSeriesNameOverlay={renderSeriesNameOverlay}
+              onPlay={handlePlay}
+              onRead={handleReadEBook}
+              onEdit={handleOpenEdit}
+              onMoreAction={handleMoreAction}
+              onMoreMenuOpenChange={handleMoreMenuOpenChange}
+              onSelect={onSelect}
+            />
+          }
+        />
+      </motion.div>
 
       {confirmState && (
         <ConfirmDialog

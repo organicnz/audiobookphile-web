@@ -1,6 +1,6 @@
-import { AudibleRegion } from "@/shared/lib/providerUtils"
+import { AudibleRegion } from '@/shared/lib/providerUtils'
 import { Author, Series } from '.'
-import { StartSessionDeviceInfo } from "./models"
+import { StartSessionDeviceInfo } from './models'
 
 /** Payload for the `author_removed` socket event (full author JSON or `{ id, libraryId }`). */
 export interface AuthorRemovedPayload {

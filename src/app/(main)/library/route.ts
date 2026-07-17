@@ -43,13 +43,7 @@ export const GET = async () => {
     return redirect('/account')
   } catch (error) {
     // Re-throw redirect errors
-    if (
-      error &&
-      typeof error === 'object' &&
-      'digest' in error &&
-      typeof error.digest === 'string' &&
-      error.digest.includes('NEXT_REDIRECT')
-    ) {
+    if (error && typeof error === 'object' && 'digest' in error && typeof error.digest === 'string' && error.digest.includes('NEXT_REDIRECT')) {
       throw error
     }
     return redirect('/login?error=unauthorized')

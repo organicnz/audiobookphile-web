@@ -137,23 +137,32 @@ body {
 }
 
 /* Smooth dialog starting style animations */
-dialog[open], .modal-open {
+dialog[open],
+.modal-open {
   opacity: 1;
   transform: scale(1);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out, display 0.3s ease-out allow-discrete;
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out,
+    display 0.3s ease-out allow-discrete;
 }
 
 @starting-style {
-  dialog[open], .modal-open {
+  dialog[open],
+  .modal-open {
     opacity: 0;
     transform: scale(0.95);
   }
 }
 
-dialog, .modal-closed {
+dialog,
+.modal-closed {
   opacity: 0;
   transform: scale(0.95);
-  transition: opacity 0.2s ease-in, transform 0.2s ease-in, display 0.2s ease-in allow-discrete;
+  transition:
+    opacity 0.2s ease-in,
+    transform 0.2s ease-in,
+    display 0.2s ease-in allow-discrete;
 }
 
 /* View Transitions config */

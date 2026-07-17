@@ -42,14 +42,10 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
           type="search"
           defaultValue={initialQuery}
           placeholder={t('ButtonSearch')}
-          className="bg-bg-light border-border flex-1 rounded-md border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          className="bg-bg-light border-border focus:ring-primary flex-1 rounded-md border px-4 py-2 text-sm focus:ring-2 focus:outline-none"
           autoFocus
         />
-        <button
-          type="submit"
-          disabled={isPending}
-          className="bg-primary rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-        >
+        <button type="submit" disabled={isPending} className="bg-primary rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50">
           {isPending ? '...' : t('ButtonSearch')}
         </button>
       </form>
@@ -65,25 +61,21 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {initialResults.map((item: any) => {
-          const coverSrc = item.cover_path
-            ? `/api/items/${item.id}/cover?ts=${item.updated_at}`
-            : placeholder
+          const coverSrc = item.cover_path ? `/api/items/${item.id}/cover?ts=${item.updated_at}` : placeholder
           const title = item.title || 'Unknown'
           const author = item.author_names_first_last || ''
 
           return (
-            <Link
-              key={item.id}
-              href={`/library/${libraryId}/item/${item.id}`}
-              className="group flex flex-col gap-1"
-            >
+            <Link key={item.id} href={`/library/${libraryId}/item/${item.id}`} className="group flex flex-col gap-1">
               <div className="relative aspect-[2/3] overflow-hidden rounded-md">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={coverSrc}
                   alt={title}
                   className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-                  onError={(e) => { (e.target as HTMLImageElement).src = placeholder }}
+                  onError={(e) => {
+                    ;(e.target as HTMLImageElement).src = placeholder
+                  }}
                 />
               </div>
               <p className="text-foreground line-clamp-2 text-xs font-medium">{title}</p>

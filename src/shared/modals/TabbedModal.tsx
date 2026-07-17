@@ -56,7 +56,7 @@ export default function TabbedModal({
       style={style}
     >
       {/* Tabs bar */}
-      <div className="flex gap-1.5 px-2 mb-[-1px]" role="tablist">
+      <div className="mb-[-1px] flex gap-1.5 px-2" role="tablist">
         {tabs.map((tab) => {
           const isActive = tab.id === selectedTab
           return (
@@ -66,7 +66,7 @@ export default function TabbedModal({
               aria-selected={isActive}
               aria-controls={`tabpanel-${tab.id}`}
               className={mergeClasses(
-                'relative flex-1 max-w-[140px] cursor-pointer px-4 py-3 text-sm font-semibold transition-colors select-none rounded-t-xl overflow-hidden',
+                'relative max-w-[140px] flex-1 cursor-pointer overflow-hidden rounded-t-xl px-4 py-3 text-sm font-semibold transition-colors select-none',
                 isActive ? 'text-foreground' : 'text-foreground/40 hover:text-foreground/60'
               )}
               onClick={() => onTabChange(tab.id)}
@@ -74,7 +74,7 @@ export default function TabbedModal({
               {isActive && (
                 <motion.div
                   layoutId="active-tab"
-                  className="absolute inset-0 bg-primary/10 border-t border-x border-primary/20"
+                  className="bg-primary/10 border-primary/20 absolute inset-0 border-x border-t"
                   transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                 />
               )}
@@ -85,7 +85,7 @@ export default function TabbedModal({
       </div>
 
       {/* Modal content */}
-      <div className="bg-primary/95 border-white/10 backdrop-blur-xl shadow-2xl flex flex-col rounded-tr-2xl rounded-b-2xl border overflow-hidden">
+      <div className="bg-primary/95 flex flex-col overflow-hidden rounded-tr-2xl rounded-b-2xl border border-white/10 shadow-2xl backdrop-blur-xl">
         {/* Tab content */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -109,4 +109,3 @@ export default function TabbedModal({
     </Modal>
   )
 }
-

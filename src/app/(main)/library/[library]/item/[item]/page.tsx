@@ -1,6 +1,6 @@
-import { getLibraryItem } from '@/shared/lib/api';
-import { BookLibraryItem, PodcastLibraryItem } from '@/types/api';
-import LibraryItemClient from './LibraryItemClient';
+import { getLibraryItem } from '@/shared/lib/api'
+import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
+import LibraryItemClient from './LibraryItemClient'
 
 export default async function ItemPage({ params }: { params: Promise<{ item: string; library: string }> }) {
   const { item: itemId } = await params

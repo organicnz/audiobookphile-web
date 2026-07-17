@@ -100,19 +100,13 @@ export interface InitialUserData {
   profile: Profile
 }
 
-export function UserProvider({
-  children,
-  initialUser,
-}: {
-  children: ReactNode
-  initialUser: InitialUserData
-}) {
+export function UserProvider({ children, initialUser }: { children: ReactNode; initialUser: InitialUserData }) {
   const [userData, setUserData] = useState<InitialUserData>(initialUser)
   const supabase = createClient()
 
   useEffect(() => {
     const {
-      data: { subscription },
+      data: { subscription }
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         // MainLayout will redirect
@@ -147,7 +141,7 @@ export function UserProvider({
       accessAllLibraries: true,
       accessAllTags: true,
       accessExplicitContent: true,
-      selectedTagsNotAccessible: false,
+      selectedTagsNotAccessible: false
     },
     mediaProgress: [],
     bookmarks: [],
@@ -158,7 +152,7 @@ export function UserProvider({
     itemTagsSelected: [],
     hasOpenIDLink: false,
     token: '',
-    createdAt: 0,
+    createdAt: 0
   }
 
   const contextValue: UserContextType = {
@@ -176,12 +170,12 @@ export function UserProvider({
       version: 'supabase',
       buildNumber: '1',
       homeBookshelfView: 1,
-      bookshelfView: 1,
+      bookshelfView: 1
     },
     userDefaultLibraryId: profile.default_library_id ?? undefined,
     ereaderDevices: [],
     Source: 'supabase',
-    getMediaItemProgress: () => undefined,
+    getMediaItemProgress: () => undefined
   }
 
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>

@@ -31,11 +31,7 @@ export async function updateCoverFromUrlAction(libraryItemId: string, coverUrl: 
 /**
  * Server Action: Auto-fetch cover from metadata providers (Open Library, Google Books)
  */
-export async function autoFetchCoverAction(
-  libraryItemId: string,
-  title: string,
-  author?: string
-): Promise<string | null> {
+export async function autoFetchCoverAction(libraryItemId: string, title: string, author?: string): Promise<string | null> {
   try {
     const fetched = await fetchBookCover(title, author)
     if (!fetched) return null

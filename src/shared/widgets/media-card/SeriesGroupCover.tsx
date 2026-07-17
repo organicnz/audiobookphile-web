@@ -10,7 +10,7 @@ interface SeriesGroupCoverProps {
   /** Series name (used as fallback when no covers available) */
   name: string
   /** Books in the series */
-  books: LibraryItem[]
+  books: (LibraryItem | import('@/types/api/models').SeriesBook)[]
   /** Width of the cover area in pixels */
   width: number
   /** Height of the cover area in pixels */

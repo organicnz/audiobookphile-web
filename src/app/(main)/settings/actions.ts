@@ -10,18 +10,14 @@ export type UpdateSortingPrefixesApiResponse = {
 }
 
 // Server Action — ABS-specific, not available in Supabase-backed version
-export async function updateServerSettings(
-  _settingsUpdatePayload: Partial<ServerSettings>,
-): Promise<UpdateServerSettingsApiResponse> {
+export async function updateServerSettings(_settingsUpdatePayload: Partial<ServerSettings>): Promise<UpdateServerSettingsApiResponse> {
   'use server'
   console.warn('[settings/actions] updateServerSettings is not available in the Supabase-backed version')
   return { serverSettings: {} as ServerSettings }
 }
 
 // Server Action — ABS-specific, not available in Supabase-backed version
-export async function updateSortingPrefixes(
-  _sortingPrefixes: string[],
-): Promise<UpdateSortingPrefixesApiResponse> {
+export async function updateSortingPrefixes(_sortingPrefixes: string[]): Promise<UpdateSortingPrefixesApiResponse> {
   'use server'
   console.warn('[settings/actions] updateSortingPrefixes is not available in the Supabase-backed version')
   return { rowsUpdated: 0, serverSettings: {} as ServerSettings }

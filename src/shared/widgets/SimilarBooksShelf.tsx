@@ -45,10 +45,7 @@ export default function SimilarBooksShelf({ libraryItem }: SimilarBooksShelfProp
 
         const ids = data.map((d: any) => d.id)
 
-        const { data: items, error: itemsErr } = await supabase
-          .from('library_items')
-          .select('*')
-          .in('id', ids)
+        const { data: items, error: itemsErr } = await supabase.from('library_items').select('*').in('id', ids)
 
         if (itemsErr) {
           console.error('Failed to fetch similar library items details:', itemsErr)
@@ -82,7 +79,7 @@ export default function SimilarBooksShelf({ libraryItem }: SimilarBooksShelfProp
   if (isLoading) {
     return (
       <div className="mt-12">
-        <h2 className="text-xl font-semibold mb-4 opacity-50">Loading similar items...</h2>
+        <h2 className="mb-4 text-xl font-semibold opacity-50">Loading similar items...</h2>
       </div>
     )
   }
@@ -92,7 +89,7 @@ export default function SimilarBooksShelf({ libraryItem }: SimilarBooksShelfProp
   }
 
   return (
-    <div className="mt-12 relative z-10">
+    <div className="relative z-10 mt-12">
       <BookShelfRow title="Similar to this">
         {similarItems.map((item, index) => {
           const props = {
@@ -107,9 +104,9 @@ export default function SimilarBooksShelf({ libraryItem }: SimilarBooksShelfProp
           }
 
           if (item.mediaType === 'book') {
-            return <BookMediaCard key={item.id} {...props as any} />
+            return <BookMediaCard key={item.id} {...(props as any)} />
           }
-          return <PodcastMediaCard key={item.id} {...props as any} />
+          return <PodcastMediaCard key={item.id} {...(props as any)} />
         })}
       </BookShelfRow>
     </div>

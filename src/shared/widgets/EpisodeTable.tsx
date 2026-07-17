@@ -1,6 +1,11 @@
 'use client'
 
-import { batchUpdateMediaFinishedAction, deleteLibraryItemMediaEpisodeAction, fetchPodcastFeedAction, toggleFinishedAction } from '@/features/player/actions/mediaActions'
+import {
+  batchUpdateMediaFinishedAction,
+  deleteLibraryItemMediaEpisodeAction,
+  fetchPodcastFeedAction,
+  toggleFinishedAction
+} from '@/features/player/actions/mediaActions'
 import AudioFileDataModal from '@/shared/modals/AudioFileDataModal'
 import EpisodeFeedModal from '@/shared/modals/EpisodeFeedModal'
 import ViewEpisodeModal from '@/shared/modals/ViewEpisodeModal'

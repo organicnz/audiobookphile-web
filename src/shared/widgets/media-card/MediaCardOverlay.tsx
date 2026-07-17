@@ -7,17 +7,7 @@ import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { MediaItemShare, RssFeed } from '@/types/api'
-import { 
-  Pause, 
-  Play, 
-  BookOpen, 
-  CheckCircle2, 
-  Circle, 
-  Edit2, 
-  AlertCircle, 
-  Rss, 
-  Globe 
-} from 'lucide-react'
+import { Pause, Play, BookOpen, CheckCircle2, Circle, Edit2, AlertCircle, Rss, Globe } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCallback, useMemo, type ReactNode } from 'react'
 
@@ -113,10 +103,11 @@ export default function MediaCardOverlay({
   const isProcessingOrPending = useMemo(() => processing || isPending, [processing, isPending])
 
   const overlayWrapperClasslist = useMemo(
-    () => mergeClasses(
-      isSelectionMode ? 'bg-black/60' : 'bg-gradient-to-t from-black/80 via-black/40 to-black/60 backdrop-blur-[2px]', 
-      selected && 'ring-2 ring-primary ring-inset'
-    ),
+    () =>
+      mergeClasses(
+        isSelectionMode ? 'bg-black/60' : 'bg-gradient-to-t from-black/80 via-black/40 to-black/60 backdrop-blur-[2px]',
+        selected && 'ring-2 ring-primary ring-inset'
+      ),
     [isSelectionMode, selected]
   )
 
@@ -161,14 +152,14 @@ export default function MediaCardOverlay({
       {/* Overlay */}
       <AnimatePresence>
         {showOverlay && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
             style={{ willChange: 'opacity' }}
-            cy-id="overlay" 
-            className={mergeClasses('absolute start-0 top-0 z-10 h-full w-full rounded-lg md:block overflow-hidden', overlayWrapperClasslist)}
+            cy-id="overlay"
+            className={mergeClasses('absolute start-0 top-0 z-10 h-full w-full overflow-hidden rounded-lg md:block', overlayWrapperClasslist)}
           >
             {/* Play/Read center interaction */}
             {(showPlayButton || showReadButton) && (
@@ -184,7 +175,7 @@ export default function MediaCardOverlay({
                     <IconBtn
                       borderless
                       outlined={false}
-                      className="text-white drop-shadow-2xl h-auto w-auto"
+                      className="h-auto w-auto text-white drop-shadow-2xl"
                       onClick={handlePlayClick}
                       ariaLabel={isItemPlaying ? t('ButtonPlaying') : t('ButtonPlay')}
                       icon={isItemPlaying ? Pause : Play}
@@ -195,7 +186,7 @@ export default function MediaCardOverlay({
                   ) : showReadButton ? (
                     <IconBtn
                       borderless
-                      className="text-white drop-shadow-2xl h-auto w-auto"
+                      className="h-auto w-auto text-white drop-shadow-2xl"
                       onClick={handleReadClick}
                       ariaLabel={t('ButtonRead')}
                       icon={BookOpen}
@@ -217,19 +208,13 @@ export default function MediaCardOverlay({
                 onClick={handleSelectClick}
                 ariaLabel={selected ? t('ButtonDeselect') : t('ButtonSelect')}
                 selected={selected}
-                className={selected ? '!bg-primary !text-black !border-primary' : ''}
+                className={selected ? '!bg-primary !border-primary !text-black' : ''}
               />
             )}
 
             {/* Edit button */}
             {showEditButton && userCanUpdate && !isSelectionMode && (
-              <MediaOverlayIconBtn 
-                cyId="editButton" 
-                position="top-end" 
-                icon={Edit2} 
-                onClick={handleEditClick} 
-                ariaLabel={t('ButtonEdit')} 
-              />
+              <MediaOverlayIconBtn cyId="editButton" position="top-end" icon={Edit2} onClick={handleEditClick} ariaLabel={t('ButtonEdit')} />
             )}
 
             {/* More menu icon */}
@@ -254,11 +239,11 @@ export default function MediaCardOverlay({
       {/* Processing overlay */}
       <AnimatePresence>
         {processing && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            cy-id="loadingSpinner" 
+            cy-id="loadingSpinner"
             className="absolute start-0 top-0 z-20 flex h-full w-full items-center justify-center rounded-lg bg-black/60 backdrop-blur-md"
           >
             <LoadingSpinner size="la-lg" />
@@ -270,7 +255,7 @@ export default function MediaCardOverlay({
       {showError && (
         <Tooltip text={errorText} position="right" usePortal className="absolute start-0 bottom-4 z-10" tooltipClassName="whitespace-nowrap">
           <div
-            className={mergeClasses('bg-error/90 backdrop-blur-md flex items-center justify-end rounded-r-full shadow-lg', 'border-y border-r border-white/20')}
+            className={mergeClasses('bg-error/90 flex items-center justify-end rounded-r-full shadow-lg backdrop-blur-md', 'border-y border-r border-white/20')}
             style={{ height: `${ICON_SIZE.ERROR_BADGE_HEIGHT}em`, width: `${ICON_SIZE.ERROR_BADGE_WIDTH}em` }}
           >
             <AlertCircle size={14} className="pr-1 text-white" />
@@ -282,7 +267,10 @@ export default function MediaCardOverlay({
       {rssFeed && !isSelectionMode && !isHovering && (
         <div
           cy-id="rssFeed"
-          className={mergeClasses('absolute start-[0.5em] top-[0.5em] z-10', 'flex items-center justify-center rounded-lg bg-black/60 backdrop-blur-md border border-white/10 shadow-sm')}
+          className={mergeClasses(
+            'absolute start-[0.5em] top-[0.5em] z-10',
+            'flex items-center justify-center rounded-lg border border-white/10 bg-black/60 shadow-sm backdrop-blur-md'
+          )}
           style={{ width: `${ICON_SIZE.SMALL}em`, height: `${ICON_SIZE.SMALL}em` }}
         >
           <Rss size={14} className="text-primary fill-current" aria-hidden="true" />
@@ -291,7 +279,10 @@ export default function MediaCardOverlay({
       {mediaItemShare && !isSelectionMode && !isHovering && (
         <div
           cy-id="mediaItemShare"
-          className={mergeClasses('absolute start-[0.5em] z-10', 'flex items-center justify-center rounded-lg bg-black/60 backdrop-blur-md border border-white/10 shadow-sm')}
+          className={mergeClasses(
+            'absolute start-[0.5em] z-10',
+            'flex items-center justify-center rounded-lg border border-white/10 bg-black/60 shadow-sm backdrop-blur-md'
+          )}
           style={{
             width: `${ICON_SIZE.SMALL}em`,
             height: `${ICON_SIZE.SMALL}em`,

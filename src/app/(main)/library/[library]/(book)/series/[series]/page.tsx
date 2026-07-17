@@ -1,5 +1,5 @@
-import { getLibraryItems, getSeries } from '@/shared/lib/api';
-import SeriesClient from './SeriesClient';
+import { getLibraryItems, getSeries } from '@/shared/lib/api'
+import SeriesClient from './SeriesClient'
 
 export default async function SeriesPage({ params }: { params: Promise<{ series: string; library: string }> }) {
   const { series: seriesId, library: libraryId } = await params

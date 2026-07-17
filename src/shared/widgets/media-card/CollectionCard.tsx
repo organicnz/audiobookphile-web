@@ -160,10 +160,7 @@ function CollectionCard(props: CollectionCardProps) {
                 {!isSelectionMode && moreMenuItems.length > 0 && (
                   <div
                     cy-id="moreButton"
-                    className={mergeClasses(
-                      'absolute end-2 bottom-2 cursor-pointer md:block transition-transform duration-300',
-                      'hover:scale-125'
-                    )}
+                    className={mergeClasses('absolute end-2 bottom-2 cursor-pointer transition-transform duration-300 md:block', 'hover:scale-125')}
                   >
                     <MediaCardMoreMenu items={moreMenuItems} processing={processing} onAction={handleMoreAction} onOpenChange={handleMoreMenuOpenChange} />
                   </div>
@@ -184,12 +181,25 @@ function CollectionCard(props: CollectionCardProps) {
                 cy-id="rssFeed"
                 className={mergeClasses(
                   'absolute start-2 top-2 z-10',
-                  'flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg'
+                  'flex items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg backdrop-blur-md'
                 )}
                 style={{ width: '1.5rem', height: '1.5rem' }}
               >
                 <span className="text-orange-500">
-                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M4 11a9 9 0 0 1 9 9" /><path d="M4 4a16 16 0 0 1 16 16" /><circle cx="5" cy="19" r="1" /></svg>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M4 11a9 9 0 0 1 9 9" />
+                    <path d="M4 4a16 16 0 0 1 16 16" />
+                    <circle cx="5" cy="19" r="1" />
+                  </svg>
                 </span>
               </div>
             )}

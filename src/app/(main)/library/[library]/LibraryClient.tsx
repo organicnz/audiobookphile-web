@@ -240,7 +240,9 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
                 const libraryItems = series.books || []
                 const mediaItemProgressMap = new Map<string, MediaProgress>()
                 libraryItems.forEach((libraryItem) => {
-                  const mediaProgress = libraryItem.userMediaProgress ?? (libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined)
+                  const mediaProgress =
+                    ('userMediaProgress' in libraryItem ? libraryItem.userMediaProgress : undefined) ??
+                    (libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined)
                   if (mediaProgress) {
                     const key = mediaProgress.mediaItemId ?? libraryItem.media?.id
                     if (key) mediaItemProgressMap.set(key, mediaProgress)

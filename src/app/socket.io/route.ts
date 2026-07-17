@@ -8,8 +8,8 @@ export async function GET(request: Request) {
   // Vercel serverless does not support actual WebSockets
   if (transport === 'polling') {
     const handshake = {
-      sid: "dummy-sid-" + Date.now(),
-      upgrades: ["websocket"],
+      sid: 'dummy-sid-' + Date.now(),
+      upgrades: ['websocket'],
       pingInterval: 25000,
       pingTimeout: 5000,
       maxPayload: 1000000
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       status: 200,
       headers: {
         'Content-Type': 'text/plain',
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': '*'
       }
     })
   }
@@ -37,7 +37,7 @@ export async function POST() {
     status: 200,
     headers: {
       'Content-Type': 'text/plain',
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': '*'
     }
   })
 }

@@ -83,7 +83,7 @@ export default function TextInput({
     actualType === 'search' &&
       '[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden',
     '[&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer',
-    (showCopy || clearable || type === 'password') ? 'pe-10' : 'pe-2',
+    showCopy || clearable || type === 'password' ? 'pe-10' : 'pe-2',
     customInputClass
   )
 
@@ -137,18 +137,18 @@ export default function TextInput({
   const shouldShowPasswordToggle = type === 'password'
 
   return (
-    <div className={mergeClasses('w-full group', className)} cy-id="text-input">
+    <div className={mergeClasses('group w-full', className)} cy-id="text-input">
       {label && (
         <Label htmlFor={inputId} disabled={disabled}>
           {label}
         </Label>
       )}
 
-      <InputWrapper 
-        disabled={disabled} 
-        readOnly={readOnly} 
-        error={error || isInvalidDate} 
-        inputRef={readInputRef} 
+      <InputWrapper
+        disabled={disabled}
+        readOnly={readOnly}
+        error={error || isInvalidDate}
+        inputRef={readInputRef}
         className={mergeClasses('relative', borderless ? 'border-none bg-transparent shadow-none' : '')}
       >
         <input
@@ -186,7 +186,7 @@ export default function TextInput({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 type="button"
-                className="p-1.5 text-foreground/40 hover:text-foreground hover:bg-white/5 rounded-lg transition-colors outline-none focus-visible:ring-1 focus-visible:ring-primary"
+                className="text-foreground/40 hover:text-foreground focus-visible:ring-primary rounded-lg p-1.5 transition-colors outline-none hover:bg-white/5 focus-visible:ring-1"
                 onClick={handleClear}
                 aria-label={t('ButtonClearInput')}
                 cy-id="text-input-clear"
@@ -202,17 +202,13 @@ export default function TextInput({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 type="button"
-                className="p-1.5 text-foreground/40 hover:text-foreground hover:bg-white/5 rounded-lg transition-colors outline-none focus-visible:ring-1 focus-visible:ring-primary"
+                className="text-foreground/40 hover:text-foreground focus-visible:ring-primary rounded-lg p-1.5 transition-colors outline-none hover:bg-white/5 focus-visible:ring-1"
                 onClick={togglePasswordVisibility}
                 aria-label={showPassword ? t('ButtonHidePassword') : t('ButtonShowPassword')}
                 aria-controls={inputId}
                 cy-id="text-input-password-toggle"
               >
-                {showPassword ? (
-                  <EyeOff size={14} strokeWidth={2.5} />
-                ) : (
-                  <Eye size={14} strokeWidth={2.5} />
-                )}
+                {showPassword ? <EyeOff size={14} strokeWidth={2.5} /> : <Eye size={14} strokeWidth={2.5} />}
               </motion.button>
             )}
 
@@ -224,18 +220,14 @@ export default function TextInput({
                 whileTap={{ scale: 0.9 }}
                 type="button"
                 className={mergeClasses(
-                  'p-1.5 rounded-lg transition-all outline-none focus-visible:ring-1 focus-visible:ring-primary',
+                  'focus-visible:ring-primary rounded-lg p-1.5 transition-all outline-none focus-visible:ring-1',
                   hasCopied ? 'text-success bg-success/10' : 'text-foreground/40 hover:text-foreground hover:bg-white/5'
                 )}
                 onClick={handleCopyToClipboard}
                 aria-label={hasCopied ? t('ButtonCopiedToClipboard') : t('ButtonCopyToClipboard')}
                 cy-id="text-input-copy"
               >
-                {hasCopied ? (
-                  <Check size={14} strokeWidth={3} />
-                ) : (
-                  <Copy size={14} strokeWidth={2.5} />
-                )}
+                {hasCopied ? <Check size={14} strokeWidth={3} /> : <Copy size={14} strokeWidth={2.5} />}
               </motion.button>
             )}
           </AnimatePresence>
@@ -244,5 +236,3 @@ export default function TextInput({
     </div>
   )
 }
-
-

@@ -87,7 +87,8 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
     libraryItem,
     media: libraryItem.media,
     title: libraryItem.media?.metadata?.title ?? '',
-    author: libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : null,
+    author:
+      libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : null,
     episodeForQueue: null,
     mediaProgress,
     itemIsFinished: isRead,
@@ -126,7 +127,8 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
     }
 
     const title = libraryItem.media?.metadata?.title ?? ''
-    const subtitle = libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : ''
+    const subtitle =
+      libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : ''
     addItemToQueue({
       libraryItemId: libraryItem.id,
       libraryId: libraryItem.libraryId,
@@ -175,22 +177,18 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
             loading={playerHandler.state.playerState === PlayerState.LOADING}
             color={isItemPlaying ? 'bg-primary' : 'bg-success'}
             size="small"
-            className="flex h-10 items-center px-6 rounded-xl shadow-lg shadow-success/20 uppercase font-black tracking-widest text-[11px]"
+            className="shadow-success/20 flex h-10 items-center rounded-xl px-6 text-[11px] font-black tracking-widest uppercase shadow-lg"
           >
-            {isItemPlaying ? (
-              <Pause size={18} className="mr-2 fill-current" />
-            ) : (
-              <Play size={18} className="mr-2 fill-current" />
-            )}
+            {isItemPlaying ? <Pause size={18} className="mr-2 fill-current" /> : <Play size={18} className="mr-2 fill-current" />}
             {isItemPlaying ? t('ButtonPause') : t('ButtonPlay')}
           </Btn>
         )}
 
         {!showPlayButton && (libraryItem.isMissing || libraryItem.isInvalid) && (
-          <Btn 
-            color="bg-error" 
-            size="small" 
-            className="flex h-10 items-center px-6 rounded-xl opacity-80 uppercase font-black tracking-widest text-[11px]" 
+          <Btn
+            color="bg-error"
+            size="small"
+            className="flex h-10 items-center rounded-xl px-6 text-[11px] font-black tracking-widest uppercase opacity-80"
             disabled
           >
             <AlertCircle size={18} className="mr-2" />
@@ -199,18 +197,18 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
         )}
 
         {showReadButton && (
-          <Btn 
-            onClick={handleReadEBook} 
-            color="bg-info" 
-            size="small" 
-            className="flex h-10 items-center px-6 rounded-xl shadow-lg shadow-info/20 uppercase font-black tracking-widest text-[11px]"
+          <Btn
+            onClick={handleReadEBook}
+            color="bg-info"
+            size="small"
+            className="shadow-info/20 flex h-10 items-center rounded-xl px-6 text-[11px] font-black tracking-widest uppercase shadow-lg"
           >
             <BookOpen size={18} className="mr-2" />
             {t('ButtonRead')}
           </Btn>
         )}
 
-        <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10">
+        <div className="flex items-center gap-1.5 rounded-2xl border border-white/10 bg-white/5 px-2 py-1 backdrop-blur-md">
           {showQueueBtn && (
             <Tooltip text={isQueued ? t('ButtonQueueRemoveItem') : t('ButtonQueueAddItem')} position="top">
               <span className="inline-flex">
@@ -218,10 +216,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
                   ariaLabel={isQueued ? t('ButtonQueueRemoveItem') : t('ButtonQueueAddItem')}
                   onClick={handleQueueClick}
                   borderless
-                  className={mergeClasses(
-                    'transition-all duration-300',
-                    isQueued ? 'text-success scale-110' : 'text-foreground/60 hover:text-white'
-                  )}
+                  className={mergeClasses('transition-all duration-300', isQueued ? 'text-success scale-110' : 'text-foreground/60 hover:text-white')}
                   size="small"
                   icon={isQueued ? CheckSquare : ListPlus}
                 />
@@ -232,14 +227,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
           {userCanUpdate && (
             <Tooltip text={t('LabelEdit')} position="top">
               <span className="inline-flex">
-                <IconBtn 
-                  ariaLabel={t('LabelEdit')} 
-                  onClick={onEdit} 
-                  borderless 
-                  className="text-foreground/60 hover:text-white" 
-                  size="small"
-                  icon={Edit}
-                />
+                <IconBtn ariaLabel={t('LabelEdit')} onClick={onEdit} borderless className="text-foreground/60 hover:text-white" size="small" icon={Edit} />
               </span>
             </Tooltip>
           )}

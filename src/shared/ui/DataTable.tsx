@@ -132,15 +132,15 @@ function DataTablePagination({
   const pageIndicator = pageLabel || `Page ${currentPage} of ${totalPages}`
 
   return (
-    <div className="flex items-center justify-end gap-4 px-6 py-4 bg-white/5 border-t border-white/5 backdrop-blur-sm rounded-b-xl">
+    <div className="flex items-center justify-end gap-4 rounded-b-xl border-t border-white/5 bg-white/5 px-6 py-4 backdrop-blur-sm">
       <div className="flex items-center gap-3">
-        <span className="text-foreground/60 text-xs font-bold uppercase tracking-wider">{rowsPerPageLabel}</span>
+        <span className="text-foreground/60 text-xs font-bold tracking-wider uppercase">{rowsPerPageLabel}</span>
         <div className="w-24">
           <Dropdown value={rowsPerPage} items={dropdownItems} onChange={(value) => onRowsPerPageChange(value as number)} size="small" />
         </div>
       </div>
       <span className="text-foreground/80 text-sm font-medium">{pageIndicator}</span>
-      <div className="flex items-center gap-2 ms-2">
+      <div className="ms-2 flex items-center gap-2">
         <IconBtn ariaLabel="Previous page" size="small" disabled={currentPage <= 1} onClick={() => onPageChange(currentPage - 1)}>
           <ChevronLeft size={16} />
         </IconBtn>
@@ -285,7 +285,7 @@ export default function DataTable<T>({
       layout
       key={getRowKeyValue(row, index)}
       className={mergeClasses(
-        'border-white/5 even:bg-white/[0.02] hover:bg-white/[0.05] border-b transition-colors group',
+        'group border-b border-white/5 transition-colors even:bg-white/[0.02] hover:bg-white/[0.05]',
         isRowSelected(row, index) ? 'bg-primary/10 hover:bg-primary/15' : '',
         getRowClassName(row, index)
       )}
@@ -311,7 +311,10 @@ export default function DataTable<T>({
         </td>
       )}
       {visibleColumns.map((column, colIndex) => (
-        <td key={`${id}-cell-${index}-${colIndex}`} className={mergeClasses('px-4 py-3 text-foreground/80 font-medium', getResponsiveHiddenClass(column.hiddenBelow), column.cellClassName)}>
+        <td
+          key={`${id}-cell-${index}-${colIndex}`}
+          className={mergeClasses('text-foreground/80 px-4 py-3 font-medium', getResponsiveHiddenClass(column.hiddenBelow), column.cellClassName)}
+        >
           {renderCellContent(row, column, index)}
         </td>
       ))}
@@ -328,7 +331,7 @@ export default function DataTable<T>({
         <th
           key={`${id}-header-${index}`}
           className={mergeClasses(
-            'text-foreground/40 px-4 py-3 text-start text-xs font-bold uppercase tracking-wider',
+            'text-foreground/40 px-4 py-3 text-start text-xs font-bold tracking-wider uppercase',
             column.headerClassName,
             getResponsiveHiddenClass(column.hiddenBelow)
           )}
@@ -343,7 +346,7 @@ export default function DataTable<T>({
       <th
         key={`${id}-header-${index}`}
         className={mergeClasses(
-          'text-foreground/40 group cursor-pointer px-4 py-3 text-start text-xs font-bold uppercase tracking-wider select-none transition-colors hover:text-foreground/60',
+          'text-foreground/40 group hover:text-foreground/60 cursor-pointer px-4 py-3 text-start text-xs font-bold tracking-wider uppercase transition-colors select-none',
           column.headerClassName,
           getResponsiveHiddenClass(column.hiddenBelow)
         )}
@@ -390,28 +393,26 @@ export default function DataTable<T>({
   }
 
   return (
-    <div ref={containerRef} className={mergeClasses('w-full group/table', className)}>
-      <div className="bg-primary/5 border border-white/10 relative overflow-x-auto rounded-2xl shadow-xl">
+    <div ref={containerRef} className={mergeClasses('group/table w-full', className)}>
+      <div className="bg-primary/5 relative overflow-x-auto rounded-2xl border border-white/10 shadow-xl">
         <table className={mergeClasses('w-full border-collapse text-sm', tableClassName)}>
           {caption && <caption className="sr-only">{caption}</caption>}
-          <thead className="bg-white/5 backdrop-blur-md sticky top-0 z-10">
-            <tr ref={headerRowRef} className="border-white/10 border-b">
+          <thead className="sticky top-0 z-10 bg-white/5 backdrop-blur-md">
+            <tr ref={headerRowRef} className="border-b border-white/10">
               {renderSelectionHeaderCell()}
               {visibleColumns.map((column, index) => renderHeaderCell(column, index))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
-            {data.map((row, index) => (renderRow ? renderRow(row, index) : renderDefaultRow(row, index)))}
-          </tbody>
+          <tbody className="divide-y divide-white/5">{data.map((row, index) => (renderRow ? renderRow(row, index) : renderDefaultRow(row, index)))}</tbody>
         </table>
-        
+
         <AnimatePresence>
           {showBulkHeader && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="bg-primary border-b border-white/20 absolute inset-x-0 top-0 z-20 flex items-center shadow-lg" 
+              className="bg-primary absolute inset-x-0 top-0 z-20 flex items-center border-b border-white/20 shadow-lg"
               style={{ height: `${headerHeight}px` }}
             >
               <div className={mergeClasses('flex h-full w-full items-center', bulkActions?.className)}>
@@ -435,8 +436,8 @@ export default function DataTable<T>({
                   </div>
                 )}
                 <div className="flex min-h-0 min-w-0 flex-1 items-center justify-between gap-4 px-4">
-                  <span className="text-white text-sm font-bold">{bulkSelectedLabel}</span>
-                  <div className="shrink-0 flex items-center gap-2">{bulkActions?.actions}</div>
+                  <span className="text-sm font-bold text-white">{bulkSelectedLabel}</span>
+                  <div className="flex shrink-0 items-center gap-2">{bulkActions?.actions}</div>
                 </div>
               </div>
             </motion.div>
@@ -447,4 +448,3 @@ export default function DataTable<T>({
     </div>
   )
 }
-

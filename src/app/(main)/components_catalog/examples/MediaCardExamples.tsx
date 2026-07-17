@@ -13,7 +13,7 @@ export interface MediaCardExamplesProps {
   selectedBook?: BookLibraryItem | null
   selectedPodcast?: PodcastLibraryItem | null
   /** Selected series from search results */
-  selectedSeries?: { series: Series; books: LibraryItem[] } | null
+  selectedSeries?: { series: Series; books: (LibraryItem | import('@/types/api/models').SeriesBook)[] } | null
   /** Selected collection from search results */
   selectedCollection?: Collection | null
   /** Selected playlist from search results */
@@ -31,7 +31,7 @@ export function MediaCardExamples({
   selectedAuthor
 }: MediaCardExamplesProps) {
   // Get libraryId from real series data or fall back to selectedBook
-  const seriesLibraryId = selectedSeries?.books?.[0]?.libraryId ?? selectedBook?.libraryId ?? ''
+  const seriesLibraryId = (selectedSeries?.books?.[0] as LibraryItem)?.libraryId ?? selectedBook?.libraryId ?? ''
 
   // Series data - only from real selection
   const seriesData: Series | null = selectedSeries ? ({ ...selectedSeries.series, books: selectedSeries.books } as Series) : null

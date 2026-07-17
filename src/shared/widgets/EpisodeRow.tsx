@@ -112,7 +112,7 @@ export default function EpisodeRow({
   return (
     <>
       <div
-        className="group/row border-white/5 hover:bg-white/[0.03] relative h-44 w-full overflow-hidden border-b px-3 py-3 transition-all duration-300"
+        className="group/row relative h-44 w-full overflow-hidden border-b border-white/5 px-3 py-3 transition-all duration-300 hover:bg-white/[0.03]"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
@@ -125,7 +125,7 @@ export default function EpisodeRow({
                 <button
                   id={`btn-episode-${episode.id}`}
                   type="button"
-                  className={`focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-2 line-clamp-2 cursor-pointer rounded-lg text-start text-[13px] sm:text-sm leading-tight font-black uppercase tracking-tight transition-colors ${userIsFinished ? 'text-white/40' : 'text-white/90'}`}
+                  className={`focus-visible:ring-accent line-clamp-2 cursor-pointer rounded-lg text-start text-[13px] leading-tight font-black tracking-tight uppercase transition-colors focus-visible:ring-1 focus-visible:ring-offset-2 sm:text-sm ${userIsFinished ? 'text-white/40' : 'text-white/90'}`}
                   onClick={(e) => {
                     e.stopPropagation()
                     handleRowClick()
@@ -139,7 +139,7 @@ export default function EpisodeRow({
               <div className="relative mt-2 mb-1 flex h-10 min-h-0 items-start overflow-hidden pe-12">
                 <div
                   dir="auto"
-                  className="text-white/40 line-clamp-2 w-full text-xs leading-relaxed break-words whitespace-normal font-medium"
+                  className="line-clamp-2 w-full text-xs leading-relaxed font-medium break-words whitespace-normal text-white/40"
                   dangerouslySetInnerHTML={{ __html: descriptionHtml }}
                   onClick={(e) => {
                     if ((e.target as HTMLElement).tagName.toLowerCase() === 'a') {
@@ -152,23 +152,23 @@ export default function EpisodeRow({
               {/* Metadata row */}
               <div className="flex h-7 w-full flex-shrink-0 items-center">
                 {sortKey === 'audioFile.metadata.filename' ? (
-                  <p className="text-white/30 truncate text-[11px] font-bold uppercase tracking-widest">
+                  <p className="truncate text-[11px] font-bold tracking-widest text-white/30 uppercase">
                     <span className="text-white/20">{t('LabelFilename')}</span>: {episode.audioFile?.metadata?.filename}
                   </p>
                 ) : (
-                  <div className="inline-flex w-full max-w-xl justify-between overflow-hidden pr-12 gap-4">
+                  <div className="inline-flex w-full max-w-xl justify-between gap-4 overflow-hidden pr-12">
                     {episode.season && (
-                      <p className="text-white/30 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+                      <p className="text-[10px] font-black tracking-widest whitespace-nowrap text-white/30 uppercase">
                         {t('LabelSeasonNumber', { 0: episode.season })}
                       </p>
                     )}
                     {episode.episode && (
-                      <p className="text-white/30 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+                      <p className="text-[10px] font-black tracking-widest whitespace-nowrap text-white/30 uppercase">
                         {t('LabelEpisodeNumber', { 0: episode.episode })}
                       </p>
                     )}
                     {publishedDate && (
-                      <p className="text-white/30 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+                      <p className="text-[10px] font-black tracking-widest whitespace-nowrap text-white/30 uppercase">
                         {t('LabelPublishedDate', { 0: publishedDate })}
                       </p>
                     )}
@@ -179,7 +179,7 @@ export default function EpisodeRow({
 
             {/* Selection checkbox area */}
             <div
-              className={`absolute top-4 right-3 z-10 flex flex-shrink-0 items-center justify-center transition-all duration-300 ${isHovering || isSelected || isSelectionMode ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+              className={`absolute top-4 right-3 z-10 flex flex-shrink-0 items-center justify-center transition-all duration-300 ${isHovering || isSelected || isSelectionMode ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}`}
               onClick={(e) => e.stopPropagation()}
             >
               <Checkbox value={isSelected} onChange={(checked) => onSelect(episode, checked)} />
@@ -195,19 +195,13 @@ export default function EpisodeRow({
                   e.stopPropagation()
                   onPlay(episode)
                 }}
-                className={`border border-white/5 hover:border-white/10 hover:bg-white/10 flex-nowrap px-3 h-9 backdrop-blur-md shadow-lg ${userIsFinished ? 'text-white/30' : 'text-white/90'}`}
+                className={`h-9 flex-nowrap border border-white/5 px-3 shadow-lg backdrop-blur-md hover:border-white/10 hover:bg-white/10 ${userIsFinished ? 'text-white/30' : 'text-white/90'}`}
               >
-                {streamIsPlaying ? (
-                  <Pause size={18} className="text-accent fill-current" />
-                ) : (
-                  <Play size={18} className="text-success fill-current" />
-                )}
-                <span className="ps-2 text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-                  {timeRemaining}
-                </span>
+                {streamIsPlaying ? <Pause size={18} className="text-accent fill-current" /> : <Play size={18} className="text-success fill-current" />}
+                <span className="ps-2 text-[10px] font-black tracking-widest whitespace-nowrap uppercase">{timeRemaining}</span>
               </Btn>
 
-              <div className="h-4 w-px bg-white/5 mx-1" />
+              <div className="mx-1 h-4 w-px bg-white/5" />
 
               <Tooltip position="top" text={userIsFinished ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')} className="flex-shrink-0">
                 <div onClick={(e) => e.stopPropagation()}>
@@ -239,14 +233,7 @@ export default function EpisodeRow({
                 />
               )}
 
-              {userCanDelete && (
-                <IconBtn 
-                  borderless 
-                  className="text-white/20 hover:text-error" 
-                  onClick={handleDeleteClick}
-                  icon={Trash2}
-                />
-              )}
+              {userCanDelete && <IconBtn borderless className="hover:text-error text-white/20" onClick={handleDeleteClick} icon={Trash2} />}
 
               {episode.audioFile && contextMenuItems.length > 0 && (
                 <div onClick={(e) => e.stopPropagation()} className="ms-auto flex-shrink-0">
@@ -268,11 +255,11 @@ export default function EpisodeRow({
 
         {/* Progress bar */}
         {!userIsFinished && progressPercent > 0 && (
-          <div className="absolute bottom-0 left-0 h-[2px] bg-white/5 w-full overflow-hidden">
-            <motion.div 
+          <div className="absolute bottom-0 left-0 h-[2px] w-full overflow-hidden bg-white/5">
+            <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progressPercent * 100}%` }}
-              className="bg-accent h-full shadow-[0_0_8px_rgba(245,158,11,0.5)]" 
+              className="bg-accent h-full shadow-[0_0_8px_rgba(245,158,11,0.5)]"
             />
           </div>
         )}

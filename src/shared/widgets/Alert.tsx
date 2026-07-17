@@ -27,14 +27,7 @@ export default function Alert({ type = 'error', autoFocus = true, children, clas
     info: Info
   }[type]
 
-  const prefix =
-    type === 'error'
-      ? t('LabelError')
-      : type === 'warning'
-        ? t('LabelWarning')
-        : type === 'success'
-          ? t('LabelSuccess')
-          : t('LabelInformation')
+  const prefix = type === 'error' ? t('LabelError') : type === 'warning' ? t('LabelWarning') : type === 'success' ? t('LabelSuccess') : t('LabelInformation')
 
   const typeClasses =
     type === 'error'
@@ -58,7 +51,7 @@ export default function Alert({ type = 'error', autoFocus = true, children, clas
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       cy-id="alert"
       className={mergeClasses(
-        'w-full border rounded-xl flex items-start gap-4 p-4 relative overflow-hidden backdrop-blur-xl shadow-lg',
+        'relative flex w-full items-start gap-4 overflow-hidden rounded-xl border p-4 shadow-lg backdrop-blur-xl',
         typeClasses,
         className
       )}
@@ -67,17 +60,15 @@ export default function Alert({ type = 'error', autoFocus = true, children, clas
       ref={alertRef}
     >
       {/* Subtle background glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-      
-      <div className="flex-shrink-0 mt-0.5 relative z-10">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
+
+      <div className="relative z-10 mt-0.5 flex-shrink-0">
         <Icon size={22} className="opacity-90" />
       </div>
-      
-      <div className="flex-1 relative z-10 min-w-0">
+
+      <div className="relative z-10 min-w-0 flex-1">
         <span className="sr-only">{prefix}: </span>
-        <div className="text-sm font-medium leading-relaxed">
-          {children}
-        </div>
+        <div className="text-sm leading-relaxed font-medium">{children}</div>
       </div>
     </motion.div>
   )

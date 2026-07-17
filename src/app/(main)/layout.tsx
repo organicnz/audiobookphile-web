@@ -25,7 +25,22 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   const { user } = userPayload
 
   return (
-    <UserProvider initialUser={{ id: user.id, email: user.email, profile: { id: user.id, username: user.username, user_type: user.type, default_library_id: userPayload.userDefaultLibraryId ?? null, created_at: null, updated_at: null, language: null, theme: null } }}>
+    <UserProvider
+      initialUser={{
+        id: user.id,
+        email: user.email,
+        profile: {
+          id: user.id,
+          username: user.username,
+          user_type: user.type,
+          default_library_id: userPayload.userDefaultLibraryId ?? null,
+          created_at: null,
+          updated_at: null,
+          language: null,
+          theme: null
+        }
+      }}
+    >
       <TasksProvider>
         <MetadataProvider>
           <MediaProvider>

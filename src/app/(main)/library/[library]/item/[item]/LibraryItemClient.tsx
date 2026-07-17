@@ -139,7 +139,7 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
 
             {/* Podcast episode downloads queue */}
             {episodeDownloadsQueued.length > 0 && (
-              <div className="bg-black/20 border border-white/5 backdrop-blur-md rounded-xl mx-auto mt-4 max-w-max px-5 py-3 md:mx-0">
+              <div className="mx-auto mt-4 max-w-max rounded-xl border border-white/5 bg-black/20 px-5 py-3 backdrop-blur-md md:mx-0">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Folder size={18} className="text-primary" />
@@ -149,7 +149,7 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
                     <button
                       type="button"
                       aria-label="Clear episode download queue"
-                      className="bg-white/5 hover:bg-error/20 hover:text-error p-1.5 rounded-lg transition-colors"
+                      className="hover:bg-error/20 hover:text-error rounded-lg bg-white/5 p-1.5 transition-colors"
                       onClick={() => setIsClearQueueDialogOpen(true)}
                     >
                       <X size={16} />
@@ -197,7 +197,7 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
               {/* library files table */}
               {!isPodcast && (libraryItem.libraryFiles?.length ?? 0) > 0 && <LibraryFilesTable libraryItem={libraryItem} />}
             </div>
-            
+
             {/* AI Recommendations Shelf */}
             <SimilarBooksShelf libraryItem={libraryItem} />
           </div>

@@ -59,10 +59,10 @@ export default function CollapsibleTable({
   const countAriaLabel = useMemo(() => t('LabelItemsPlural', { count }), [count, t])
 
   return (
-    <div className="my-4 w-full overflow-hidden rounded-2xl border border-white/10 bg-primary/5 shadow-lg">
+    <div className="bg-primary/5 my-4 w-full overflow-hidden rounded-2xl border border-white/10 shadow-lg">
       <div
         className={mergeClasses(
-          'w-full bg-white/5 backdrop-blur-md py-4 px-6 flex items-center gap-4 transition-colors',
+          'flex w-full items-center gap-4 bg-white/5 px-6 py-4 backdrop-blur-md transition-colors',
           !keepOpen ? 'cursor-pointer hover:bg-white/10' : ''
         )}
         onClick={handleClickBar}
@@ -73,30 +73,24 @@ export default function CollapsibleTable({
         aria-controls={!keepOpen ? `${id}-content` : undefined}
       >
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground/80 truncate">
-            {title}
-          </h3>
-          <div 
-            className="flex h-6 w-8 items-center justify-center rounded-full bg-primary/20 text-[10px] font-black text-primary shadow-inner" 
-            aria-label={countAriaLabel} 
+          <h3 className="text-foreground/80 truncate text-sm font-bold tracking-wider uppercase">{title}</h3>
+          <div
+            className="bg-primary/20 text-primary flex h-6 w-8 items-center justify-center rounded-full text-[10px] font-black shadow-inner"
+            aria-label={countAriaLabel}
             role="status"
           >
             {count}
           </div>
           <div className="grow" />
           {hasHeaderActions && (
-            <div className="flex flex-shrink-0 items-center gap-2" onClick={e => e.stopPropagation()}>
+            <div className="flex flex-shrink-0 items-center gap-2" onClick={(e) => e.stopPropagation()}>
               {headerActions}
             </div>
           )}
         </div>
-        
+
         {!keepOpen && (
-          <motion.div
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="text-foreground/40"
-          >
+          <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 25 }} className="text-foreground/40">
             <ChevronDown size={20} strokeWidth={3} />
           </motion.div>
         )}
@@ -118,9 +112,9 @@ export default function CollapsibleTable({
                   <thead>
                     <tr className="border-b border-white/5">
                       {tableHeaders.map((header, index) => (
-                        <th 
-                          key={index} 
-                          className={mergeClasses('py-3 text-start text-[10px] font-black uppercase tracking-widest text-foreground/30', header.className)} 
+                        <th
+                          key={index}
+                          className={mergeClasses('text-foreground/30 py-3 text-start text-[10px] font-black tracking-widest uppercase', header.className)}
                           scope={header.scope ?? 'col'}
                         >
                           {header.label}
@@ -128,9 +122,7 @@ export default function CollapsibleTable({
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
-                    {children}
-                  </tbody>
+                  <tbody className="divide-y divide-white/5">{children}</tbody>
                 </table>
               </div>
             </div>
@@ -140,4 +132,3 @@ export default function CollapsibleTable({
     </div>
   )
 }
-

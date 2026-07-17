@@ -33,13 +33,7 @@ export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disable
         const Icon = sortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
         return {
           ...item,
-          rightIcon: (
-            <Icon 
-              size={16} 
-              className="text-primary opacity-80" 
-              aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
-            />
-          )
+          rightIcon: <Icon size={16} className="text-primary opacity-80" aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')} />
         }
       }
       return item
@@ -57,13 +51,7 @@ export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disable
   }
 
   const Icon = sortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
-  const rightIcon = (
-    <Icon 
-      size={16} 
-      className="text-primary" 
-      aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
-    />
-  )
+  const rightIcon = <Icon size={16} className="text-primary" aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')} />
 
   return (
     <div className={className}>
@@ -73,7 +61,7 @@ export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disable
         onChange={handleSortChange}
         size="auto"
         rightIcon={rightIcon}
-        className="h-9 text-[11px] font-black uppercase tracking-widest"
+        className="h-9 text-[11px] font-black tracking-widest uppercase"
         highlightSelected={true}
         menuMaxHeight="none"
         disabled={disabled}

@@ -19,8 +19,11 @@ export async function requireApiAuth(request: Request) {
     }
   })
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-  
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser(token)
+
   if (userError || !user) {
     return { user: null, supabase: null, token: null }
   }

@@ -44,11 +44,7 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <AuthCard
-      title="Forgot password"
-      subtitle="Enter your email and we'll send you a reset link."
-      onSubmit={handleSubmit}
-    >
+    <AuthCard title="Forgot password" subtitle="Enter your email and we'll send you a reset link." onSubmit={handleSubmit}>
       <div className="mb-6">
         <TextInput label="Email" value={email} type="email" autocomplete="email" onChange={setEmail} />
       </div>

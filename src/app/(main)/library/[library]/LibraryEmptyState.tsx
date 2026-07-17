@@ -35,20 +35,20 @@ export default function LibraryEmptyState({ library, showScanButton }: LibraryEm
   const Icon = library.mediaType === 'podcast' ? Podcast : LibraryIcon
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="flex flex-col items-center justify-center gap-6 py-20 px-4 w-full max-w-lg mx-auto text-center"
+      className="mx-auto flex w-full max-w-lg flex-col items-center justify-center gap-6 px-4 py-20 text-center"
     >
       <div className="relative">
-        <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse"></div>
-        <motion.div 
+        <div className="bg-primary/20 absolute inset-0 scale-150 animate-pulse rounded-full blur-3xl"></div>
+        <motion.div
           animate={{ rotate: isLibraryTaskRunning ? 360 : 0 }}
-          transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+          transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
           className={mergeClasses(
-            "relative bg-gradient-to-br from-primary/10 to-primary/30 p-6 rounded-3xl border border-primary/20 shadow-xl",
-            isLibraryTaskRunning ? "animate-pulse" : "shadow-primary/10"
+            'from-primary/10 to-primary/30 border-primary/20 relative rounded-3xl border bg-gradient-to-br p-6 shadow-xl',
+            isLibraryTaskRunning ? 'animate-pulse' : 'shadow-primary/10'
           )}
         >
           {isLibraryTaskRunning ? (
@@ -58,30 +58,26 @@ export default function LibraryEmptyState({ library, showScanButton }: LibraryEm
           )}
         </motion.div>
       </div>
-      
+
       <div className="space-y-2">
-        <h2 className="text-3xl font-black tracking-tight bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent">
+        <h2 className="from-foreground to-foreground/60 bg-gradient-to-br bg-clip-text text-3xl font-black tracking-tight text-transparent">
           {t('MessageXLibraryIsEmpty', { 0: library.name })}
         </h2>
         <p className="text-foreground-muted max-w-md text-lg">
-          {isLibraryTaskRunning 
-            ? "We are currently scanning your files. This might take a moment."
-            : "It looks like there are no items here yet. Scan your library folder to discover media."}
+          {isLibraryTaskRunning
+            ? 'We are currently scanning your files. This might take a moment.'
+            : 'It looks like there are no items here yet. Scan your library folder to discover media.'}
         </p>
       </div>
 
       {showScanButton && (
-        <motion.div 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="mt-4"
-        >
-          <Btn 
-            size="large" 
-            color="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20" 
-            onClick={handleScanLibrary} 
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="mt-4">
+          <Btn
+            size="large"
+            color="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+            onClick={handleScanLibrary}
             loading={isPending || isLibraryTaskRunning}
-            className="rounded-full px-8 py-4 font-bold tracking-wide flex items-center gap-2"
+            className="flex items-center gap-2 rounded-full px-8 py-4 font-bold tracking-wide"
           >
             <PlusCircle size={20} />
             {t('ButtonScanLibrary')}

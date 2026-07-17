@@ -18,11 +18,7 @@ export function useSocket() {
 }
 
 // No-op: socket events are not supported in the serverless architecture
-export function useSocketEvent<T>(
-  _event: string,
-  _callback: ((data: T) => void) | (() => void),
-  _dependencies?: unknown[]
-): void {
+export function useSocketEvent<T>(_event: string, _callback: ((data: T) => void) | (() => void), _dependencies?: unknown[]): void {
   // no-op
 }
 

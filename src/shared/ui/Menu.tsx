@@ -32,7 +32,7 @@ export default function Menu({
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const [focusedSubIndex, setFocusedSubIndex] = useState(-1)
   const [openSubmenuIndex, setOpenSubmenuIndex] = useState<number | null>(null)
-  
+
   const triggerRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
   const id = useId()
@@ -86,12 +86,7 @@ export default function Menu({
 
   return (
     <div className={mergeClasses('relative w-fit', className)}>
-      <div 
-        ref={triggerRef} 
-        onClick={toggleMenu} 
-        onKeyDown={handleKeyDown}
-        className="cursor-pointer"
-      >
+      <div ref={triggerRef} onClick={toggleMenu} onKeyDown={handleKeyDown} className="cursor-pointer">
         {trigger(showMenu)}
       </div>
 

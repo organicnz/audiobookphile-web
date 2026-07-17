@@ -157,12 +157,16 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
         if (data?.error) {
           throw new Error(data.error)
         }
-        
+
         // Map results back to SearchLibraryResponse structure
         const items = data?.results || []
         result = {
-          book: items.filter((item: any) => item.mediaType === 'book').map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
-          podcast: items.filter((item: any) => item.mediaType === 'podcast').map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
+          book: items
+            .filter((item: any) => item.mediaType === 'book')
+            .map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
+          podcast: items
+            .filter((item: any) => item.mediaType === 'podcast')
+            .map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
           tags: [],
           authors: [],
           series: [],
@@ -281,7 +285,7 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
     setSelectedPlaylist,
     setSelectedSeries,
     setSelectedAuthor,
-    
+
     useSemanticSearch,
     setUseSemanticSearch
   }

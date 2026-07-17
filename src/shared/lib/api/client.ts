@@ -5,10 +5,9 @@ import { cache } from 'react'
 import { UserLoginResponse, ServerStatus } from '@/types/api'
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
 
-
 export function getServerBaseUrl() {
   const isServer = typeof window === 'undefined'
-  
+
   // On the server, bypass Vercel's Edge Router (loopback fetch) to prevent it from dropping
   // Authorization headers and throwing 401 Unauthorized loops.
   if (isServer && process.env.NEXT_PUBLIC_SUPABASE_URL) {
@@ -54,101 +53,6 @@ export function redirectToLogin(request: Request, errorMessage: string): NextRes
 export function getUserDefaultUrlPath(userDefaultLibraryId: string | null, userType: string) {
   const isAdmin = ['admin', 'root'].includes(userType)
   return userDefaultLibraryId ? `/library/${userDefaultLibraryId}` : isAdmin ? '/settings' : '/account'
-}
-
-/**
- * Shared shape for `response.cookies` and `cookies()` from `next/headers` (both expose `.set`).
- * maxAgeSeconds is the env JWT lifetime; cookie maxAge is slightly shorter so the cookie expires
- * before the token is rejected (5 second buffer).
- */
-function sessionCookieOptions(maxAgeSeconds: number) {
-  return {
-    httpOnly: true,
-    secure: false,
-    sameSite: 'lax' as const,
-    path: '/',
-    maxAge: Math.max(maxAgeSeconds - 5, 5)
-  }
-}
-
-function writeSessionCookies(store: SessionCookieSetter, accessToken: string, refreshToken: string | null) {
-  store.set('access_token', accessToken, sessionCookieOptions(AccessTokenExpiry))
-  if (refreshToken) {
-    store.set('refresh_token', refreshToken, sessionCookieOptions(RefreshTokenExpiry))
-  }
-}
-
-/**
- * The NextJS server sets its own cookies separate from the Audiobookphile server
- * because the Abs Server cookies are not available to NextJS for server-side rendering.
- */
-export function setTokenCookies(response: NextResponse, accessToken: string, refreshToken: string | null) {
-  writeSessionCookies(response.cookies, accessToken, refreshToken)
-}
-
-/**
- * Exchange a refresh token for new session tokens (server-side).
- * Used by internal-api/refresh and download proxies that cannot rely on a redirect.
- */
-export async function refreshSessionWithToken(refreshToken: string): Promise<SessionRefreshResult | null> {
-  const baseUrl = getServerBaseUrl()
-  const refreshResponse = await fetch(`${baseUrl}/auth/refresh`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-refresh-token': refreshToken
-    }
-  })
-
-  if (!refreshResponse.ok) {
-    return null
-  }
-
-  const data = (await refreshResponse.json()) as {
-    userDefaultLibraryId?: string | null
-    user?: { accessToken?: string; refreshToken?: string; type?: string }
-  }
-
-  const accessToken = data.user?.accessToken
-  if (!accessToken) {
-    return null
-  }
-
-  return {
-    accessToken,
-    refreshToken: data.user?.refreshToken ?? null,
-    userDefaultLibraryId: data.userDefaultLibraryId ?? null,
-    userType: data.user?.type ?? 'user'
-  }
-}
-
-export async function getAccessToken() {
-  return (await cookies()).get('access_token')?.value || null
-}
-
-async function redirectToSessionRefreshRoute() {
-  const currentPath = (await headers()).get('x-current-path') ?? ''
-  redirect(`/internal-api/refresh?redirect=${encodeURIComponent(currentPath || '')}`)
-}
-
-/**
- * Refresh via ABS, write Next.js cookies for this request (so server actions return Set-Cookie).
- * If cookies cannot be mutated (e.g. Server Component render), redirect to `/internal-api/refresh` like {@link getData}.
- */
-async function applyRefreshedSessionOrRedirect(cookieStore: Awaited<ReturnType<typeof cookies>>, refreshToken: string): Promise<SessionRefreshTokens> {
-  const session = await refreshSessionWithToken(refreshToken)
-  if (!session) {
-    throw new UnauthorizedError('Unauthorized')
-  }
-  try {
-    writeSessionCookies(cookieStore, session.accessToken, session.refreshToken)
-  } catch {
-    await redirectToSessionRefreshRoute()
-  }
-  return {
-    accessToken: session.accessToken,
-    refreshToken: session.refreshToken
-  }
 }
 
 async function parseApiResponseBody<T>(response: Response): Promise<T> {
@@ -200,34 +104,29 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
     }
 
     let accessToken: string | null = null
-    let refreshToken: string | null = null
-    let didProactiveRefresh = false
 
     if (!isPublic) {
-      accessToken = cookieStore.get('access_token')?.value ?? null
-      refreshToken = cookieStore.get('refresh_token')?.value ?? null
+      const { createClient } = await import('@/shared/utils/supabase/server')
+      const supabase = await createClient()
 
-      if (!accessToken && refreshToken) {
-        const session = await applyRefreshedSessionOrRedirect(cookieStore, refreshToken)
-        accessToken = session.accessToken
-        refreshToken = session.refreshToken ?? cookieStore.get('refresh_token')?.value ?? null
-        didProactiveRefresh = true
-      }
+      // First try to get the active session locally
+      const { data: sessionData } = await supabase.auth.getSession()
 
-      // Fallback to Supabase session if no legacy token
-      if (!accessToken) {
-        const { createClient } = await import('@/shared/utils/supabase/server')
-        const supabase = await createClient()
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session) {
-          accessToken = session.access_token
+      if (sessionData.session) {
+        accessToken = sessionData.session.access_token
+      } else {
+        // Fallback to getUser which forces a refresh if the token is expired
+        const { data: userData } = await supabase.auth.getUser()
+        if (userData.user) {
+          const { data: refreshedSession } = await supabase.auth.getSession()
+          if (refreshedSession.session) {
+            accessToken = refreshedSession.session.access_token
+          }
         }
       }
 
-      console.log(`[apiRequest] Endpoint: ${endpoint}, accessToken found? ${!!accessToken}`)
-
       if (!accessToken) {
-        console.error(`[apiRequest] Throwing UnauthorizedError for ${endpoint} because accessToken is null`)
+        console.error(`[apiRequest] Throwing UnauthorizedError for ${endpoint} because accessToken could not be retrieved from Supabase`)
         throw new UnauthorizedError('No authentication token found')
       }
 
@@ -238,15 +137,6 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
       ...options,
       headers: fetchHeaders
     })
-
-    if (!isPublic && response.status === 401 && refreshToken && !didProactiveRefresh) {
-      const session = await applyRefreshedSessionOrRedirect(cookieStore, refreshToken)
-      fetchHeaders.set('Authorization', `Bearer ${session.accessToken}`)
-      response = await fetch(url, {
-        ...options,
-        headers: fetchHeaders
-      })
-    }
 
     if (!response.ok) {
       console.error(`[apiRequest] Failed for ${url}: status ${response.status}`)

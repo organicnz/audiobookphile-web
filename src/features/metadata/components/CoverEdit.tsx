@@ -267,7 +267,7 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
             {userCanUpload && (
               <div className="w-10 pe-2 md:w-40 md:min-w-32">
                 <FileInput onChange={fileUploadSelected}>
-                  <span className="hidden md:inline-block font-black uppercase tracking-widest text-[11px]">{t('ButtonUploadCover')}</span>
+                  <span className="hidden text-[11px] font-black tracking-widest uppercase md:inline-block">{t('ButtonUploadCover')}</span>
                   <Upload size={22} className="md:hidden" />
                 </FileInput>
               </div>
@@ -378,9 +378,9 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
       )}
 
       {previewUpload && (
-        <div className="bg-primary/95 backdrop-blur-3xl absolute top-0 left-0 z-20 h-full w-full p-8 flex flex-col items-center">
-          <p className="text-xl font-black uppercase tracking-widest text-white/90 mb-8">{t('HeaderPreviewCover')}</p>
-          <button className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors" onClick={resetCoverPreview} type="button">
+        <div className="bg-primary/95 absolute top-0 left-0 z-20 flex h-full w-full flex-col items-center p-8 backdrop-blur-3xl">
+          <p className="mb-8 text-xl font-black tracking-widest text-white/90 uppercase">{t('HeaderPreviewCover')}</p>
+          <button className="absolute top-6 right-6 text-white/40 transition-colors hover:text-white" onClick={resetCoverPreview} type="button">
             <X size={32} />
           </button>
           <div className="flex justify-center py-4">

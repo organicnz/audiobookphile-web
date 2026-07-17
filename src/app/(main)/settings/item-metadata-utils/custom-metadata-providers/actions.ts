@@ -5,9 +5,7 @@ import type { CreateCustomMetadataProviderPayload, CreateCustomMetadataProviderR
 /**
  * ABS-specific — not available in the Supabase-backed version.
  */
-export async function createCustomMetadataProvider(
-  _payload: CreateCustomMetadataProviderPayload,
-): Promise<CreateCustomMetadataProviderResponse> {
+export async function createCustomMetadataProvider(_payload: CreateCustomMetadataProviderPayload): Promise<CreateCustomMetadataProviderResponse> {
   console.warn('[custom-metadata-providers/actions] createCustomMetadataProvider is not available in the Supabase-backed version')
   return {} as CreateCustomMetadataProviderResponse
 }

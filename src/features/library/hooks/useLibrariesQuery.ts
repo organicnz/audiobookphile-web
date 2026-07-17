@@ -9,6 +9,6 @@ export function useLibrariesQuery() {
     queryFn: async () => {
       const { libraries } = await getLibraries()
       return z.array(LibrarySchema).parse(libraries)
-    },
+    }
   })
 }

@@ -91,7 +91,7 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
       <button
         ref={triggerRef}
         type="button"
-        className="text-foreground/70 hover:text-white relative flex h-10 w-10 cursor-pointer items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
+        className="text-foreground/70 relative flex h-10 w-10 cursor-pointer items-center justify-center transition-all duration-300 hover:scale-110 hover:text-white active:scale-95"
         aria-haspopup="listbox"
         aria-expanded={showMenu}
         onClick={clickShowMenu}
@@ -101,10 +101,10 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
             <span className="relative">
               <LoadingSpinner className="scale-110 !cursor-pointer" />
               {showUnseenSuccessIndicator && (
-                <motion.span 
+                <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="bg-success pointer-events-none absolute -top-1 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-background" 
+                  className="bg-success border-background pointer-events-none absolute -top-1 -right-0.5 h-2.5 w-2.5 rounded-full border-2"
                 />
               )}
             </span>
@@ -114,10 +114,10 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
             <span className="relative">
               <Bell size={20} className={showMenu ? 'text-white' : ''} aria-label={t('LabelActivities')} />
               {showUnseenSuccessIndicator && (
-                <motion.span 
+                <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: [0, 1.2, 1] }}
-                  className="bg-success pointer-events-none absolute -top-1 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-background shadow-[0_0_12px_rgba(34,197,94,0.6)]" 
+                  className="bg-success border-background pointer-events-none absolute -top-1 -right-0.5 h-2.5 w-2.5 rounded-full border-2 shadow-[0_0_12px_rgba(34,197,94,0.6)]"
                 />
               )}
             </span>
@@ -133,23 +133,23 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="bg-primary/95 backdrop-blur-2xl border-white/10 fixed top-16 right-4 left-auto z-[100] mt-0 w-auto max-w-[24rem] min-w-[20rem] overflow-hidden rounded-2xl border text-base shadow-2xl ring-1 ring-black/20 focus:outline-none md:mt-1.5"
+            className="bg-primary/95 fixed top-16 right-4 left-auto z-[100] mt-0 w-auto max-w-[24rem] min-w-[20rem] overflow-hidden rounded-2xl border border-white/10 text-base shadow-2xl ring-1 ring-black/20 backdrop-blur-2xl focus:outline-none md:mt-1.5"
             style={{ maxHeight: '80vh', willChange: 'transform, opacity' }}
           >
-            <div className="border-white/10 flex items-center justify-between border-b px-4 py-3 bg-white/5">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">{t('LabelActivities')}</h3>
-              <button onClick={closeMenu} className="text-white/30 hover:text-white transition-colors">
+            <div className="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-3">
+              <h3 className="text-[10px] font-black tracking-[0.2em] text-white/50 uppercase">{t('LabelActivities')}</h3>
+              <button onClick={closeMenu} className="text-white/30 transition-colors hover:text-white">
                 <Bell size={14} className="opacity-50" />
               </button>
             </div>
-            <ul className="h-full w-full overflow-y-auto max-h-[calc(80vh-3rem)] scrollbar-hide py-2" role="listbox" aria-label={t('LabelTasks')}>
+            <ul className="scrollbar-hide h-full max-h-[calc(80vh-3rem)] w-full overflow-y-auto py-2" role="listbox" aria-label={t('LabelTasks')}>
               {tasksToShow.map((task) => {
                 const actionLink = getActionLink(task)
 
                 if (actionLink) {
                   return (
                     <li key={task.id} className="relative select-none">
-                      <Link href={actionLink} onClick={closeMenu} className="hover:bg-white/5 block cursor-pointer px-1 py-0.5 transition-colors">
+                      <Link href={actionLink} onClick={closeMenu} className="block cursor-pointer px-1 py-0.5 transition-colors hover:bg-white/5">
                         <ItemTaskRunningCard task={task} />
                       </Link>
                     </li>
@@ -157,7 +157,7 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
                 }
 
                 return (
-                  <li key={task.id} className="hover:bg-white/5 relative px-1 py-0.5 select-none transition-colors">
+                  <li key={task.id} className="relative px-1 py-0.5 transition-colors select-none hover:bg-white/5">
                     <ItemTaskRunningCard task={task} />
                   </li>
                 )

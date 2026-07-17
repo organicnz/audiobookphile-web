@@ -1,4 +1,59 @@
-import { Author, AuthorImagePayload, AuthorQuickMatchPayload, AuthorResponse, AuthorUpdateResponse, BookSearchResult, Collection, CreateApiKeyPayload, CreateCustomMetadataProviderPayload, CreateCustomMetadataProviderResponse, CreateUpdateApiKeyResponse, FetchPodcastFeedResponse, FFProbeData, GetApiKeysResponse, GetAuthorsResponse, GetBackupsResponse, GetCollectionsResponse, GetCustomMetadataProvidersResponse, GetFilesystemPathsResponse, GetLibrariesResponse, GetLibraryItemsResponse, GetListeningSessionsResponse, GetLoggerDataResponse, GetNarratorsResponse, GetOpenListeningSessionsResponse, GetPlaylistsResponse, GetRssFeedsResponse, GetSeriesResponse, GetUsersResponse, Library, LibraryFilterData, LibraryItem, MediaItemShare, MetadataProvidersResponse, MutateBackupsResponse, OpenMediaItemSharePayload, OpenRssFeedPayload, OpenRssFeedResponse, PersonalizedShelf, Playlist, PlaylistItemPayload, PodcastSearchResult, RssPodcastEpisode, SaveLibraryOrderApiResponse, SearchLibraryResponse, Series, ServerStatus, TasksResponse, UpdateAuthorPayload, UpdateLibraryItemMediaPayload, UpdateLibraryItemMediaResponse, UploadCoverResponse, User, UserLoginResponse } from '@/types/api'
+import {
+  Author,
+  AuthorImagePayload,
+  AuthorQuickMatchPayload,
+  AuthorResponse,
+  AuthorUpdateResponse,
+  BookSearchResult,
+  Collection,
+  CreateApiKeyPayload,
+  CreateCustomMetadataProviderPayload,
+  CreateCustomMetadataProviderResponse,
+  CreateUpdateApiKeyResponse,
+  FetchPodcastFeedResponse,
+  FFProbeData,
+  GetApiKeysResponse,
+  GetAuthorsResponse,
+  GetBackupsResponse,
+  GetCollectionsResponse,
+  GetCustomMetadataProvidersResponse,
+  GetFilesystemPathsResponse,
+  GetLibrariesResponse,
+  GetLibraryItemsResponse,
+  GetListeningSessionsResponse,
+  GetLoggerDataResponse,
+  GetNarratorsResponse,
+  GetOpenListeningSessionsResponse,
+  GetPlaylistsResponse,
+  GetRssFeedsResponse,
+  GetSeriesResponse,
+  GetUsersResponse,
+  Library,
+  LibraryFilterData,
+  LibraryItem,
+  MediaItemShare,
+  MetadataProvidersResponse,
+  MutateBackupsResponse,
+  OpenMediaItemSharePayload,
+  OpenRssFeedPayload,
+  OpenRssFeedResponse,
+  PersonalizedShelf,
+  Playlist,
+  PlaylistItemPayload,
+  PodcastSearchResult,
+  RssPodcastEpisode,
+  SaveLibraryOrderApiResponse,
+  SearchLibraryResponse,
+  Series,
+  ServerStatus,
+  TasksResponse,
+  UpdateAuthorPayload,
+  UpdateLibraryItemMediaPayload,
+  UpdateLibraryItemMediaResponse,
+  UploadCoverResponse,
+  User,
+  UserLoginResponse
+} from '@/types/api'
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
 import { cache } from 'react'
 import { apiRequest } from './client'
@@ -50,8 +105,11 @@ export const getData = cache(async <T extends Promise<unknown>[]>(...promises: T
 export const getCurrentUser = cache(async (): Promise<UserLoginResponse | null> => {
   const { createClient } = await import('@/shared/utils/supabase/server')
   const supabase = await createClient()
-  
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser()
   if (userError || !user) {
     return null
   }

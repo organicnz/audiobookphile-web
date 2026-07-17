@@ -1,5 +1,5 @@
 import { MediaProgress } from '.'
-import { AudioBookmark, PlaybackSession } from "./models"
+import { AudioBookmark, PlaybackSession } from './models'
 
 export interface UserPermissions {
   download: boolean
@@ -35,7 +35,9 @@ export interface User {
   /** Library IDs accessible to user (empty if accessAllLibraries is true) */
   librariesAccessible: string[]
   /** Tags selected/filtered for user (empty if accessAllTags is true) */
-  itemTagsSelected: string[]
+  itemTagsAccessible: string[]
+  /** Alias for backward compatibility */
+  itemTagsSelected?: string[]
   hasOpenIDLink: boolean
   /** Latest playback session (included when include=latestSession) */
   latestSession?: PlaybackSession

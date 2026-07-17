@@ -106,10 +106,29 @@ export function MultiSelect<T = string>({
     setIsMenuOpen,
     setFocusIndex
   } = useMultiSelect({
-    value, selectedItems, items, disabled, showEdit, showInput, allowNew, menuDisabled,
-    editingPillIndex: controlledEditingPillIndex, getEditableText, getReadOnlyPrefix, getFullText,
-    getItemTextId: getItemTextIdProp, onMutate: onMutateProp, onValidate, onValidationError,
-    onDuplicateError, onItemEdited, onItemAdded, onItemRemoved, onInputChange, onEditingPillIndexChange, onEditDone
+    value,
+    selectedItems,
+    items,
+    disabled,
+    showEdit,
+    showInput,
+    allowNew,
+    menuDisabled,
+    editingPillIndex: controlledEditingPillIndex,
+    getEditableText,
+    getReadOnlyPrefix,
+    getFullText,
+    getItemTextId: getItemTextIdProp,
+    onMutate: onMutateProp,
+    onValidate,
+    onValidationError,
+    onDuplicateError,
+    onItemEdited,
+    onItemAdded,
+    onItemRemoved,
+    onInputChange,
+    onEditingPillIndexChange,
+    onEditDone
   })
 
   // Compute the id of the currently focused descendant for aria-activedescendant

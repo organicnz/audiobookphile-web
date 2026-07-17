@@ -30,8 +30,8 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${siteUrl}/auth/callback?next=/library`,
-    },
+      redirectTo: `${siteUrl}/auth/callback?next=/library`
+    }
   })
 
   if (error) {
@@ -94,14 +94,16 @@ export async function resetPassword(password: string) {
 
 export async function signOut() {
   const supabase = await createClient()
-  const { data: { session } } = await supabase.auth.getSession()
-  
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
+
   if (session?.access_token) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     await fetch(`${supabaseUrl}/functions/v1/api/logout`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${session.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
         'Content-Type': 'application/json'
       }
     }).catch(console.error)

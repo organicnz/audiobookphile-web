@@ -1,5 +1,5 @@
-import { getAuthor } from '@/shared/lib/api';
-import AuthorClient from './AuthorClient';
+import { getAuthor } from '@/shared/lib/api'
+import AuthorClient from './AuthorClient'
 
 export default async function AuthorPage({ params }: { params: Promise<{ author: string; library: string }> }) {
   const { author: authorId } = await params

@@ -77,11 +77,7 @@ export default function ToggleSwitch({
 
   return (
     <InputWrapper disabled={disabled} borderless size={size} className={mergeClasses('bg-transparent', className)}>
-      <div
-        cy-id="toggle-and-label-wrapper"
-        ref={wrapperRef}
-        className="flex items-center justify-start py-1.5 px-1"
-      >
+      <div cy-id="toggle-and-label-wrapper" ref={wrapperRef} className="flex items-center justify-start px-1 py-1.5">
         <button
           ref={buttonRef}
           id={toggleId}
@@ -96,26 +92,23 @@ export default function ToggleSwitch({
           onKeyDown={handleKeyDown}
         >
           <motion.span
-            animate={{ 
+            animate={{
               x: value ? (size === 'small' ? 16 : size === 'medium' ? 18 : 20) : 2,
               scale: value ? 1.05 : 1
             }}
             transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-            className={mergeClasses(
-              'pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform',
-              knobSize
-            )}
+            className={mergeClasses('pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform', knobSize)}
           />
         </button>
         {label && (
-          <label 
-            cy-id="toggle-label" 
-            id={labelId} 
+          <label
+            cy-id="toggle-label"
+            id={labelId}
             className={mergeClasses(
-              'ps-3 select-none font-medium transition-colors cursor-pointer',
+              'cursor-pointer ps-3 font-medium transition-colors select-none',
               size === 'small' ? 'text-xs sm:text-sm' : size === 'medium' ? 'text-sm sm:text-base' : 'text-base sm:text-lg',
               disabled ? 'text-disabled' : 'text-foreground/80 hover:text-foreground'
-            )} 
+            )}
             htmlFor={toggleId}
           >
             {label}
@@ -125,4 +118,3 @@ export default function ToggleSwitch({
     </InputWrapper>
   )
 }
-

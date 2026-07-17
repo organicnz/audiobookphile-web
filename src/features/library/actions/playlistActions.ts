@@ -24,20 +24,14 @@ export async function createPlaylistAction(payload: {
   })
 }
 
-export async function batchAddToPlaylistAction(
-  playlistId: string,
-  items: PlaylistItemPayload[],
-): Promise<Playlist> {
+export async function batchAddToPlaylistAction(playlistId: string, items: PlaylistItemPayload[]): Promise<Playlist> {
   return await apiRequest<Playlist>(`/api/playlists/${playlistId}/batch-add`, {
     method: 'POST',
     body: JSON.stringify({ items })
   })
 }
 
-export async function batchRemoveFromPlaylistAction(
-  playlistId: string,
-  items: PlaylistItemPayload[],
-): Promise<Playlist> {
+export async function batchRemoveFromPlaylistAction(playlistId: string, items: PlaylistItemPayload[]): Promise<Playlist> {
   return await apiRequest<Playlist>(`/api/playlists/${playlistId}/batch-remove`, {
     method: 'POST',
     body: JSON.stringify({ items })

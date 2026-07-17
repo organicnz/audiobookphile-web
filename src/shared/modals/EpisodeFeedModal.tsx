@@ -238,7 +238,7 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      className="bg-background/90 backdrop-blur-xl border border-white/10"
+      className="bg-background/90 border border-white/10 backdrop-blur-xl"
       outerContent={
         <div className="pointer-events-none absolute top-0 left-0 w-2/3 overflow-hidden p-5">
           <p className="truncate text-3xl text-white drop-shadow-md">{libraryItem.media?.metadata?.title}</p>
@@ -255,12 +255,12 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
                 onChange={setSearch}
                 type="search"
                 placeholder={t('PlaceholderSearchEpisode')}
-                className="mr-2 grow text-sm md:text-base bg-white/5 border-white/10"
+                className="mr-2 grow border-white/10 bg-white/5 text-sm md:text-base"
               />
             </form>
-            <Btn className="px-4 bg-white/5 border-white/10 hover:bg-white/10" onClick={() => setSortDescending(!sortDescending)}>
-              <span className="pr-4 font-black uppercase tracking-widest text-[11px]">{t('LabelSortPubDate')}</span>
-              <span className="absolute inset-y-0 right-0 flex items-center pr-2 text-primary">
+            <Btn className="border-white/10 bg-white/5 px-4 hover:bg-white/10" onClick={() => setSortDescending(!sortDescending)}>
+              <span className="pr-4 text-[11px] font-black tracking-widest uppercase">{t('LabelSortPubDate')}</span>
+              <span className="text-primary absolute inset-y-0 right-0 flex items-center pr-2">
                 {sortDescending ? <ChevronDown size={18} strokeWidth={3} /> : <ChevronUp size={18} strokeWidth={3} />}
               </span>
             </Btn>

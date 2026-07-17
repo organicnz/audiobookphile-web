@@ -125,22 +125,13 @@ export default function LibraryItemModal(props: LibraryItemModalProps) {
   const outerContent = useMemo(() => {
     if (!mediaTitle) return undefined
     return (
-      <motion.div 
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="absolute inset-x-0 top-0 z-10 px-6 py-4 pointer-events-none"
-      >
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="pointer-events-none absolute inset-x-0 top-0 z-10 px-6 py-4">
         <div className="max-w-prose">
-          <h2 
-            className="truncate text-xl font-semibold text-white/90 drop-shadow-md tracking-tight" 
-            title={mediaTitle}
-          >
+          <h2 className="truncate text-xl font-semibold tracking-tight text-white/90 drop-shadow-md" title={mediaTitle}>
             {mediaTitle}
           </h2>
           {resolvedItem && 'authors' in resolvedItem.media.metadata && (
-            <p className="text-white/60 text-sm truncate font-medium">
-              {(resolvedItem.media.metadata.authors as any[])?.map(a => a.name).join(', ')}
-            </p>
+            <p className="truncate text-sm font-medium text-white/60">{(resolvedItem.media.metadata.authors as any[])?.map((a) => a.name).join(', ')}</p>
           )}
         </div>
       </motion.div>

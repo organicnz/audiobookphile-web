@@ -20,9 +20,7 @@ function validateImageFile(file: File): void {
     throw new StorageError(`File too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`)
   }
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-    throw new StorageError(
-      `Invalid file type "${file.type}". Allowed types: ${ALLOWED_MIME_TYPES.join(', ')}`
-    )
+    throw new StorageError(`Invalid file type "${file.type}". Allowed types: ${ALLOWED_MIME_TYPES.join(', ')}`)
   }
 }
 
@@ -36,12 +34,10 @@ export async function uploadCoverImage(file: File, storagePath: string): Promise
   validateImageFile(file)
 
   const supabase = createClient()
-  const { error } = await supabase.storage
-    .from(COVERS_BUCKET)
-    .upload(storagePath, file, {
-      cacheControl: '3600',
-      upsert: true,
-    })
+  const { error } = await supabase.storage.from(COVERS_BUCKET).upload(storagePath, file, {
+    cacheControl: '3600',
+    upsert: true
+  })
 
   if (error) {
     throw new StorageError(`Failed to upload cover image: ${error.message}`)
@@ -57,9 +53,7 @@ export async function uploadCoverImage(file: File, storagePath: string): Promise
  */
 export function getCoverImageUrl(storagePath: string): string {
   const supabase = createClient()
-  const { data } = supabase.storage
-    .from(COVERS_BUCKET)
-    .getPublicUrl(storagePath)
+  const { data } = supabase.storage.from(COVERS_BUCKET).getPublicUrl(storagePath)
 
   return data.publicUrl
 }
@@ -70,9 +64,7 @@ export function getCoverImageUrl(storagePath: string): string {
  */
 export async function deleteCoverImage(storagePath: string): Promise<void> {
   const supabase = createClient()
-  const { error } = await supabase.storage
-    .from(COVERS_BUCKET)
-    .remove([storagePath])
+  const { error } = await supabase.storage.from(COVERS_BUCKET).remove([storagePath])
 
   if (error) {
     throw new StorageError(`Failed to delete cover image: ${error.message}`)
@@ -86,11 +78,7 @@ export async function deleteCoverImage(storagePath: string): Promise<void> {
  * @param oldPath - Optional path to the old image to delete first
  * @returns The public URL of the new image
  */
-export async function replaceCoverImage(
-  file: File,
-  storagePath: string,
-  oldPath?: string
-): Promise<string> {
+export async function replaceCoverImage(file: File, storagePath: string, oldPath?: string): Promise<string> {
   if (oldPath && oldPath !== storagePath) {
     try {
       await deleteCoverImage(oldPath)

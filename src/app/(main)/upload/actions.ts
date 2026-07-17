@@ -13,7 +13,7 @@ export async function fetchBookMetadata(title: string, author: string, _provider
     const query = new URLSearchParams({ title, limit: '5' })
     if (author) query.set('author', author)
     const olRes = await fetch(`https://openlibrary.org/search.json?${query.toString()}`, {
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(8000)
     })
     if (olRes.ok) {
       const data = await olRes.json()
@@ -24,9 +24,7 @@ export async function fetchBookMetadata(title: string, author: string, _provider
           title: doc.title || title,
           author: authorNames[0] || author || '',
           description: doc.first_sentence?.value || '',
-          cover: doc.cover_i
-            ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`
-            : undefined,
+          cover: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg` : undefined,
           series: [],
           genres: doc.subject?.slice(0, 3) || [],
           tags: [],
@@ -37,7 +35,7 @@ export async function fetchBookMetadata(title: string, author: string, _provider
           publishedYear: doc.first_publish_year ? String(doc.first_publish_year) : undefined,
           narrator: undefined,
           explicit: false,
-          abridged: false,
+          abridged: false
         })
       }
     }
@@ -45,10 +43,9 @@ export async function fetchBookMetadata(title: string, author: string, _provider
     // Google Books search (if Open Library returned nothing)
     if (results.length === 0) {
       const q = author ? `intitle:${title}+inauthor:${author}` : `intitle:${title}`
-      const gbRes = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=5&printType=books`,
-        { signal: AbortSignal.timeout(8000) }
-      )
+      const gbRes = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=5&printType=books`, {
+        signal: AbortSignal.timeout(8000)
+      })
       if (gbRes.ok) {
         const data = await gbRes.json()
         const items = (data?.items as any[]) || []
@@ -70,7 +67,7 @@ export async function fetchBookMetadata(title: string, author: string, _provider
             publishedYear: info.publishedDate?.slice(0, 4) || undefined,
             narrator: undefined,
             explicit: false,
-            abridged: false,
+            abridged: false
           })
         }
       }
@@ -92,7 +89,9 @@ export async function getCookie(): Promise<string> {
   // Returns the Supabase session access token for authenticating upload requests
   const { createClient } = await import('@/shared/utils/supabase/server')
   const supabase = await createClient()
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
   return session?.access_token ?? ''
 }
 

@@ -210,19 +210,25 @@ export const Pill = <T,>({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       className={mergeClasses(
-        'relative mx-1 my-0.5 flex flex-nowrap items-center justify-center rounded-full px-3 py-1 text-xs font-medium transition-all group',
-        isEditing ? 'bg-white/10 ring-1 ring-white/20 shadow-lg z-10' : 'bg-white/5 hover:bg-white/10 text-foreground/80 hover:text-foreground border border-white/5',
-        !disabled && isFocused && !isEditing ? 'ring-2 ring-primary border-primary/50' : '',
-        hasValidationError && 'ring-2 ring-error border-error/50'
+        'group relative mx-1 my-0.5 flex flex-nowrap items-center justify-center rounded-full px-3 py-1 text-xs font-medium transition-all',
+        isEditing
+          ? 'z-10 bg-white/10 shadow-lg ring-1 ring-white/20'
+          : 'text-foreground/80 hover:text-foreground border border-white/5 bg-white/5 hover:bg-white/10',
+        !disabled && isFocused && !isEditing ? 'ring-primary border-primary/50 ring-2' : '',
+        hasValidationError && 'ring-error border-error/50 ring-2'
       )}
       tabIndex={-1}
       onMouseDown={(e) => e.preventDefault()}
       onKeyDown={isEditing ? handlePillKeyDown : undefined}
-      onClick={!isEditing ? (e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        onClick()
-      } : undefined}
+      onClick={
+        !isEditing
+          ? (e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onClick()
+            }
+          : undefined
+      }
     >
       {isEditing ? (
         <>
@@ -231,7 +237,7 @@ export const Pill = <T,>({
           </span>
           <div className="inline-flex items-center" style={{ maxWidth: '80%' }}>
             {readOnlyPrefix && (
-              <span ref={prefixRef} className="text-foreground/40 text-xs me-1 select-none">
+              <span ref={prefixRef} className="text-foreground/40 me-1 text-xs select-none">
                 {readOnlyPrefix}
               </span>
             )}
@@ -243,7 +249,7 @@ export const Pill = <T,>({
                 onChange={handleEditInputChange}
                 onKeyDown={handleEditInputKeyDown}
                 onBlur={handleInputBlur}
-                className="border-none bg-transparent text-center text-xs outline-none font-medium placeholder:text-white/20"
+                className="border-none bg-transparent text-center text-xs font-medium outline-none placeholder:text-white/20"
                 style={{ minWidth: '4px', width: `${inputWidthRef.current}px`, maxWidth: '100%' }}
                 autoComplete="off"
                 aria-label={t('LabelEditItem', { item: readOnlyPrefix ? readOnlyPrefix + itemText : itemText })}
@@ -253,7 +259,7 @@ export const Pill = <T,>({
           <div className="ms-2 flex items-center gap-1.5" role="group">
             <button
               type="button"
-              className="p-1 text-foreground/40 hover:text-error hover:bg-error/10 rounded-full transition-all outline-none focus:ring-1 focus:ring-error"
+              className="text-foreground/40 hover:text-error hover:bg-error/10 focus:ring-error rounded-full p-1 transition-all outline-none focus:ring-1"
               onClick={handleCancelEdit}
               ref={cancelButtonRef}
             >
@@ -261,7 +267,7 @@ export const Pill = <T,>({
             </button>
             <button
               type="button"
-              className="p-1 text-foreground/40 hover:text-success hover:bg-success/10 rounded-full transition-all outline-none focus:ring-1 focus:ring-success"
+              className="text-foreground/40 hover:text-success hover:bg-success/10 focus:ring-success rounded-full p-1 transition-all outline-none focus:ring-1"
               onClick={handleSaveEdit}
               ref={saveButtonRef}
             >
@@ -271,13 +277,13 @@ export const Pill = <T,>({
         </>
       ) : (
         <>
-          <span className="relative z-0 truncate max-w-[150px]">{fullText}</span>
+          <span className="relative z-0 max-w-[150px] truncate">{fullText}</span>
           {!disabled && (
-            <div className="flex items-center ms-1.5 gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="ms-1.5 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
               {showEditButton && (
                 <button
                   type="button"
-                  className="p-1 text-foreground/40 hover:text-primary transition-colors outline-none focus:ring-1 focus:ring-primary rounded-full"
+                  className="text-foreground/40 hover:text-primary focus:ring-primary rounded-full p-1 transition-colors outline-none focus:ring-1"
                   onClick={handleEditButtonClick}
                   tabIndex={-1}
                 >
@@ -286,7 +292,7 @@ export const Pill = <T,>({
               )}
               <button
                 type="button"
-                className="p-1 text-foreground/40 hover:text-error transition-colors outline-none focus:ring-1 focus:ring-error rounded-full"
+                className="text-foreground/40 hover:text-error focus:ring-error rounded-full p-1 transition-colors outline-none focus:ring-1"
                 onClick={(e) => {
                   e.stopPropagation()
                   onRemove(item)

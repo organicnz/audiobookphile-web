@@ -435,7 +435,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
       <div className="text-foreground flex h-dvh w-full items-center justify-center bg-neutral-900" role="status" aria-live="polite">
         <div className="flex flex-col items-center gap-6">
           <LoadingSpinner size="la-3x" color="rgb(168 85 247)" />
-          <p className="text-xl font-black uppercase tracking-widest text-white/40">Loading...</p>
+          <p className="text-xl font-black tracking-widest text-white/40 uppercase">Loading...</p>
         </div>
       </div>
     )
@@ -444,9 +444,9 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
   if (fetchError || !shareData || !playbackSession) {
     return (
       <div className="text-foreground flex h-dvh w-full items-center justify-center bg-neutral-900">
-        <div className="flex flex-col items-center gap-6 bg-white/5 backdrop-blur-xl p-12 rounded-3xl border border-white/10">
+        <div className="flex flex-col items-center gap-6 rounded-3xl border border-white/10 bg-white/5 p-12 backdrop-blur-xl">
           <AlertCircle size={64} className="text-error drop-shadow-[0_0_15px_rgba(var(--error-rgb),0.5)]" />
-          <p className="text-2xl font-black uppercase tracking-widest text-white/90">{fetchError || 'Failed to load shared item'}</p>
+          <p className="text-2xl font-black tracking-widest text-white/90 uppercase">{fetchError || 'Failed to load shared item'}</p>
         </div>
       </div>
     )
@@ -513,14 +513,14 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
             <div className="flex items-center justify-center gap-3 sm:gap-4">
               {/* Volume */}
               <Tooltip text="Volume" position="top">
-                <IconBtn borderless size="custom" className="w-10 h-10 text-white/60 hover:text-white transition-colors" onClick={toggleMute}>
+                <IconBtn borderless size="custom" className="h-10 w-10 text-white/60 transition-colors hover:text-white" onClick={toggleMute}>
                   <VolumeIcon size={24} />
                 </IconBtn>
               </Tooltip>
- 
+
               {/* Jump backward */}
               <Tooltip text={`Jump back ${settings.jumpBackwardAmount}s`} position="top">
-                <IconBtn borderless size="custom" className="w-12 h-12 text-white/60 hover:text-white transition-colors" onClick={jumpBackward}>
+                <IconBtn borderless size="custom" className="h-12 w-12 text-white/60 transition-colors hover:text-white" onClick={jumpBackward}>
                   <RotateCcw size={28} />
                 </IconBtn>
               </Tooltip>
@@ -531,7 +531,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
                 size="custom"
                 loading={playerState === PlayerState.LOADING}
                 outlined={false}
-                className="h-16 w-16 rounded-full bg-accent text-white shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:scale-110 active:scale-95 transition-all"
+                className="bg-accent h-16 w-16 rounded-full text-white shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all hover:scale-110 active:scale-95"
                 onClick={playPause}
               >
                 {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
@@ -539,7 +539,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
 
               {/* Jump forward */}
               <Tooltip text={`Jump forward ${settings.jumpForwardAmount}s`} position="top">
-                <IconBtn borderless size="custom" className="w-12 h-12 text-white/60 hover:text-white transition-colors" onClick={jumpForward}>
+                <IconBtn borderless size="custom" className="h-12 w-12 text-white/60 transition-colors hover:text-white" onClick={jumpForward}>
                   <RotateCw size={28} />
                 </IconBtn>
               </Tooltip>
@@ -565,7 +565,11 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
           {/* Download button */}
           {shareData.isDownloadable && (
             <Tooltip text="Download" position="bottom" className="absolute top-6 left-6">
-              <button aria-label="Download" className="text-white/40 hover:text-white transition-all hover:scale-110 active:scale-95" onClick={downloadShareItem}>
+              <button
+                aria-label="Download"
+                className="text-white/40 transition-all hover:scale-110 hover:text-white active:scale-95"
+                onClick={downloadShareItem}
+              >
                 <Download size={32} />
               </button>
             </Tooltip>

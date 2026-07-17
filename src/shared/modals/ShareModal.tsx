@@ -179,7 +179,7 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
               href="https://www.audiobookphile.org/guides/media-item-shares"
               target="_blank"
               rel="noreferrer"
-              className="text-white/40 hover:text-primary transition-colors inline-flex"
+              className="hover:text-primary inline-flex text-white/40 transition-colors"
             >
               <HelpCircle size={20} strokeWidth={2.5} />
             </a>
@@ -223,11 +223,11 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
               </div>
             </div>
 
-            <div className="mb-4 flex w-full items-center md:w-1/2 gap-3">
-              <p className="text-white/40 px-1 py-1 text-sm font-medium uppercase tracking-wider">{t('LabelDownloadable')}</p>
+            <div className="mb-4 flex w-full items-center gap-3 md:w-1/2">
+              <p className="px-1 py-1 text-sm font-medium tracking-wider text-white/40 uppercase">{t('LabelDownloadable')}</p>
               <ToggleSwitch size="medium" value={isDownloadable} onChange={setIsDownloadable} />
               <Tooltip text={t('LabelShareDownloadableHelp')} position="right" maxWidth={160} openOnClick addTabIndex>
-                <span className="text-white/20 hover:text-primary transition-colors cursor-pointer">
+                <span className="hover:text-primary cursor-pointer text-white/20 transition-colors">
                   <Info size={18} strokeWidth={2.5} />
                 </span>
               </Tooltip>

@@ -38,7 +38,7 @@ const LoadingOverlay = memo<{ progress?: string }>(({ progress }) => {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-          className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full"
+          className="h-5 w-5 rounded-full border-2 border-white/30 border-t-white"
         />
       )}
     </motion.div>
@@ -93,10 +93,8 @@ export default function Btn({
       >
         {children}
       </motion.span>
-      
-      <AnimatePresence>
-        {loading && <LoadingOverlay progress={progress} />}
-      </AnimatePresence>
+
+      <AnimatePresence>{loading && <LoadingOverlay progress={progress} />}</AnimatePresence>
 
       {loading && (
         <span className="sr-only" role="status" aria-live="polite">
@@ -106,4 +104,3 @@ export default function Btn({
     </ButtonBase>
   )
 }
-

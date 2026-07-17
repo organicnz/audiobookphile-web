@@ -25,8 +25,18 @@ interface GlobalSearchInputProps {
 
 export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onItemSelect, onClear, usePortal = false }: GlobalSearchInputProps = {}) {
   const searchOptions = useMemo(() => ({ autoSelectFirst: false, libraryId }), [libraryId])
-  const { searchQuery, setSearchQuery, isSearching, searchResults, selectedLibraryId, handleSearch, searchError, clearSelection, useSemanticSearch, setUseSemanticSearch } =
-    useLibrarySearch(searchOptions)
+  const {
+    searchQuery,
+    setSearchQuery,
+    isSearching,
+    searchResults,
+    selectedLibraryId,
+    handleSearch,
+    searchError,
+    clearSelection,
+    useSemanticSearch,
+    setUseSemanticSearch
+  } = useLibrarySearch(searchOptions)
   const t = useTypeSafeTranslations()
   const router = useRouter()
 
@@ -150,11 +160,15 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
 
   return (
     <div className="relative w-full" ref={containerRef}>
-      <InputWrapper size="small" className="w-full bg-white/5 border-white/10 group-focus-within:bg-white/10 group-focus-within:border-primary/50 transition-all duration-300" inputRef={inputRef}>
+      <InputWrapper
+        size="small"
+        className="group-focus-within:border-primary/50 w-full border-white/10 bg-white/5 transition-all duration-300 group-focus-within:bg-white/10"
+        inputRef={inputRef}
+      >
         <input
           ref={inputRef}
           type="text"
-          className="h-full w-full bg-transparent text-sm font-medium outline-none placeholder:text-foreground/30 text-foreground"
+          className="placeholder:text-foreground/30 text-foreground h-full w-full bg-transparent text-sm font-medium outline-none"
           placeholder={t('PlaceholderSearch')}
           value={searchQuery}
           onInput={(e) => setSearchQuery(e.currentTarget.value)}
@@ -176,13 +190,13 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
       </InputWrapper>
 
       {/* Search Icon, Spinner or Clear Button */}
-      <div className="absolute end-0 top-0 flex h-full items-center pe-2 gap-1">
+      <div className="absolute end-0 top-0 flex h-full items-center gap-1 pe-2">
         <button
           type="button"
           onClick={() => setUseSemanticSearch(!useSemanticSearch)}
-          className={`flex items-center justify-center p-1.5 rounded-md transition-all duration-300 ${
-            useSemanticSearch 
-              ? 'bg-accent/20 text-accent shadow-[0_0_10px_rgba(var(--accent),0.3)]' 
+          className={`flex items-center justify-center rounded-md p-1.5 transition-all duration-300 ${
+            useSemanticSearch
+              ? 'bg-accent/20 text-accent shadow-[0_0_10px_rgba(var(--accent),0.3)]'
               : 'text-foreground/30 hover:text-foreground/70 hover:bg-white/5'
           }`}
           aria-label="Toggle Smart AI Search"
@@ -190,20 +204,25 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
         >
           <Sparkles size={16} strokeWidth={useSemanticSearch ? 2.5 : 2} />
         </button>
-        
+
         {isSearching || isTyping ? (
-          <LoadingSpinner size="la-sm" className="scale-75 text-primary opacity-80" />
+          <LoadingSpinner size="la-sm" className="text-primary scale-75 opacity-80" />
         ) : searchQuery ? (
-          <button 
-            onClick={handleClear} 
-            className="cursor-pointer text-foreground/40 hover:text-foreground hover:bg-white/10 p-1.5 rounded-md transition-all" 
+          <button
+            onClick={handleClear}
+            className="text-foreground/40 hover:text-foreground cursor-pointer rounded-md p-1.5 transition-all hover:bg-white/10"
             aria-label="Clear search"
           >
             <X size={16} strokeWidth={3} aria-hidden="true" />
           </button>
         ) : (
           <div className="p-1.5">
-            <Search size={16} strokeWidth={2.5} className="pointer-events-none text-foreground/30 group-focus-within:text-primary transition-colors duration-300" aria-hidden="true" />
+            <Search
+              size={16}
+              strokeWidth={2.5}
+              className="text-foreground/30 group-focus-within:text-primary pointer-events-none transition-colors duration-300"
+              aria-hidden="true"
+            />
           </div>
         )}
       </div>
@@ -224,4 +243,3 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
     </div>
   )
 }
-

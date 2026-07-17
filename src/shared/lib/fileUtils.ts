@@ -2,7 +2,41 @@ import path from 'path'
 
 export const SupportedFileTypes = {
   image: ['png', 'jpg', 'jpeg', 'webp'],
-  audio: ['m4b', 'mp3', 'm4a', 'flac', 'opus', 'ogg', 'oga', 'mp4', 'aac', 'wma', 'aiff', 'aif', 'wav', 'webm', 'webma', 'mka', 'awb', 'caf', 'mpeg', 'mpg', 'mkv', 'avi', 'mov', 'm4v', 'wmv', 'flv', 'mts', 'm2ts', 'vob', 'ogv', 'rmvb', 'asf', '3gp'],
+  audio: [
+    'm4b',
+    'mp3',
+    'm4a',
+    'flac',
+    'opus',
+    'ogg',
+    'oga',
+    'mp4',
+    'aac',
+    'wma',
+    'aiff',
+    'aif',
+    'wav',
+    'webm',
+    'webma',
+    'mka',
+    'awb',
+    'caf',
+    'mpeg',
+    'mpg',
+    'mkv',
+    'avi',
+    'mov',
+    'm4v',
+    'wmv',
+    'flv',
+    'mts',
+    'm2ts',
+    'vob',
+    'ogv',
+    'rmvb',
+    'asf',
+    '3gp'
+  ],
   ebook: ['epub', 'pdf', 'mobi', 'azw3', 'cbr', 'cbz'],
   info: ['nfo'],
   text: ['txt'],
@@ -44,7 +78,7 @@ export const sanitizeFileName = (filename: string, colonReplacement = ' - '): st
   const getByteLength = (str: string) => new Blob([str]).size
   const extByteLength = getByteLength(ext)
   const basenameByteLength = getByteLength(basename)
-  
+
   if (basenameByteLength + extByteLength > MAX_FILENAME_BYTES) {
     const MaxBytesForBasename = MAX_FILENAME_BYTES - extByteLength
     let totalBytes = 0

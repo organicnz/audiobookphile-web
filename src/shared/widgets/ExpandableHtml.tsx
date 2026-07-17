@@ -66,7 +66,7 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
       <motion.div
         layout
         initial={false}
-        animate={{ 
+        animate={{
           height: isExpanded ? 'auto' : 'auto' // Motion handles the layout change
         }}
         className="relative"
@@ -90,14 +90,11 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
       {isClamped && (
         <button
           type="button"
-          className="group text-foreground/40 hover:text-primary mt-2 flex items-center gap-1.5 rounded-lg py-1 px-2 text-[0.8em] font-black uppercase tracking-widest select-none transition-all duration-300 hover:bg-white/5 active:scale-95"
+          className="group text-foreground/40 hover:text-primary mt-2 flex items-center gap-1.5 rounded-lg px-2 py-1 text-[0.8em] font-black tracking-widest uppercase transition-all duration-300 select-none hover:bg-white/5 active:scale-95"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? t('ButtonReadLess') : t('ButtonReadMore')}
-          <ChevronDown 
-            size={14} 
-            className={`transition-transform duration-500 ease-out ${isExpanded ? 'rotate-180' : ''}`} 
-          />
+          <ChevronDown size={14} className={`transition-transform duration-500 ease-out ${isExpanded ? 'rotate-180' : ''}`} />
         </button>
       )}
     </div>

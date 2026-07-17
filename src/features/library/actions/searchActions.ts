@@ -1,12 +1,6 @@
 'use server'
 
-import {
-    getCurrentUser,
-    getLibraries,
-    getLibraryCollections,
-    getLibraryPlaylists,
-    searchLibrary,
-} from '@/shared/lib/api'
+import { getCurrentUser, getLibraries, getLibraryCollections, getLibraryPlaylists, searchLibrary } from '@/shared/lib/api'
 
 /**
  * Server Action: Search a library

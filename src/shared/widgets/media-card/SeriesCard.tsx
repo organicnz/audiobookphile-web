@@ -182,7 +182,7 @@ function SeriesCard(props: SeriesCardProps) {
           {/* Books count badge */}
           <div
             cy-id="seriesLengthMarker"
-            className="absolute z-20 top-2 end-2 px-2 py-0.5 rounded-lg bg-primary/90 backdrop-blur-md border border-white/10 shadow-2xl"
+            className="bg-primary/90 absolute end-2 top-2 z-20 rounded-lg border border-white/10 px-2 py-0.5 shadow-2xl backdrop-blur-md"
           >
             <p className="text-[10px] font-black tracking-tighter text-white" role="status" aria-label={t('LabelNumberOfBooks')}>
               {books.length}
@@ -191,11 +191,11 @@ function SeriesCard(props: SeriesCardProps) {
 
           {/* Progress bar */}
           {seriesProgressPercent > 0 && (
-            <div className="absolute bottom-0 start-0 w-full h-1 bg-white/10 z-10 overflow-hidden rounded-b">
+            <div className="absolute start-0 bottom-0 z-10 h-1 w-full overflow-hidden rounded-b bg-white/10">
               <div
                 cy-id="seriesProgressBar"
                 className={mergeClasses(
-                  'h-full transition-all duration-500 shadow-[0_0_8px_rgba(251,191,36,0.5)]',
+                  'h-full shadow-[0_0_8px_rgba(251,191,36,0.5)] transition-all duration-500',
                   isSeriesFinished ? 'bg-success' : 'bg-primary'
                 )}
                 style={{ width: `${seriesProgressPercent * 100}%` }}
@@ -209,16 +209,12 @@ function SeriesCard(props: SeriesCardProps) {
             selected={selected}
             cyId="hoveringDisplayTitle"
             className={mergeClasses(
-              'z-20 flex items-center justify-center bg-primary/40 backdrop-blur-md text-center transition-opacity duration-300',
+              'bg-primary/40 z-20 flex items-center justify-center text-center backdrop-blur-md transition-opacity duration-300',
               isHovering || isSelectionMode ? 'opacity-100' : 'opacity-0'
             )}
           >
             <div className="p-4">
-              {hasValidCovers && isHovering && (
-                <p className="text-sm font-black uppercase tracking-wider text-white drop-shadow-lg">
-                  {displayTitle}
-                </p>
-              )}
+              {hasValidCovers && isHovering && <p className="text-sm font-black tracking-wider text-white uppercase drop-shadow-lg">{displayTitle}</p>}
             </div>
 
             {/* Selection button */}
@@ -240,12 +236,25 @@ function SeriesCard(props: SeriesCardProps) {
               cy-id="rssFeed"
               className={mergeClasses(
                 'absolute start-2 top-2 z-10',
-                'flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-lg'
+                'flex items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg backdrop-blur-md'
               )}
               style={{ width: '1.5rem', height: '1.5rem' }}
             >
               <span className="text-orange-500">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M4 11a9 9 0 0 1 9 9" /><path d="M4 4a16 16 0 0 1 16 16" /><circle cx="5" cy="19" r="1" /></svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M4 11a9 9 0 0 1 9 9" />
+                  <path d="M4 4a16 16 0 0 1 16 16" />
+                  <circle cx="5" cy="19" r="1" />
+                </svg>
               </span>
             </div>
           )}

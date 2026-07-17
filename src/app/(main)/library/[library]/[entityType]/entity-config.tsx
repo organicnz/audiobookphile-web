@@ -19,7 +19,7 @@ import { TranslationKey } from '@/types/translations'
 import React, { type MouseEvent, type ReactNode } from 'react'
 
 /** Selection is unused on the bookshelf; stable identity so memo(MediaCard) can skip unchanged cards. */
- 
+
 function bookshelfCardNoopSelect(_event: MouseEvent) {}
 
 export interface SkeletonComponentProps {

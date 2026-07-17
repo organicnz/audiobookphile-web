@@ -75,11 +75,7 @@ export interface SyncReport {
  * The `list` API returns files at a given path; we recursively walk
  * directories to get every object. Pagination is strictly respected.
  */
-export async function listSupabaseStorageObjects(
-  supabase: SupabaseClient,
-  bucket: string,
-  prefix = ''
-): Promise<StorageObject[]> {
+export async function listSupabaseStorageObjects(supabase: SupabaseClient, bucket: string, prefix = ''): Promise<StorageObject[]> {
   const results: StorageObject[] = []
 
   let offset = 0
@@ -90,7 +86,7 @@ export async function listSupabaseStorageObjects(
     const { data, error } = await supabase.storage.from(bucket).list(prefix, {
       limit,
       offset,
-      sortBy: { column: 'name', order: 'asc' },
+      sortBy: { column: 'name', order: 'asc' }
     })
 
     if (error) {
@@ -118,7 +114,7 @@ export async function listSupabaseStorageObjects(
           key: fullPath,
           size: item.metadata?.size ?? 0,
           lastModified: item.updated_at ? new Date(item.updated_at) : null,
-          source: 'supabase',
+          source: 'supabase'
         })
       }
     }
@@ -151,8 +147,8 @@ export async function listB2Objects(): Promise<StorageObject[]> {
     region: process.env.B2_REGION || 'us-west-004',
     credentials: {
       accessKeyId: process.env.B2_KEY_ID!,
-      secretAccessKey: process.env.B2_APP_KEY!,
-    },
+      secretAccessKey: process.env.B2_APP_KEY!
+    }
   })
 
   const results: StorageObject[] = []
@@ -162,7 +158,7 @@ export async function listB2Objects(): Promise<StorageObject[]> {
     const command = new ListObjectsV2Command({
       Bucket: process.env.B2_BUCKET_NAME,
       MaxKeys: 1000,
-      ContinuationToken: continuationToken,
+      ContinuationToken: continuationToken
     })
 
     const response = await s3Client.send(command)
@@ -173,7 +169,7 @@ export async function listB2Objects(): Promise<StorageObject[]> {
           key: obj.Key,
           size: obj.Size ?? 0,
           lastModified: obj.LastModified ?? null,
-          source: 'b2',
+          source: 'b2'
         })
       }
     }
@@ -197,15 +193,15 @@ export async function checkB2ObjectExists(key: string): Promise<boolean> {
     region: process.env.B2_REGION || 'us-west-004',
     credentials: {
       accessKeyId: process.env.B2_KEY_ID!,
-      secretAccessKey: process.env.B2_APP_KEY!,
-    },
+      secretAccessKey: process.env.B2_APP_KEY!
+    }
   })
 
   try {
     await s3Client.send(
       new HeadObjectCommand({
         Bucket: process.env.B2_BUCKET_NAME,
-        Key: key,
+        Key: key
       })
     )
     return true
@@ -223,9 +219,7 @@ export async function checkB2ObjectExists(key: string): Promise<boolean> {
  * Uses pagination to retrieve all records and avoids non-existent tables.
  * Returns a map of storagePath → { libraryItemId, title }.
  */
-export async function getDbStoragePaths(
-  supabase: SupabaseClient
-): Promise<Map<string, { libraryItemId: string; title: string }>> {
+export async function getDbStoragePaths(supabase: SupabaseClient): Promise<Map<string, { libraryItemId: string; title: string }>> {
   const pathMap = new Map<string, { libraryItemId: string; title: string }>()
 
   let from = 0
@@ -235,7 +229,8 @@ export async function getDbStoragePaths(
   while (hasMore) {
     const { data: items, error } = await supabase
       .from('library_items')
-      .select(`
+      .select(
+        `
         id,
         title,
         books!inner (
@@ -243,7 +238,8 @@ export async function getDbStoragePaths(
           title,
           audio_files
         )
-      `)
+      `
+      )
       .range(from, from + limit - 1)
 
     if (error) {
@@ -267,7 +263,7 @@ export async function getDbStoragePaths(
         if (path) {
           pathMap.set(path, {
             libraryItemId: item.id,
-            title: item.title || bookData.title || 'Unknown',
+            title: item.title || bookData.title || 'Unknown'
           })
         }
       }
@@ -293,12 +289,9 @@ export async function getDbStoragePaths(
  * - `orphanedGroups`: files in storage with no matching DB path reference, grouped by directory
  * - `missingFiles`: DB records referencing paths that don't exist in storage
  */
-export function computeSyncDiff(
-  storageObjects: StorageObject[],
-  dbPaths: Map<string, { libraryItemId: string; title: string }>
-): SyncReport {
+export function computeSyncDiff(storageObjects: StorageObject[], dbPaths: Map<string, { libraryItemId: string; title: string }>): SyncReport {
   const storageKeys = new Set(storageObjects.map((obj) => obj.key))
-  
+
   const orphanGroupsMap = new Map<string, OrphanedGroup>()
 
   for (const obj of storageObjects) {
@@ -343,7 +336,7 @@ export function computeSyncDiff(
         libraryItemId: info.libraryItemId,
         title: info.title,
         missingPath: path,
-        source: process.env.B2_ENDPOINT ? 'b2' : 'supabase',
+        source: process.env.B2_ENDPOINT ? 'b2' : 'supabase'
       })
     }
   }
@@ -353,7 +346,7 @@ export function computeSyncDiff(
     missingFiles,
     totalStorageFiles: storageObjects.length,
     totalDbPaths: dbPaths.size,
-    generatedAt: new Date().toISOString(),
+    generatedAt: new Date().toISOString()
   }
 }
 
@@ -365,10 +358,7 @@ export function computeSyncDiff(
  * Infers a library ID for an orphaned group.
  */
 export async function inferLibraryId(supabase: SupabaseClient): Promise<string | null> {
-  const { data: libraries } = await supabase
-    .from('libraries')
-    .select('id, media_type')
-    .order('display_order')
+  const { data: libraries } = await supabase.from('libraries').select('id, media_type').order('display_order')
 
   if (!libraries || libraries.length === 0) return null
   if (libraries.length === 1) return libraries[0].id
@@ -388,7 +378,7 @@ export async function importOrphanedGroup(
 ): Promise<{ libraryItemId: string } | { error: string }> {
   const libraryItemId = crypto.randomUUID()
   const title = group.inferredTitle || 'Untitled Import'
-  
+
   const totalSize = group.files.reduce((acc, f) => acc + f.size, 0)
 
   // Build audio_files JSONB
@@ -405,19 +395,17 @@ export async function importOrphanedGroup(
         size: file.size,
         mtimeMs: Date.now(),
         ctimeMs: Date.now(),
-        birthtimeMs: Date.now(),
+        birthtimeMs: Date.now()
       },
       addedAt: Date.now(),
       updatedAt: Date.now(),
       duration: null,
-      mimeType: guessMimeType(filename),
+      mimeType: guessMimeType(filename)
     }
   })
 
   const bookId = crypto.randomUUID()
-  const { error: bookError } = await supabase
-    .from('books')
-    .insert({ id: bookId, title, audio_files: audioFilesJson })
+  const { error: bookError } = await supabase.from('books').insert({ id: bookId, title, audio_files: audioFilesJson })
 
   if (bookError) {
     return { error: `Failed to create book: ${bookError.message}` }
@@ -439,8 +427,8 @@ export async function importOrphanedGroup(
       metadata: af.metadata,
       addedAt: af.addedAt,
       updatedAt: af.updatedAt,
-      isSupplementary: false,
-    })),
+      isSupplementary: false
+    }))
   })
 
   if (itemError) {
@@ -467,7 +455,7 @@ function guessMimeType(filename: string): string {
     wav: 'audio/wav',
     aac: 'audio/aac',
     wma: 'audio/x-ms-wma',
-    mp4: 'audio/mp4',
+    mp4: 'audio/mp4'
   }
   return mimeMap[ext || ''] || 'audio/mpeg'
 }

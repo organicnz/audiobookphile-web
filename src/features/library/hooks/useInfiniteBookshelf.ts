@@ -1,5 +1,11 @@
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
-import { fetchLibraryItemsAction, fetchAuthorsAction, fetchSeriesAction, fetchCollectionsAction, fetchPlaylistsAction } from '@/features/library/actions/libraryActions'
+import {
+  fetchLibraryItemsAction,
+  fetchAuthorsAction,
+  fetchSeriesAction,
+  fetchCollectionsAction,
+  fetchPlaylistsAction
+} from '@/features/library/actions/libraryActions'
 import { EntityType, BookshelfEntity, LibraryItem, MediaItemShare, RssFeed } from '@/types/api'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { useCallback } from 'react'
@@ -18,7 +24,7 @@ export function useInfiniteBookshelf({ libraryId, entityType, query, limit }: Us
 
   const queryFn = async ({ pageParam = 0 }) => {
     const queryParams = `${query}${query ? '&' : ''}limit=${limit}&page=${pageParam}&minified=1`
-    
+
     let response: any
     switch (entityType) {
       case 'items':
@@ -52,22 +58,25 @@ export function useInfiniteBookshelf({ libraryId, entityType, query, limit }: Us
     queryKey,
     queryFn,
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
+    getNextPageParam: (lastPage) => lastPage.nextPage
   })
 
   // Real-time updates via Socket.io
-  const updateItemInCache = useCallback((updater: (item: BookshelfEntity) => BookshelfEntity) => {
-    queryClient.setQueriesData({ queryKey: ['bookshelf', libraryId] }, (oldData: any) => {
-      if (!oldData) return oldData
-      return {
-        ...oldData,
-        pages: oldData.pages.map((page: any) => ({
-          ...page,
-          results: page.results.map(updater)
-        }))
-      }
-    })
-  }, [queryClient, libraryId])
+  const updateItemInCache = useCallback(
+    (updater: (item: BookshelfEntity) => BookshelfEntity) => {
+      queryClient.setQueriesData({ queryKey: ['bookshelf', libraryId] }, (oldData: any) => {
+        if (!oldData) return oldData
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            results: page.results.map(updater)
+          }))
+        }
+      })
+    },
+    [queryClient, libraryId]
+  )
 
   useSocketEvent<MediaItemShare>('share_open', (share) => {
     if (entityType !== 'items') return

@@ -43,11 +43,7 @@ export default function ResetPasswordForm() {
   )
 
   return (
-    <AuthCard
-      title="Set new password"
-      subtitle="Choose a strong password for your account."
-      onSubmit={handleSubmit}
-    >
+    <AuthCard title="Set new password" subtitle="Choose a strong password for your account." onSubmit={handleSubmit}>
       <div className="mb-6 flex flex-col gap-4">
         <TextInput label="New password" value={password} type="password" autocomplete="new-password" onChange={setPassword} />
         <TextInput label="Confirm new password" value={confirmPassword} type="password" autocomplete="new-password" onChange={setConfirmPassword} />

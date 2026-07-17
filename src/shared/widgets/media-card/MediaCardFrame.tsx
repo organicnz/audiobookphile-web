@@ -43,7 +43,7 @@ export default function MediaCardFrame({
       onMouseLeave={onMouseLeave}
       onKeyDown={onKeyDown}
       className={mergeClasses(
-        'relative z-30 @container rounded-xl overflow-hidden',
+        '@container relative z-30 overflow-hidden rounded-xl',
         onClick && 'cursor-pointer',
         'focus-visible:outline-primary focus-visible:outline-2 focus-visible:outline-offset-2',
         'transition-all duration-300',
@@ -56,7 +56,7 @@ export default function MediaCardFrame({
       }}
     >
       <div
-        className="bg-primary/95 backdrop-blur-xl relative start-0 top-0 z-10 w-full overflow-hidden rounded-xl border border-white/10 shadow-2xl transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+        className="bg-primary/95 relative start-0 top-0 z-10 w-full overflow-hidden rounded-xl border border-white/10 shadow-2xl backdrop-blur-xl transition-transform duration-500 ease-out group-hover:scale-[1.02]"
         style={{
           height: typeof height === 'number' ? `${height}px` : height,
           aspectRatio: aspectRatio ? `${aspectRatio}` : undefined,

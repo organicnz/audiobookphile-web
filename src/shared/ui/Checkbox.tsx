@@ -39,7 +39,7 @@ export default function Checkbox({
 
   const sizePx = size === 'small' ? 16 : size === 'medium' ? 20 : 24
   const sizeClass = size === 'small' ? 'w-4 h-4' : size === 'medium' ? 'w-5 h-5' : 'w-6 h-6'
-  
+
   const checkboxWrapperClassName = mergeClasses(
     'rounded-md flex shrink-0 justify-center items-center border transition-all duration-200',
     checkboxBgClass,
@@ -50,9 +50,9 @@ export default function Checkbox({
 
   const labelSizeClass = size === 'small' ? 'text-xs sm:text-sm ps-2' : size === 'medium' ? 'text-sm sm:text-base ps-3' : 'text-base sm:text-lg ps-3'
   const checkboxLabelClassName = mergeClasses(
-    labelSizeClass, 
+    labelSizeClass,
     'font-medium select-none transition-colors',
-    disabled ? 'text-disabled' : 'text-foreground/80 group-hover:text-foreground', 
+    disabled ? 'text-disabled' : 'text-foreground/80 group-hover:text-foreground',
     labelClass
   )
 
@@ -63,14 +63,8 @@ export default function Checkbox({
   }
 
   return (
-    <InputWrapper 
-      disabled={disabled} 
-      borderless 
-      size={size} 
-      className={mergeClasses('bg-transparent', className)} 
-      inputRef={inputRef}
-    >
-      <div cy-id="checkbox-and-label-wrapper" className="group flex items-center justify-start py-1.5 px-1 relative cursor-pointer">
+    <InputWrapper disabled={disabled} borderless size={size} className={mergeClasses('bg-transparent', className)} inputRef={inputRef}>
+      <div cy-id="checkbox-and-label-wrapper" className="group relative flex cursor-pointer items-center justify-start px-1 py-1.5">
         <div cy-id="checkbox-wrapper" className={checkboxWrapperClassName}>
           <AnimatePresence mode="wait">
             {partial ? (
@@ -96,7 +90,7 @@ export default function Checkbox({
             ) : null}
           </AnimatePresence>
         </div>
-        
+
         {label && (
           <span cy-id="checkbox-label" className={checkboxLabelClassName}>
             {label}
@@ -111,10 +105,9 @@ export default function Checkbox({
           disabled={disabled}
           aria-label={ariaLabel}
           onChange={handleChange}
-          className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-md"
+          className="focus-visible:ring-primary focus-visible:ring-offset-background absolute inset-0 h-full w-full cursor-pointer rounded-md opacity-0 focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none"
         />
       </div>
     </InputWrapper>
   )
 }
-

@@ -23,15 +23,7 @@ export default function CommandPalette() {
 
   const activeLibraryId = libraryContext?.library?.id || user?.defaultLibraryId
 
-  const {
-    searchQuery,
-    setSearchQuery,
-    searchResults,
-    isSearching,
-    handleSearch,
-    useSemanticSearch,
-    setUseSemanticSearch
-  } = useLibrarySearch({
+  const { searchQuery, setSearchQuery, searchResults, isSearching, handleSearch, useSemanticSearch, setUseSemanticSearch } = useLibrarySearch({
     libraryId: activeLibraryId || undefined,
     autoSelectFirst: false
   })
@@ -59,11 +51,11 @@ export default function CommandPalette() {
 
   const books = searchResults?.book || []
   const podcasts = searchResults?.podcast || []
-  
+
   // Aggregate items for keyboard navigation
   const items = [
-    ...books.map(b => ({ type: 'book' as const, id: b.libraryItem.id, title: b.libraryItem.media?.metadata?.title, item: b.libraryItem })),
-    ...podcasts.map(p => ({ type: 'podcast' as const, id: p.libraryItem.id, title: p.libraryItem.media?.metadata?.title, item: p.libraryItem })),
+    ...books.map((b) => ({ type: 'book' as const, id: b.libraryItem.id, title: b.libraryItem.media?.metadata?.title, item: b.libraryItem })),
+    ...podcasts.map((p) => ({ type: 'podcast' as const, id: p.libraryItem.id, title: p.libraryItem.media?.metadata?.title, item: p.libraryItem })),
     { type: 'action' as const, id: 'settings', title: t('HeaderSettings'), icon: Settings, href: '/settings' }
   ]
 
@@ -74,10 +66,10 @@ export default function CommandPalette() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault()
-        setActiveIndex(prev => (prev < items.length - 1 ? prev + 1 : prev))
+        setActiveIndex((prev) => (prev < items.length - 1 ? prev + 1 : prev))
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
-        setActiveIndex(prev => (prev > 0 ? prev - 1 : 0))
+        setActiveIndex((prev) => (prev > 0 ? prev - 1 : 0))
       } else if (e.key === 'Enter') {
         e.preventDefault()
         const selected = items[activeIndex]
@@ -105,7 +97,7 @@ export default function CommandPalette() {
     }
   }, [activeIndex])
 
-  const executeAction = (selected: typeof items[number]) => {
+  const executeAction = (selected: (typeof items)[number]) => {
     setIsOpen(false)
     if (selected.type === 'action' && selected.href) {
       router.push(selected.href)
@@ -124,7 +116,7 @@ export default function CommandPalette() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm"
+          className="bg-background/80 fixed inset-0 backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
 
@@ -134,14 +126,14 @@ export default function CommandPalette() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -20 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="relative w-full max-w-2xl overflow-hidden rounded-xl border border-white/10 bg-primary shadow-2xl mx-4"
+          className="bg-primary relative mx-4 w-full max-w-2xl overflow-hidden rounded-xl border border-white/10 shadow-2xl"
         >
           {/* Search Input */}
-          <div className="flex items-center border-b border-white/10 px-4 py-4 relative">
+          <div className="relative flex items-center border-b border-white/10 px-4 py-4">
             <Search className="text-foreground-muted mr-3 h-5 w-5" />
             <input
               ref={inputRef}
-              className="flex-1 bg-transparent text-lg text-foreground outline-none placeholder:text-foreground-muted"
+              className="text-foreground placeholder:text-foreground-muted flex-1 bg-transparent text-lg outline-none"
               placeholder={useSemanticSearch ? "Describe what you're looking for..." : t('PlaceholderSearch') + '...'}
               value={searchQuery}
               onChange={(e) => {
@@ -149,10 +141,8 @@ export default function CommandPalette() {
                 setActiveIndex(0)
               }}
             />
-            {isSearching && (
-              <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-foreground border-t-transparent" />
-            )}
-            
+            {isSearching && <div className="border-foreground mr-3 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />}
+
             {/* Semantic Search Toggle */}
             <button
               onClick={() => {
@@ -160,41 +150,38 @@ export default function CommandPalette() {
                 if (searchQuery) handleSearch()
               }}
               className={mergeClasses(
-                "mr-3 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors border",
-                useSemanticSearch 
-                  ? "bg-primary-500/20 text-primary-400 border-primary-500/50" 
-                  : "bg-white/5 text-foreground-muted border-white/10 hover:bg-white/10 hover:text-foreground"
+                'mr-3 flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                useSemanticSearch
+                  ? 'bg-primary-500/20 text-primary-400 border-primary-500/50'
+                  : 'text-foreground-muted hover:text-foreground border-white/10 bg-white/5 hover:bg-white/10'
               )}
               title="Toggle AI Semantic Search"
             >
               <span className="relative flex h-2 w-2">
-                {useSemanticSearch && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>}
-                <span className={mergeClasses("relative inline-flex rounded-full h-2 w-2", useSemanticSearch ? "bg-primary-500" : "bg-foreground-muted")}></span>
+                {useSemanticSearch && <span className="bg-primary-400 absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>}
+                <span
+                  className={mergeClasses('relative inline-flex h-2 w-2 rounded-full', useSemanticSearch ? 'bg-primary-500' : 'bg-foreground-muted')}
+                ></span>
               </span>
               AI Search
             </button>
             <button
               onClick={() => setIsOpen(false)}
-              className="ml-3 rounded-md p-1 text-foreground-muted hover:bg-white/10 hover:text-foreground transition-colors"
+              className="text-foreground-muted hover:text-foreground ml-3 rounded-md p-1 transition-colors hover:bg-white/10"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
           {/* Results Area */}
-          <div 
-            ref={listRef}
-            className="max-h-[60vh] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
-          >
+          <div ref={listRef} className="scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent max-h-[60vh] overflow-y-auto p-2">
             {items.length === 0 && searchQuery.length > 0 && !isSearching && (
-              <div className="py-14 text-center text-sm text-foreground-muted">
-                {t('MessageNoItems')}
-              </div>
+              <div className="text-foreground-muted py-14 text-center text-sm">{t('MessageNoItems')}</div>
             )}
 
             {items.map((item, index) => {
               const isActive = index === activeIndex
-              
+
               return (
                 <div
                   key={item.id}
@@ -202,7 +189,7 @@ export default function CommandPalette() {
                   onMouseEnter={() => setActiveIndex(index)}
                   className={mergeClasses(
                     'flex cursor-pointer items-center rounded-lg px-3 py-2 transition-colors',
-                    isActive ? 'bg-white/10 text-foreground' : 'text-foreground-muted hover:bg-white/5'
+                    isActive ? 'text-foreground bg-white/10' : 'text-foreground-muted hover:bg-white/5'
                   )}
                 >
                   {/* Icon or Cover */}
@@ -223,10 +210,8 @@ export default function CommandPalette() {
 
                   {/* Title & Type */}
                   <div className="flex flex-col overflow-hidden">
-                    <span className="truncate font-medium">
-                      {item.title}
-                    </span>
-                    <span className="text-xs opacity-70 flex items-center gap-1 mt-0.5">
+                    <span className="truncate font-medium">{item.title}</span>
+                    <span className="mt-0.5 flex items-center gap-1 text-xs opacity-70">
                       {item.type === 'book' && <Book size={10} />}
                       {item.type === 'podcast' && <Headphones size={10} />}
                       {item.type === 'action' && 'Action'}
@@ -237,14 +222,21 @@ export default function CommandPalette() {
               )
             })}
           </div>
-          
+
           {/* Footer */}
-          <div className="border-t border-white/10 px-4 py-2 text-xs text-foreground-muted bg-black/20 flex justify-between">
+          <div className="text-foreground-muted flex justify-between border-t border-white/10 bg-black/20 px-4 py-2 text-xs">
             <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1"><kbd className="font-sans font-semibold bg-white/10 px-1.5 rounded">↑</kbd> <kbd className="font-sans font-semibold bg-white/10 px-1.5 rounded">↓</kbd> to navigate</span>
-              <span className="flex items-center gap-1"><kbd className="font-sans font-semibold bg-white/10 px-1.5 rounded">Enter</kbd> to select</span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded bg-white/10 px-1.5 font-sans font-semibold">↑</kbd>{' '}
+                <kbd className="rounded bg-white/10 px-1.5 font-sans font-semibold">↓</kbd> to navigate
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded bg-white/10 px-1.5 font-sans font-semibold">Enter</kbd> to select
+              </span>
             </div>
-            <span className="flex items-center gap-1"><kbd className="font-sans font-semibold bg-white/10 px-1.5 rounded">esc</kbd> to close</span>
+            <span className="flex items-center gap-1">
+              <kbd className="rounded bg-white/10 px-1.5 font-sans font-semibold">esc</kbd> to close
+            </span>
           </div>
         </motion.div>
       </div>

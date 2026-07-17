@@ -9,14 +9,14 @@ import type { MetadataProvider as MetadataProviderType } from '@/types/api'
 export async function getMetadataProvidersAction() {
   const books: MetadataProviderType[] = [
     { value: 'openlibrary', text: 'Open Library' },
-    { value: 'google', text: 'Google Books' },
+    { value: 'google', text: 'Google Books' }
   ]
 
   return {
     providers: {
       books,
       podcasts: [] as MetadataProviderType[],
-      booksCovers: books,
-    },
+      booksCovers: books
+    }
   }
 }

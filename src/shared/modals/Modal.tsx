@@ -148,7 +148,7 @@ export default function Modal({
           <motion.button
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-foreground-muted hover:text-foreground absolute end-4 top-4 z-20 inline-flex items-center justify-center rounded-full bg-black/20 p-2 transition-colors hover:bg-black/40 backdrop-blur-md"
+            className="text-foreground-muted hover:text-foreground absolute end-4 top-4 z-20 inline-flex items-center justify-center rounded-full bg-black/20 p-2 backdrop-blur-md transition-colors hover:bg-black/40"
             aria-label={t('ButtonCloseModal')}
             onClick={clickClose}
             cy-id="modal-close-button"
@@ -176,8 +176,8 @@ export default function Modal({
             <div
               style={style}
               className={mergeClasses(
-                'text-foreground shadow-[0_20px_50px_rgba(0,0,0,0.4)] bg-bg/95 backdrop-blur-md relative rounded-xl border border-white/10',
-                'w-[calc(100vw-2rem)] max-w-[95vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px] overflow-hidden',
+                'text-foreground bg-bg/95 relative rounded-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-md',
+                'w-[calc(100vw-2rem)] max-w-[95vw] overflow-hidden sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px]',
                 className
               )}
               cy-id="modal-panel"
@@ -187,11 +187,11 @@ export default function Modal({
               {/* Processing overlay */}
               <AnimatePresence>
                 {processing && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="absolute inset-0 z-50 flex h-full w-full items-center justify-center bg-gray-900/60 backdrop-blur-[1px]" 
+                    className="absolute inset-0 z-50 flex h-full w-full items-center justify-center bg-gray-900/60 backdrop-blur-[1px]"
                     cy-id="modal-processing-overlay"
                   >
                     <LoadingIndicator />
@@ -208,4 +208,3 @@ export default function Modal({
   if (typeof window === 'undefined') return null
   return createPortal(modalContent, document.body)
 }
-

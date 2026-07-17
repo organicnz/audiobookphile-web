@@ -37,7 +37,7 @@ export function useFilterData(libraryId: string | undefined) {
     queryKey,
     queryFn: () => fetchLibraryFilterDataAction(libraryId!),
     enabled: !!libraryId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000 // 5 minutes
   })
 
   const updateFilterDataWithItem = useCallback(
@@ -76,15 +76,18 @@ export function useFilterData(libraryId: string | undefined) {
     [libraryId, queryClient, queryKey]
   )
 
-  const removeSeriesFromFilterData = useCallback((seriesId: string) => {
-    queryClient.setQueryData<LibraryFilterData>(queryKey, (prev) => {
-      if (!prev) return prev
-      return {
-        ...prev,
-        series: prev.series.filter((s) => s.id !== seriesId)
-      }
-    })
-  }, [queryClient, queryKey])
+  const removeSeriesFromFilterData = useCallback(
+    (seriesId: string) => {
+      queryClient.setQueryData<LibraryFilterData>(queryKey, (prev) => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          series: prev.series.filter((s) => s.id !== seriesId)
+        }
+      })
+    },
+    [queryClient, queryKey]
+  )
 
   // Register socket listeners for real-time updates directly in the hook
   useSocketEvent<LibraryItem>('item_added', updateFilterDataWithItem)

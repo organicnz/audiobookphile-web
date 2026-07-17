@@ -35,7 +35,7 @@ export interface FetchResult {
  */
 function normalizeString(str: string): string {
   if (!str) return ''
-  
+
   let cleaned = str
     // 1. Split CamelCase/PascalCase
     .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -83,10 +83,7 @@ function getExtensionFromType(contentType: string): string {
 /**
  * Fetch a cover image for a book by title and/or author.
  */
-export async function fetchBookCover(
-  title: string,
-  author?: string
-): Promise<FetchedCover | null> {
+export async function fetchBookCover(title: string, author?: string): Promise<FetchedCover | null> {
   const result = await fetchBookMetadata(title, author)
   return result.cover
 }
@@ -95,17 +92,11 @@ export async function fetchBookCover(
  * Fetch full metadata and cover for a book.
  * Uses a multi-pass strategy to maximize match chances even with noisy metadata.
  */
-export async function fetchBookMetadata(
-  title: string,
-  author?: string
-): Promise<FetchResult> {
+export async function fetchBookMetadata(title: string, author?: string): Promise<FetchResult> {
   const { cleanTitle, extractedAuthor } = parseRawTitle(title)
   const cleanAuthor = author ? normalizeString(author) : extractedAuthor
 
-  const strategies = [
-    { title: cleanTitle, author: cleanAuthor },
-    { title: cleanTitle },
-  ]
+  const strategies = [{ title: cleanTitle, author: cleanAuthor }, { title: cleanTitle }]
 
   const words = cleanTitle.split(' ')
   if (words.length > 5) {
@@ -116,7 +107,7 @@ export async function fetchBookMetadata(
 
   for (const strategy of strategies) {
     if (!strategy.title) continue
-    
+
     for (const provider of providers) {
       try {
         const result = await provider(strategy.title, strategy.author)
@@ -133,10 +124,9 @@ export async function fetchBookMetadata(
 async function fetchFromITunes(title: string, author?: string): Promise<FetchResult | null> {
   try {
     const queryTerm = author ? `${title} ${author}` : title
-    const searchRes = await fetch(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(queryTerm)}&media=audiobook&limit=1`,
-      { signal: AbortSignal.timeout(8000) }
-    )
+    const searchRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(queryTerm)}&media=audiobook&limit=1`, {
+      signal: AbortSignal.timeout(8000)
+    })
     if (!searchRes.ok) return null
 
     const data = await searchRes.json()
@@ -146,13 +136,13 @@ async function fetchFromITunes(title: string, author?: string): Promise<FetchRes
     }
 
     const item = data.results[0]
-    
+
     const metadata: BookMetadata = {
       title: item.trackName || title,
       author: item.artistName,
       description: item.description ? item.description.replace(/<[^>]*>/g, '') : undefined,
       publishedYear: item.releaseDate ? new Date(item.releaseDate).getFullYear().toString() : undefined,
-      genres: item.primaryGenreName ? [item.primaryGenreName] : [],
+      genres: item.primaryGenreName ? [item.primaryGenreName] : []
     }
 
     let cover: FetchedCover | null = null
@@ -179,10 +169,7 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
     const queryTerm = author ? `${title} ${author}` : title
     const query = new URLSearchParams({ q: queryTerm, limit: '3' })
 
-    const searchRes = await fetch(
-      `https://openlibrary.org/search.json?${query.toString()}`,
-      { signal: AbortSignal.timeout(8000) }
-    )
+    const searchRes = await fetch(`https://openlibrary.org/search.json?${query.toString()}`, { signal: AbortSignal.timeout(8000) })
     if (!searchRes.ok) return null
 
     const data = await searchRes.json()
@@ -190,20 +177,17 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
     if (!docs?.length) return null
 
     const withCover = docs.find((d) => d.cover_i) || docs[0]
-    
+
     const metadata: BookMetadata = {
       title: withCover.title || title,
       author: withCover.author_name?.[0],
       publishedYear: withCover.first_publish_year?.toString(),
-      genres: withCover.subject?.slice(0, 5),
+      genres: withCover.subject?.slice(0, 5)
     }
 
     let cover: FetchedCover | null = null
     if (withCover.cover_i) {
-      const imgRes = await fetch(
-        `https://covers.openlibrary.org/b/id/${withCover.cover_i}-L.jpg`,
-        { signal: AbortSignal.timeout(10000) }
-      )
+      const imgRes = await fetch(`https://covers.openlibrary.org/b/id/${withCover.cover_i}-L.jpg`, { signal: AbortSignal.timeout(10000) })
       if (imgRes.ok) {
         const contentType = imgRes.headers.get('content-type') || 'image/jpeg'
         if (!contentType.includes('text/html')) {
@@ -224,10 +208,9 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
 async function fetchFromGoogleBooks(title: string, author?: string): Promise<FetchResult | null> {
   try {
     const queryTerm = author ? `${title} ${author}` : title
-    const searchRes = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(queryTerm)}&maxResults=3&printType=books`,
-      { signal: AbortSignal.timeout(8000) }
-    )
+    const searchRes = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(queryTerm)}&maxResults=3&printType=books`, {
+      signal: AbortSignal.timeout(8000)
+    })
     if (!searchRes.ok) return null
 
     const data = await searchRes.json()
@@ -244,15 +227,12 @@ async function fetchFromGoogleBooks(title: string, author?: string): Promise<Fet
       publishedYear: info.publishedDate ? info.publishedDate.split('-')[0] : undefined,
       publisher: info.publisher,
       genres: info.categories,
-      language: info.language,
+      language: info.language
     }
 
     let cover: FetchedCover | null = null
     if (info.imageLinks) {
-      let imgUrl: string =
-        info.imageLinks.extraLarge ||
-        info.imageLinks.large ||
-        info.imageLinks.thumbnail
+      let imgUrl: string = info.imageLinks.extraLarge || info.imageLinks.large || info.imageLinks.thumbnail
 
       imgUrl = imgUrl.replace('http://', 'https://').replace('&edge=curl', '')
 

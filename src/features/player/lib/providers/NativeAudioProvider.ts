@@ -27,7 +27,7 @@ export class NativeAudioProvider implements IAudioProvider {
 
     const trackStartTime = Math.max(0, this.startTime - track.startOffset)
     this.onTrackLoad(trackStartTime)
-    
+
     this.player.src = track.relativeContentUrl
     this.player.load()
   }

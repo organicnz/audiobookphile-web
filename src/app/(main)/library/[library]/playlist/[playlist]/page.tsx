@@ -1,5 +1,5 @@
-import { getCurrentUser, getPlaylist } from '@/shared/lib/api';
-import PlaylistClient from './PlaylistClient';
+import { getCurrentUser, getPlaylist } from '@/shared/lib/api'
+import PlaylistClient from './PlaylistClient'
 
 export default async function PlaylistPage({ params }: { params: Promise<{ playlist: string; library: string }> }) {
   const { playlist: playlistId } = await params

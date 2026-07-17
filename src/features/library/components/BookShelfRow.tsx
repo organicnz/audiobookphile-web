@@ -59,7 +59,7 @@ export default function BookShelfRow({ title, children, className }: BookShelfRo
   }
 
   return (
-    <div className={mergeClasses('relative w-full content-visibility-auto', className)}>
+    <div className={mergeClasses('content-visibility-auto relative w-full', className)}>
       <div
         ref={shelfRef}
         className="bookshelf-row categorizedBookshelfRow no-scroll pl-4e md:pl-8e relative w-full max-w-full overflow-x-auto overflow-y-hidden"
@@ -70,12 +70,12 @@ export default function BookShelfRow({ title, children, className }: BookShelfRo
 
       <div className="relative">
         <div className="categoryPlacard left-4e md:left-8e w-44e relative top-0 z-30 transform">
-          <div className="bg-primary/95 backdrop-blur-xl px-4 py-1.5 flex h-full w-full items-center justify-center rounded-lg border border-white/10 shadow-lg">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/90">{title}</h2>
+          <div className="bg-primary/95 flex h-full w-full items-center justify-center rounded-lg border border-white/10 px-4 py-1.5 shadow-lg backdrop-blur-xl">
+            <h2 className="text-[10px] font-black tracking-[0.2em] text-white/90 uppercase">{title}</h2>
           </div>
         </div>
 
-        <div className="h-px bg-white/5 absolute top-0 right-0 left-0 z-5 w-full"></div>
+        <div className="absolute top-0 right-0 left-0 z-5 h-px w-full bg-white/5"></div>
       </div>
 
       <AnimatePresence>

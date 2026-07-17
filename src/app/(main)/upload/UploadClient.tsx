@@ -27,8 +27,6 @@ import { Library } from '@/types/api'
 import { CleanedItem, FileWithMetadata, getItemsFromFilelist, upload, UploadProgressInfo } from './UploadHelper'
 import { fetchBookMetadata, fetchPodcastMetadata, getCookie } from './actions'
 
-
-
 interface LibraryClientProps {
   libraries: Library[]
 }
@@ -63,7 +61,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
     toggleTableExpanded,
     handleFetchMetadata,
     handleRemoveStagedItem,
-    handleStartUpload,
+    handleStartUpload
   } = useUploader(libraries)
 
   function preventDef(e: React.DragEvent<HTMLDivElement>): void {
@@ -112,7 +110,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
           <div className="flex items-center pt-6">
             <ToggleSwitch label={t('LabelAutoFetchMetadata')} value={autoFetch} className="pr-0" onChange={setAutoFetch} />
             <Tooltip maxWidth={300} text={t('LabelAutoFetchMetadataHelp')}>
-              <Info size={18} className="text-white/40 hover:text-primary transition-colors cursor-help" />
+              <Info size={18} className="hover:text-primary cursor-help text-white/40 transition-colors" />
             </Tooltip>
           </div>
 
@@ -220,7 +218,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
                     {/* floating x on right */}
                     {!uploadProcessing && !item.isUploading && (
                       <IconBtn
-                        className="bg-primary border-white/10 absolute -top-3 -right-3 h-8 w-8 rounded-full border shadow-xl"
+                        className="bg-primary absolute -top-3 -right-3 h-8 w-8 rounded-full border border-white/10 shadow-xl"
                         onClick={() => handleRemoveStagedItem(index)}
                       >
                         <X size={16} />

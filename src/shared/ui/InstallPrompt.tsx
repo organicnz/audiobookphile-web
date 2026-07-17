@@ -39,13 +39,13 @@ export function InstallPrompt() {
 
     deferredPrompt.prompt()
     const { outcome } = await deferredPrompt.userChoice
-    
+
     if (outcome === 'accepted') {
       console.log('User accepted the install prompt')
     } else {
       console.log('User dismissed the install prompt')
     }
-    
+
     setDeferredPrompt(null)
     setIsInstallable(false)
   }
@@ -53,23 +53,33 @@ export function InstallPrompt() {
   if (!isInstallable || isInstalled) return null
 
   return (
-    <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
-      <div className="bg-primary/90 backdrop-blur-md text-primary-foreground px-6 py-3 rounded-full shadow-lg border border-primary-foreground/20 flex items-center space-x-4">
+    <div className="animate-in slide-in-from-bottom-5 fade-in fixed bottom-20 left-1/2 z-50 -translate-x-1/2 duration-300">
+      <div className="bg-primary/90 text-primary-foreground border-primary-foreground/20 flex items-center space-x-4 rounded-full border px-6 py-3 shadow-lg backdrop-blur-md">
         <div className="flex flex-col">
-          <span className="font-semibold text-sm">Install Audiobookphile</span>
+          <span className="text-sm font-semibold">Install Audiobookphile</span>
           <span className="text-xs opacity-80">Add to home screen for offline listening</span>
         </div>
-        <button 
+        <button
           onClick={handleInstallClick}
-          className="bg-background text-foreground px-4 py-1.5 rounded-full text-sm font-medium hover:bg-background/90 transition-colors"
+          className="bg-background text-foreground hover:bg-background/90 rounded-full px-4 py-1.5 text-sm font-medium transition-colors"
         >
           Install
         </button>
-        <button 
-          onClick={() => setIsInstallable(false)}
-          className="opacity-60 hover:opacity-100 p-1"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        <button onClick={() => setIsInstallable(false)} className="p-1 opacity-60 hover:opacity-100">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
         </button>
       </div>
     </div>

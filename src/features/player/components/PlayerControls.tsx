@@ -1,13 +1,4 @@
-import { 
-  SkipBack, 
-  RotateCcw, 
-  Pause, 
-  Play, 
-  RotateCw, 
-  SkipForward, 
-  List, 
-  Settings2 
-} from 'lucide-react'
+import { SkipBack, RotateCcw, Pause, Play, RotateCw, SkipForward, List, Settings2 } from 'lucide-react'
 import type { UsePlayerHandlerReturn } from '@/features/player/hooks/usePlayerHandler'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { PlayerState } from '@/types/api'
@@ -64,18 +55,18 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
 
   return (
     <>
-      <div className="mt-8 flex items-center w-full max-w-4xl mx-auto px-4 lg:mt-4">
+      <div className="mx-auto mt-8 flex w-full max-w-4xl items-center px-4 lg:mt-4">
         {/* Left section: Optional info/spacer */}
-        <div className="hidden lg:flex flex-1" />
+        <div className="hidden flex-1 lg:flex" />
 
         {/* Center - playback controls */}
         <div className="flex flex-1 items-center justify-center gap-2 sm:gap-6">
           {/* previous chapter */}
           <Tooltip text={t('ButtonPreviousChapter')} position="top">
-            <IconBtn 
-              borderless 
-              size="custom" 
-              className="p-2 text-foreground/60 hover:text-foreground" 
+            <IconBtn
+              borderless
+              size="custom"
+              className="text-foreground/60 hover:text-foreground p-2"
               onClick={handlePreviousChapter}
               icon={SkipBack}
               whileHover={{ x: -2 }}
@@ -85,17 +76,17 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
 
           {/* jump backward */}
           <Tooltip text={jumpBackwardTooltipText} position="top">
-            <div className="relative group">
-              <IconBtn 
-                borderless 
-                size="custom" 
-                className="p-2 text-foreground/80 hover:text-foreground" 
+            <div className="group relative">
+              <IconBtn
+                borderless
+                size="custom"
+                className="text-foreground/80 hover:text-foreground p-2"
                 onClick={jumpBackward}
                 icon={RotateCcw}
                 whileHover={{ rotate: -15 }}
                 whileTap={{ scale: 0.9 }}
               />
-              <span className="absolute inset-0 flex items-center justify-center pointer-events-none text-[8px] font-bold mt-0.5 opacity-60 group-hover:opacity-100">
+              <span className="pointer-events-none absolute inset-0 mt-0.5 flex items-center justify-center text-[8px] font-bold opacity-60 group-hover:opacity-100">
                 {settings.jumpBackwardAmount}
               </span>
             </div>
@@ -108,28 +99,28 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
               size="custom"
               loading={isLoading}
               outlined={false}
-              className="bg-foreground text-background hover:bg-foreground/90 h-14 w-14 sm:h-16 sm:w-16 shadow-xl"
+              className="bg-foreground text-background hover:bg-foreground/90 h-14 w-14 shadow-xl sm:h-16 sm:w-16"
               onClick={playPause}
               icon={isPlaying ? Pause : Play}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              iconClass={isPlaying ? "" : "ml-1"}
+              iconClass={isPlaying ? '' : 'ml-1'}
             />
           </div>
 
           {/* jump forward */}
           <Tooltip text={jumpForwardTooltipText} position="top">
-            <div className="relative group">
-              <IconBtn 
-                borderless 
-                size="custom" 
-                className="p-2 text-foreground/80 hover:text-foreground" 
+            <div className="group relative">
+              <IconBtn
+                borderless
+                size="custom"
+                className="text-foreground/80 hover:text-foreground p-2"
                 onClick={jumpForward}
                 icon={RotateCw}
                 whileHover={{ rotate: 15 }}
                 whileTap={{ scale: 0.9 }}
               />
-              <span className="absolute inset-0 flex items-center justify-center pointer-events-none text-[8px] font-bold mt-0.5 opacity-60 group-hover:opacity-100">
+              <span className="pointer-events-none absolute inset-0 mt-0.5 flex items-center justify-center text-[8px] font-bold opacity-60 group-hover:opacity-100">
                 {settings.jumpForwardAmount}
               </span>
             </div>
@@ -137,10 +128,10 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
 
           {/* next chapter */}
           <Tooltip text={t('ButtonNextChapter')} position="top">
-            <IconBtn 
-              borderless 
-              size="custom" 
-              className="p-2 text-foreground/60 hover:text-foreground" 
+            <IconBtn
+              borderless
+              size="custom"
+              className="text-foreground/60 hover:text-foreground p-2"
               onClick={handleNextChapter}
               icon={SkipForward}
               whileHover={{ x: 2 }}
@@ -155,7 +146,7 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
           <div className="hidden sm:block">
             <VolumeControl playerHandler={playerHandler} />
           </div>
-          
+
           {/* playback rate widget */}
           <PlaybackRateWidget playerHandler={playerHandler} />
 
@@ -165,11 +156,11 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
           {/* chapters button */}
           {chapters.length > 0 && (
             <Tooltip text={t('LabelViewChapters')} position="top">
-              <IconBtn 
-                size="custom" 
-                borderless 
-                className="p-2 text-foreground/60 hover:text-foreground" 
-                onClick={() => setIsChaptersModalOpen(true)} 
+              <IconBtn
+                size="custom"
+                borderless
+                className="text-foreground/60 hover:text-foreground p-2"
+                onClick={() => setIsChaptersModalOpen(true)}
                 ariaLabel={t('LabelViewChapters')}
                 icon={List}
               />
@@ -178,11 +169,11 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
 
           {/* player settings button */}
           <Tooltip text={t('LabelViewPlayerSettings')} position="top">
-            <IconBtn 
-              size="custom" 
-              borderless 
-              className="p-2 text-foreground/60 hover:text-foreground" 
-              onClick={() => setIsSettingsModalOpen(true)} 
+            <IconBtn
+              size="custom"
+              borderless
+              className="text-foreground/60 hover:text-foreground p-2"
+              onClick={() => setIsSettingsModalOpen(true)}
               ariaLabel={t('LabelViewPlayerSettings')}
               icon={Settings2}
               whileHover={{ rotate: 30 }}

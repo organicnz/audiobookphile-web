@@ -27,4 +27,3 @@ export default function Label({ children, id, htmlFor, disabled = false, classNa
     </label>
   )
 }
-

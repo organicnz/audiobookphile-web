@@ -116,11 +116,7 @@ export default function MediaCardCover({
   return (
     <>
       {/* Cover background when image does not fill */}
-      <div
-        cy-id="coverBg"
-        className="bg-black/40 absolute start-0 top-0 h-full w-full overflow-hidden"
-        style={{ display: showCoverBg ? 'block' : 'none' }}
-      >
+      <div cy-id="coverBg" className="absolute start-0 top-0 h-full w-full overflow-hidden bg-black/40" style={{ display: showCoverBg ? 'block' : 'none' }}>
         {showCoverBg && (
           <motion.div
             animate={{ scale: isHovering ? 1.15 : 1.1, opacity: 0.3 }}
@@ -143,9 +139,7 @@ export default function MediaCardCover({
           className="absolute start-0 top-0 flex h-full w-full items-center justify-center bg-white/5"
           style={{ padding: '1rem' }}
         >
-          <p className="text-center text-foreground/20 font-black uppercase tracking-widest text-[10px]">
-            {title}
-          </p>
+          <p className="text-foreground/20 text-center text-[10px] font-black tracking-widest uppercase">{title}</p>
         </div>
       )}
 
@@ -160,11 +154,11 @@ export default function MediaCardCover({
           loading="lazy"
           onLoad={handleImageLoaded}
           onError={handleImageError}
-          animate={{ 
+          animate={{
             opacity: imageReady ? 1 : 0,
             scale: isHovering ? 1.08 : 1
           }}
-          transition={{ 
+          transition={{
             opacity: { duration: 0.4 },
             scale: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
           }}
@@ -179,23 +173,27 @@ export default function MediaCardCover({
 
       {/* Placeholder cover title & author */}
       {!shouldAttemptCover && (
-        <div 
-          className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5 p-4 text-center"
+        <div
+          className="from-primary/20 to-primary/5 absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br p-4 text-center"
           style={{ viewTransitionName: `cover-${libraryItem.id}` }}
         >
-          <div
-            cy-id="placeholderTitle"
-            className="flex-1 flex items-center justify-center"
-          >
-            <p cy-id="placeholderTitleText" aria-hidden="true" className="font-black uppercase tracking-widest text-primary/80 drop-shadow-sm leading-tight" style={{ fontSize: `${TITLE_FONT_SIZE}em` }}>
+          <div cy-id="placeholderTitle" className="flex flex-1 items-center justify-center">
+            <p
+              cy-id="placeholderTitleText"
+              aria-hidden="true"
+              className="text-primary/80 leading-tight font-black tracking-widest uppercase drop-shadow-sm"
+              style={{ fontSize: `${TITLE_FONT_SIZE}em` }}
+            >
               {titleCleaned}
             </p>
           </div>
-          <div
-            cy-id="placeholderAuthor"
-            className="w-full pb-2"
-          >
-            <p cy-id="placeholderAuthorText" aria-hidden="true" className="font-bold text-primary/40 uppercase tracking-widest" style={{ fontSize: `${AUTHOR_FONT_SIZE}em` }}>
+          <div cy-id="placeholderAuthor" className="w-full pb-2">
+            <p
+              cy-id="placeholderAuthorText"
+              aria-hidden="true"
+              className="text-primary/40 font-bold tracking-widest uppercase"
+              style={{ fontSize: `${AUTHOR_FONT_SIZE}em` }}
+            >
               {authorCleaned}
             </p>
           </div>
@@ -205,7 +203,7 @@ export default function MediaCardCover({
       {/* Progress bar */}
       {userProgressPercent > 0 && (!isPodcast || !!libraryItem.recentEpisode) && (
         <div className="absolute start-0 bottom-0 z-20 w-full px-2 pb-2">
-          <div className="h-1.5 w-full bg-white/10 backdrop-blur-sm rounded-full overflow-hidden shadow-inner">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10 shadow-inner backdrop-blur-sm">
             <motion.div
               cy-id="progressBar"
               initial={{ width: 0 }}
@@ -213,9 +211,7 @@ export default function MediaCardCover({
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className={mergeClasses(
                 'h-full rounded-full transition-all duration-500',
-                itemIsFinished 
-                  ? 'bg-success shadow-[0_0_10px_rgba(76,175,80,0.5)]' 
-                  : 'bg-accent shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                itemIsFinished ? 'bg-success shadow-[0_0_10px_rgba(76,175,80,0.5)]' : 'bg-accent shadow-[0_0_10px_rgba(245,158,11,0.5)]'
               )}
             />
           </div>

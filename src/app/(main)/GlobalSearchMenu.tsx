@@ -1,16 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Tag, 
-  Layers, 
-  Bookmark, 
-  Music, 
-  Mic, 
-  Book, 
-  Radio, 
-  ChevronRight, 
-  User as UserIcon,
-  Search
-} from 'lucide-react'
+import { Tag, Layers, Bookmark, Music, Mic, Book, Radio, ChevronRight, User as UserIcon, Search } from 'lucide-react'
 import AuthorImage from '@/features/metadata/components/AuthorImage'
 import { FlatResultItem, SearchResultType } from '@/features/library/hooks/useGlobalSearchTransformer'
 import { useMenuPosition } from '@/shared/hooks/useMenuPosition'
@@ -35,7 +24,7 @@ const HighlightMatch = ({ text, query }: { text: string; query: string }) => {
     <>
       {parts.map((part, i) =>
         part.isMatch ? (
-          <span key={i} className="font-black text-accent drop-shadow-[0_0_8px_rgba(245,158,11,0.3)]">
+          <span key={i} className="text-accent font-black drop-shadow-[0_0_8px_rgba(245,158,11,0.3)]">
             {part.text}
           </span>
         ) : (
@@ -120,7 +109,7 @@ export default function GlobalSearchMenu({
         cy-id="global-search-menu"
         role="listbox"
         tabIndex={-1}
-        className="bg-primary/95 border-white/10 backdrop-blur-xl globalSearchMenu absolute z-50 mt-2 max-h-[min(600px,calc(100vh-100px))] w-full overflow-y-auto rounded-2xl border p-1.5 shadow-2xl"
+        className="bg-primary/95 globalSearchMenu absolute z-50 mt-2 max-h-[min(600px,calc(100vh-100px))] w-full overflow-y-auto rounded-2xl border border-white/10 p-1.5 shadow-2xl backdrop-blur-xl"
         style={
           usePortal
             ? {
@@ -137,7 +126,7 @@ export default function GlobalSearchMenu({
         {results.map((result, index) => {
           if (result.isPlaceholder) {
             return (
-              <div key={result.id} className="px-4 py-3 text-sm text-foreground/40 font-medium italic">
+              <div key={result.id} className="text-foreground/40 px-4 py-3 text-sm font-medium italic">
                 {result.placeholderText}
               </div>
             )
@@ -145,7 +134,7 @@ export default function GlobalSearchMenu({
 
           if (result.type === 'header') {
             return (
-              <div key={result.id} className="mt-3 mb-1 px-4 py-1 text-[10px] font-black uppercase tracking-[0.15em] text-foreground/30">
+              <div key={result.id} className="text-foreground/30 mt-3 mb-1 px-4 py-1 text-[10px] font-black tracking-[0.15em] uppercase">
                 {result.title}
               </div>
             )
@@ -163,7 +152,7 @@ export default function GlobalSearchMenu({
               {/* Image / Icon */}
               <div
                 className={mergeClasses(
-                  'bg-white/5 relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-lg shadow-inner ring-1 ring-white/5',
+                  'relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/5 shadow-inner ring-1 ring-white/5',
                   containerClass
                 )}
               >
@@ -185,17 +174,17 @@ export default function GlobalSearchMenu({
                   <HighlightMatch text={result.title} query={searchQuery} />
                 </div>
                 {result.subtitle && (
-                  <div className="text-[10px] text-foreground/40 truncate font-medium mt-0.5">
+                  <div className="text-foreground/40 mt-0.5 truncate text-[10px] font-medium">
                     {shouldHighlightSubtitle ? <HighlightMatch text={result.subtitle} query={searchQuery} /> : <span>{result.subtitle}</span>}
                   </div>
                 )}
                 {result.author && (
-                  <div className="text-foreground/60 truncate text-xs font-semibold mt-0.5">
+                  <div className="text-foreground/60 mt-0.5 truncate text-xs font-semibold">
                     <HighlightMatch text={result.author} query={searchQuery} />
                   </div>
                 )}
               </div>
-              
+
               {isSelected && (
                 <div className="text-accent pr-2">
                   <ChevronRight size={16} strokeWidth={3} />
@@ -250,4 +239,3 @@ export default function GlobalSearchMenu({
 
   return menuContent
 }
-

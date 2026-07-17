@@ -5,14 +5,16 @@ export default async function RootPage() {
   let isAuthed = false
   try {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
     if (user) {
       isAuthed = true
     }
   } catch {
     // Supabase env vars missing or client failed — safe fallback
   }
-  
+
   if (isAuthed) {
     redirect('/library')
   } else {

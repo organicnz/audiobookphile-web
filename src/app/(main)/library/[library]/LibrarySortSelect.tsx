@@ -172,11 +172,7 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
       if (selectedItem) {
         const Icon = currentSortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
         selectedItem.rightIcon = (
-          <Icon 
-            size={16} 
-            className="text-primary opacity-80" 
-            aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
-          />
+          <Icon size={16} className="text-primary opacity-80" aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')} />
         )
       }
     }
@@ -185,13 +181,7 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
   }, [t, availableItems, currentSortBy, currentSortDesc])
 
   const Icon = currentSortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
-  const rightIcon = (
-    <Icon 
-      size={16} 
-      className="text-primary" 
-      aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
-    />
-  )
+  const rightIcon = <Icon size={16} className="text-primary" aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')} />
 
   return (
     <div className="h-9 w-36 sm:w-44 md:w-48">
@@ -201,7 +191,7 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
         onChange={handleSortChange}
         size="auto"
         rightIcon={rightIcon}
-        className="h-full text-[11px] font-black uppercase tracking-widest"
+        className="h-full text-[11px] font-black tracking-widest uppercase"
         highlightSelected={true}
         menuMaxHeight="none"
       />

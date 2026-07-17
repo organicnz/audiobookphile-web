@@ -1,5 +1,5 @@
-import { getCollection, getCurrentUser } from '@/shared/lib/api';
-import CollectionClient from './CollectionClient';
+import { getCollection, getCurrentUser } from '@/shared/lib/api'
+import CollectionClient from './CollectionClient'
 
 export default async function CollectionPage({ params }: { params: Promise<{ collection: string; library: string }> }) {
   const { collection: collectionId } = await params

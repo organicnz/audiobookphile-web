@@ -143,7 +143,6 @@ export const deserialize = (el: DOMNode): Descendant[] | CustomText | null => {
   if (isBold || isItalic || isStrike) {
     children = children.map((child) => {
       if ('text' in child) {
-         
         const { isIntentionalBreak, ...cleanChild } = child as TextWithMarker
         return {
           ...cleanChild,
@@ -158,7 +157,6 @@ export const deserialize = (el: DOMNode): Descendant[] | CustomText | null => {
     // Clean up the intentional break marker even if no formatting is applied
     children = children.map((child) => {
       if ('text' in child && (child as TextWithMarker).isIntentionalBreak) {
-         
         const { isIntentionalBreak, ...cleanChild } = child as TextWithMarker
         return cleanChild
       }

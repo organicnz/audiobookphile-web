@@ -1,12 +1,12 @@
 'use client'
 
 import {
-    deleteLibraryItemAction,
-    getExpandedLibraryItemAction,
-    removeFromContinueListeningAction,
-    rescanLibraryItemAction,
-    sendEbookToDeviceAction,
-    toggleFinishedAction
+  deleteLibraryItemAction,
+  getExpandedLibraryItemAction,
+  removeFromContinueListeningAction,
+  rescanLibraryItemAction,
+  sendEbookToDeviceAction,
+  toggleFinishedAction
 } from '@/features/player/actions/mediaActions'
 import type { ConfirmState } from '@/shared/widgets/ConfirmDialog'
 import { useMediaContext } from '@/features/player/contexts/MediaContext'

@@ -24,7 +24,7 @@ export default function ItemDetailsExamplesPage() {
   const [selectedPodcast, setSelectedPodcast] = useState<PodcastLibraryItem | null>(null)
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null)
-  const [selectedSeries, setSelectedSeries] = useState<{ series: Series; books: LibraryItem[] } | null>(null)
+  const [selectedSeries, setSelectedSeries] = useState<{ series: Series; books: (LibraryItem | import('@/types/api/models').SeriesBook)[] } | null>(null)
   const [selectedAuthor, setSelectedAuthor] = useState<Author | null>(null)
 
   const handleItemSelect = useCallback(async (item: FlatResultItem) => {

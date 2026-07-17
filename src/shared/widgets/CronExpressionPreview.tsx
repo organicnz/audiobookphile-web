@@ -40,25 +40,25 @@ export default function CronExpressionPreview({ cronExpression, className, isVal
   }
 
   return (
-    <div className={mergeClasses('p-4 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl', className)}>
+    <div className={mergeClasses('rounded-2xl border border-white/10 bg-white/5 p-4 shadow-xl backdrop-blur-md', className)}>
       <div className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-[auto_1fr]">
         <div className="flex items-center gap-2">
-          <div className="bg-primary/20 p-1.5 rounded-lg border border-primary/20">
+          <div className="bg-primary/20 border-primary/20 rounded-lg border p-1.5">
             <Clock size={16} className="text-primary" />
           </div>
-          <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">{t('LabelSchedule')}</p>
+          <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">{t('LabelSchedule')}</p>
         </div>
-        <p className="text-white/90 font-medium py-1" cy-id="cron-description">
+        <p className="py-1 font-medium text-white/90" cy-id="cron-description">
           {verbalDescription}
         </p>
 
         <div className="flex items-center gap-2">
-          <div className="bg-success/20 p-1.5 rounded-lg border border-success/20">
+          <div className="bg-success/20 border-success/20 rounded-lg border p-1.5">
             <Calendar size={16} className="text-success" />
           </div>
-          <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">{t('LabelNextRun')}</p>
+          <p className="text-[10px] font-black tracking-widest text-white/60 uppercase">{t('LabelNextRun')}</p>
         </div>
-        <p className="text-white/90 font-medium py-1">{nextRunDate || t('LabelNotAvailable')}</p>
+        <p className="py-1 font-medium text-white/90">{nextRunDate || t('LabelNotAvailable')}</p>
       </div>
     </div>
   )

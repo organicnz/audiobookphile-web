@@ -33,16 +33,7 @@
   --tc-table-row-bg-even: #141414;
   --tc-table-row-bg-hover: #ffffff0b;
 
-  --tc-page-gradient: linear-gradient(
-    to right bottom,
-    #181818,
-    #161616,
-    #141414,
-    #121212,
-    #111111,
-    #111111,
-    #111111
-  );
+  --tc-page-gradient: linear-gradient(to right bottom, #181818, #161616, #141414, #121212, #111111, #111111, #111111);
 
   --tc-modal-content-box-shadow: 2px 8px 6px #111111aa;
   --tc-shadow-media-player: 0px -6px 8px #1111113f;

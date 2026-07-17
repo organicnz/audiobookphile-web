@@ -13,7 +13,7 @@ export interface FlatResultItem {
   subtitle?: string
   link?: string
   imageSrc?: string
-   
+
   originalItem?: any
   isPlaceholder?: boolean // For "Thinking", "No Results"
   placeholderText?: string

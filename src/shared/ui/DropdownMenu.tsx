@@ -132,7 +132,7 @@ function DropdownSubmenu({
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       ref={submenuRef}
       role="menu"
-      className="bg-primary/95 border-white/10 backdrop-blur-xl absolute z-[9999] overflow-y-auto rounded-xl border py-1.5 shadow-2xl"
+      className="bg-primary/95 absolute z-[9999] overflow-y-auto rounded-xl border border-white/10 py-1.5 shadow-2xl backdrop-blur-xl"
       style={{
         ...floatingStyles,
         width: '200px',
@@ -145,7 +145,7 @@ function DropdownSubmenu({
       onClick={(e) => e.stopPropagation()}
     >
       {filterText && (
-        <li className="text-white/40 border-white/5 relative mb-1 border-b px-4 py-1.5 text-xs select-none" role="presentation">
+        <li className="relative mb-1 border-b border-white/5 px-4 py-1.5 text-xs text-white/40 select-none" role="presentation">
           <span className="font-mono tracking-wider uppercase">{filterText}</span>
         </li>
       )}
@@ -154,7 +154,7 @@ function DropdownSubmenu({
           key={subitem.value}
           id={`${dropdownId}-subitem-${parentIndex}-${subitemIndex}`}
           className={mergeClasses(
-            'text-foreground hover:bg-white/5 relative cursor-pointer px-4 py-2 transition-colors mx-1 rounded-lg',
+            'text-foreground relative mx-1 cursor-pointer rounded-lg px-4 py-2 transition-colors hover:bg-white/5',
             focusedSubIndex === subitemIndex ? 'bg-white/10' : ''
           )}
           role="option"
@@ -172,7 +172,7 @@ function DropdownSubmenu({
         </li>
       ))}
       {filteredSubitems.length === 0 && (
-        <li className="text-white/40 relative py-3 select-none" role="option" aria-selected={false}>
+        <li className="relative py-3 text-white/40 select-none" role="option" aria-selected={false}>
           <div className="flex items-center justify-center">
             <span className="text-sm font-normal">{t('LabelNoItems')}</span>
           </div>
@@ -358,9 +358,7 @@ export default function DropdownMenu({
     () =>
       items.map((item, index) => {
         if (item.type === 'divider') {
-          return (
-            <li key={item.id || `divider-${index}`} className="my-1 border-b border-white/5 mx-1" role="presentation" />
-          )
+          return <li key={item.id || `divider-${index}`} className="mx-1 my-1 border-b border-white/5" role="presentation" />
         }
 
         const hasSubitems = item.subitems && item.subitems.length > 0
@@ -375,7 +373,7 @@ export default function DropdownMenu({
               menuItemRefs.current[index] = el
             }}
             className={mergeClasses(
-              'text-foreground hover:bg-white/5 relative cursor-pointer py-2.5 px-4 mx-1 rounded-lg transition-colors',
+              'text-foreground relative mx-1 cursor-pointer rounded-lg px-4 py-2.5 transition-colors hover:bg-white/5',
               focusedIndex === index && focusedSubIndex === -1 ? 'bg-white/10' : '',
               isSubmenuOpen ? 'bg-white/10' : '',
               highlightSelected && isItemSelected?.(item) ? 'text-primary' : '',
@@ -397,7 +395,7 @@ export default function DropdownMenu({
           >
             <div className="flex items-center gap-3">
               {Icon && <Icon size={16} className="opacity-60" />}
-              <div className="flex flex-1 min-w-0 items-center">
+              <div className="flex min-w-0 flex-1 items-center">
                 <span className={mergeClasses('block truncate font-sans text-sm font-medium', item.subtext ? 'font-semibold' : '')}>{item.text}</span>
                 {item.subtext && <span className="mx-1 opacity-40">:</span>}
                 {item.subtext && <span className="text-foreground/60 block truncate font-sans text-xs font-normal">{item.subtext}</span>}
@@ -464,7 +462,7 @@ export default function DropdownMenu({
           transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           ref={menuRef}
           className={mergeClasses(
-            'bg-primary/95 border-white/10 backdrop-blur-xl absolute z-10 mt-1.5 overflow-auto rounded-xl border py-1.5 shadow-2xl ring-1 ring-black/10',
+            'bg-primary/95 absolute z-10 mt-1.5 overflow-auto rounded-xl border border-white/10 py-1.5 shadow-2xl ring-1 ring-black/10 backdrop-blur-xl',
             className
           )}
           role="listbox"
@@ -495,7 +493,7 @@ export default function DropdownMenu({
         >
           {menuItems}
           {showNoItemsMessage && !items.length && (
-            <li className="text-foreground relative py-4 px-4 select-none" role="option" aria-selected={false} cy-id="dropdown-menu-no-items">
+            <li className="text-foreground relative px-4 py-4 select-none" role="option" aria-selected={false} cy-id="dropdown-menu-no-items">
               <div className="flex items-center justify-center">
                 <span className="font-normal opacity-40">{defaultNoItemsText}</span>
               </div>
@@ -513,4 +511,3 @@ export default function DropdownMenu({
 
   return menuContent
 }
-

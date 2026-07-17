@@ -50,16 +50,24 @@ const ButtonBase = ({
     'rounded-xl border shadow-sm',
     !borderless && 'bg-primary/80 backdrop-blur-md border-white/10 hover:border-white/20',
     borderless && 'border-transparent bg-transparent shadow-none text-foreground/60 hover:text-foreground',
-    
+
     // Focus states
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black',
-    
+
     // Sizing
-    size === 'small' ? 'h-9 px-4 text-sm' : size === 'large' ? 'h-12 px-10 text-lg' : size === 'auto' ? 'min-h-10 h-auto px-6' : size === 'custom' ? '' : 'h-10 px-8 text-base',
-    
+    size === 'small'
+      ? 'h-9 px-4 text-sm'
+      : size === 'large'
+        ? 'h-12 px-10 text-lg'
+        : size === 'auto'
+          ? 'min-h-10 h-auto px-6'
+          : size === 'custom'
+            ? ''
+            : 'h-10 px-8 text-base',
+
     // Disabled states
     'disabled:opacity-40 disabled:cursor-not-allowed disabled:grayscale',
-    
+
     className
   )
 
@@ -69,11 +77,13 @@ const ButtonBase = ({
     }
   }
 
-  const animationProps = !disabled ? {
-    whileHover: whileHover ?? { scale: 1.02, y: -1 },
-    whileTap: whileTap ?? { scale: 0.97 },
-    transition: transition ?? { type: 'spring', stiffness: 500, damping: 25 }
-  } : {}
+  const animationProps = !disabled
+    ? {
+        whileHover: whileHover ?? { scale: 1.02, y: -1 },
+        whileTap: whileTap ?? { scale: 0.97 },
+        transition: transition ?? { type: 'spring', stiffness: 500, damping: 25 }
+      }
+    : {}
 
   if (to) {
     return (

@@ -1,6 +1,6 @@
 # Audiobookphile 🎧
 
-A serverless, open-source audiobook and podcast client. Built with Next.js 16, Supabase, and deployed effortlessly on Vercel. 
+A serverless, open-source audiobook and podcast client. Built with Next.js 16, Supabase, and deployed effortlessly on Vercel.
 
 Audiobookphile is designed for users who want a beautiful, premium "Liquid Glass" UI for their audiobooks, without the hassle of managing servers or docker containers. It's an excellent, zero-maintenance alternative to traditional self-hosted solutions.
 
@@ -68,12 +68,13 @@ bunx supabase db push
 ```
 
 ### Migrating from Audiobookshelf (SQLite)
-If you are coming from a traditional self-hosted Audiobookshelf instance and want to move your metadata to Audiobookphile's Postgres backend, we've included a migration toolkit! 
-Check out the `supabase-migration-toolkit` skill/scripts to convert your SQLite schema and bulk-upload your data to Supabase.
+
+If you are coming from a traditional self-hosted Audiobookshelf instance and want to move your metadata to Audiobookphile's Postgres backend, we've included a migration toolkit! Check out the `supabase-migration-toolkit` skill/scripts to convert your SQLite schema and bulk-upload your data to Supabase.
 
 ## Hybrid Storage (Supabase + Backblaze B2)
 
 The client supports a hybrid storage model to minimize cloud costs.
+
 - **Small files (< 25MB):** Cover images, metadata files, and short podcast clips are securely uploaded directly to Supabase Storage.
 - **Large files (>= 25MB):** Full audiobooks are securely uploaded directly to Backblaze B2 using S3 pre-signed URLs.
 
@@ -82,6 +83,7 @@ To enable this, provide the `B2_*` environment variables. The client and backend
 ## CI/CD (GitHub Actions)
 
 The repository comes pre-configured with two GitHub Actions:
+
 1. **Next.js Checks (`nextjs-check.yml`)**: Runs TypeScript and Linter checks on PRs.
 2. **Edge Functions Deploy (`edge-functions.yml`)**: Deploys Supabase Edge Functions on pushes to `main`.
 

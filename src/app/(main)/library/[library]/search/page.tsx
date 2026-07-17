@@ -3,13 +3,7 @@ import SearchClient from './SearchClient'
 
 export const dynamic = 'force-dynamic'
 
-export default async function SearchPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ library: string }>
-  searchParams: Promise<{ q?: string }>
-}) {
+export default async function SearchPage({ params, searchParams }: { params: Promise<{ library: string }>; searchParams: Promise<{ q?: string }> }) {
   const { library: libraryId } = await params
   const { q: query } = await searchParams
 

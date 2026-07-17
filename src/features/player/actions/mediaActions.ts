@@ -5,19 +5,14 @@ import type { UpdateLibraryItemMediaPayload } from '@/types/api'
 import { apiRequest } from '@/shared/lib/api'
 import { revalidatePath } from 'next/cache'
 
-export async function toggleFinishedAction(
-  libraryItemId: string,
-  params: { isFinished: boolean; episodeId?: string },
-) {
+export async function toggleFinishedAction(libraryItemId: string, params: { isFinished: boolean; episodeId?: string }) {
   return await apiRequest(`/api/me/progress/${libraryItemId}`, {
     method: 'PATCH',
     body: JSON.stringify({ isFinished: params.isFinished, episodeId: params.episodeId })
   })
 }
 
-export async function batchUpdateMediaFinishedAction(
-  payload: { libraryItemId: string; episodeId?: string; isFinished: boolean }[],
-) {
+export async function batchUpdateMediaFinishedAction(payload: { libraryItemId: string; episodeId?: string; isFinished: boolean }[]) {
   return await apiRequest('/api/me/progress-batch', {
     method: 'PATCH',
     body: JSON.stringify({ items: payload })
@@ -28,10 +23,7 @@ export async function batchUpdateMediaFinishedAction(
  * Update library item metadata (title, author, description, etc.)
  * Delegates to applyMatchAction logic.
  */
-export async function updateLibraryItemMediaAction(
-  libraryItemId: string,
-  payload: UpdateLibraryItemMediaPayload,
-) {
+export async function updateLibraryItemMediaAction(libraryItemId: string, payload: UpdateLibraryItemMediaPayload) {
   const { applyMatchAction } = await import('@/features/metadata/actions/matchActions')
   return applyMatchAction(libraryItemId, payload)
 }
@@ -44,11 +36,11 @@ export async function rescanLibraryItemAction(libraryItemId: string) {
   // For now, let's just trigger a re-fetch and cover update
   const { fetchBookCover } = await import('@/shared/lib/coverFetch')
   const { autoFetchCoverAction } = await import('@/features/metadata/actions/coverActions')
-  
+
   // We'd need to fetch the item title first.
   const item = await getLibraryItem(libraryItemId)
   if (!item?.media?.metadata?.title) return { result: 'UPTODATE' }
-  
+
   const title = item.media.metadata.title
   const author = (item.media.metadata as any).authorName || (item.media.metadata as any).author
 
@@ -94,11 +86,7 @@ export async function getExpandedLibraryItemAction(libraryItemId: string) {
   return getLibraryItem(libraryItemId)
 }
 
-export async function deleteLibraryItemMediaEpisodeAction(
-  _libraryItemId: string,
-  _episodeId: string,
-  _hardDelete = false,
-) {
+export async function deleteLibraryItemMediaEpisodeAction(_libraryItemId: string, _episodeId: string, _hardDelete = false) {
   // Podcast episodes not yet supported
   return null
 }

@@ -201,14 +201,9 @@ export function useUploader(libraries: Library[]) {
     const items = uploadItems.map((item) => ({ ...item }))
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
-      
+
       try {
-        const existingBookId = await checkExistingBook(
-          item.title, 
-          item.author || '', 
-          selectedLibrary!, 
-          currentLibraryMediaType! || 'book'
-        )
+        const existingBookId = await checkExistingBook(item.title, item.author || '', selectedLibrary!, currentLibraryMediaType! || 'book')
         if (existingBookId) {
           item.bookId = existingBookId
         }
@@ -271,6 +266,6 @@ export function useUploader(libraries: Library[]) {
     toggleTableExpanded,
     handleFetchMetadata,
     handleRemoveStagedItem,
-    handleStartUpload,
+    handleStartUpload
   }
 }

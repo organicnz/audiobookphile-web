@@ -372,7 +372,7 @@ export default function Dropdown({
           className={mergeClasses(
             'text-foreground relative w-full cursor-pointer text-left',
             'flex h-full items-center justify-between border-none bg-transparent ps-2 outline-none',
-            'disabled:text-disabled disabled:cursor-not-allowed group transition-all',
+            'disabled:text-disabled group transition-all disabled:cursor-not-allowed',
             size === 'small' ? 'text-sm' : size === 'large' ? 'text-lg' : size === 'medium' ? 'text-base' : ''
           )}
           aria-haspopup="listbox"
@@ -444,4 +444,3 @@ export default function Dropdown({
     </div>
   )
 }
-

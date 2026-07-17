@@ -18,10 +18,10 @@ export default function ModalSideNavigation({ canGoPrev, canGoNext, onPrevAction
   const t = useTypeSafeTranslations()
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-[1]">
+    <div className="pointer-events-none absolute inset-0 z-[1]">
       <AnimatePresence>
         {canGoPrev && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
@@ -31,7 +31,7 @@ export default function ModalSideNavigation({ canGoPrev, canGoNext, onPrevAction
               whileHover={{ scale: 1.1, x: -4 }}
               whileTap={{ scale: 0.9 }}
               type="button"
-              className="group pointer-events-auto cursor-pointer flex items-center justify-center w-16 h-16 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-xl transition-all shadow-2xl"
+              className="group pointer-events-auto flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 shadow-2xl backdrop-blur-xl transition-all hover:bg-white/10"
               aria-label={t('ButtonPrevious')}
               onClick={(e) => {
                 e.stopPropagation()
@@ -40,7 +40,7 @@ export default function ModalSideNavigation({ canGoPrev, canGoNext, onPrevAction
               }}
               onMouseDown={(e) => e.preventDefault()}
             >
-              <ChevronLeft size={40} className="text-foreground/40 group-hover:text-primary transition-colors duration-300 drop-shadow-lg" />
+              <ChevronLeft size={40} className="text-foreground/40 group-hover:text-primary drop-shadow-lg transition-colors duration-300" />
             </motion.button>
           </motion.div>
         )}
@@ -48,7 +48,7 @@ export default function ModalSideNavigation({ canGoPrev, canGoNext, onPrevAction
 
       <AnimatePresence>
         {canGoNext && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
@@ -58,7 +58,7 @@ export default function ModalSideNavigation({ canGoPrev, canGoNext, onPrevAction
               whileHover={{ scale: 1.1, x: 4 }}
               whileTap={{ scale: 0.9 }}
               type="button"
-              className="group pointer-events-auto cursor-pointer flex items-center justify-center w-16 h-16 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-xl transition-all shadow-2xl"
+              className="group pointer-events-auto flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 shadow-2xl backdrop-blur-xl transition-all hover:bg-white/10"
               aria-label={t('ButtonNext')}
               onClick={(e) => {
                 e.stopPropagation()
@@ -67,7 +67,7 @@ export default function ModalSideNavigation({ canGoPrev, canGoNext, onPrevAction
               }}
               onMouseDown={(e) => e.preventDefault()}
             >
-              <ChevronRight size={40} className="text-foreground/40 group-hover:text-primary transition-colors duration-300 drop-shadow-lg" />
+              <ChevronRight size={40} className="text-foreground/40 group-hover:text-primary drop-shadow-lg transition-colors duration-300" />
             </motion.button>
           </motion.div>
         )}

@@ -27,12 +27,12 @@ export function rateLimit(options?: RateLimitOptions) {
 
         const newCount = tokenCount + 1
         tokenCache.set(token, [newCount, now])
-        
+
         if (newCount > limit) {
           return reject(new Error('Rate limit exceeded'))
         }
 
         return resolve()
-      }),
+      })
   }
 }

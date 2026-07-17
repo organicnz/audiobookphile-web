@@ -16,13 +16,13 @@ export interface MediaOverlayIconBtnProps {
   transition?: any
 }
 
-export default function MediaOverlayIconBtn({ 
-  icon, 
-  onClick, 
-  ariaLabel, 
-  position = 'top-start', 
-  className, 
-  selected, 
+export default function MediaOverlayIconBtn({
+  icon,
+  onClick,
+  ariaLabel,
+  position = 'top-start',
+  className,
+  selected,
   cyId,
   whileHover,
   transition
@@ -42,8 +42,8 @@ export default function MediaOverlayIconBtn({
         borderless
         size="small"
         className={mergeClasses(
-          'p-1.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-white/70 hover:not-disabled:text-white hover:bg-white/10 transition-all duration-300 shadow-xl',
-          selected && 'bg-primary/90 text-black border-primary shadow-primary/20',
+          'rounded-xl border border-white/10 bg-black/60 p-1.5 text-white/70 shadow-xl backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:not-disabled:text-white',
+          selected && 'bg-primary/90 border-primary shadow-primary/20 text-black',
           className
         )}
         onClick={onClick}

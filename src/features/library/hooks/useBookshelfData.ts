@@ -1,5 +1,11 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { fetchAuthorsAction, fetchCollectionsAction, fetchLibraryItemsAction, fetchPlaylistsAction, fetchSeriesAction } from '@/features/library/actions/libraryActions'
+import {
+  fetchAuthorsAction,
+  fetchCollectionsAction,
+  fetchLibraryItemsAction,
+  fetchPlaylistsAction,
+  fetchSeriesAction
+} from '@/features/library/actions/libraryActions'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { BookshelfEntity, EntityType, LibraryItem, MediaItemShare, RssFeed } from '@/types/api'
@@ -57,48 +63,51 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
   // We maintain a sparse array of items, but we fetch them using TanStack Query per page
   const [sparseItems, setSparseItems] = useState<(BookshelfEntity | null)[]>([])
 
-  const loadPage = useCallback(async (page: number) => {
-    const limit = itemsPerPageRef.current
-    if (limit <= 0) return
+  const loadPage = useCallback(
+    async (page: number) => {
+      const limit = itemsPerPageRef.current
+      if (limit <= 0) return
 
-    const pageQueryKey = [...baseQueryKey, 'page', page, 'limit', limit]
-    
-    try {
-      const data = await queryClient.fetchQuery({
-        queryKey: pageQueryKey,
-        queryFn: async () => {
-          const response = await fetchEntityData(entityType, libraryId, buildPageQueryParams(entityType, query, page, limit))
-          return response as any
-        },
-        staleTime: 5 * 60 * 1000 // 5 minutes
-      })
+      const pageQueryKey = [...baseQueryKey, 'page', page, 'limit', limit]
 
-      const results = (data.results || data.authors || []) as BookshelfEntity[]
-      const total = data.total ?? results.length
-
-      setTotalEntities(total)
-      setIsInitialized(true)
-      setError(null)
-      
-      setSparseItems(prev => {
-        let next = [...prev]
-        if (next.length !== total) {
-          next = new Array(total).fill(null)
-        }
-        
-        const startIndex = page * limit
-        results.forEach((item, i) => {
-          if (startIndex + i < total) {
-            next[startIndex + i] = item
-          }
+      try {
+        const data = await queryClient.fetchQuery({
+          queryKey: pageQueryKey,
+          queryFn: async () => {
+            const response = await fetchEntityData(entityType, libraryId, buildPageQueryParams(entityType, query, page, limit))
+            return response as any
+          },
+          staleTime: 5 * 60 * 1000 // 5 minutes
         })
-        return next
-      })
-    } catch (err) {
-      console.error('Failed to load bookshelf page', page, err)
-      setError(err instanceof Error ? err : new Error('An unknown error occurred'))
-    }
-  }, [baseQueryKey, entityType, libraryId, query, queryClient])
+
+        const results = (data.results || data.authors || []) as BookshelfEntity[]
+        const total = data.total ?? results.length
+
+        setTotalEntities(total)
+        setIsInitialized(true)
+        setError(null)
+
+        setSparseItems((prev) => {
+          let next = [...prev]
+          if (next.length !== total) {
+            next = new Array(total).fill(null)
+          }
+
+          const startIndex = page * limit
+          results.forEach((item, i) => {
+            if (startIndex + i < total) {
+              next[startIndex + i] = item
+            }
+          })
+          return next
+        })
+      } catch (err) {
+        console.error('Failed to load bookshelf page', page, err)
+        setError(err instanceof Error ? err : new Error('An unknown error occurred'))
+      }
+    },
+    [baseQueryKey, entityType, libraryId, query, queryClient]
+  )
 
   // Invalidate when core params change
   useEffect(() => {
@@ -108,9 +117,9 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
   }, [baseQueryKey])
 
   const updateItems = useCallback((updater: (item: BookshelfEntity) => BookshelfEntity) => {
-    setSparseItems(prev => {
+    setSparseItems((prev) => {
       let changed = false
-      const next = prev.map(item => {
+      const next = prev.map((item) => {
         if (!item) return item
         const nextItem = updater(item)
         if (nextItem !== item) changed = true
@@ -123,7 +132,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
   // Socket listeners
   useSocketEvent<MediaItemShare>('share_open', (share) => {
     if (entityType !== 'items') return
-    updateItems(item => {
+    updateItems((item) => {
       const li = item as LibraryItem
       if (li.media.id === share.mediaItemId) return { ...li, mediaItemShare: share }
       return item
@@ -132,7 +141,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
 
   useSocketEvent<MediaItemShare>('share_closed', (share) => {
     if (entityType !== 'items') return
-    updateItems(item => {
+    updateItems((item) => {
       const li = item as LibraryItem
       if (li.media.id === share.mediaItemId) return { ...li, mediaItemShare: undefined }
       return item
@@ -141,7 +150,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
 
   useSocketEvent<RssFeed>('rss_feed_open', (feed) => {
     if (entityType !== 'items' && entityType !== 'series' && entityType !== 'collections') return
-    updateItems(item => {
+    updateItems((item) => {
       if (item.id === feed.entityId) return { ...item, rssFeed: feed }
       return item
     })
@@ -149,7 +158,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
 
   useSocketEvent<RssFeed>('rss_feed_closed', (feed) => {
     if (entityType !== 'items' && entityType !== 'series' && entityType !== 'collections') return
-    updateItems(item => {
+    updateItems((item) => {
       if (item.id === feed.entityId) return { ...item, rssFeed: undefined }
       return item
     })

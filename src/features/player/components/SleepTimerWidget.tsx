@@ -127,15 +127,21 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
   }
 
   const popoverContent = isOpen ? (
-    <div ref={popoverRef} id={`${widgetId}-popover`} role="dialog" style={floatingStyles} className="bg-background z-70 rounded-lg p-3 shadow-lg flex flex-col gap-2">
-      <div className="text-foreground text-sm font-semibold mb-1 text-center">Sleep Timer</div>
+    <div
+      ref={popoverRef}
+      id={`${widgetId}-popover`}
+      role="dialog"
+      style={floatingStyles}
+      className="bg-background z-70 flex flex-col gap-2 rounded-lg p-3 shadow-lg"
+    >
+      <div className="text-foreground mb-1 text-center text-sm font-semibold">Sleep Timer</div>
       <div className="grid grid-cols-5 gap-1">
         {PRESET_DURATIONS.map((minutes) => (
           <button
             key={minutes}
             type="button"
             onClick={() => handleStartTimer(minutes)}
-            className="border-border border rounded-md px-3 py-1.5 text-sm font-medium transition-colors text-button-foreground-muted hover:bg-button-selected-bg hover:text-button-foreground"
+            className="border-border text-button-foreground-muted hover:bg-button-selected-bg hover:text-button-foreground rounded-md border px-3 py-1.5 text-sm font-medium transition-colors"
           >
             {minutes}m
           </button>
@@ -145,7 +151,7 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
         <button
           type="button"
           onClick={handleStopTimer}
-          className="bg-error/10 text-error hover:bg-error/20 w-full rounded-md py-1.5 text-sm font-medium transition-colors mt-2"
+          className="bg-error/10 text-error hover:bg-error/20 mt-2 w-full rounded-md py-1.5 text-sm font-medium transition-colors"
         >
           Cancel Timer
         </button>
@@ -164,14 +170,12 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
         aria-controls={`${widgetId}-popover`}
         aria-label="Sleep Timer"
         className={mergeClasses(
-          'p-2 transition-colors flex items-center gap-1.5',
+          'flex items-center gap-1.5 p-2 transition-colors',
           sleepTimerRemaining !== null ? 'text-primary' : 'text-foreground/60 hover:text-foreground'
         )}
       >
         <Moon size={20} />
-        {sleepTimerRemaining !== null && (
-          <span className="text-xs font-semibold tabular-nums">{formatRemainingTime(sleepTimerRemaining)}</span>
-        )}
+        {sleepTimerRemaining !== null && <span className="text-xs font-semibold tabular-nums">{formatRemainingTime(sleepTimerRemaining)}</span>}
       </button>
 
       {mounted && typeof document !== 'undefined' && createPortal(popoverContent, document.body)}

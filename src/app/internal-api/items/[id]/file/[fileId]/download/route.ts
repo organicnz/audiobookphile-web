@@ -2,24 +2,19 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/shared/utils/supabase/server'
 import { getStorageProvider } from '@/shared/lib/storage/StorageProvider'
 
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string; fileId: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string; fileId: string }> }) {
   try {
     const { id, fileId } = await params
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Fetch the item
-    const { data: item, error: itemError } = await supabase
-      .from('library_items')
-      .select('*, books(*)')
-      .eq('id', id)
-      .single()
+    const { data: item, error: itemError } = await supabase.from('library_items').select('*, books(*)').eq('id', id).single()
 
     if (itemError || !item) {
       return NextResponse.json({ error: 'Item not found' }, { status: 404 })

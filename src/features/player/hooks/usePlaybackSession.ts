@@ -233,13 +233,15 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
 
       try {
         // Always save progress on close, regardless of how long was listened
-        const syncData = getCurrentTime ? {
-          currentTime: getCurrentTime(),
-          duration: getDuration?.() || undefined,
-          timeListened: Math.max(0, Math.floor(listeningTimeSinceSync.current)),
-          libraryItemId: session.libraryItemId,
-          episodeId: session.episodeId
-        } : null
+        const syncData = getCurrentTime
+          ? {
+              currentTime: getCurrentTime(),
+              duration: getDuration?.() || undefined,
+              timeListened: Math.max(0, Math.floor(listeningTimeSinceSync.current)),
+              libraryItemId: session.libraryItemId,
+              episodeId: session.episodeId
+            }
+          : null
 
         await closePlaybackSession(session.id, syncData)
       } catch (error) {

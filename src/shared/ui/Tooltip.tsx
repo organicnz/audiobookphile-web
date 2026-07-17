@@ -125,7 +125,9 @@ const Tooltip = ({
   }
 
   const onMouseLeave = () => closeSoon()
-  const onFocus = () => { if (!disabled) openNow() }
+  const onFocus = () => {
+    if (!disabled) openNow()
+  }
   const onBlur = () => setOpen(false)
 
   const onClick = () => {
@@ -206,15 +208,15 @@ const Tooltip = ({
           aria-hidden={!open}
           style={{ ...floatingStyles, zIndex: 10000 }}
           className={mergeClasses(
-            'inline-block whitespace-normal break-words text-center px-3 py-1.5',
-            'rounded-lg bg-primary/95 backdrop-blur-xl border border-white/10 shadow-2xl text-foreground text-xs font-semibold',
+            'inline-block px-3 py-1.5 text-center break-words whitespace-normal',
+            'bg-primary/95 text-foreground rounded-lg border border-white/10 text-xs font-semibold shadow-2xl backdrop-blur-xl',
             tooltipClassName
           )}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
         >
           {text}
-          {withArrow && <div ref={arrowRef} style={arrowStyles} className="bg-primary border-r border-b border-white/10 absolute h-2 w-2 rotate-45" />}
+          {withArrow && <div ref={arrowRef} style={arrowStyles} className="bg-primary absolute h-2 w-2 rotate-45 border-r border-b border-white/10" />}
         </motion.div>
       )}
     </AnimatePresence>
@@ -233,13 +235,14 @@ const Tooltip = ({
       aria-describedby={tooltipId}
     >
       {children}
-      {mounted && (usePortal
-        ? portalRoot
-          ? createPortal(tooltipElement, portalRoot)
-          : typeof document !== 'undefined'
-            ? createPortal(tooltipElement, document.body)
-            : null
-        : tooltipElement)}
+      {mounted &&
+        (usePortal
+          ? portalRoot
+            ? createPortal(tooltipElement, portalRoot)
+            : typeof document !== 'undefined'
+              ? createPortal(tooltipElement, document.body)
+              : null
+          : tooltipElement)}
     </div>
   )
 }

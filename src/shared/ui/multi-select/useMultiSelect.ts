@@ -482,8 +482,6 @@ export function useMultiSelect<T = string>({
     }
   }, [])
 
-
-
   return {
     textInput,
     isMenuOpen,

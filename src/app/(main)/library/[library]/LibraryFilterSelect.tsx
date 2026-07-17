@@ -450,13 +450,13 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
         onChange={handleFilterChange}
         size="auto"
         leftIcon={<Filter size={14} className="text-primary" />}
-        className="h-full text-[11px] font-black uppercase tracking-widest"
+        className="h-full text-[11px] font-black tracking-widest uppercase"
         displayText={getSelectedText()}
         menuMaxHeight="calc(100vh - 120px)"
       />
       {showClear && (
         <button
-          className="absolute inset-y-0 right-8 z-10 flex items-center text-gray-400 hover:text-white transition-colors duration-200"
+          className="absolute inset-y-0 right-8 z-10 flex items-center text-gray-400 transition-colors duration-200 hover:text-white"
           onClick={(e) => {
             e.stopPropagation()
             updateSetting(isSeries ? 'seriesFilterBy' : 'filterBy', 'all')

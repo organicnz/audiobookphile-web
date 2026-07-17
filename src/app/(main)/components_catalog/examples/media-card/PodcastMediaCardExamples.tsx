@@ -103,8 +103,7 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
         description="Media card components for displaying podcasts in the bookshelf. PodcastMediaCard displays podcasts with podcast-specific badges. PodcastEpisodeCard displays a specific podcast episode. MediaCardSkeleton provides a loading state."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span>{' '}
-          <Code overflow>import PodcastMediaCard from &apos;@/shared/widgets/media-card/PodcastMediaCard&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import PodcastMediaCard from &apos;@/shared/widgets/media-card/PodcastMediaCard&apos;</Code>
           <br />
           <Code overflow>import PodcastEpisodeCard from &apos;@/shared/widgets/media-card/PodcastEpisodeCard&apos;</Code>
         </p>

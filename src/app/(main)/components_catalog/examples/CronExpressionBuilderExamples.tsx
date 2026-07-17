@@ -77,8 +77,7 @@ export function CronExpressionBuilderExamples() {
         description="A comprehensive cron expression builder with visual schedule builder and advanced cron expression input option"
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span>{' '}
-          <Code overflow>import CronExpressionBuilder from &apos;@/shared/widgets/CronExpressionBuilder&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import CronExpressionBuilder from &apos;@/shared/widgets/CronExpressionBuilder&apos;</Code>
         </p>
         <div className="mb-2">
           <span className="font-bold">Props:</span>
@@ -100,8 +99,7 @@ export function CronExpressionBuilderExamples() {
 
       <ComponentInfo component="CronExpressionPreview" description="A preview of the cron expression with a verbal description of the schedule, next run date">
         <p className="mb-2">
-          <span className="font-bold">Import:</span>{' '}
-          <Code overflow>import CronExpressionPreview from &apos;@/shared/widgets/CronExpressionPreview&apos;</Code>
+          <span className="font-bold">Import:</span> <Code overflow>import CronExpressionPreview from &apos;@/shared/widgets/CronExpressionPreview&apos;</Code>
         </p>
         <div className="mb-2">
           <span className="font-bold">Props:</span>

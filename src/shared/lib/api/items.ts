@@ -1,4 +1,59 @@
-import { Author, AuthorImagePayload, AuthorQuickMatchPayload, AuthorResponse, AuthorUpdateResponse, BookSearchResult, Collection, CreateApiKeyPayload, CreateCustomMetadataProviderPayload, CreateCustomMetadataProviderResponse, CreateUpdateApiKeyResponse, FetchPodcastFeedResponse, FFProbeData, GetApiKeysResponse, GetAuthorsResponse, GetBackupsResponse, GetCollectionsResponse, GetCustomMetadataProvidersResponse, GetFilesystemPathsResponse, GetLibrariesResponse, GetLibraryItemsResponse, GetListeningSessionsResponse, GetLoggerDataResponse, GetNarratorsResponse, GetOpenListeningSessionsResponse, GetPlaylistsResponse, GetRssFeedsResponse, GetSeriesResponse, GetUsersResponse, Library, LibraryFilterData, LibraryItem, MediaItemShare, MetadataProvidersResponse, MutateBackupsResponse, OpenMediaItemSharePayload, OpenRssFeedPayload, OpenRssFeedResponse, PersonalizedShelf, Playlist, PlaylistItemPayload, PodcastSearchResult, RssPodcastEpisode, SaveLibraryOrderApiResponse, SearchLibraryResponse, Series, ServerStatus, TasksResponse, UpdateAuthorPayload, UpdateLibraryItemMediaPayload, UpdateLibraryItemMediaResponse, UploadCoverResponse, User, UserLoginResponse } from '@/types/api'
+import {
+  Author,
+  AuthorImagePayload,
+  AuthorQuickMatchPayload,
+  AuthorResponse,
+  AuthorUpdateResponse,
+  BookSearchResult,
+  Collection,
+  CreateApiKeyPayload,
+  CreateCustomMetadataProviderPayload,
+  CreateCustomMetadataProviderResponse,
+  CreateUpdateApiKeyResponse,
+  FetchPodcastFeedResponse,
+  FFProbeData,
+  GetApiKeysResponse,
+  GetAuthorsResponse,
+  GetBackupsResponse,
+  GetCollectionsResponse,
+  GetCustomMetadataProvidersResponse,
+  GetFilesystemPathsResponse,
+  GetLibrariesResponse,
+  GetLibraryItemsResponse,
+  GetListeningSessionsResponse,
+  GetLoggerDataResponse,
+  GetNarratorsResponse,
+  GetOpenListeningSessionsResponse,
+  GetPlaylistsResponse,
+  GetRssFeedsResponse,
+  GetSeriesResponse,
+  GetUsersResponse,
+  Library,
+  LibraryFilterData,
+  LibraryItem,
+  MediaItemShare,
+  MetadataProvidersResponse,
+  MutateBackupsResponse,
+  OpenMediaItemSharePayload,
+  OpenRssFeedPayload,
+  OpenRssFeedResponse,
+  PersonalizedShelf,
+  Playlist,
+  PlaylistItemPayload,
+  PodcastSearchResult,
+  RssPodcastEpisode,
+  SaveLibraryOrderApiResponse,
+  SearchLibraryResponse,
+  Series,
+  ServerStatus,
+  TasksResponse,
+  UpdateAuthorPayload,
+  UpdateLibraryItemMediaPayload,
+  UpdateLibraryItemMediaResponse,
+  UploadCoverResponse,
+  User,
+  UserLoginResponse
+} from '@/types/api'
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
 import { cache } from 'react'
 import { apiRequest } from './client'
@@ -631,6 +686,6 @@ export async function checkExistingBook(title: string, author: string, libraryId
   if (author) queryParams.append('author', author)
   if (libraryId) queryParams.append('libraryId', libraryId)
   if (mediaType) queryParams.append('mediaType', mediaType)
-  
+
   return apiRequest<{ mediaId: string | null }>(`/api/items/check-existing?${queryParams.toString()}`)
 }

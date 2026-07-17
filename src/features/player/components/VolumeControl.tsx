@@ -164,8 +164,8 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
           onMouseEnter={openPopover}
           onMouseLeave={closePopoverSoon}
         >
-          <div 
-            className="bg-primary/95 backdrop-blur-xl flex flex-col items-center rounded-2xl p-4 shadow-2xl border border-white/10" 
+          <div
+            className="bg-primary/95 flex flex-col items-center rounded-2xl border border-white/10 p-4 shadow-2xl backdrop-blur-xl"
             style={{ marginBottom: -8 }}
           >
             <div
@@ -177,12 +177,12 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
               aria-valuemax={100}
               aria-valuenow={volumePercentage}
               aria-valuetext={`${volumePercentage}%`}
-              className="relative flex cursor-pointer items-center justify-center select-none group"
+              className="group relative flex cursor-pointer items-center justify-center select-none"
               style={{ height: trackHeight, width: 24 }}
               onMouseDown={handleMouseDown}
             >
               <div
-                className="bg-white/10 pointer-events-none absolute rounded-full transition-colors group-hover:bg-white/20"
+                className="pointer-events-none absolute rounded-full bg-white/10 transition-colors group-hover:bg-white/20"
                 style={{ width: 6, height: trackHeight }}
               />
               <div
@@ -190,7 +190,7 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
                 style={{ width: 6, height: filledHeight, bottom: 0 }}
               />
               <motion.div
-                className="bg-white pointer-events-none absolute rounded-full shadow-lg"
+                className="pointer-events-none absolute rounded-full bg-white shadow-lg"
                 animate={{ scale: isDraggingRef.current ? 1.2 : 1 }}
                 style={{
                   width: 14,
@@ -200,7 +200,7 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
                 }}
               />
             </div>
-            <span className="mt-2 text-[10px] font-black font-mono text-white/40">{volumePercentage}%</span>
+            <span className="mt-2 font-mono text-[10px] font-black text-white/40">{volumePercentage}%</span>
           </div>
         </motion.div>
       )}
@@ -219,7 +219,7 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
         aria-label={t('LabelVolume')}
         aria-expanded={isOpen}
         aria-controls={`${widgetId}-popover`}
-        className="text-foreground/60 hover:text-white flex h-10 w-10 cursor-pointer items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95"
+        className="text-foreground/60 flex h-10 w-10 cursor-pointer items-center justify-center transition-all duration-300 hover:scale-110 hover:text-white active:scale-95"
       >
         <VolumeIcon size={24} strokeWidth={2} />
       </button>

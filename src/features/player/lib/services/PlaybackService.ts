@@ -11,7 +11,7 @@ export class PlaybackService {
    */
   async generateSession(libraryItemId: string, userId: string, episodeId?: string): Promise<PlaybackSession> {
     if (libraryItemId.startsWith('book-')) {
-      const nowMs = Date.now();
+      const nowMs = Date.now()
       return {
         id: `${libraryItemId}__mock_session`,
         userId: userId,
@@ -28,34 +28,38 @@ export class PlaybackService {
         media_player: 'SKIP-ExoPlayer',
         mediaType: 'book',
         media_type: 'book',
-        audioTracks: [{
-          index: 1,
-          startOffset: 0,
-          duration: 3600,
-          title: 'Track 1',
-          contentUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-          mimeType: 'audio/mpeg',
-          codec: 'mp3',
-          isMissing: false,
-          start_offset: 0,
-          content_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-          mime_type: 'audio/mpeg',
-          is_missing: false,
-        }],
-        audio_tracks: [{
-          index: 1,
-          startOffset: 0,
-          duration: 3600,
-          title: 'Track 1',
-          contentUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-          mimeType: 'audio/mpeg',
-          codec: 'mp3',
-          isMissing: false,
-          start_offset: 0,
-          content_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-          mime_type: 'audio/mpeg',
-          is_missing: false,
-        }],
+        audioTracks: [
+          {
+            index: 1,
+            startOffset: 0,
+            duration: 3600,
+            title: 'Track 1',
+            contentUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+            mimeType: 'audio/mpeg',
+            codec: 'mp3',
+            isMissing: false,
+            start_offset: 0,
+            content_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+            mime_type: 'audio/mpeg',
+            is_missing: false
+          }
+        ],
+        audio_tracks: [
+          {
+            index: 1,
+            startOffset: 0,
+            duration: 3600,
+            title: 'Track 1',
+            contentUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+            mimeType: 'audio/mpeg',
+            codec: 'mp3',
+            isMissing: false,
+            start_offset: 0,
+            content_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+            mime_type: 'audio/mpeg',
+            is_missing: false
+          }
+        ],
         chapters: [],
         currentTime: 0,
         current_time: 0,
@@ -64,14 +68,15 @@ export class PlaybackService {
         startedAt: nowMs,
         started_at: nowMs,
         updatedAt: nowMs,
-        updated_at: nowMs,
-      } as unknown as PlaybackSession;
+        updated_at: nowMs
+      } as unknown as PlaybackSession
     }
 
     // Fetch the single library item with all relations
     const { data: item, error: itemError } = await this.supabase
       .from('library_items')
-      .select(`
+      .select(
+        `
         *,
         books (
           *,
@@ -86,7 +91,8 @@ export class PlaybackService {
             )
           )
         )
-      `)
+      `
+      )
       .eq('id', libraryItemId)
       .maybeSingle()
 
@@ -94,7 +100,7 @@ export class PlaybackService {
       throw new Error(`Library item not found: ${itemError?.message || 'Item does not exist'}`)
     }
 
-    const book = Array.isArray(item.books) ? (item.books as any[])[0] : item.books as any
+    const book = Array.isArray(item.books) ? (item.books as any[])[0] : (item.books as any)
     const audioFilesList: any[] = book?.audio_files || item.books?.audio_files || []
 
     if (!audioFilesList.length) {
@@ -102,14 +108,16 @@ export class PlaybackService {
     }
 
     // Sort audio files by index
-    const sortedAudioFiles = [...audioFilesList].map((af: any) => ({
-      ...af,
-      index: af.track_index !== undefined ? af.track_index : (af.index !== undefined ? af.index : 0),
-      duration: Number(af.duration) || 0,
-      size: Number(af.size) || 0,
-      mime_type: af.mime_type || af.mimeType || 'audio/mpeg',
-      codec: af.codec || 'mp3',
-    })).sort((a: any, b: any) => a.index - b.index)
+    const sortedAudioFiles = [...audioFilesList]
+      .map((af: any) => ({
+        ...af,
+        index: af.track_index !== undefined ? af.track_index : af.index !== undefined ? af.index : 0,
+        duration: Number(af.duration) || 0,
+        size: Number(af.size) || 0,
+        mime_type: af.mime_type || af.mimeType || 'audio/mpeg',
+        codec: af.codec || 'mp3'
+      }))
+      .sort((a: any, b: any) => a.index - b.index)
 
     // Get Storage Provider
     const storage = getStorageProvider(this.supabase)
@@ -145,12 +153,12 @@ export class PlaybackService {
           mimeType: af.mime_type,
           codec: af.codec,
           isMissing: false,
-          
+
           // Legacy properties required by some clients
           start_offset: currentOffset,
           content_url: finalSignedUrl,
           mime_type: af.mime_type,
-          is_missing: false,
+          is_missing: false
         })
         currentOffset += duration
       }
@@ -161,18 +169,14 @@ export class PlaybackService {
     }
 
     // Fetch user media progress
-    let progressQuery = this.supabase
-      .from('media_progress')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('library_item_id', libraryItemId)
-    
+    let progressQuery = this.supabase.from('media_progress').select('*').eq('user_id', userId).eq('library_item_id', libraryItemId)
+
     if (episodeId) {
       progressQuery = progressQuery.eq('episode_id', episodeId)
     } else {
       progressQuery = progressQuery.is('episode_id', null)
     }
-    
+
     const { data: progressRecord } = await progressQuery.maybeSingle()
     const currentTime = progressRecord ? Number(progressRecord.current_time_pos) || 0 : 0
 
@@ -183,12 +187,14 @@ export class PlaybackService {
 
     // Get Chapters
     const chaptersList = book?.chapters || []
-    const chapters = chaptersList.map((ch: any, index: number) => ({
-      id: ch.chapter_index !== undefined ? ch.chapter_index : (typeof ch.id === 'number' ? ch.id : index),
-      title: ch.title,
-      start: Number(ch.start_time !== undefined ? ch.start_time : ch.start) || 0,
-      end: Number(ch.end_time !== undefined ? ch.end_time : ch.end) || 0
-    })).sort((a: any, b: any) => a.id - b.id)
+    const chapters = chaptersList
+      .map((ch: any, index: number) => ({
+        id: ch.chapter_index !== undefined ? ch.chapter_index : typeof ch.id === 'number' ? ch.id : index,
+        title: ch.title,
+        start: Number(ch.start_time !== undefined ? ch.start_time : ch.start) || 0,
+        end: Number(ch.end_time !== undefined ? ch.end_time : ch.end) || 0
+      }))
+      .sort((a: any, b: any) => a.id - b.id)
 
     const nowMs = Date.now()
     const totalDuration = Number(book?.duration || item.duration) || currentOffset
@@ -199,12 +205,12 @@ export class PlaybackService {
       libraryId: item.library_id,
       libraryItemId: libraryItemId,
       episodeId: episodeId || undefined,
-      
+
       displayTitle: book?.title || item.title || 'Unknown Title',
       displayAuthor: authorName,
       coverPath: item.cover_path || book?.cover_path || null,
       cover_path: item.cover_path || book?.cover_path || null, // legacy
-      
+
       duration: totalDuration,
       playMethod: 0,
       play_method: 0,
@@ -212,11 +218,11 @@ export class PlaybackService {
       media_player: 'SKIP-ExoPlayer',
       mediaType: item.media_type || 'book',
       media_type: item.media_type || 'book',
-      
+
       audioTracks: audioTracks,
       audio_tracks: audioTracks, // legacy
       chapters: chapters,
-      
+
       currentTime: currentTime,
       current_time: currentTime, // legacy
       playbackRate: 1.0,
@@ -224,7 +230,7 @@ export class PlaybackService {
       startedAt: nowMs,
       started_at: nowMs, // legacy
       updatedAt: nowMs,
-      updated_at: nowMs, // legacy
+      updated_at: nowMs // legacy
     } as unknown as PlaybackSession
   }
 }

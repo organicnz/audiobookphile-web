@@ -37,7 +37,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
         description: options?.title,
         duration: options?.duration,
         onAutoClose: options?.onDismiss,
-        onDismiss: options?.onDismiss,
+        onDismiss: options?.onDismiss
       }
 
       switch (options?.type) {
@@ -66,8 +66,6 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
 
   return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>
 }
-
-
 
 export const useGlobalToast = (): ToastContextType => {
   const context = useContext(ToastContext)
