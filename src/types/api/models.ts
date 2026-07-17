@@ -169,6 +169,20 @@ export interface Author {
   series?: Series[]
 }
 
+export interface SeriesBook {
+  id: string
+  sequence: string
+  title: string
+  addedAt?: number
+  updatedAt?: number
+  media: {
+    id: string
+    coverPath: string | null
+    duration?: number
+  }
+  cover: string | null
+}
+
 export interface Series {
   id: string
   name: string
@@ -185,7 +199,7 @@ export interface Series {
     sequence: string
   }
   /** books in the series (expanded only) */
-  books?: LibraryItem[]
+  books?: SeriesBook[] | LibraryItem[]
   /** if available (expanded only) */
   rssFeed?: RssFeed
   /** library items (author page endpoint only) */
