@@ -3,6 +3,7 @@
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { Author } from '@/types/api'
 import { useEffect, useState } from 'react'
+import { getCoverImageUrl } from '@/shared/utils/supabase/storage'
 
 interface AuthorImageProps {
   author: Author
@@ -16,7 +17,15 @@ export default function AuthorImage({ author, className }: AuthorImageProps) {
   const [imageError, setImageError] = useState(false)
   const [showCoverBg, setShowCoverBg] = useState(false)
 
-  const imageSrc = author.imagePath !== 'missing' ? `/api/authors/${author.id}/image?ts=${author.updatedAt || Date.now()}` : null
+  // Fetch directly from Supabase Storage if we know the path.
+  // If it's null, hit the proxy API to trigger the OpenLibrary fetch.
+  // If it's 'missing', don't try to load an image at all to prevent 404s.
+  const imageSrc =
+    author.imagePath && author.imagePath !== 'missing'
+      ? getCoverImageUrl(author.imagePath)
+      : !author.imagePath
+        ? `/api/authors/${author.id}/image?ts=${author.updatedAt || Date.now()}`
+        : null
 
   // Reset state when author or image source changes
   useEffect(() => {
