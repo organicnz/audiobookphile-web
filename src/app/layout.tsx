@@ -34,6 +34,16 @@ export default async function RootLayout({
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const isAdmin = user?.email ? ADMIN_EMAILS.includes(user.email.toLowerCase()) : false
+  
+  let userType: 'aficionado' | 'fan' | null = null
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('user_type')
+      .eq('id', user.id)
+      .single()
+    userType = profile?.user_type as 'aficionado' | 'fan' | null
+  }
 
   return (
     <html lang="en" className="dark h-full antialiased">
@@ -47,7 +57,7 @@ export default async function RootLayout({
           <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] rounded-full bg-amber-600/5 blur-[100px] mix-blend-screen animate-float" />
         </div>
 
-        <Navigation isAdmin={isAdmin} />
+        <Navigation isAdmin={isAdmin} userType={userType} />
         <main className="flex-1 md:ml-64 pb-20 md:pb-0 z-0">
           {children}
         </main>

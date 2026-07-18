@@ -21,13 +21,23 @@ const navItems: NavigationItems = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
-export function Navigation({ isAdmin = false }: { isAdmin?: boolean }) {
+export function Navigation({ isAdmin = false, userType }: { isAdmin?: boolean; userType?: 'aficionado' | 'fan' | null }) {
   const pathname = usePathname()
 
   // Don't show nav on auth pages
   if (pathname === '/login' || pathname.startsWith('/login/')) return null
 
-  const finalNavItems = isAdmin ? [...navItems, { name: 'Admin', href: '/admin/email', icon: ShieldAlert }] : navItems
+  let finalNavItems = navItems
+
+  if (userType === 'fan') {
+    finalNavItems = finalNavItems.filter(item => item.name !== 'Studio' && item.name !== 'Create')
+  } else if (userType === 'aficionado') {
+    finalNavItems = finalNavItems.filter(item => item.name !== 'Explore' && item.name !== 'Create')
+  }
+
+  if (isAdmin) {
+    finalNavItems = [...finalNavItems, { name: 'Admin', href: '/admin/email', icon: ShieldAlert }]
+  }
 
   return (
     <>
