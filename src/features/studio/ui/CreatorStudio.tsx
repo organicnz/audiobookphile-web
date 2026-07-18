@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Upload, Video, TrendingUp, Users, DollarSign, AlertTriangle, ShieldCheck } from 'lucide-react'
 import { CreateDropModal } from './CreateDropModal'
 
-export function CreatorStudio() {
+export function CreatorStudio({ activeSubscribers = 0 }: { activeSubscribers?: number }) {
   const [isDropModalOpen, setIsDropModalOpen] = useState(false)
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
@@ -51,9 +51,9 @@ export function CreatorStudio() {
           </div>
           <div className="glass-panel p-6 rounded-2xl flex flex-col">
             <span className="text-sm font-medium text-muted-foreground mb-1">Active Subscribers</span>
-            <span className="text-3xl font-bold text-white">4,892</span>
+            <span className="text-3xl font-bold text-white">{activeSubscribers.toLocaleString()}</span>
             <span className="text-xs text-primary mt-2 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> +5% from last month
+              <TrendingUp className="w-3 h-3" /> Live
             </span>
           </div>
           <div className="glass-panel p-6 rounded-2xl flex flex-col">

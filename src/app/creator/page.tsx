@@ -20,9 +20,18 @@ export default async function CreatorPage() {
     redirect("/login");
   }
 
+  // Fetch active subscriber count
+  const { count, error } = await supabase
+    .from("subscriptions")
+    .select("*", { count: "exact", head: true })
+    .eq("creator_id", user.id)
+    .eq("status", "active");
+
+  const activeSubscribers = count || 0;
+
   return (
     <div className="min-h-screen bg-background">
-      <CreatorStudio />
+      <CreatorStudio activeSubscribers={activeSubscribers} />
     </div>
   );
 }
