@@ -157,6 +157,22 @@ export function AuthForm() {
                 />
               </div>
             )}
+
+            {mode === 'signup' && (
+              <div className="animate-fade-in-up">
+                <label htmlFor="zipCode" className="sr-only">Zip Code (Required for Neighborhoods)</label>
+                <input
+                  id="zipCode"
+                  name="zipCode"
+                  type="text"
+                  pattern="[0-9]{5}"
+                  title="Five digit zip code"
+                  required
+                  className="appearance-none rounded-xl relative block w-full px-3 py-3 border border-white/10 bg-white/5 text-off-white placeholder-muted-foreground focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all"
+                  placeholder="Zip Code (Required for Local Communities)"
+                />
+              </div>
+            )}
           </div>
 
           {errorMsg && (

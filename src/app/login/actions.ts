@@ -9,6 +9,7 @@ export async function authAction(prevState: any, formData: FormData) {
   const password = formData.get('password') as string
   const mode = formData.get('mode') as string
   const userType = formData.get('userType') as string
+  const zipCode = formData.get('zipCode') as string
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
@@ -20,7 +21,8 @@ export async function authAction(prevState: any, formData: FormData) {
         action: mode, 
         email, 
         ...(password && { password }),
-        ...(userType && { userType })
+        ...(userType && { userType }),
+        ...(zipCode && { zipCode })
       })
     })
 

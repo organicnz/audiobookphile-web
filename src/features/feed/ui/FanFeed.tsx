@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import MuxPlayer from '@mux/mux-player-react'
-import { Heart, MessageCircle, Share2, DollarSign, Star, MoreVertical, Lock, Clock, EyeOff } from 'lucide-react'
+import { Heart, MessageCircle, Share2, DollarSign, Star, MoreVertical, Lock, Clock, EyeOff, Users } from 'lucide-react'
 import Link from 'next/link'
 import { DropZoneCarousel, type Drop } from './DropZoneCarousel'
 import { TipModal } from '@/features/monetization/ui/TipModal'
@@ -130,6 +130,13 @@ export function FanFeed({ videos, drops }: { videos: Video[], drops: Drop[] }) {
               </div>
               <span className="text-xs font-medium text-amber-500 drop-shadow-md">Tip</span>
             </button>
+
+            <Link href="/communities" className="flex flex-col items-center gap-1 group">
+              <div className="w-12 h-12 rounded-full bg-bio-teal/20 backdrop-blur-xl border border-bio-teal/50 flex items-center justify-center transition-transform group-hover:scale-110">
+                <Users className="w-6 h-6 text-bio-teal" />
+              </div>
+              <span className="text-xs font-medium text-bio-teal drop-shadow-md">Spaces</span>
+            </Link>
 
             <button className="flex flex-col items-center gap-1 group">
               <div className="w-12 h-12 rounded-full glass-panel flex items-center justify-center transition-transform group-hover:scale-110">
