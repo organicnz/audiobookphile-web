@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { Home, Compass, PlusSquare, Users, Activity, ShieldAlert, Settings, LucideIcon } from 'lucide-react'
+import { Home, Compass, PlusSquare, MonitorPlay, Settings, ShieldAlert, LucideIcon } from 'lucide-react'
 import { SidebarNav } from './SidebarNav'
 import { BottomNav } from './BottomNav'
 
@@ -14,11 +14,10 @@ export type NavigationItem = {
 export type NavigationItems = NavigationItem[]
 
 const navItems: NavigationItems = [
-  { name: 'Home', href: '/home', icon: Home },
+  { name: 'Feed', href: '/home', icon: Home },
   { name: 'Explore', href: '/explore', icon: Compass },
   { name: 'Create', href: '/create', icon: PlusSquare },
-  { name: 'Circles', href: '/circles', icon: Users },
-  { name: 'Progress', href: '/progress', icon: Activity },
+  { name: 'Studio', href: '/creator', icon: MonitorPlay },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
