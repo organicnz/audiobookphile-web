@@ -1,0 +1,20 @@
+$ next start -p "3001"
+▲ Next.js 16.2.4
+- Local:         http://localhost:3001
+- Network:       http://10.0.0.194:3001
+✓ Ready in 126ms
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/organic/package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * /Users/organic/dev/work/audiobookphile/audiobookphile-web/bun.lock
+   * /Users/organic/dev/package-lock.json
+
+[Proxy] Handling request: /library/test/series
+[apiRequest] Throwing UnauthorizedError for /api/libraries because accessToken could not be retrieved from Supabase
+Error getting library data Error [UnauthorizedError]: No authentication token found
+    at j (.next/server/chunks/ssr/dev_work_audiobookphile_audiobookphile-web_0k52rcz._.js:9:29377)
+    at async (.next/server/chunks/ssr/dev_work_audiobookphile_audiobookphile-web_src_shared_lib_0lumdlr._.js:2:9874)
+    at async h (.next/server/chunks/ssr/dev_work_audiobookphile_audiobookphile-web_src_0dt4ehk._.js:2:6422)
+error: script "start" exited with code 143

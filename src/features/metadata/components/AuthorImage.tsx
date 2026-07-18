@@ -16,7 +16,7 @@ export default function AuthorImage({ author, className }: AuthorImageProps) {
   const [imageError, setImageError] = useState(false)
   const [showCoverBg, setShowCoverBg] = useState(false)
 
-  const imageSrc = author.imagePath ? `/api/authors/${author.id}/image?ts=${author.updatedAt || Date.now()}` : null
+  const imageSrc = author.imagePath !== 'missing' ? `/api/authors/${author.id}/image?ts=${author.updatedAt || Date.now()}` : null
 
   // Reset state when author or image source changes
   useEffect(() => {

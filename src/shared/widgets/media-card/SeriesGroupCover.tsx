@@ -104,7 +104,8 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
       const validBooks = books
         .filter((book) => {
           const state = loadingStates.get(book.id)
-          return !state?.failed
+          const hasCover = (book as any).media?.coverPath || (book as any).cover
+          return !state?.failed && hasCover
         })
         .map((book) => ({
           id: book.id,
