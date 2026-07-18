@@ -12,14 +12,20 @@ export function CreatorStudio() {
       </header>
 
       {/* Quick Actions */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-        <button className="flex items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/10 border-amber-500/30 group">
-          <Upload className="w-6 h-6 text-amber-500 group-hover:-translate-y-1 transition-transform" />
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <button className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/10 border-amber-500/30 group">
+          <Upload className="w-8 h-8 text-amber-500 group-hover:-translate-y-1 transition-transform" />
           <span className="text-lg font-bold text-amber-500">Upload Video</span>
         </button>
-        <button className="flex items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/10 border-amber-500/30 group">
-          <Video className="w-6 h-6 text-amber-500 group-hover:scale-110 transition-transform" />
+        <button className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/10 border-amber-500/30 group">
+          <Video className="w-8 h-8 text-amber-500 group-hover:scale-110 transition-transform" />
           <span className="text-lg font-bold text-amber-500">Go Live</span>
+        </button>
+        <button className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/20 border-amber-500 group shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+          <svg className="w-8 h-8 text-amber-500 group-hover:scale-110 transition-transform fill-amber-500 drop-shadow-md" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="text-lg font-bold text-amber-500 drop-shadow-md">Create Drop</span>
         </button>
       </section>
 

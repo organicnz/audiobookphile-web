@@ -35,6 +35,8 @@ const MOCK_VIDEOS = [
   }
 ]
 
+import { DropZoneCarousel } from './DropZoneCarousel'
+
 export function FanFeed() {
   const [activeVideo, setActiveVideo] = useState(0)
 
@@ -47,11 +49,18 @@ export function FanFeed() {
   }
 
   return (
-    <div 
-      className="h-full w-full max-w-md mx-auto relative snap-y snap-mandatory overflow-y-scroll hide-scrollbar bg-black"
-      onScroll={handleScroll}
-      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-    >
+    <div className="h-full w-full max-w-md mx-auto relative bg-black">
+      {/* Absolute top Drop Zone Carousel */}
+      <div className="absolute top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/80 to-transparent pt-2">
+        <DropZoneCarousel />
+      </div>
+
+      {/* Main scrolling video feed */}
+      <div 
+        className="h-full w-full relative snap-y snap-mandatory overflow-y-scroll hide-scrollbar"
+        onScroll={handleScroll}
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
       {MOCK_VIDEOS.map((video, idx) => (
         <div key={video.id} className="h-full w-full snap-start relative bg-black flex justify-center items-center">
           {/* Video Player */}
@@ -119,6 +128,7 @@ export function FanFeed() {
           </div>
         </div>
       ))}
+      </div>
     </div>
   )
 }
