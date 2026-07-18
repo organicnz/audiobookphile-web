@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { Upload, Video, TrendingUp, Users, DollarSign, AlertTriangle, ShieldCheck, Lock } from 'lucide-react'
 import { CreateDropModal } from './CreateDropModal'
 import { TimeCapsuleModal } from './TimeCapsuleModal'
+import Link from 'next/link'
 
 export function CreatorStudio({ 
   activeSubscribers = 0,
@@ -29,10 +30,10 @@ export function CreatorStudio({
           <Upload className="w-8 h-8 text-amber-500 group-hover:-translate-y-1 transition-transform" />
           <span className="text-lg font-bold text-amber-500">Upload Video</span>
         </button>
-        <button className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/10 border-amber-500/30 group">
+        <Link href={`/live/your_username`} className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/10 border-amber-500/30 group">
           <Video className="w-8 h-8 text-amber-500 group-hover:scale-110 transition-transform" />
           <span className="text-lg font-bold text-amber-500">Go Live</span>
-        </button>
+        </Link>
         <button 
           onClick={() => setIsDropModalOpen(true)}
           className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/20 border-amber-500 group shadow-[0_0_15px_rgba(245,158,11,0.2)]"

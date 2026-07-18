@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import MuxPlayer from '@mux/mux-player-react'
-import { Heart, MessageCircle, Share2, DollarSign, Star, MoreVertical, Lock, Clock } from 'lucide-react'
+import { Heart, MessageCircle, Share2, DollarSign, Star, MoreVertical, Lock, Clock, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { DropZoneCarousel, type Drop } from './DropZoneCarousel'
 import { TipModal } from '@/features/monetization/ui/TipModal'
@@ -16,11 +16,13 @@ export interface Video {
   comments: string
   isSubscribed: boolean
   unlocksAt?: string
+  moderationStatus?: string
 }
 
 export function FanFeed({ videos, drops }: { videos: Video[], drops: Drop[] }) {
   const [activeVideo, setActiveVideo] = useState(0)
   const [tipModalCreator, setTipModalCreator] = useState<string | null>(null)
+  const [revealedNsfw, setRevealedNsfw] = useState<Record<string, boolean>>({})
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const container = e.currentTarget
@@ -46,21 +48,42 @@ export function FanFeed({ videos, drops }: { videos: Video[], drops: Drop[] }) {
       {videos.map((video, idx) => {
         const isLocked = video.unlocksAt && new Date(video.unlocksAt) > new Date();
         const unlockDateString = video.unlocksAt ? new Date(video.unlocksAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+        const isNsfw = video.moderationStatus === 'rejected' && !revealedNsfw[video.id];
+        
+        const shouldBlur = isLocked || isNsfw;
+        const autoPlayVideo = !shouldBlur && idx === activeVideo;
 
         return (
         <div key={video.id} className="h-full w-full snap-start relative bg-black flex justify-center items-center">
           {/* Video Player */}
-          <div className={`absolute inset-0 transition-all duration-1000 ${isLocked ? 'blur-xl scale-110 opacity-50' : ''}`}>
+          <div className={`absolute inset-0 transition-all duration-1000 ${shouldBlur ? 'blur-2xl scale-110 opacity-50' : ''}`}>
             <MuxPlayer
               playbackId={video.playbackId}
               className="h-full w-full object-cover pointer-events-none"
               loop
               muted={false}
-              autoPlay={!isLocked && idx === activeVideo ? "any" : false}
+              autoPlay={autoPlayVideo ? "any" : false}
               streamType="on-demand"
               style={{ '--controls': 'none' } as any}
             />
           </div>
+
+          {isNsfw && !isLocked && (
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center animate-fade-in-up">
+              <div className="w-20 h-20 rounded-full bg-red-500/20 backdrop-blur-md border border-red-500/50 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+                <EyeOff className="w-10 h-10 text-red-400 drop-shadow-md" />
+              </div>
+              <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-widest drop-shadow-lg">Sensitive Content</h3>
+              <p className="text-red-200 font-medium mb-8 max-w-[80%]">This video contains adult themes.</p>
+              
+              <button 
+                onClick={() => setRevealedNsfw(prev => ({ ...prev, [video.id]: true }))}
+                className="px-8 py-4 rounded-full bg-red-600 text-white font-bold tracking-wider hover:bg-red-500 transition-all shadow-[0_0_20px_rgba(239,68,68,0.3)] active:scale-95 uppercase text-sm"
+              >
+                I am over 18 - Reveal
+              </button>
+            </div>
+          )}
 
           {isLocked && (
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center animate-fade-in-up">

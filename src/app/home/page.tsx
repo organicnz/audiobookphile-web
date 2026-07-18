@@ -11,7 +11,7 @@ export default async function HomePage() {
   // We'll select *, profiles!inner(username)
   const { data: contentData } = await supabase
     .from('content')
-    .select('id, mux_playback_id, description, likes_count, comments_count, profiles!inner(username)')
+    .select('id, mux_playback_id, description, likes_count, comments_count, moderation_status, profiles!inner(username)')
     .order('created_at', { ascending: false })
     .limit(10);
 
@@ -23,8 +23,21 @@ export default async function HomePage() {
     playbackId: c.mux_playback_id || '',
     likes: (c.likes_count || 0).toString(),
     comments: (c.comments_count || 0).toString(),
-    isSubscribed: false, // We would check subscriptions here in a real scenario
+    isSubscribed: false,
+    moderationStatus: c.moderation_status || 'approved'
   }));
+
+  // DEMO: Inject a mocked NSFW video
+  const demoNsfwVideo: Video = {
+    id: 'demo-nsfw-video',
+    creator: 'spicy_creator',
+    description: 'This video is flagged as adult content. Click to reveal.',
+    playbackId: 'qxb01i6T202018GGS2nwgDS7Bzl3Kx1q9e02Tj02mC62h4', // random mux ID for background blur
+    likes: '45k',
+    comments: '12k',
+    isSubscribed: true,
+    moderationStatus: 'rejected'
+  }
 
   // DEMO: Inject a mocked Time Capsule video at the top of the feed
   const futureDate = new Date();
@@ -41,7 +54,7 @@ export default async function HomePage() {
     unlocksAt: futureDate.toISOString()
   }
 
-  const videos = [demoLockedVideo, ...dbVideos];
+  const videos = [demoLockedVideo, demoNsfwVideo, ...dbVideos];
 
   // Fetch drops from the 'posts' table
   const { data: postsData } = await supabase
