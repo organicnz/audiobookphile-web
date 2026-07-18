@@ -1,4 +1,5 @@
 import { EntityType } from '@/types/api'
+import { Suspense } from 'react'
 
 import BookshelfClient from './BookshelfClient'
 
@@ -8,7 +9,9 @@ export default async function EntityPage({ params }: { params: Promise<{ library
 
   return (
     <div className="h-full w-full">
-      <BookshelfClient key={entityType} entityType={entityType} />
+      <Suspense fallback={null}>
+        <BookshelfClient key={entityType} entityType={entityType} />
+      </Suspense>
     </div>
   )
 }
