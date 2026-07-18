@@ -1,9 +1,11 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Upload, Video, TrendingUp, Users, DollarSign, AlertTriangle, ShieldCheck } from 'lucide-react'
+import { CreateDropModal } from './CreateDropModal'
 
 export function CreatorStudio() {
+  const [isDropModalOpen, setIsDropModalOpen] = useState(false)
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
       <header className="mb-10">
@@ -21,13 +23,18 @@ export function CreatorStudio() {
           <Video className="w-8 h-8 text-amber-500 group-hover:scale-110 transition-transform" />
           <span className="text-lg font-bold text-amber-500">Go Live</span>
         </button>
-        <button className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/20 border-amber-500 group shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+        <button 
+          onClick={() => setIsDropModalOpen(true)}
+          className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl liquid-glass-hover bg-amber-500/20 border-amber-500 group shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+        >
           <svg className="w-8 h-8 text-amber-500 group-hover:scale-110 transition-transform fill-amber-500 drop-shadow-md" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           <span className="text-lg font-bold text-amber-500 drop-shadow-md">Create Drop</span>
         </button>
       </section>
+
+      {isDropModalOpen && <CreateDropModal onClose={() => setIsDropModalOpen(false)} />}
 
       {/* Analytics Dashboard */}
       <section className="mb-10">
