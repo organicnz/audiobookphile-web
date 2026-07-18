@@ -19,11 +19,9 @@ export async function fetchAuthorsAction(libraryId: string, query?: string) {
 }
 
 export async function fetchCollectionsAction(libraryId: string, query?: string) {
-  const data = await getLibraryCollections(libraryId, query)
-  return { results: data ?? [] }
+  return getLibraryCollections(libraryId, query)
 }
 
 export async function fetchPlaylistsAction(libraryId: string, query?: string) {
-  const data = await getLibraryPlaylists(libraryId, query)
-  return { results: data ?? [] }
+  return getLibraryPlaylists(libraryId, query)
 }
