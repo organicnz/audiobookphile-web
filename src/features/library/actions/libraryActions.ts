@@ -1,6 +1,7 @@
 'use server'
 
 import { getLibraryAuthors, getLibraryCollections, getLibraryFilterData, getLibraryItems, getLibraryPlaylists, getLibrarySeries } from '@/shared/lib/api'
+import { getLibraryStats } from '@/shared/lib/api/libraries'
 
 export async function fetchLibraryItemsAction(libraryId: string, query?: string) {
   return getLibraryItems(libraryId, query)
@@ -24,4 +25,8 @@ export async function fetchCollectionsAction(libraryId: string, query?: string) 
 
 export async function fetchPlaylistsAction(libraryId: string, query?: string) {
   return getLibraryPlaylists(libraryId, query)
+}
+
+export async function fetchLibraryStatsAction(libraryId: string) {
+  return getLibraryStats(libraryId)
 }
