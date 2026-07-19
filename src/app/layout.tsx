@@ -1,48 +1,56 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Navigation } from "@/shared/ui/layout/Navigation";
-import { createClient } from "@/shared/lib/supabase/server";
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import './globals.css'
+import { Navigation } from '@/shared/ui/layout/Navigation'
+import { createClient } from '@/shared/lib/supabase/server'
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
-  title: "Aficionado",
-  description: "A premium social media platform designed to connect creators and their fans through immersive, short-form video streaming and direct engagement.",
-};
+  title: {
+    default: 'Aficionado',
+    template: '%s | Aficionado',
+  },
+  description: 'A premium social platform connecting creators and fans through immersive short-form video and direct engagement.',
+  metadataBase: new URL('https://aficionado.fans'),
+  openGraph: {
+    siteName: 'Aficionado',
+    type: 'website',
+  },
+}
 
-const ADMIN_EMAILS = [
-  'devastatingdebater@gmail.com',
-  'tamerlanium@gmail.com',
-  'support@aficionado.fans',
-  'contact@aficionado.fans'
-]
+// Admin emails from env — keeps them out of client code
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '')
+  .split(',')
+  .map(e => e.trim().toLowerCase())
+  .filter(Boolean)
 
 export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const isAdmin = user?.email ? ADMIN_EMAILS.includes(user.email.toLowerCase()) : false
-  
+
   let userType: 'aficionado' | 'fan' | null = null
+  let isAdmin = false
+
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('user_type')
       .eq('id', user.id)
       .single()
-    userType = profile?.user_type as 'aficionado' | 'fan' | null
+
+    userType = (profile?.user_type as 'aficionado' | 'fan' | null) ?? null
+    isAdmin = user.email ? ADMIN_EMAILS.includes(user.email.toLowerCase()) : false
   }
 
   return (
@@ -50,7 +58,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-full flex flex-col bg-background text-foreground relative overflow-x-hidden`}
       >
-        {/* Ambient Glowing Background Orbs */}
+        {/* Ambient background orbs */}
         <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-background">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-secondary/20 blur-[120px] mix-blend-screen animate-float" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-amber-500/5 blur-[150px] mix-blend-screen animate-float-delayed" />
@@ -63,5 +71,5 @@ export default async function RootLayout({
         </main>
       </body>
     </html>
-  );
+  )
 }

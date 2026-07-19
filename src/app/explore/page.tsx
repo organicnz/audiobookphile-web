@@ -70,8 +70,8 @@ export default async function ExplorePage() {
           <p className="text-muted-foreground text-sm max-w-md mx-auto mb-6">
             That's everything for today. We intentionally limit your feed to protect your mental health. Go outside, call a friend, or just breathe.
           </p>
-          <a href="/breathe" className="text-xs text-primary/60 hover:text-primary transition-colors">
-            → Take a breathing break
+          <a href="/home" className="text-xs text-primary/60 hover:text-primary transition-colors">
+            → Return to home
           </a>
         </div>
       </div>
