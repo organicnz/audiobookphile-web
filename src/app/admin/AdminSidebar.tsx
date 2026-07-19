@@ -2,14 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Mail, BarChart3, Users2, Settings } from 'lucide-react'
+import { LayoutDashboard, Mail, Users, ShieldAlert } from 'lucide-react'
 
 const adminNavItems = [
+  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Users', href: '/admin/users', icon: Users },
+  { name: 'Moderation', href: '/admin/moderation', icon: ShieldAlert },
   { name: 'Send Email', href: '/admin/email', icon: Mail },
-  // Future tabs — uncomment as features are built:
-  // { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-  // { name: 'Users', href: '/admin/users', icon: Users2 },
-  // { name: 'Settings', href: '/admin/settings', icon: Settings },
 ]
 
 export function AdminSidebar() {
@@ -19,7 +18,9 @@ export function AdminSidebar() {
     <nav className="space-y-1">
       {adminNavItems.map((item) => {
         const Icon = item.icon
-        const isActive = pathname === item.href
+        const isActive = item.href === '/admin'
+          ? pathname === '/admin'
+          : pathname.startsWith(item.href)
 
         return (
           <Link
