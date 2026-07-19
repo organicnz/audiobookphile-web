@@ -16,8 +16,10 @@ interface AuthorImageProps {
 export default function AuthorImage({ author, className }: AuthorImageProps) {
   const [imageError, setImageError] = useState(false)
   const [showCoverBg, setShowCoverBg] = useState(false)
-
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:54321/functions/v1/api'
+  const fallbackUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api`
+    : 'http://localhost:54321/functions/v1/api'
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || fallbackUrl
   const rawImageSrc = `${apiUrl}/authors/${author.id}/image`
   const imageSrc = author.updatedAt ? `${rawImageSrc}?ts=${new Date(author.updatedAt).getTime()}` : rawImageSrc
 
