@@ -229,17 +229,7 @@ export async function getDbStoragePaths(supabase: SupabaseClient): Promise<Map<s
   while (hasMore) {
     const { data: items, error } = await supabase
       .from('library_items')
-      .select(
-        `
-        id,
-        title,
-        books!inner (
-          id,
-          title,
-          audio_files
-        )
-      `
-      )
+      .select('id, title, audio_files')
       .range(from, from + limit - 1)
 
     if (error) {
@@ -253,17 +243,14 @@ export async function getDbStoragePaths(supabase: SupabaseClient): Promise<Map<s
     }
 
     for (const item of items) {
-      const bookData = Array.isArray(item.books) ? item.books[0] : item.books
-      if (!bookData) continue
-
-      const audioFilesList = Array.isArray(bookData.audio_files) ? bookData.audio_files : []
+      const audioFilesList = Array.isArray(item.audio_files) ? item.audio_files : []
 
       for (const af of audioFilesList) {
         const path = af.metadata?.path || af.storage_path || af.path
         if (path) {
           pathMap.set(path, {
             libraryItemId: item.id,
-            title: item.title || bookData.title || 'Unknown'
+            title: item.title || 'Unknown'
           })
         }
       }
@@ -404,24 +391,17 @@ export async function importOrphanedGroup(
     }
   })
 
-  const bookId = crypto.randomUUID()
-  const { error: bookError } = await supabase.from('books').insert({ id: bookId, title, audio_files: audioFilesJson })
-
-  if (bookError) {
-    return { error: `Failed to create book: ${bookError.message}` }
-  }
-
   const { error: itemError } = await supabase.from('library_items').insert({
     id: libraryItemId,
     library_id: libraryId,
     media_type: 'book',
-    media_id: bookId,
     title,
     size: totalSize,
     path: group.dirPath,
     rel_path: group.dirPath.split('/').pop() || '',
     is_missing: false,
     last_storage_check: new Date().toISOString(),
+    audio_files: audioFilesJson,
     library_files: audioFilesJson.map((af) => ({
       ino: af.ino,
       metadata: af.metadata,
@@ -432,7 +412,6 @@ export async function importOrphanedGroup(
   })
 
   if (itemError) {
-    await supabase.from('books').delete().eq('id', bookId)
     return { error: `Failed to create library item: ${itemError.message}` }
   }
 

@@ -14,14 +14,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     }
 
     // Fetch the item
-    const { data: item, error: itemError } = await supabase.from('library_items').select('*, books(*)').eq('id', id).single()
+    const { data: item, error: itemError } = await supabase.from('library_items').select('*').eq('id', id).single()
 
     if (itemError || !item) {
       return NextResponse.json({ error: 'Item not found' }, { status: 404 })
     }
 
-    const book = Array.isArray(item.books) ? item.books[0] : item.books
-    const audioFiles = book?.audio_files || []
+    const audioFiles = (item.audio_files as any[]) || []
     const file = audioFiles.find((f: any) => f.ino === fileId || f.id === fileId)
 
     if (!file) {

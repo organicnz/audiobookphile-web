@@ -1,4 +1,16 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+// ⚠️  AUTO-GENERATED — DO NOT EDIT DIRECTLY
+// Run `npm run gen:types` in audiobookphile-backend to regenerate from the live database.
+// This file is kept in sync with audiobookphile-web/src/types/supabase.ts via that script.
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | {
+      [key: string]: Json | undefined
+    }
+  | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -6,33 +18,37 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.5'
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
+      search_history: {
+        Row: {
+          id: string
+          user_id: string
+          query: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          query: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          query?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'search_history_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       authors: {
         Row: {
           asin: string | null
@@ -80,19 +96,19 @@ export type Database = {
       book_authors: {
         Row: {
           author_id: string
-          book_id: string
+          library_item_id: string
           created_at: string | null
           id: string
         }
         Insert: {
           author_id: string
-          book_id: string
+          library_item_id: string
           created_at?: string | null
           id?: string
         }
         Update: {
           author_id?: string
-          book_id?: string
+          library_item_id?: string
           created_at?: string | null
           id?: string
         }
@@ -105,8 +121,8 @@ export type Database = {
             referencedColumns: ['id']
           },
           {
-            foreignKeyName: 'book_authors_book_id_fkey'
-            columns: ['book_id']
+            foreignKeyName: 'book_authors_library_item_id_fkey'
+            columns: ['library_item_id']
             isOneToOne: false
             referencedRelation: 'books'
             referencedColumns: ['id']
@@ -115,21 +131,21 @@ export type Database = {
       }
       book_series: {
         Row: {
-          book_id: string
+          library_item_id: string
           created_at: string | null
           id: string
           sequence: string | null
           series_id: string
         }
         Insert: {
-          book_id: string
+          library_item_id: string
           created_at?: string | null
           id?: string
           sequence?: string | null
           series_id: string
         }
         Update: {
-          book_id?: string
+          library_item_id?: string
           created_at?: string | null
           id?: string
           sequence?: string | null
@@ -137,8 +153,8 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'book_series_book_id_fkey'
-            columns: ['book_id']
+            foreignKeyName: 'book_series_library_item_id_fkey'
+            columns: ['library_item_id']
             isOneToOne: false
             referencedRelation: 'books'
             referencedColumns: ['id']
@@ -227,23 +243,23 @@ export type Database = {
         }
         Relationships: []
       }
-      collection_books: {
+      collection_items: {
         Row: {
-          book_id: string | null
+          library_item_id: string | null
           collection_id: string | null
           created_at: string
           id: string
           order: number | null
         }
         Insert: {
-          book_id?: string | null
+          library_item_id?: string | null
           collection_id?: string | null
           created_at?: string
           id: string
           order?: number | null
         }
         Update: {
-          book_id?: string | null
+          library_item_id?: string | null
           collection_id?: string | null
           created_at?: string
           id?: string
@@ -251,8 +267,8 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'collection_books_book_id_fkey'
-            columns: ['book_id']
+            foreignKeyName: 'collection_books_library_item_id_fkey'
+            columns: ['library_item_id']
             isOneToOne: false
             referencedRelation: 'books'
             referencedColumns: ['id']
@@ -651,6 +667,24 @@ export type Database = {
           title: string | null
           title_ignore_prefix: string | null
           updated_at: string
+
+          abridged: boolean | null
+          asin: string | null
+          audio_files: Json | null
+          chapters: Json | null
+          description: string | null
+          duration: number | null
+          ebook_file: Json | null
+          explicit: boolean | null
+          genres: Json | null
+          isbn: string | null
+          language: string | null
+          narrators: Json | null
+          published_date: string | null
+          published_year: string | null
+          publisher: string | null
+          subtitle: string | null
+          tags: Json | null
         }
         Insert: {
           author_names_first_last?: string | null
@@ -679,6 +713,24 @@ export type Database = {
           title?: string | null
           title_ignore_prefix?: string | null
           updated_at?: string
+
+          abridged?: boolean | null
+          asin?: string | null
+          audio_files?: Json | null
+          chapters?: Json | null
+          description?: string | null
+          duration?: number | null
+          ebook_file?: Json | null
+          explicit?: boolean | null
+          genres?: Json | null
+          isbn?: string | null
+          language?: string | null
+          narrators?: Json | null
+          published_date?: string | null
+          published_year?: string | null
+          publisher?: string | null
+          subtitle?: string | null
+          tags?: Json | null
         }
         Update: {
           author_names_first_last?: string | null
@@ -707,6 +759,24 @@ export type Database = {
           title?: string | null
           title_ignore_prefix?: string | null
           updated_at?: string
+
+          abridged?: boolean | null
+          asin?: string | null
+          audio_files?: Json | null
+          chapters?: Json | null
+          description?: string | null
+          duration?: number | null
+          ebook_file?: Json | null
+          explicit?: boolean | null
+          genres?: Json | null
+          isbn?: string | null
+          language?: string | null
+          narrators?: Json | null
+          published_date?: string | null
+          published_year?: string | null
+          publisher?: string | null
+          subtitle?: string | null
+          tags?: Json | null
         }
         Relationships: [
           {
@@ -1263,16 +1333,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_admin: { Args: never; Returns: boolean }
-      merge_authors: {
-        Args: {
-          p_library_id: string
-          p_source_name: string
-          p_target_name: string
-        }
-        Returns: undefined
-      }
-      sync_author_avatars: { Args: never; Returns: undefined }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
@@ -1313,7 +1374,11 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema['Tables']
+    | {
+        schema: keyof DatabaseWithoutInternals
+      },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
@@ -1336,7 +1401,11 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema['Tables']
+    | {
+        schema: keyof DatabaseWithoutInternals
+      },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
@@ -1359,7 +1428,11 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums'] | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema['Enums']
+    | {
+        schema: keyof DatabaseWithoutInternals
+      },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
@@ -1389,9 +1462,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {}
-  },
   public: {
     Enums: {}
   }

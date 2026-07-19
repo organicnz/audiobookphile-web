@@ -1,8 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { BookOpen, CalendarDays, Clock, HardDrive, Layers, Users } from 'lucide-react'
+import { BookOpen, CalendarDays, Clock, HardDrive, Layers, Users, Music } from 'lucide-react'
 import { useLibraryStats } from '../hooks/useLibraryStats'
+import Link from 'next/link'
 
 // Utility for formatting bytes
 function formatBytes(bytes: number, decimals = 2) {
@@ -41,96 +42,164 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
     return <div className="text-foreground-muted flex w-full items-center justify-center p-12">Failed to load library stats.</div>
   }
 
-  const cards = [
-    {
-      title: 'Total Books',
-      value: stats.totalBooks.toLocaleString(),
-      icon: BookOpen,
-      color: 'text-blue-400',
-      bg: 'bg-blue-400/10'
-    },
-    {
-      title: 'Total Authors',
-      value: stats.totalAuthors.toLocaleString(),
-      icon: Users,
-      color: 'text-purple-400',
-      bg: 'bg-purple-400/10'
-    },
-    {
-      title: 'Total Series',
-      value: stats.totalSeries.toLocaleString(),
-      icon: Layers,
-      color: 'text-pink-400',
-      bg: 'bg-pink-400/10'
-    },
-    {
-      title: 'Total Duration',
-      value: formatDuration(stats.totalDuration),
-      icon: Clock,
-      color: 'text-emerald-400',
-      bg: 'bg-emerald-400/10'
-    },
-    {
-      title: 'Library Size',
-      value: formatBytes(stats.totalSize),
-      icon: HardDrive,
-      color: 'text-amber-400',
-      bg: 'bg-amber-400/10'
-    },
-    {
-      title: 'Added Last 30 Days',
-      value: stats.addedLast30Days.toLocaleString(),
-      icon: CalendarDays,
-      color: 'text-cyan-400',
-      bg: 'bg-cyan-400/10'
-    }
-  ]
+  const topGenres = stats.genresWithCount
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5)
+    .map((stat) => ({
+      label: stat.genre,
+      percentage: Math.round((stat.count / Math.max(1, stats.totalItems)) * 100)
+    }))
+
+  const topAuthors = stats.authorsWithCount
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10)
+    .map((stat) => ({
+      id: stat.id,
+      label: stat.name,
+      numBooks: stat.count
+    }))
 
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      transition: { staggerChildren: 0.1 }
     }
   }
 
-  const item = {
+  const itemAnim = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } }
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-8">
+    <div className="mx-auto w-full max-w-6xl space-y-12 pb-12">
       <div className="flex flex-col space-y-2">
         <h1 className="text-4xl font-bold tracking-tight text-white/90">Library Stats</h1>
         <p className="text-white/50">Overview of your library contents and metrics.</p>
       </div>
 
-      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {cards.map((card) => (
-          <motion.div
-            key={card.title}
-            variants={item}
-            whileHover={{ scale: 1.02, y: -4 }}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-md transition-all"
-          >
-            {/* Ambient Glow */}
-            <div className={`absolute -top-6 -right-6 h-24 w-24 rounded-full opacity-50 blur-2xl transition-opacity group-hover:opacity-100 ${card.bg}`} />
+      {/* Summary Cards */}
+      <motion.div variants={container} initial="hidden" animate="show" className="flex flex-wrap justify-center gap-6">
+        <motion.div variants={itemAnim} className="flex p-2">
+          <BookOpen className="text-accent/80 mr-3 h-12 w-12" />
+          <div className="flex flex-col">
+            <p className="text-4xl leading-none font-bold text-white">{stats.totalItems.toLocaleString()}</p>
+            <p className="text-sm text-white/50">Items in Library</p>
+          </div>
+        </motion.div>
 
-            <div className="relative z-10 flex items-center justify-between">
-              <div className={`rounded-xl p-3 ${card.bg} ${card.color}`}>
-                <card.icon className="h-6 w-6" />
+        <motion.div variants={itemAnim} className="flex p-2">
+          <Clock className="text-accent/80 mr-3 h-12 w-12" />
+          <div className="flex flex-col">
+            <p className="text-4xl leading-none font-bold text-white">{formatDuration(stats.totalDuration)}</p>
+            <p className="text-sm text-white/50">Overall Runtime</p>
+          </div>
+        </motion.div>
+
+        <motion.div variants={itemAnim} className="flex p-2">
+          <Users className="text-accent/80 mr-3 h-12 w-12" />
+          <div className="flex flex-col">
+            <p className="text-4xl leading-none font-bold text-white">{stats.totalAuthors.toLocaleString()}</p>
+            <p className="text-sm text-white/50">Total Authors</p>
+          </div>
+        </motion.div>
+
+        <motion.div variants={itemAnim} className="flex p-2">
+          <HardDrive className="text-accent/80 mr-3 h-12 w-12" />
+          <div className="flex flex-col">
+            <p className="text-4xl leading-none font-bold text-white">{formatBytes(stats.totalSize)}</p>
+            <p className="text-sm text-white/50">Total Size</p>
+          </div>
+        </motion.div>
+
+        <motion.div variants={itemAnim} className="flex p-2">
+          <Music className="text-accent/80 mr-3 h-12 w-12" />
+          <div className="flex flex-col">
+            <p className="text-4xl leading-none font-bold text-white">{stats.numAudioTracks.toLocaleString()}</p>
+            <p className="text-sm text-white/50">Audio Tracks</p>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Genres & Authors Section */}
+      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+        {/* Top Genres */}
+        <motion.div variants={itemAnim} className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+          <h2 className="mb-6 text-2xl font-semibold text-white/90">Top 5 Genres</h2>
+          {topGenres.length === 0 && <p className="text-white/50">No genres found.</p>}
+          {topGenres.map((stat, index) => (
+            <div key={index} className="w-full py-3">
+              <div className="mb-2 flex items-end justify-between">
+                <p className="text-2xl font-bold text-white/90">{stat.percentage}%</p>
+                <p className="text-white/70">{stat.label}</p>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${stat.percentage}%` }}
+                  transition={{ duration: 1, ease: 'easeOut' }}
+                  className="bg-accent h-full rounded-full"
+                />
               </div>
             </div>
+          ))}
+        </motion.div>
 
-            <div className="relative z-10 mt-6 flex flex-col space-y-1">
-              <h3 className="text-sm font-medium tracking-wider text-white/50 uppercase">{card.title}</h3>
-              <p className="text-4xl font-bold tracking-tight text-white/90">{card.value}</p>
+        {/* Top Authors */}
+        <motion.div variants={itemAnim} className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+          <h2 className="mb-6 text-2xl font-semibold text-white/90">Top 10 Authors</h2>
+          {topAuthors.length === 0 && <p className="text-white/50">No authors found.</p>}
+          {topAuthors.map((stat, index) => (
+            <div key={index} className="mb-2 flex w-full items-center py-2">
+              <span className="pr-2 text-sm text-white/50">{index + 1}.</span>
+              <Link href={`/library/${libraryId}/author/${stat.id}`} className="truncate pr-4 text-sm text-white/70 hover:text-white hover:underline">
+                {stat.label}
+              </Link>
+              <div className="h-1 grow overflow-hidden rounded-full border-b border-dotted border-white/10" />
+              <div className="ml-4 w-8 text-right">
+                <p className="text-sm font-bold text-white/90">{stat.numBooks}</p>
+              </div>
             </div>
-          </motion.div>
-        ))}
+          ))}
+        </motion.div>
+      </motion.div>
+
+      {/* Longest & Largest Items */}
+      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+        {/* Longest Items */}
+        <motion.div variants={itemAnim} className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+          <h2 className="mb-6 text-2xl font-semibold text-white/90">Longest Items</h2>
+          {stats.longestItems.length === 0 && <p className="text-white/50">No items found.</p>}
+          {stats.longestItems.map((stat, index) => (
+            <div key={index} className="mb-2 flex w-full items-center justify-between py-2">
+              <span className="pr-2 text-sm text-white/50">{index + 1}.</span>
+              <Link href={`/library/${libraryId}/book/${stat.id}`} className="w-3/4 truncate pr-4 text-sm text-white/70 hover:text-white hover:underline">
+                {stat.title}
+              </Link>
+              <div className="w-1/4 shrink-0 text-right">
+                <p className="text-sm font-bold text-white/90">{formatDuration(stat.duration)}</p>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Largest Items */}
+        <motion.div variants={itemAnim} className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+          <h2 className="mb-6 text-2xl font-semibold text-white/90">Largest Items</h2>
+          {stats.largestItems.length === 0 && <p className="text-white/50">No items found.</p>}
+          {stats.largestItems.map((stat, index) => (
+            <div key={index} className="mb-2 flex w-full items-center justify-between py-2">
+              <span className="pr-2 text-sm text-white/50">{index + 1}.</span>
+              <Link href={`/library/${libraryId}/book/${stat.id}`} className="w-3/4 truncate pr-4 text-sm text-white/70 hover:text-white hover:underline">
+                {stat.title}
+              </Link>
+              <div className="w-1/4 shrink-0 text-right">
+                <p className="text-sm font-bold whitespace-nowrap text-white/90">{formatBytes(stat.size)}</p>
+              </div>
+            </div>
+          ))}
+        </motion.div>
       </motion.div>
     </div>
   )

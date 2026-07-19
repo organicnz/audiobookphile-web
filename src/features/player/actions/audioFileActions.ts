@@ -18,15 +18,12 @@ export async function deleteLibraryFileAction(itemId: string, fileIno: string): 
   await verifyAdminOrThrow()
   const db = createServiceRoleClient()
 
-  // Get the library item to find the book
-  const { data: item } = await db.from('library_items').select('media_id').eq('id', itemId).single()
+  // Get the library item to find the audio files
+  const { data: item } = await db.from('library_items').select('audio_files').eq('id', itemId).single()
 
-  if (!item?.media_id) return
+  if (!item) return
 
-  // Get the book's audio_files to find the storage path
-  const { data: book } = await db.from('books').select('audio_files').eq('id', item.media_id).single()
-
-  const audioFiles = (book?.audio_files as any[]) || []
+  const audioFiles = (item?.audio_files as any[]) || []
   const fileToDelete = audioFiles.find((f: any) => f.ino === fileIno)
 
   if (fileToDelete?.metadata?.path) {
@@ -35,5 +32,5 @@ export async function deleteLibraryFileAction(itemId: string, fileIno: string): 
 
   // Remove from audio_files JSONB
   const updatedFiles = audioFiles.filter((f: any) => f.ino !== fileIno)
-  await db.from('books').update({ audio_files: updatedFiles }).eq('id', item.media_id)
+  await db.from('library_items').update({ audio_files: updatedFiles }).eq('id', itemId)
 }
