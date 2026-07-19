@@ -309,3 +309,87 @@ Bookshelf Label
   background: var(--bookshelf-divider-bg);
   box-shadow: 0.125em 0.875em 0.5em #111111aa;
 }
+
+/* ─── Stats: Listening Heatmap ──────────────────────────────────────────────── */
+
+.stats-heatmap-cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  cursor: pointer;
+  background-color: var(--tc-border);
+  transition: opacity 0.1s ease;
+}
+
+.stats-heatmap-cell:hover,
+.stats-heatmap-cell:focus-visible {
+  opacity: 0.75;
+  outline: none;
+}
+
+.stats-heatmap-cell[data-intensity='1'] {
+  background-color: #78350f;
+}
+.stats-heatmap-cell[data-intensity='2'] {
+  background-color: #b45309;
+}
+.stats-heatmap-cell[data-intensity='3'] {
+  background-color: #d97706;
+}
+.stats-heatmap-cell[data-intensity='4'] {
+  background-color: #f59e0b;
+}
+
+.stats-heatmap-swatch {
+  border-radius: 2px;
+  background-color: var(--tc-border);
+}
+
+.stats-heatmap-swatch[data-intensity='1'] {
+  background-color: #78350f;
+}
+.stats-heatmap-swatch[data-intensity='2'] {
+  background-color: #b45309;
+}
+.stats-heatmap-swatch[data-intensity='3'] {
+  background-color: #d97706;
+}
+.stats-heatmap-swatch[data-intensity='4'] {
+  background-color: #f59e0b;
+}
+
+/* Light theme overrides */
+.theme-light .stats-heatmap-cell {
+  background-color: var(--tc-border);
+}
+.theme-light .stats-heatmap-cell[data-intensity='1'] {
+  background-color: #fde68a;
+}
+.theme-light .stats-heatmap-cell[data-intensity='2'] {
+  background-color: #fbbf24;
+}
+.theme-light .stats-heatmap-cell[data-intensity='3'] {
+  background-color: #f59e0b;
+}
+.theme-light .stats-heatmap-cell[data-intensity='4'] {
+  background-color: #d97706;
+}
+
+.theme-light .stats-heatmap-swatch {
+  background-color: var(--tc-border);
+}
+.theme-light .stats-heatmap-swatch[data-intensity='1'] {
+  background-color: #fde68a;
+}
+.theme-light .stats-heatmap-swatch[data-intensity='2'] {
+  background-color: #fbbf24;
+}
+.theme-light .stats-heatmap-swatch[data-intensity='3'] {
+  background-color: #f59e0b;
+}
+.theme-light .stats-heatmap-swatch[data-intensity='4'] {
+  background-color: #d97706;
+}
