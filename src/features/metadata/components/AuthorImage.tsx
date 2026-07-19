@@ -19,14 +19,8 @@ export default function AuthorImage({ author, className }: AuthorImageProps) {
   const [showCoverBg, setShowCoverBg] = useState(false)
 
   // Fetch directly from Supabase Storage if we know the path.
-  // If it's null, hit the proxy API to trigger the OpenLibrary fetch.
-  // If it's 'missing', don't try to load an image at all to prevent 404s.
-  const imageSrc =
-    author.imagePath && author.imagePath !== 'missing'
-      ? getCoverImageUrl(author.imagePath)
-      : !author.imagePath
-        ? `/api/authors/${author.id}/image?ts=${author.updatedAt || Date.now()}`
-        : null
+  // We no longer fallback to proxy fetching, as a background cron job handles fetching.
+  const imageSrc = author.imagePath && author.imagePath !== 'missing' ? getCoverImageUrl(author.imagePath) : null
 
   // Reset state when author or image source changes
   useEffect(() => {
