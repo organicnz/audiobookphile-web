@@ -20,7 +20,8 @@ export default function AuthorImage({ author, className }: AuthorImageProps) {
 
   // Fetch directly from Supabase Storage if we know the path.
   // We no longer fallback to proxy fetching, as a background cron job handles fetching.
-  const imageSrc = author.imagePath && author.imagePath !== 'missing' ? getCoverImageUrl(author.imagePath) : null
+  const rawImageSrc = author.imagePath && author.imagePath !== 'missing' ? getCoverImageUrl(author.imagePath) : null
+  const imageSrc = rawImageSrc ? `${rawImageSrc}?ts=${author.updatedAt || Date.now()}` : null
 
   // Reset state when author or image source changes
   useEffect(() => {
