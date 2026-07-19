@@ -53,20 +53,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Admin route — check is_admin flag from DB
-  if (pathname.startsWith('/admin') && user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
-
-    if (!profile?.is_admin) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/home'
-      return NextResponse.redirect(url)
-    }
-  }
+  // Admin route — let admin/layout.tsx handle the is_admin check server-side
+  // Proxy only ensures user is authenticated (already covered by isProtected above)
 
   // Authenticated on login → home or ?next=
   if (user && pathname === '/login') {

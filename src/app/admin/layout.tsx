@@ -19,14 +19,10 @@ export default async function AdminLayout({
 
   if (!user) redirect('/login?next=/admin')
 
-  // Check is_admin from database — single source of truth
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', user.id)
-    .single()
+  // Check is_admin via RPC — works regardless of RLS column visibility
+  const { data: isAdmin } = await supabase.rpc('get_my_is_admin')
 
-  if (!profile?.is_admin) redirect('/home')
+  if (!isAdmin) redirect('/home')
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen pt-24 px-4 md:px-8 max-w-7xl mx-auto gap-8">
