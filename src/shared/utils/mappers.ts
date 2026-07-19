@@ -8,7 +8,9 @@ type LibraryRow = Database['public']['Tables']['libraries']['Row'] & {
   folders?: Array<Database['public']['Tables']['library_folders']['Row']>
 }
 
-type BooksRowWithJoins = Database['public']['Tables']['books']['Row'] & {
+type PodcastEpisodesRow = Database['public']['Tables']['podcast_episodes']['Row']
+
+type LibraryItemRow = Database['public']['Tables']['library_items']['Row'] & {
   book_authors?: Array<{
     authors: Database['public']['Tables']['authors']['Row'] | null
   }> | null
@@ -16,16 +18,6 @@ type BooksRowWithJoins = Database['public']['Tables']['books']['Row'] & {
     series: Database['public']['Tables']['series']['Row'] | null
     sequence: string | null
   }> | null
-  // library_item_id is resolved via joins at runtime, not in the books Row itself
-  library_item_id?: string | null
-  // size is not in books Row but may be present via join context
-  size?: number | null
-}
-
-type PodcastEpisodesRow = Database['public']['Tables']['podcast_episodes']['Row']
-
-type LibraryItemRow = Database['public']['Tables']['library_items']['Row'] & {
-  books?: BooksRowWithJoins | null
   podcast_episodes?: PodcastEpisodesRow[] | null
   // folder_id and scan_version are not in the DB schema but may be present from legacy/join paths
   folder_id?: string | null
@@ -82,13 +74,8 @@ export function mapLibraryItem(row: LibraryItemRow): LibraryItem {
     updatedAt: row.updated_at ? new Date(row.updated_at).getTime() : 0,
     lastScan: row.last_scan ? new Date(row.last_scan).getTime() : undefined,
     scanVersion: row.scan_version ?? undefined,
-    // Add nested joins if they exist
-    // Supabase returns a single object (not array) for FK joins via media_id → books.id
-    media: row.books
-      ? mapBook(Array.isArray(row.books) ? row.books[0] : row.books)
-      : row.podcast_episodes?.length
-        ? mapPodcast(row.podcast_episodes[0])
-        : createSkeletonBook(row)
+    // Supabase returns a single object (not array) for FK joins via media_id → books.id (now merged)
+    media: row.media_type === 'podcast' && row.podcast_episodes?.length ? mapPodcast(row.podcast_episodes[0]) : mapBook(row)
   }
 }
 
@@ -109,7 +96,7 @@ function createSkeletonBook(row: Pick<LibraryItemRow, 'id' | 'title'>): BookMedi
   }
 }
 
-function mapBook(book: BooksRowWithJoins): BookMedia {
+function mapBook(book: LibraryItemRow): BookMedia {
   if (!book) {
     return createSkeletonBook({} as Pick<LibraryItemRow, 'id' | 'title'>)
   }
@@ -155,7 +142,7 @@ function mapBook(book: BooksRowWithJoins): BookMedia {
   return {
     mediaType: 'book' as const,
     id: book.id,
-    libraryItemId: book.library_item_id ?? book.id,
+    libraryItemId: book.id,
     coverPath: book.cover_path ?? undefined,
     tags: (book.tags as string[]) || [],
     audioFiles: audioFiles as never,
@@ -176,8 +163,8 @@ function mapBook(book: BooksRowWithJoins): BookMedia {
         name: bs.series?.name || 'Unknown Series',
         sequence: bs.sequence ?? undefined
       })),
-      genres: (book.genres as string[]) || [],
-      publishedYear: book.published_year ?? undefined,
+      genres: Array.isArray(book.genres) ? (book.genres as string[]) : typeof book.genres === 'string' ? JSON.parse(book.genres) : [],
+      publishedYear: typeof book.published_year === 'number' ? book.published_year : undefined,
       publishedDate: book.published_date ?? undefined,
       publisher: book.publisher ?? undefined,
       description: book.description ?? undefined,
