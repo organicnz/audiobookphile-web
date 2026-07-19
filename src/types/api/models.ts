@@ -137,6 +137,21 @@ export interface Library {
   folders?: LibraryFolder[]
 }
 
+export interface LibraryStats {
+  totalItems: number
+  totalBooks: number
+  totalAuthors: number
+  totalSeries: number
+  totalDuration: number
+  totalSize: number
+  addedLast30Days: number
+  numAudioTracks: number
+  genresWithCount: { genre: string; count: number }[]
+  authorsWithCount: { id: string; name: string; count: number }[]
+  longestItems: { id: string; title: string; duration: number }[]
+  largestItems: { id: string; title: string; size: number }[]
+}
+
 export interface LibraryFolder {
   id: string
   fullPath: string

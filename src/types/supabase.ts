@@ -1,22 +1,35 @@
-// ⚠️  AUTO-GENERATED — DO NOT EDIT DIRECTLY
-// Run `npm run gen:types` in audiobookphile-backend to regenerate from the live database.
-// This file is kept in sync with audiobookphile-backend/src/types/supabase.ts via that script.
-
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | {
-      [key: string]: Json | undefined
-    }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: '14.5'
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -1250,7 +1263,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: never; Returns: boolean }
+      merge_authors: {
+        Args: {
+          p_library_id: string
+          p_source_name: string
+          p_target_name: string
+        }
+        Returns: undefined
+      }
+      sync_author_avatars: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
@@ -1291,11 +1313,7 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
-    | {
-        schema: keyof DatabaseWithoutInternals
-      },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
@@ -1318,11 +1336,7 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
-    | {
-        schema: keyof DatabaseWithoutInternals
-      },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables'] | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
@@ -1345,11 +1359,7 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema['Enums']
-    | {
-        schema: keyof DatabaseWithoutInternals
-      },
+  DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums'] | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
@@ -1379,6 +1389,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {}
+  },
   public: {
     Enums: {}
   }
