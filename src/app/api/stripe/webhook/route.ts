@@ -4,31 +4,38 @@ import { createClient } from '@supabase/supabase-js'
 import type { SubscriptionStatus } from '@/shared/types/database'
 
 export async function POST(req: Request) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'dummy_key', { apiVersion: '2026-06-24.dahlia' })
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || 'dummy_secret'
+  const stripeKey = process.env.STRIPE_SECRET_KEY
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!stripeKey || !webhookSecret || !supabaseUrl || !serviceRoleKey) {
+    console.error('Missing required environment variables for Stripe webhook')
+    return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 })
+  }
+
+  const stripe = new Stripe(stripeKey, { apiVersion: '2026-06-24.dahlia' })
 
   // Use Service Role — webhooks run outside user session context
-  const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || 'dummy_key'
-  )
+  const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
 
   const body = await req.text()
   const signature = req.headers.get('stripe-signature')
 
+  if (!signature) {
+    return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 })
+  }
+
   let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(body, signature!, webhookSecret)
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error'
+    console.error('Webhook signature verification failed:', message)
     return NextResponse.json({ error: `Webhook Error: ${message}` }, { status: 400 })
   }
 
-  // Extract subscription data from the raw webhook event.
-  // In Stripe API 2026-06-24, `current_period_end` has moved from the
-  // top-level Subscription object to individual items. The raw event
-  // payload still includes it, so we extract it safely.
   const subData = event.data.object as unknown as Record<string, unknown>
 
   switch (event.type) {
@@ -40,18 +47,17 @@ export async function POST(req: Request) {
       const creatorId = metadata.creator_id
       const status = (subData.status as string) as SubscriptionStatus
 
-      // Derive current_period_end from items if available, otherwise
-      // fall back to the subscription-level field (present in raw payloads)
-      let periodEnd: string
-      const rawPeriodEnd = subData.current_period_end as number | undefined
-      if (rawPeriodEnd) {
-        periodEnd = new Date(rawPeriodEnd * 1000).toISOString()
-      } else {
-        // Fallback: use current time + 30 days
-        periodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      if (!fanId || !creatorId) {
+        console.error('Missing fan_id or creator_id in subscription metadata', metadata)
+        break
       }
 
-      await supabaseAdmin
+      const rawPeriodEnd = subData.current_period_end as number | undefined
+      const periodEnd = rawPeriodEnd
+        ? new Date(rawPeriodEnd * 1000).toISOString()
+        : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+
+      const { error } = await supabaseAdmin
         .from('subscriptions')
         .upsert({
           stripe_subscription_id: subData.id as string,
@@ -60,11 +66,33 @@ export async function POST(req: Request) {
           status,
           current_period_end: periodEnd,
         }, { onConflict: 'stripe_subscription_id' })
+
+      if (error) console.error('Supabase upsert error:', error.message)
+      break
+    }
+
+    case 'payment_intent.succeeded': {
+      // Handle one-time tips
+      const pi = subData as unknown as Stripe.PaymentIntent
+      const metadata = pi.metadata ?? {}
+      if (metadata.type === 'tip') {
+        const { error } = await supabaseAdmin
+          .from('tips')
+          .insert({
+            stripe_payment_intent_id: pi.id,
+            fan_id: metadata.fan_id,
+            creator_id: metadata.creator_id,
+            amount: pi.amount,
+            message: metadata.message ?? '',
+          })
+          .select()
+        if (error) console.error('Tip insert error:', error.message)
+      }
       break
     }
 
     default:
-      console.log(`Unhandled event type ${event.type}`)
+      console.log(`Unhandled Stripe event: ${event.type}`)
   }
 
   return NextResponse.json({ received: true })
