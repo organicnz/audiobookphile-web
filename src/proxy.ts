@@ -7,13 +7,6 @@ const PROTECTED_ROUTES = [
   '/content', '/monetization', '/admin',
 ]
 
-const ADMIN_EMAILS = [
-  'support@aficionado.fans',
-  'tamerlanium@gmail.com',
-  'devastatingdebater@gmail.com',
-  'contact@aficionado.fans',
-]
-
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
@@ -60,10 +53,15 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Admin route — only allow admin emails
+  // Admin route — check is_admin flag from DB
   if (pathname.startsWith('/admin') && user) {
-    const email = user.email?.toLowerCase() ?? ''
-    if (!ADMIN_EMAILS.includes(email)) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.is_admin) {
       const url = request.nextUrl.clone()
       url.pathname = '/home'
       return NextResponse.redirect(url)

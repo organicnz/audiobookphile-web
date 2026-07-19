@@ -27,12 +27,6 @@ export const metadata: Metadata = {
   },
 }
 
-// Admin emails from env — keeps them out of client code
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '')
-  .split(',')
-  .map(e => e.trim().toLowerCase())
-  .filter(Boolean)
-
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -45,12 +39,12 @@ export default async function RootLayout({
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('user_type')
+      .select('user_type, is_admin')
       .eq('id', user.id)
       .single()
 
     userType = (profile?.user_type as 'aficionado' | 'fan' | null) ?? null
-    isAdmin = user.email ? ADMIN_EMAILS.includes(user.email.toLowerCase()) : false
+    isAdmin = profile?.is_admin === true
   }
 
   return (
