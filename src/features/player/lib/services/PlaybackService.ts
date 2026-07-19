@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js'
-import { getStorageProvider } from '@/shared/lib/storage/StorageProvider'
+
 import type { PlaybackSession, PlayMethod } from '@/types/api'
 import crypto from 'crypto'
 
@@ -119,29 +119,31 @@ export class PlaybackService {
       }))
       .sort((a: any, b: any) => a.index - b.index)
 
-    // Get Storage Provider
-    const storage = getStorageProvider(this.supabase)
+    // Fetch signed URLs from Edge Function (this delegates the storage path and signing logic to the backend)
+    let downloadManifest: any = null
+    try {
+      const { data, error } = await this.supabase.functions.invoke(`api/items/${libraryItemId}/download`, {
+        method: 'GET'
+      })
+      if (error) throw error
+      downloadManifest = data
+    } catch (edgeError) {
+      console.warn(`[PlaybackService] Failed to fetch edge download manifest, falling back to empty tracks.`, edgeError)
+    }
 
-    // Sign audio files and calculate offset
+    // Adapt Edge Function tracks and calculate offset
     let currentOffset = 0
     const audioTracks: any[] = []
-    const missingTracks: string[] = []
+    const edgeTracks = downloadManifest?.tracks || []
 
     for (let i = 0; i < sortedAudioFiles.length; i++) {
       const af = sortedAudioFiles[i]
-      const storagePath = af.metadata?.path ?? af.storage_path ?? af.path ?? ''
       const duration = af.duration
 
-      let finalSignedUrl = ''
-      let isMissing = false
-
-      try {
-        finalSignedUrl = await storage.getSignedUrl(storagePath, 3600)
-      } catch (signErr: any) {
-        console.warn(`[PlaybackService] Missing storage file at "${storagePath}": ${signErr.message}. Skipping track.`)
-        missingTracks.push(storagePath)
-        isMissing = true
-      }
+      // Match the track from the edge manifest
+      const edgeTrack = edgeTracks.find((t: any) => t.index === (af.index ?? i))
+      const finalSignedUrl = edgeTrack?.url || ''
+      const isMissing = !finalSignedUrl
 
       if (!isMissing && finalSignedUrl) {
         audioTracks.push({

@@ -1,45 +1,24 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/shared/utils/supabase/server'
-import { getStorageProvider } from '@/shared/lib/storage/StorageProvider'
+import { apiRequest } from '@/shared/lib/api/client'
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string; fileId: string }> }) {
   try {
     const { id, fileId } = await params
-    const supabase = await createClient()
-    const {
-      data: { user }
-    } = await supabase.auth.getUser()
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    // Request signed URL from Edge Function
+    const data = await apiRequest<{ url: string }>(`/api/items/${id}/file/${fileId}/download`)
+
+    if (!data || !data.url) {
+      return NextResponse.json({ error: 'Failed to retrieve signed URL' }, { status: 404 })
     }
-
-    // Fetch the item
-    const { data: item, error: itemError } = await supabase.from('library_items').select('*').eq('id', id).single()
-
-    if (itemError || !item) {
-      return NextResponse.json({ error: 'Item not found' }, { status: 404 })
-    }
-
-    const audioFiles = (item.audio_files as any[]) || []
-    const file = audioFiles.find((f: any) => f.ino === fileId || f.id === fileId)
-
-    if (!file) {
-      return NextResponse.json({ error: 'File not found' }, { status: 404 })
-    }
-
-    const storagePath = file.metadata?.path || file.storage_path || file.path
-    if (!storagePath) {
-      return NextResponse.json({ error: 'Storage path not found' }, { status: 404 })
-    }
-
-    // Generate signed URL
-    const storage = getStorageProvider(supabase)
-    const signedUrl = await storage.getSignedUrl(storagePath, 3600)
 
     // Redirect to the signed URL
-    return NextResponse.redirect(signedUrl)
+    return NextResponse.redirect(data.url)
   } catch (error: any) {
     console.error('Download error:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    if (error?.status === 401) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: error?.status || 500 })
   }
 }
