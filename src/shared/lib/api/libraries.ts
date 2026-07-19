@@ -8,6 +8,7 @@ import {
   Library,
   LibraryFilterData,
   LibraryItem,
+  LibraryStats,
   PersonalizedShelf,
   SaveLibraryOrderApiResponse
 } from '@/types/api'
@@ -112,6 +113,10 @@ export const getLibraryItem = cache(async (itemId: string, expanded?: boolean, i
   if (include) params.set('include', include)
   return await apiRequest<LibraryItem>(`/api/items/${itemId}?${params.toString()}`, {})
 })
+
+export async function getLibraryStats(libraryId: string): Promise<LibraryStats> {
+  return apiRequest(`/api/libraries/${libraryId}/stats`, {})
+}
 
 export const getLibrarySeries = cache(async (libraryId: string, queryParams?: string): Promise<GetSeriesResponse> => {
   return await apiRequest<GetSeriesResponse>(`/api/libraries/${libraryId}/series${queryParams ? `?${queryParams}` : ''}`, {})
