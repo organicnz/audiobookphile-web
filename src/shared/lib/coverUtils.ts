@@ -13,7 +13,8 @@ export function getLibraryItemCoverUrl(libraryItemId: string, timestamp?: number
   if (raw) {
     params.set('raw', '1')
   }
-  return `/api/items/${libraryItemId}/cover?${params.toString()}`
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:54321/functions/v1/api'
+  return `${apiUrl}/items/${libraryItemId}/cover?${params.toString()}`
 }
 
 /**

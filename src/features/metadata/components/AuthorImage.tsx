@@ -3,7 +3,6 @@
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { Author } from '@/types/api'
 import { useEffect, useState } from 'react'
-import { getCoverImageUrl } from '@/shared/utils/supabase/storage'
 import { User } from 'lucide-react'
 
 interface AuthorImageProps {
@@ -18,10 +17,9 @@ export default function AuthorImage({ author, className }: AuthorImageProps) {
   const [imageError, setImageError] = useState(false)
   const [showCoverBg, setShowCoverBg] = useState(false)
 
-  // Fetch directly from Supabase Storage if we know the path.
-  // We no longer fallback to proxy fetching, as a background cron job handles fetching.
-  const rawImageSrc = author.imagePath && author.imagePath !== 'missing' ? getCoverImageUrl(author.imagePath) : null
-  const imageSrc = rawImageSrc ? (author.updatedAt ? `${rawImageSrc}?ts=${new Date(author.updatedAt).getTime()}` : rawImageSrc) : null
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:54321/functions/v1/api'
+  const rawImageSrc = `${apiUrl}/authors/${author.id}/image`
+  const imageSrc = author.updatedAt ? `${rawImageSrc}?ts=${new Date(author.updatedAt).getTime()}` : rawImageSrc
 
   // Reset state when author or image source changes
   useEffect(() => {
