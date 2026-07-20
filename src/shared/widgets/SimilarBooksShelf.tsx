@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { BookLibraryItem, BookshelfView, PodcastLibraryItem } from '@/types/api'
-import { createClient } from '@/shared/utils/supabase/client'
 import BookShelfRow from '../../features/library/components/BookShelfRow'
 import BookMediaCard from './media-card/BookMediaCard'
 import PodcastMediaCard from './media-card/PodcastMediaCard'
@@ -26,44 +25,23 @@ export default function SimilarBooksShelf({ libraryItem }: SimilarBooksShelfProp
     const fetchSimilarItems = async () => {
       setIsLoading(true)
       try {
-        const { data, error } = await (supabase as any).rpc('match_library_items', {
-          item_id: libraryItem.id,
-          match_threshold: 0.2,
-          match_count: 10
+        const { apiRequest } = await import('@/shared/lib/api/client')
+        const data = await apiRequest<{ similarItems: any[] }>(`/api/items/${libraryItem.id}/similar`, {
+          method: 'GET'
         })
 
-        if (error) {
-          console.error('Failed to fetch similar items:', error)
+        if (!data || !data.similarItems || data.similarItems.length === 0) {
           if (isMounted) setHasEmbedding(false)
           return
         }
 
-        if (!data || data.length === 0) {
-          if (isMounted) setHasEmbedding(false)
-          return
-        }
-
-        const ids = data.map((d: any) => d.id)
-
-        const { data: items, error: itemsErr } = await supabase.from('library_items').select('*').in('id', ids)
-
-        if (itemsErr) {
-          console.error('Failed to fetch similar library items details:', itemsErr)
-          return
-        }
-
-        if (isMounted && items) {
-          const sortedItems = items.sort((a: any, b: any) => {
-            const indexA = ids.indexOf(a.id)
-            const indexB = ids.indexOf(b.id)
-            return indexA - indexB
-          }) as unknown as (BookLibraryItem | PodcastLibraryItem)[]
-
-          setSimilarItems(sortedItems)
+        if (isMounted) {
+          setSimilarItems(data.similarItems)
           setHasEmbedding(true)
         }
       } catch (err) {
         console.error('Error in fetchSimilarItems:', err)
+        if (isMounted) setHasEmbedding(false)
       } finally {
         if (isMounted) setIsLoading(false)
       }

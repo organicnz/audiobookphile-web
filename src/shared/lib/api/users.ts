@@ -103,43 +103,18 @@ export const getData = cache(async <T extends Promise<unknown>[]>(...promises: T
  * call revalidateTag('current-user') when server settings change or user is updated
  */
 export const getCurrentUser = cache(async (): Promise<UserLoginResponse | null> => {
-  const { createClient } = await import('@/shared/utils/supabase/server')
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser()
-  if (userError || !user) {
+  try {
+    const data = await apiRequest<UserLoginResponse>('/api/me', {
+      method: 'GET'
+    })
+    return data || null
+  } catch (err) {
+    if (err instanceof UnauthorizedError) {
+      return null
+    }
+    console.error('[users] getCurrentUser failed:', err)
     return null
   }
-
-  const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-  const profileData = profile as any
-
-  return {
-    user: {
-      id: user.id,
-      username: profile?.username || user?.email?.split('@')[0] || 'User',
-      email: user.email,
-      type: profile?.user_type || 'user',
-      token: '',
-      isActive: true,
-      isLocked: false,
-      hasUpdateAvailable: false,
-      createdAt: new Date(user.created_at).getTime(),
-      lastSeen: new Date(user.last_sign_in_at || user.created_at).getTime(),
-      extra: {},
-      mediaProgress: [],
-      seriesHideFromContinueListening: [],
-      bookmarks: [],
-      permissions: profileData?.permissions || {}
-    },
-    userDefaultLibraryId: profile?.default_library_id || null,
-    serverSettings: null,
-    ereaderDevices: [],
-    Source: 'local'
-  } as unknown as UserLoginResponse
 })
 
 export const getServerStatus = cache(async (): Promise<ServerStatus> => {
