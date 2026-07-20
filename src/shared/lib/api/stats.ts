@@ -29,66 +29,16 @@ export interface UserStatsData {
 
 /**
  * Fetch all data needed for the user stats page server-side.
- * Uses RLS — only returns rows belonging to the authenticated user.
  */
 export async function getUserStatsData(): Promise<UserStatsData> {
-  const supabase = await createClient()
-
-  const {
-    data: { user }
-  } = await supabase.auth.getUser()
-
-  if (!user) {
+  try {
+    const { apiRequest } = await import('@/shared/lib/api/client')
+    const data = await apiRequest<UserStatsData>('/api/me/stats', {
+      method: 'GET'
+    })
+    return data || { mediaProgress: [], recentSessions: [] }
+  } catch (err) {
+    console.error('[stats] getUserStatsData failed:', err)
     return { mediaProgress: [], recentSessions: [] }
   }
-
-  // Fetch media progress joined with library_items for title
-  const { data: progressData } = await supabase
-    .from('media_progress')
-    .select(
-      `
-      id,
-      library_item_id,
-      duration,
-      progress,
-      is_finished,
-      finished_at,
-      last_update,
-      started_at,
-      library_items ( title )
-    `
-    )
-    .eq('user_id', user.id)
-    .order('last_update', { ascending: false })
-
-  // Fetch recent playback sessions
-  const { data: sessionsData } = await supabase
-    .from('playback_sessions')
-    .select('id, display_title, display_author, time_listening, session_date, updated_at')
-    .eq('user_id', user.id)
-    .order('updated_at', { ascending: false })
-    .limit(10)
-
-  const mediaProgress: MediaProgressRow[] = (progressData ?? []).map((row) => ({
-    id: row.id,
-    library_item_id: row.library_item_id,
-    duration: row.duration ?? null,
-    progress: row.progress ?? null,
-    is_finished: row.is_finished ?? null,
-    finished_at: row.finished_at ?? null,
-    last_update: row.last_update ?? null,
-    started_at: row.started_at ?? null,
-    title: (row.library_items as { title: string | null } | null)?.title ?? null
-  }))
-
-  const recentSessions: PlaybackSessionRow[] = (sessionsData ?? []).map((row) => ({
-    id: row.id,
-    display_title: row.display_title ?? null,
-    display_author: row.display_author ?? null,
-    time_listening: row.time_listening ?? null,
-    session_date: row.session_date ?? null,
-    updated_at: row.updated_at
-  }))
-
-  return { mediaProgress, recentSessions }
 }
