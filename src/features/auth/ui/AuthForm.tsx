@@ -51,6 +51,19 @@ export function AuthForm() {
   const [mode, setMode] = useState<AuthMode>('login')
   const [userType, setUserType] = useState<'aficionado' | 'fan'>('fan')
 
+  // Requirement 1: client-side checkbox validation state
+  const [checkboxError, setCheckboxError] = useState<string | null>(null)
+
+  // Requirement 2: track which mode produced the current action state to suppress stale messages
+  const [submittedMode, setSubmittedMode] = useState<AuthMode | null>(null)
+
+  // Requirement 2 + 3: clear stale action state and checkbox error on mode switch
+  const switchMode = (next: AuthMode) => {
+    setMode(next)
+    setCheckboxError(null)
+    setSubmittedMode(null)
+  }
+
   const handleOAuth = async (provider: 'google' | 'github') => {
     const supabase = createClient()
     await supabase.auth.signInWithOAuth({
@@ -61,9 +74,41 @@ export function AuthForm() {
     })
   }
 
-  // Combine URL param message, action error, and action success
-  const errorMsg = state?.error || (defaultMessage && !state?.success ? defaultMessage : null)
-  const successMsg = state?.success
+  // Requirement 1: intercept submit to validate checkboxes before dispatching server action
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (mode !== 'signup') return
+
+    const form = e.currentTarget
+    const termsChecked = (form.elements.namedItem('terms') as HTMLInputElement)?.checked
+    const creatorChecked =
+      userType !== 'aficionado' ||
+      (form.elements.namedItem('creator-agreement') as HTMLInputElement)?.checked
+
+    if (!termsChecked) {
+      e.preventDefault()
+      e.stopPropagation()
+      setCheckboxError('You must accept the Terms of Service and Privacy Policy.')
+      return
+    }
+    if (!creatorChecked) {
+      e.preventDefault()
+      e.stopPropagation()
+      setCheckboxError('You must accept the Creator Monetization Agreement.')
+      return
+    }
+
+    setCheckboxError(null)
+    setSubmittedMode(mode)
+    // allow normal form action dispatch to proceed
+  }
+
+  // Requirement 2: show action error/success only when it belongs to the current mode
+  const displayError =
+    checkboxError ??
+    (submittedMode === mode ? (state?.error ?? null) : null) ??
+    (defaultMessage && !state?.success ? defaultMessage : null)
+
+  const displaySuccess = submittedMode === mode ? (state?.success ?? null) : null
 
   return (
     <div className="w-full max-w-md space-y-8 liquid-glass p-8 relative overflow-hidden">
@@ -88,17 +133,17 @@ export function AuthForm() {
       </div>
 
       <div className="flex justify-center space-x-2 border-b border-white/10 pb-4">
-        <button onClick={() => setMode('login')} className={`text-sm font-medium transition-colors ${mode === 'login' ? 'text-primary' : 'text-muted-foreground hover:text-white'}`}>Login</button>
+        <button onClick={() => switchMode('login')} className={`text-sm font-medium transition-colors ${mode === 'login' ? 'text-primary' : 'text-muted-foreground hover:text-white'}`}>Login</button>
         <span className="text-muted-foreground/30">•</span>
-        <button onClick={() => setMode('signup')} className={`text-sm font-medium transition-colors ${mode === 'signup' ? 'text-primary' : 'text-muted-foreground hover:text-white'}`}>Sign Up</button>
+        <button onClick={() => switchMode('signup')} className={`text-sm font-medium transition-colors ${mode === 'signup' ? 'text-primary' : 'text-muted-foreground hover:text-white'}`}>Sign Up</button>
       </div>
 
-      {successMsg ? (
+      {displaySuccess ? (
         <div className="text-primary text-sm text-center p-4 bg-primary/10 border border-primary/20 rounded-lg animate-fade-in-up">
-          {successMsg}
+          {displaySuccess}
         </div>
       ) : (
-        <form action={formAction} className="mt-8 space-y-6">
+        <form action={formAction} onSubmit={handleSubmit} className="mt-8 space-y-6">
           <input type="hidden" name="mode" value={mode} />
           {mode === 'signup' && <input type="hidden" name="userType" value={userType} />}
           
@@ -165,8 +210,8 @@ export function AuthForm() {
                   id="zipCode"
                   name="zipCode"
                   type="text"
-                  pattern="[0-9]{5}"
-                  title="Five digit zip code"
+                  pattern="[0-9]{5}(-[0-9]{4})?"
+                  title="5-digit ZIP code or ZIP+4 format (e.g. 90210 or 90210-1234)"
                   required
                   className="appearance-none rounded-xl relative block w-full px-3 py-3 border border-white/10 bg-white/5 text-off-white placeholder-muted-foreground focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all"
                   placeholder="Zip Code (Required for Local Communities)"
@@ -179,11 +224,11 @@ export function AuthForm() {
             <div className="space-y-4 animate-fade-in-up">
               <div className="flex items-start">
                 <div className="flex items-center h-5">
+                  {/* Requirement 1.5: removed native `required` — validation handled in JS */}
                   <input
                     id="terms"
                     name="terms"
                     type="checkbox"
-                    required
                     className="focus:ring-primary h-4 w-4 text-primary border-white/20 bg-white/5 rounded"
                   />
                 </div>
@@ -198,11 +243,11 @@ export function AuthForm() {
               {userType === 'aficionado' && (
                 <div className="flex items-start animate-fade-in-up">
                   <div className="flex items-center h-5">
+                    {/* Requirement 1.5: removed native `required` — validation handled in JS */}
                     <input
                       id="creator-agreement"
                       name="creator-agreement"
                       type="checkbox"
-                      required
                       className="focus:ring-primary h-4 w-4 text-primary border-white/20 bg-white/5 rounded"
                     />
                   </div>
@@ -216,25 +261,25 @@ export function AuthForm() {
             </div>
           )}
 
-          {errorMsg && (
+          {displayError && (
             <div className="text-destructive text-sm text-center p-3 bg-destructive/10 border border-destructive/20 rounded-lg animate-fade-in-up">
-              {errorMsg}
+              {displayError}
             </div>
           )}
 
           <div className="flex items-center justify-between mt-4">
             {mode === 'login' && (
               <>
-                <button type="button" onClick={() => setMode('forgot_password')} className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                <button type="button" onClick={() => switchMode('forgot_password')} className="text-xs text-muted-foreground hover:text-primary transition-colors">
                   Forgot your password?
                 </button>
-                <button type="button" onClick={() => setMode('magic_link')} className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                <button type="button" onClick={() => switchMode('magic_link')} className="text-xs text-muted-foreground hover:text-primary transition-colors">
                   Use Magic Link
                 </button>
               </>
             )}
             {(mode === 'magic_link' || mode === 'forgot_password') && (
-              <button type="button" onClick={() => setMode('login')} className="text-xs text-muted-foreground hover:text-primary transition-colors">
+              <button type="button" onClick={() => switchMode('login')} className="text-xs text-muted-foreground hover:text-primary transition-colors">
                 Back to Login
               </button>
             )}
