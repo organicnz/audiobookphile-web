@@ -210,7 +210,10 @@ export function getItemsFromFilelist(filelist: FileList, mediaType: Library['med
       return cleanItem({ itemFiles: [audioFile], otherFiles: [], ignoredFiles: [] }, mediaType, index++)
     })
   } else {
-    items = Object.values(itemMap).map((i) => cleanItem(i, mediaType, index++))
+    items = Object.values(itemMap).map((i) => {
+      i.itemFiles.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }))
+      return cleanItem(i, mediaType, index++)
+    })
   }
 
   return { items, ignoredFiles }
@@ -268,12 +271,17 @@ export async function upload(
     } | null = null
     try {
       const presignUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-presign` : '/api/upload/presign'
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${cookie}`
+      }
+      if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        headers['apikey'] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      }
+
       const presignRes = await fetch(presignUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${cookie}`
-        },
+        headers,
         body: JSON.stringify({
           filename: storagePath,
           contentType: file.type || file.mime_type || 'application/octet-stream',
@@ -295,10 +303,14 @@ export async function upload(
           uploadUrl = data.url
         }
       } else if (presignRes.status !== 501) {
-        throw new Error(`Presign failed: ${presignRes.status}`)
+        const errData = await presignRes.json().catch(() => ({}))
+        throw new Error(errData.error || `Presign failed: ${presignRes.status}`)
       }
-    } catch (e) {
+    } catch (e: unknown) {
       console.warn('Failed to get presigned URL:', e)
+      if (e instanceof Error && e.message.includes('Presign failed')) {
+        throw e
+      }
     }
 
     await new Promise<void>(async (resolve, reject) => {
@@ -349,12 +361,17 @@ export async function upload(
           const presignUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
             ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-presign`
             : '/api/upload/presign'
+          const completeHeaders: Record<string, string> = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cookie}`
+          }
+          if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            completeHeaders['apikey'] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          }
+
           const completeRes = await fetch(presignUrl, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${cookie}`
-            },
+            headers: completeHeaders,
             body: JSON.stringify({
               action: 'complete-multipart',
               filename: storagePath,
@@ -466,13 +483,17 @@ export async function upload(
   })
 
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-finalize` : '/api/upload'
+  const finalizeHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${cookie}`
+  }
+  if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    finalizeHeaders['apikey'] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  }
 
   const response = await fetch(baseUrl, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${cookie}`
-    },
+    headers: finalizeHeaders,
     body
   })
 
