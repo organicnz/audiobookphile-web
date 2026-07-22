@@ -1,4 +1,5 @@
 import type { MobileBookModel, MobileLibraryModel } from '@/types/schemas'
+import { parseTitleAndAuthor } from './titleAuthorParser'
 
 // Safe date helper — handles null/undefined from Supabase rows
 function toMs(value: string | null | undefined, fallback = 0): number {
@@ -170,13 +171,26 @@ export function mapBookForMobile(item: MobileBookInput, progressRecord: MobilePr
 }
 
 function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgressInput | null): unknown {
-  // 1. Authors
+  // 1. Authors & Title
   const authors =
     item.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || item.books?.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || []
   const authorNames = authors.map((a: any) => a.name)
   const rawAuthorFallback = (item as any).author_names_first_last || (item as any).author || ''
-  const authorName = authorNames.join(', ') || rawAuthorFallback || 'Unknown Author'
-  const authorNameLF = authors.map((a: any) => a.name_lf || a.name).join(', ') || rawAuthorFallback || 'Unknown Author'
+
+  let finalTitle = item.books?.title || item.title || 'Unknown Title'
+  let authorName = authorNames.join(', ') || rawAuthorFallback
+
+  if (!authorName || authorName === 'Unknown Author') {
+    const parsed = parseTitleAndAuthor(finalTitle)
+    if (parsed.cleanAuthor && parsed.cleanAuthor !== 'Unknown Author') {
+      authorName = parsed.cleanAuthor
+      finalTitle = parsed.cleanTitle
+    } else {
+      authorName = 'Unknown Author'
+    }
+  }
+
+  const authorNameLF = authors.map((a: any) => a.name_lf || a.name).join(', ') || authorName
 
   // 2. Narrators
   const narrators = item.books?.narrators || []
@@ -314,7 +328,7 @@ function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgress
       ebook_file: item.books?.ebook_file || null,
       ebookFile: item.books?.ebook_file || null,
       metadata: {
-        title: item.books?.title || item.title || 'Unknown Title',
+        title: finalTitle,
         subtitle: item.books?.subtitle || item.subtitle || null,
         author_name: authorName,
         authorName: authorName,

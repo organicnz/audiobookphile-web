@@ -1,5 +1,6 @@
 import { BookMedia, Library, LibraryItem, LibrarySettings, PodcastMedia } from '@/types/api'
 import type { Database } from '@/types/supabase'
+import { parseTitleAndAuthor } from './titleAuthorParser'
 
 // ─── Supabase Row type aliases (local to this module) ───────────────────────
 
@@ -139,6 +140,25 @@ function mapBook(book: LibraryItemRow): BookMedia {
     })
     .filter(Boolean)
 
+  let title = book.title || 'Unknown'
+  let rawAuthors =
+    book.book_authors && book.book_authors.length > 0
+      ? book.book_authors
+          .map((ba) => ba.authors?.name)
+          .filter(Boolean)
+          .join(', ')
+      : (book as any).author_names_first_last || ''
+
+  if (!rawAuthors || rawAuthors === 'Unknown Author') {
+    const parsed = parseTitleAndAuthor(title)
+    if (parsed.cleanAuthor && parsed.cleanAuthor !== 'Unknown Author') {
+      rawAuthors = parsed.cleanAuthor
+      title = parsed.cleanTitle
+    }
+  }
+
+  const authorsList = rawAuthors ? rawAuthors.split(', ').map((name: string) => ({ id: '', name })) : []
+
   return {
     mediaType: 'book' as const,
     id: book.id,
@@ -151,17 +171,9 @@ function mapBook(book: LibraryItemRow): BookMedia {
     numAudioFiles: audioFiles.length,
     chapters: (book.chapters as never) || [],
     metadata: {
-      title: book.title || 'Unknown',
+      title,
       subtitle: book.subtitle ?? undefined,
-      authors:
-        book.book_authors && book.book_authors.length > 0
-          ? book.book_authors.map((ba) => ({
-              id: ba.authors?.id ?? '',
-              name: ba.authors?.name || (book as any).author_names_first_last || 'Unknown Author'
-            }))
-          : (book as any).author_names_first_last
-            ? [{ id: '', name: (book as any).author_names_first_last }]
-            : [],
+      authors: authorsList,
       narrators: (book.narrators as string[]) || [],
       series: (book.book_series || []).map((bs) => ({
         id: bs.series?.id ?? '',
