@@ -44,6 +44,14 @@ export interface MobileBookInput {
   birthtime?: string | null
   duration?: number | null
   size?: number | null
+  author_names_first_last?: string | null
+  book_authors?: Array<{
+    authors?: {
+      id?: string
+      name?: string | null
+      name_lf?: string | null
+    } | null
+  }> | null
   books?: {
     id?: string
     title?: string | null
@@ -163,10 +171,12 @@ export function mapBookForMobile(item: MobileBookInput, progressRecord: MobilePr
 
 function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgressInput | null): unknown {
   // 1. Authors
-  const authors = item.books?.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || []
+  const authors =
+    item.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || item.books?.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || []
   const authorNames = authors.map((a: any) => a.name)
-  const authorName = authorNames.join(', ') || 'Unknown Author'
-  const authorNameLF = authors.map((a: any) => a.name_lf || a.name).join(', ') || 'Unknown Author'
+  const rawAuthorFallback = (item as any).author_names_first_last || (item as any).author || ''
+  const authorName = authorNames.join(', ') || rawAuthorFallback || 'Unknown Author'
+  const authorNameLF = authors.map((a: any) => a.name_lf || a.name).join(', ') || rawAuthorFallback || 'Unknown Author'
 
   // 2. Narrators
   const narrators = item.books?.narrators || []

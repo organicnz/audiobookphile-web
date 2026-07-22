@@ -153,10 +153,15 @@ function mapBook(book: LibraryItemRow): BookMedia {
     metadata: {
       title: book.title || 'Unknown',
       subtitle: book.subtitle ?? undefined,
-      authors: (book.book_authors || []).map((ba) => ({
-        id: ba.authors?.id ?? '',
-        name: ba.authors?.name || 'Unknown Author'
-      })),
+      authors:
+        book.book_authors && book.book_authors.length > 0
+          ? book.book_authors.map((ba) => ({
+              id: ba.authors?.id ?? '',
+              name: ba.authors?.name || (book as any).author_names_first_last || 'Unknown Author'
+            }))
+          : (book as any).author_names_first_last
+            ? [{ id: '', name: (book as any).author_names_first_last }]
+            : [],
       narrators: (book.narrators as string[]) || [],
       series: (book.book_series || []).map((bs) => ({
         id: bs.series?.id ?? '',
