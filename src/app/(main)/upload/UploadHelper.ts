@@ -270,7 +270,7 @@ export async function upload(
       partSize: number
     } | null = null
     try {
-      const presignUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-presign` : '/api/upload/presign'
+      const presignUrl = '/api/upload/presign'
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${cookie}`
@@ -358,9 +358,7 @@ export async function upload(
             })
           }
           // Complete the multipart upload server-side
-          const presignUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-            ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-presign`
-            : '/api/upload/presign'
+          const presignUrl = '/api/upload/presign'
           const completeHeaders: Record<string, string> = {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${cookie}`
@@ -482,7 +480,7 @@ export async function upload(
     }))
   })
 
-  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/upload-finalize` : '/api/upload'
+  const baseUrl = '/api/upload/finalize'
   const finalizeHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${cookie}`
