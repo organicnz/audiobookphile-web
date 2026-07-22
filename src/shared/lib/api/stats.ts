@@ -1,4 +1,3 @@
-import { createClient } from '@/shared/utils/supabase/server'
 import 'server-only'
 
 export interface MediaProgressRow {

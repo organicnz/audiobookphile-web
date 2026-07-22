@@ -55,7 +55,7 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
 
   return (
     <>
-      <div className="mx-auto mt-8 flex w-full max-w-4xl items-center px-4 lg:mt-4">
+      <div className="mx-auto mt-0 flex w-full max-w-4xl items-center px-4">
         {/* Left section: Optional info/spacer */}
         <div className="hidden flex-1 lg:flex" />
 

@@ -23,18 +23,15 @@ export async function createClient() {
   })
 }
 
+import { getCurrentUser } from '@/shared/lib/api/users'
+
 export async function verifyAdminOrThrow() {
-  const supabase = await createClient()
-  const {
-    data: { user }
-  } = await supabase.auth.getUser()
-  if (!user) throw new Error('Unauthorized')
+  const currentUser = await getCurrentUser()
+  if (!currentUser?.user) throw new Error('Unauthorized')
 
-  const { data: profile } = await supabase.from('profiles').select('user_type').eq('id', user.id).single()
-
-  if (profile?.user_type !== 'admin' && profile?.user_type !== 'root') {
+  if (currentUser.user.type !== 'admin' && currentUser.user.type !== 'root') {
     throw new Error('Forbidden: Admin privileges required')
   }
 
-  return user
+  return currentUser.user
 }

@@ -20,15 +20,16 @@ export default function SimilarBooksShelf({ libraryItem }: SimilarBooksShelfProp
 
   useEffect(() => {
     let isMounted = true
-    const supabase = createClient()
-
     const fetchSimilarItems = async () => {
       setIsLoading(true)
       try {
-        const { apiRequest } = await import('@/shared/lib/api/client')
-        const data = await apiRequest<{ similarItems: any[] }>(`/api/items/${libraryItem.id}/similar`, {
-          method: 'GET'
-        })
+        const url = process.env.NEXT_PUBLIC_API_URL
+          ? `${process.env.NEXT_PUBLIC_API_URL}/items/${libraryItem.id}/similar`
+          : `/api/items/${libraryItem.id}/similar`
+
+        const res = await fetch(url)
+        if (!res.ok) throw new Error('Failed to fetch similar items')
+        const data = await res.json()
 
         if (!data || !data.similarItems || data.similarItems.length === 0) {
           if (isMounted) setHasEmbedding(false)

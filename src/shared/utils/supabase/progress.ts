@@ -1,4 +1,4 @@
-import { createClient } from './server'
+import { apiRequest } from '@/shared/lib/api/client'
 
 export interface SupabaseProgressPayload {
   library_item_id: string
@@ -14,36 +14,18 @@ export interface SupabaseProgressPayload {
  * This is intended to be called from Server Actions or Route Handlers.
  */
 export async function syncProgressToSupabase(payload: SupabaseProgressPayload) {
-  const supabase = await createClient()
-
-  // Get the current authenticated user
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser()
-
-  if (userError || !user) {
-    console.error('[Supabase] No authenticated user found for progress sync')
-    return
-  }
-
-  const { error } = await supabase.from('media_progress').upsert(
-    {
-      user_id: user.id,
-      library_item_id: payload.library_item_id,
-      episode_id: payload.episode_id || null,
-      current_time_pos: payload.current_time_pos,
-      duration: payload.duration,
-      progress: payload.progress,
-      is_finished: payload.is_finished,
-      last_update: new Date().toISOString()
-    },
-    {
-      onConflict: 'user_id,library_item_id,episode_id'
-    }
-  )
-
-  if (error) {
+  try {
+    await apiRequest('/playback-progress', {
+      method: 'POST',
+      body: JSON.stringify({
+        itemId: payload.library_item_id,
+        episodeId: payload.episode_id || null,
+        currentTime: payload.current_time_pos,
+        duration: payload.duration,
+        isFinished: payload.is_finished
+      })
+    })
+  } catch (error: any) {
     // Only log actual database errors, ignoring network transient issues if needed
     // or using a proper logger.
     console.error(`[Supabase] Progress sync failed for ${payload.library_item_id}:`, error.message)
