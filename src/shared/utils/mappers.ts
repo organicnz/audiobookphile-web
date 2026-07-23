@@ -102,7 +102,32 @@ function mapBook(book: LibraryItemRow): BookMedia {
     return createSkeletonBook({} as Pick<LibraryItemRow, 'id' | 'title'>)
   }
 
-  const audioFiles = (book.audio_files as unknown[] | null) || []
+  let audioFiles = (book.audio_files as unknown[] | null) || []
+  if (audioFiles.length === 0 && Array.isArray((book as Record<string, unknown>).library_files)) {
+    const audioExts = ['.mp3', '.m4b', '.m4a', '.aac', '.flac', '.ogg', '.opus', '.wma']
+    const extracted = ((book as Record<string, unknown>).library_files as Record<string, unknown>[])
+      .filter((lf) => {
+        const metadata = (lf.metadata as Record<string, unknown>) || {}
+        const ext = String(metadata.ext || '').toLowerCase()
+        const relPath = String(metadata.relPath || metadata.filename || lf.path || '').toLowerCase()
+        return audioExts.some((e) => ext.endsWith(e) || relPath.endsWith(e))
+      })
+      .map((lf, idx) => {
+        const metadata = (lf.metadata as Record<string, unknown>) || {}
+        return {
+          index: idx,
+          ino: lf.ino,
+          metadata,
+          size: Number(lf.size) || Number(metadata.size) || 0,
+          duration: Number(lf.duration) || Number(metadata.duration) || 0,
+          mimeType: String(metadata.mimeType || 'audio/mpeg'),
+          codec: String(metadata.codec || 'mp3')
+        }
+      })
+    if (extracted.length > 0) {
+      audioFiles = extracted
+    }
+  }
 
   // Map raw audio_files JSONB to AudioTrack shape for the tracks table
   const tracks = (Array.isArray(audioFiles) ? audioFiles : [])
