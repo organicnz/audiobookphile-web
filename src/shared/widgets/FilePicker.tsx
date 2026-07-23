@@ -49,7 +49,6 @@ export default function FilePicker({
         multiple={multiple}
         onChange={handleFileChange}
         className="hidden"
-        aria-hidden="true"
       />
       <Btn onClick={handleClick} disabled={disabled} className={className}>
         {children || t('ButtonChooseFiles')}

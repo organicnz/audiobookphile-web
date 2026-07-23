@@ -44,7 +44,7 @@ function normalizeString(str: string): string {
     // 3. Remove parenthesized content
     .replace(/\([^)]*\)/g, ' ')
     // 4. Replace dots, underscores, and dashes with spaces
-    .replace(/[\._-]/g, ' ')
+    .replace(/[._-]/g, ' ')
     // 5. Remove common audiobook suffixes
     .replace(/\b(audiobook|unabridged|abridged|collection|series|vol|volume|book|complete|part|chapter|of|v\d+)\b/gi, ' ')
     // 6. Clean up extra whitespace
@@ -169,7 +169,9 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
     const queryTerm = author ? `${title} ${author}` : title
     const query = new URLSearchParams({ q: queryTerm, limit: '3' })
 
-    const searchRes = await fetch(`https://openlibrary.org/search.json?${query.toString()}`, { signal: AbortSignal.timeout(8000) })
+    const searchRes = await fetch(`https://openlibrary.org/search.json?${query.toString()}`, {
+      signal: AbortSignal.timeout(8000)
+    })
     if (!searchRes.ok) return null
 
     const data = await searchRes.json()
@@ -187,7 +189,9 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
 
     let cover: FetchedCover | null = null
     if (withCover.cover_i) {
-      const imgRes = await fetch(`https://covers.openlibrary.org/b/id/${withCover.cover_i}-L.jpg`, { signal: AbortSignal.timeout(10000) })
+      const imgRes = await fetch(`https://covers.openlibrary.org/b/id/${withCover.cover_i}-L.jpg`, {
+        signal: AbortSignal.timeout(10000)
+      })
       if (imgRes.ok) {
         const contentType = imgRes.headers.get('content-type') || 'image/jpeg'
         if (!contentType.includes('text/html')) {

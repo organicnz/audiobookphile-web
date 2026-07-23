@@ -92,7 +92,10 @@ export const validateCron = (expression: string): ValidationResult => {
 
     // Validate weekday (0-7, where 0 and 7 are Sunday)
     if (!isValidCronField(weekday, 0, 7)) {
-      return { isValid: false, error: 'Invalid weekday field. Must be 0-7 (0=Sunday), *, */n, or comma-separated values' }
+      return {
+        isValid: false,
+        error: 'Invalid weekday field. Must be 0-7 (0=Sunday), *, */n, or comma-separated values'
+      }
     }
 
     return { isValid: true }

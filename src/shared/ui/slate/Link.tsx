@@ -124,7 +124,9 @@ export const upsertLink = (editor: Editor, text: string, url: string) => {
       const [, linkPath] = overlappingLinks[0]
       Editor.withoutNormalizing(editor, () => {
         Transforms.removeNodes(editor, { at: linkPath })
-        Transforms.insertNodes(editor, { type: 'link', url, children: [{ text: content }] } as Element, { at: linkPath })
+        Transforms.insertNodes(editor, { type: 'link', url, children: [{ text: content }] } as Element, {
+          at: linkPath
+        })
       })
     } else {
       // Cursor not in a link - insert new link at cursor position

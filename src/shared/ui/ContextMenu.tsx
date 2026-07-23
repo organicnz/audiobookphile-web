@@ -56,7 +56,7 @@ export default function ContextMenu<T = string>({
   menuId,
   focusedIndex = -1,
   focusedSubIndex = -1,
-  openSubmenuIndex: openSubmenuIndex = null,
+  openSubmenuIndex = null,
   onOpenSubmenu,
   onCloseSubmenu,
   onItemClick,

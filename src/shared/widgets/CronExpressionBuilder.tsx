@@ -23,13 +23,37 @@ export default function CronExpressionBuilder({ value, onChange, options: { lang
   const intervalOptions = useMemo(
     () => [
       { text: t('LabelIntervalDaily'), value: 'daily', canExpress: (expr: string) => /^\d+ \d+ \* \* \*$/.test(expr) },
-      { text: t('LabelIntervalWeekly'), value: 'weekly', canExpress: (expr: string) => /^\d+ \d+ \* \* (\*|(\d+(,\d+)*))$/.test(expr) },
-      { text: t('LabelIntervalEvery12Hours'), value: '0 */12 * * *', canExpress: (expr: string) => expr === '0 */12 * * *' },
-      { text: t('LabelIntervalEvery6Hours'), value: '0 */6 * * *', canExpress: (expr: string) => expr === '0 */6 * * *' },
-      { text: t('LabelIntervalEvery2Hours'), value: '0 */2 * * *', canExpress: (expr: string) => expr === '0 */2 * * *' },
+      {
+        text: t('LabelIntervalWeekly'),
+        value: 'weekly',
+        canExpress: (expr: string) => /^\d+ \d+ \* \* (\*|(\d+(,\d+)*))$/.test(expr)
+      },
+      {
+        text: t('LabelIntervalEvery12Hours'),
+        value: '0 */12 * * *',
+        canExpress: (expr: string) => expr === '0 */12 * * *'
+      },
+      {
+        text: t('LabelIntervalEvery6Hours'),
+        value: '0 */6 * * *',
+        canExpress: (expr: string) => expr === '0 */6 * * *'
+      },
+      {
+        text: t('LabelIntervalEvery2Hours'),
+        value: '0 */2 * * *',
+        canExpress: (expr: string) => expr === '0 */2 * * *'
+      },
       { text: t('LabelIntervalEveryHour'), value: '0 * * * *', canExpress: (expr: string) => expr === '0 * * * *' },
-      { text: t('LabelIntervalEvery30Minutes'), value: '*/30 * * * *', canExpress: (expr: string) => expr === '*/30 * * * *' },
-      { text: t('LabelIntervalEvery15Minutes'), value: '*/15 * * * *', canExpress: (expr: string) => expr === '*/15 * * * *' },
+      {
+        text: t('LabelIntervalEvery30Minutes'),
+        value: '*/30 * * * *',
+        canExpress: (expr: string) => expr === '*/30 * * * *'
+      },
+      {
+        text: t('LabelIntervalEvery15Minutes'),
+        value: '*/15 * * * *',
+        canExpress: (expr: string) => expr === '*/15 * * * *'
+      },
       { text: t('LabelIntervalCustomCronExpression'), value: 'advanced', canExpress: () => true }
     ],
     [t]

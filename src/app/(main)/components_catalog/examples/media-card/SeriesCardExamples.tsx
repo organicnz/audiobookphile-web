@@ -159,7 +159,13 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
                       const mediaItemId = book.media?.id ?? book.id
                       return [
                         mediaItemId,
-                        { id: `finished-${book.id}`, libraryItemId: book.id, mediaItemId, isFinished: true, progress: 1 } as MediaProgress
+                        {
+                          id: `finished-${book.id}`,
+                          libraryItemId: book.id,
+                          mediaItemId,
+                          isFinished: true,
+                          progress: 1
+                        } as MediaProgress
                       ] as [string, MediaProgress]
                     }) || []
                   )

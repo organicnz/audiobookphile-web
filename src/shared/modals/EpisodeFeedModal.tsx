@@ -207,7 +207,7 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
           await downloadPodcastEpisodesAction(libraryItem.id, episodesToDownload)
           showToast(t('ToastStartedDownloadingEpisodes'), { type: 'success' })
           onClose()
-        } catch (error: Error | unknown) {
+        } catch (error: unknown) {
           console.error('Failed to download episodes', error)
           const errorMessage = error instanceof Error ? error.message : ''
           showToast(errorMessage || t('ToastFailedToDownloadEpisodes'), { type: 'error' })

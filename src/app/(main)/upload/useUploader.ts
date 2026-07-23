@@ -184,7 +184,7 @@ export function useUploader(libraries: Library[]) {
       resetUpload()
       return
     }
-    const updatedItems = [...uploadItems.filter((_, index) => index !== itemIndex)]
+    const updatedItems = uploadItems.filter((_, index) => index !== itemIndex)
     setUploadItems(updatedItems)
   }
 

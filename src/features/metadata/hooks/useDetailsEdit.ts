@@ -13,7 +13,10 @@ type Action<TDetails> =
   | { type: 'RESET_STATE'; payload: { details: TDetails; tags: string[] } }
   | { type: 'UPDATE_FIELD'; payload: { field: keyof TDetails; value: TDetails[keyof TDetails] } }
   | { type: 'UPDATE_TAGS'; payload: { tags: string[] } }
-  | { type: 'BATCH_UPDATE'; payload: { batchDetails: Partial<TDetails & { tags: string[] }>; mapType: 'overwrite' | 'append' } }
+  | {
+      type: 'BATCH_UPDATE'
+      payload: { batchDetails: Partial<TDetails & { tags: string[] }>; mapType: 'overwrite' | 'append' }
+    }
 
 // Generic reducer factory
 

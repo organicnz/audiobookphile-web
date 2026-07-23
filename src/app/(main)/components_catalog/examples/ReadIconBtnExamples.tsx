@@ -15,7 +15,10 @@ export function ReadIconBtnExamples() {
 
   const handleReadToggle = (isRead: boolean, setRead: (value: boolean) => void) => {
     setRead(!isRead)
-    showToast(!isRead ? 'Marked as finished' : 'Marked as not finished', { type: 'success', title: 'Read Status Updated' })
+    showToast(!isRead ? 'Marked as finished' : 'Marked as not finished', {
+      type: 'success',
+      title: 'Read Status Updated'
+    })
   }
 
   return (

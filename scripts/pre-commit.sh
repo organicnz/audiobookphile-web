@@ -6,6 +6,9 @@ if [ "$#" -eq 0 ]; then
   exit 0
 fi
 
+echo "Running Oxlint (Rust)..."
+bun run oxlint --fix "$@"
+
 echo "Running ESLint..."
 bun run eslint --fix "$@"
 

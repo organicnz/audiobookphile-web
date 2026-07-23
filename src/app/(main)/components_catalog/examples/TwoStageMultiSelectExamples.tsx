@@ -41,7 +41,10 @@ export function TwoStageMultiSelectExamples() {
   const handleTwoStageMultiSelectItemRemoved = (item: MultiSelectItem<TwoStageMultiSelectContent>) => {
     const newItems = twoStageMultiSelectValue.filter((i) => i.value !== item.value)
     setTwoStageMultiSelectValue(newItems)
-    showToast(`Removed: ${item.content.value}${item.content.modifier ? ` #${item.content.modifier}` : ''}`, { type: 'info', title: 'Item Removed' })
+    showToast(`Removed: ${item.content.value}${item.content.modifier ? ` #${item.content.modifier}` : ''}`, {
+      type: 'info',
+      title: 'Item Removed'
+    })
   }
 
   const handleTwoStageMultiSelectItemEdited = (item: MultiSelectItem<TwoStageMultiSelectContent>, index: number) => {

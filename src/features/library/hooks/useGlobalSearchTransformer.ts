@@ -71,7 +71,13 @@ export function useGlobalSearchTransformer({
         searchResults.playlists?.length)
 
     if ((isSearching || isTyping) && !hasResults) {
-      results.push({ type: 'header', id: 'thinking', title: '', isPlaceholder: true, placeholderText: t('MessageThinking') })
+      results.push({
+        type: 'header',
+        id: 'thinking',
+        title: '',
+        isPlaceholder: true,
+        placeholderText: t('MessageThinking')
+      })
     }
 
     if (searchError) {
@@ -83,7 +89,13 @@ export function useGlobalSearchTransformer({
     const isEmpty = !hasResults
 
     if (isEmpty && searchQuery && !isSearching && !isTyping && !searchError) {
-      results.push({ type: 'header', id: 'no-results', title: '', isPlaceholder: true, placeholderText: t('MessageNoResults') })
+      results.push({
+        type: 'header',
+        id: 'no-results',
+        title: '',
+        isPlaceholder: true,
+        placeholderText: t('MessageNoResults')
+      })
       return results
     }
 

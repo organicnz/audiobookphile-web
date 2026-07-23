@@ -339,7 +339,9 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
         <div
           ref={listContainerRef}
           className="relative block"
-          style={{ minHeight: filteredEpisodes.length === 0 ? `${EPISODE_ROW_HEIGHT_PX}px` : `${Math.max(totalHeight, EPISODE_ROW_HEIGHT_PX)}px` }}
+          style={{
+            minHeight: filteredEpisodes.length === 0 ? `${EPISODE_ROW_HEIGHT_PX}px` : `${Math.max(totalHeight, EPISODE_ROW_HEIGHT_PX)}px`
+          }}
         >
           {isSearching && (
             <div className="pointer-events-none absolute inset-0 z-50 bg-black/30">

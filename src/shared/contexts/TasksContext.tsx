@@ -112,7 +112,7 @@ export function TasksProvider({ children }: TasksProviderProps) {
     setAudioFilesEncoding((prev) => ({
       ...prev,
       [libraryItemId]: {
-        ...(prev[libraryItemId] || {}),
+        ...prev[libraryItemId],
         [ino]: progress
       }
     }))
@@ -122,7 +122,7 @@ export function TasksProvider({ children }: TasksProviderProps) {
     setAudioFilesFinished((prev) => ({
       ...prev,
       [libraryItemId]: {
-        ...(prev[libraryItemId] || {}),
+        ...prev[libraryItemId],
         [ino]: finished
       }
     }))

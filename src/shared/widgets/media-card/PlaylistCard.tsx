@@ -99,7 +99,9 @@ function PlaylistCard(props: PlaylistCardProps) {
     }
   }, [])
 
-  const { processing, confirmState, closeConfirm, handleMoreAction, moreMenuItems } = usePlaylistCardActions({ playlist })
+  const { processing, confirmState, closeConfirm, handleMoreAction, moreMenuItems } = usePlaylistCardActions({
+    playlist
+  })
 
   return (
     <>

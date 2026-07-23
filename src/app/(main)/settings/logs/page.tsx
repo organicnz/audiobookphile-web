@@ -14,14 +14,30 @@ export default async function LogsPage() {
   const links = []
 
   if (isSupabaseCloud && projectRef) {
-    links.push({ label: 'Supabase API Logs', desc: 'Database and auth requests', href: `https://supabase.com/dashboard/project/${projectRef}/logs/edge-logs` })
-    links.push({ label: 'Supabase Auth Logs', desc: 'Login and auth events', href: `https://supabase.com/dashboard/project/${projectRef}/logs/auth-logs` })
+    links.push({
+      label: 'Supabase API Logs',
+      desc: 'Database and auth requests',
+      href: `https://supabase.com/dashboard/project/${projectRef}/logs/edge-logs`
+    })
+    links.push({
+      label: 'Supabase Auth Logs',
+      desc: 'Login and auth events',
+      href: `https://supabase.com/dashboard/project/${projectRef}/logs/auth-logs`
+    })
   } else {
-    links.push({ label: 'Local Studio', desc: 'Self-hosted Supabase dashboard', href: supabaseUrl.replace(':8000', ':54323').replace('/v1', '') })
+    links.push({
+      label: 'Local Studio',
+      desc: 'Self-hosted Supabase dashboard',
+      href: supabaseUrl.replace(':8000', ':54323').replace('/v1', '')
+    })
   }
 
   if (isVercel) {
-    links.push({ label: 'Vercel Function Logs', desc: 'Server-side function logs', href: `https://vercel.com/dashboard` })
+    links.push({
+      label: 'Vercel Function Logs',
+      desc: 'Server-side function logs',
+      href: `https://vercel.com/dashboard`
+    })
     links.push({ label: 'Vercel Deployments', desc: 'Build and deploy history', href: `https://vercel.com/dashboard` })
   }
 
