@@ -54,7 +54,7 @@ export const sanitizeFileName = (filename: string, colonReplacement = ' - '): st
   //   Issue: https://github.com/advplyr/audiobookphile/issues/1261
   const MAX_FILENAME_BYTES = 255
   const replacement = ''
-  const illegalRe = /[/\?<>\\:*\|"]/g
+  const illegalRe = /[/?<>\\:*|"]/g
   const controlRe = /[\x00-\x1f\x80-\x9f]/g
   const reservedRe = /^\.+$/
   const windowsReservedRe = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i
