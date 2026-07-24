@@ -1,15 +1,15 @@
 'use client'
 
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
+import { getLibraryItemCoverSrc, getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useTransition } from 'react'
+import { useCallback, useMemo, useTransition } from 'react'
 
 interface SearchClientProps {
   libraryId: string
   initialQuery: string
-  initialResults: any[]
+  initialResults: any
 }
 
 export default function SearchClient({ libraryId, initialQuery, initialResults }: SearchClientProps) {
@@ -17,6 +17,18 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
+
+  const items = useMemo(() => {
+    if (!initialResults) return []
+    if (Array.isArray(initialResults)) return initialResults
+    if (Array.isArray(initialResults.results)) {
+      return initialResults.results.map((r: any) => r.libraryItem || r)
+    }
+    if (Array.isArray(initialResults.book)) {
+      return initialResults.book.map((r: any) => r.libraryItem || r)
+    }
+    return []
+  }, [initialResults])
 
   const handleSearch = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,21 +65,25 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
       {/* Results */}
       {initialQuery && (
         <p className="text-foreground-muted mb-4 text-sm">
-          {initialResults.length === 0
-            ? `No results for "${initialQuery}"`
-            : `${initialResults.length} result${initialResults.length !== 1 ? 's' : ''} for "${initialQuery}"`}
+          {items.length === 0 ? `No results for "${initialQuery}"` : `${items.length} result${items.length !== 1 ? 's' : ''} for "${initialQuery}"`}
         </p>
       )}
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {initialResults.map((item: any) => {
-          const coverSrc = item.cover_path ? `/api/items/${item.id}/cover?ts=${item.updated_at}` : placeholder
-          const title = item.title || 'Unknown'
-          const author = item.author_names_first_last || ''
+        {items.map((item: any) => {
+          const itemId = item.id
+          if (!itemId) return null
+
+          const title = item.media?.metadata?.title || item.title || 'Unknown'
+          const author = item.media?.metadata?.authorName || item.author_names_first_last || ''
+          const coverSrc =
+            item.coverPath || item.cover_path
+              ? `/api/items/${itemId}/cover?ts=${item.updatedAt || item.updated_at || Date.now()}`
+              : getLibraryItemCoverSrc(item, placeholder)
 
           return (
-            <Link key={item.id} href={`/library/${libraryId}/item/${item.id}`} className="group flex flex-col gap-1">
-              <div className="relative aspect-[2/3] overflow-hidden rounded-md">
+            <Link key={itemId} href={`/library/${libraryId}/item/${itemId}`} className="group flex flex-col gap-1">
+              <div className="relative aspect-[2/3] overflow-hidden rounded-md bg-white/5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={coverSrc}
