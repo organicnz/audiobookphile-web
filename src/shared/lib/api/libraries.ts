@@ -154,3 +154,24 @@ export const getLibraryPlaylists = cache(async (libraryId: string, queryParams?:
     }
   }
 })
+
+export async function deduplicateLibrary(libraryId: string): Promise<{ success: boolean; removedCount: number }> {
+  return apiRequest<{ success: boolean; removedCount: number }>(`/api/libraries/${libraryId}/deduplicate`, {
+    method: 'POST'
+  })
+}
+
+export async function smartSortLibrary(libraryId: string, criteria: string = 'chronological reading order'): Promise<string[]> {
+  return apiRequest<string[]>(`/api/libraries/${libraryId}/smart-sort`, {
+    method: 'POST',
+    body: JSON.stringify({ criteria })
+  })
+}
+
+export async function getBatchLibraryItems(itemIds: string[]): Promise<LibraryItem[]> {
+  const res = await apiRequest<{ items: LibraryItem[] }>('/api/items/batch', {
+    method: 'POST',
+    body: JSON.stringify({ itemIds })
+  })
+  return res.items || []
+}
