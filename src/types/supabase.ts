@@ -613,6 +613,7 @@ export type Database = {
           description: string | null
           duration: number | null
           ebook_file: Json | null
+          embedding: string | null
           explicit: boolean | null
           extra_data: Json | null
           genres: Json | null
@@ -658,6 +659,7 @@ export type Database = {
           description?: string | null
           duration?: number | null
           ebook_file?: Json | null
+          embedding?: string | null
           explicit?: boolean | null
           extra_data?: Json | null
           genres?: Json | null
@@ -703,6 +705,7 @@ export type Database = {
           description?: string | null
           duration?: number | null
           ebook_file?: Json | null
+          embedding?: string | null
           explicit?: boolean | null
           extra_data?: Json | null
           genres?: Json | null
@@ -1303,8 +1306,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_link_series_and_clean_titles: { Args: never; Returns: number }
+      deduplicate_library_items: { Args: never; Returns: number }
       get_library_stats: { Args: { p_library_id: string }; Returns: Json }
       is_admin: { Args: never; Returns: boolean }
+      match_library_items_hybrid: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          query_embedding?: string
+          query_text: string
+          target_library_id?: string
+        }
+        Returns: {
+          author_name: string
+          cover_path: string
+          description: string
+          duration: number
+          id: string
+          library_id: string
+          narrator_name: string
+          similarity_score: number
+          subtitle: string
+          title: string
+        }[]
+      }
+      match_unlinked_authors: { Args: never; Returns: undefined }
       merge_authors: {
         Args: {
           p_library_id: string
@@ -1313,6 +1340,18 @@ export type Database = {
         }
         Returns: undefined
       }
+      merge_multipart_folder_books: { Args: never; Returns: number }
+      merge_two_library_items: {
+        Args: { p_dup_id: string; p_primary_id: string }
+        Returns: boolean
+      }
+      normalize_book_title: { Args: { p_title: string }; Returns: string }
+      separate_title_and_author_for_all_books: {
+        Args: never
+        Returns: undefined
+      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { '': string }; Returns: string[] }
       sync_author_avatars: { Args: never; Returns: undefined }
     }
     Enums: {

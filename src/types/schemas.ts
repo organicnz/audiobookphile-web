@@ -1,19 +1,20 @@
 /**
- * ⚠️  COPY — DO NOT EDIT DIRECTLY
+ * ⚠️  SOURCE OF TRUTH
  *
- * This file is a copy of:
- *   audiobookphile-backend/src/types/schemas.ts
+ * This file is the canonical definition of all Zod schemas shared between
+ * the backend edge functions and the web application.
  *
- * The backend file is the single source of truth for all Zod schemas
- * shared between the backend edge functions and the web application.
+ * The web application keeps a copy at:
+ *   audiobookphile-web/src/types/schemas.ts
  *
- * To make changes:
- *   1. Edit  audiobookphile-backend/src/types/schemas.ts  first.
- *   2. Copy the updated file to this location.
+ * After editing this file:
+ *   1. Run `pnpm generate-types` (or `npm run generate-types`) in the backend
+ *      workspace to regenerate supabase.ts from the live database.
+ *   2. Copy this file to the web location above.
  *   3. Commit both changes together so the copies stay in sync.
  */
-import type { BookMetadataFlat } from '@/types/api/models'
 import { z } from 'zod'
+import type { BookMetadataFlat } from '@/types/api/models'
 
 export const AudioMetadataSchema = z.object({
   filename: z.string().nullish(),
@@ -32,13 +33,35 @@ export const AudioFileSchema = z.object({
   index: z.number(),
   ino: z.string(),
   metadata: AudioMetadataSchema,
-  duration: z.number(),
+  duration: z.number().nullish(),
   bitRate: z.number().nullish(),
   language: z.string().nullish(),
   codec: z.string().nullish(),
   mimeType: z.string(),
   addedAt: z.number().nullish(),
-  updatedAt: z.number().nullish()
+  updatedAt: z.number().nullish(),
+  timeBase: z.string().nullish(),
+  channels: z.number().nullish(),
+  channelLayout: z.string().nullish()
+})
+
+export const AudioTrackSchema = z.object({
+  index: z.number(),
+  title: z.string(),
+  contentUrl: z.string(),
+  startOffset: z.number(),
+  ino: z.string(),
+  metadata: AudioMetadataSchema,
+  duration: z.number().nullish(),
+  bitRate: z.number().nullish(),
+  language: z.string().nullish(),
+  codec: z.string().nullish(),
+  mimeType: z.string(),
+  addedAt: z.number().nullish(),
+  updatedAt: z.number().nullish(),
+  timeBase: z.string().nullish(),
+  channels: z.number().nullish(),
+  channelLayout: z.string().nullish()
 })
 
 export const ChapterSchema = z.object({
@@ -60,21 +83,33 @@ export const FileMetadataSchema = z.object({
 })
 
 export const LibraryFileSchema = z.object({
-  id: z.string(),
   ino: z.string(),
   metadata: FileMetadataSchema.nullish(),
   isSupplementary: z.boolean().nullish(),
   fileType: z.string().nullish(),
-  addedAt: z.number().nullish(),
-  updatedAt: z.number().nullish()
+  addedAt: z.number(),
+  updatedAt: z.number()
 })
 
 export const EbookFileSchema = z.object({
   ino: z.string(),
   metadata: FileMetadataSchema,
-  ebookFormat: z.string()
+  ebookFormat: z.string(),
+  addedAt: z.number(),
+  updatedAt: z.number()
 })
 
+/**
+ * BookMetadataSchema — flat string representation of book metadata.
+ * Authors, narrators, and series are pre-joined as strings, not arrays.
+ * This is the shape the iOS / mobile client expects.
+ *
+ * Compare with `BookMetadata` in the web `api/models.ts`, which uses
+ * structured Author[], string[], Series[] for the ABS / web path.
+ *
+ * `BookMetadataModel` below is pinned to `BookMetadataFlat` (the interface
+ * declared in the web layer) so any drift between them is caught at compile time.
+ */
 export const BookMetadataSchema = z.object({
   title: z.string(),
   subtitle: z.string().nullish(),
@@ -103,9 +138,10 @@ export const BookMediaSchema = z.object({
   coverPath: z.string().nullish(),
   tags: z.array(z.string()).nullish(),
   audioFiles: z.array(AudioFileSchema).nullish(),
-  tracks: z.array(AudioFileSchema).nullish(),
+  tracks: z.array(AudioTrackSchema).nullish(),
   numTracks: z.number().optional(),
-  ebookFile: EbookFileSchema.nullish()
+  ebookFile: EbookFileSchema.nullish(),
+  ebookFormat: z.string().nullish()
 })
 
 export const MediaProgressSchema = z.object({
@@ -179,8 +215,16 @@ export type FileMetadataModel = z.infer<typeof FileMetadataSchema>
 export type LibraryFileModel = z.infer<typeof LibraryFileSchema>
 export type EbookFileModel = z.infer<typeof EbookFileSchema>
 /**
+ * BookMetadataModel is the inferred type from BookMetadataSchema.
+ *
+ * In the web layer (audiobookphile-web/src/types/schemas.ts) this type is
+ * additionally pinned to `BookMetadataFlat` from `@/types/api/models` so
+ * that drift between the schema and the interface is caught at compile time.
+ * When making structural changes here, verify the web copy still compiles.
+ */
+/**
  * BookMetadataModel is pinned to BookMetadataFlat.
- * If BookMetadataSchema and BookMetadataFlat drift, this assignment will fail at compile time.
+ * This ensures the schema stays in sync with the web interface.
  */
 export type BookMetadataModel = BookMetadataFlat
 export type BookMediaModel = z.infer<typeof BookMediaSchema>
