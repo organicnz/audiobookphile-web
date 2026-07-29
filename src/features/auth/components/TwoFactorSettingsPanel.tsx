@@ -65,7 +65,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
       setUri(data.uri || '')
       setVerificationCode('')
       setMode('enrolling')
-    } catch (_err) {
+    } catch {
       setError('Unable to reach server. Please check your connection.')
     } finally {
       setLoading(false)

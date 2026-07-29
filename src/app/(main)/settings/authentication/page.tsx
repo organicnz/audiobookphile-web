@@ -1,5 +1,5 @@
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
-import { ExternalLink, Shield } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import SettingsContent from '../SettingsContent'
 import TwoFactorSettingsPanel from '@/features/auth/components/TwoFactorSettingsPanel'
 import { createClient } from '@/shared/utils/supabase/server'

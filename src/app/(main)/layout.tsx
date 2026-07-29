@@ -6,7 +6,6 @@ import { CommandPaletteProvider } from '@/shared/contexts/CommandPaletteContext'
 import CommandPalette from '@/shared/modals/CommandPalette'
 import { InstallPrompt } from '@/shared/ui/InstallPrompt'
 import { getCurrentUser } from '@/shared/lib/api'
-import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,7 +13,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   let userPayload
   try {
     userPayload = await getCurrentUser()
-  } catch (err) {
+  } catch {
     userPayload = { user: { id: 'test', email: 'test@test.com', username: 'test', type: 'admin' } }
   }
 
