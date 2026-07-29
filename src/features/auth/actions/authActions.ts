@@ -46,7 +46,7 @@ export async function signInWithGoogle() {
 
 export async function signUp(email: string, password: string) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const res = await fetch(`${supabaseUrl}/functions/v1/api/signup`, {
+  const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
@@ -77,11 +77,29 @@ export async function forgotPassword(email: string) {
 }
 
 export async function resetPassword(password: string) {
+  const supabase = await createClient()
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
+
+  if (!session?.access_token) {
+    return { error: 'Your password reset session has expired or is invalid. Please request a new reset link.' }
+  }
+
+  // Update directly via authenticated SSR client
+  const { error: ssrError } = await supabase.auth.updateUser({ password })
+  if (ssrError) {
+    return { error: ssrError.message }
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/reset-password`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password })
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify({ password, accessToken: session.access_token })
   })
 
   if (!res.ok) {
@@ -92,6 +110,55 @@ export async function resetPassword(password: string) {
   return { success: true }
 }
 
+export async function signInWithMagicLink(email: string) {
+  const siteUrl = getSiteUrl()
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/magic-link`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      redirectTo: `${siteUrl}/auth/callback?next=/library`
+    })
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}))
+    return { error: errorData.error || 'Failed to send magic link.' }
+  }
+
+  return { success: true }
+}
+
+export async function inviteUserByEmail(email: string, username?: string, userType?: string) {
+  const supabase = await createClient()
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
+
+  if (!session?.access_token) {
+    return { error: 'You must be logged in as an admin to invite users.' }
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/invite`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify({ email, username, userType: userType || 'user' })
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}))
+    return { error: errorData.error || 'Failed to invite user.' }
+  }
+
+  const data = await res.json()
+  return { success: true, user: data.user }
+}
+
 export async function signOut() {
   const supabase = await createClient()
   const {
@@ -100,7 +167,7 @@ export async function signOut() {
 
   if (session?.access_token) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    await fetch(`${supabaseUrl}/functions/v1/api/logout`, {
+    await fetch(`${supabaseUrl}/functions/v1/api/auth/logout`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${session.access_token}`,
