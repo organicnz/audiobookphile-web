@@ -14,7 +14,7 @@ import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { Playlist } from '@/types/api'
 import { BookshelfView } from '@/types/api'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { memo, useCallback, useId, useMemo, useState } from 'react'
 import LoadingSpinner from '../LoadingSpinner'
 import { Edit2, CheckCircle2, Circle } from 'lucide-react'
@@ -69,9 +69,11 @@ function PlaylistCard(props: PlaylistCardProps) {
 
   const showOverlay = (isHovering || isSelectionMode || isMoreMenuOpen) && !false // not processing locally
 
+  const params = useParams()
   const handleCardClick = useCallback(() => {
-    router.push(`/library/${playlist.libraryId}/playlist/${playlist.id}`)
-  }, [playlist.libraryId, playlist.id, router])
+    const libParam = typeof params?.library === 'string' && params.library ? params.library : playlist.libraryId
+    router.push(`/library/${libParam}/playlist/${playlist.id}`)
+  }, [playlist.id, playlist.libraryId, params?.library, router])
 
   const handleEditClick = useCallback(
     (event: React.MouseEvent) => {

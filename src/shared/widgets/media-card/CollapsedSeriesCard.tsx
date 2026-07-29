@@ -9,7 +9,7 @@ import { getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import { computeProgress } from '@/shared/lib/mediaProgress'
 import type { LibraryItem } from '@/types/api'
 import { BookshelfView } from '@/types/api'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useId, useMemo, useState } from 'react'
 import { MediaCardProps } from './MediaCard'
 import MediaCardDetailView from './MediaCardDetailView'
@@ -70,9 +70,11 @@ export default function CollapsedSeriesCard(props: CollapsedSeriesCardProps) {
     finishedAt
   } = useMemo(() => computeProgress({ progress: null, seriesProgressPercent, useSeriesProgress: true }), [seriesProgressPercent])
 
+  const params = useParams()
   const handleCardClick = () => {
     if (collapsedSeries) {
-      router.push(`/library/${libraryItem.libraryId}/series/${collapsedSeries.id}`)
+      const libParam = typeof params?.library === 'string' && params.library ? params.library : libraryItem.libraryId
+      router.push(`/library/${libParam}/series/${collapsedSeries.id}`)
     }
   }
 

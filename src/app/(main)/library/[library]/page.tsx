@@ -1,5 +1,6 @@
 import { getLibraries, getLibraryPersonalized } from '@/shared/lib/api'
-import { resolveLibraryFromParam } from '@/shared/lib/library-slugs'
+import { getLibrarySlug, resolveLibraryFromParam } from '@/shared/lib/library-slugs'
+import { redirect } from 'next/navigation'
 import LibraryClient from './LibraryClient'
 
 // Continue Listening and personalized shelves are per-user and per-session —
@@ -15,9 +16,16 @@ export default async function LibraryPage({ params }: { params: Promise<{ librar
     const response = await getLibraries()
     const resolved = resolveLibraryFromParam(paramValue, response.libraries)
     if (resolved) {
+      if (resolved.isUuidRedirect) {
+        const canonicalSlug = getLibrarySlug(resolved.library, response.libraries)
+        redirect(`/library/${canonicalSlug}`)
+      }
       libraryId = resolved.library.id
     }
   } catch (err) {
+    if (err && typeof err === 'object' && 'digest' in err && typeof err.digest === 'string' && err.digest.includes('NEXT_REDIRECT')) {
+      throw err
+    }
     console.error('Error resolving library slug', err)
   }
 

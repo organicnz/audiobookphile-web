@@ -12,7 +12,7 @@ import { useUser } from '@/shared/contexts/UserContext'
 import { useAuthorActions } from '@/features/metadata/hooks/useAuthorActions'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import type { Author } from '@/types/api'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { memo, useCallback, useId, useState } from 'react'
 import { Search, Edit2, CheckCircle2, Circle } from 'lucide-react'
 
@@ -59,11 +59,13 @@ function AuthorCard(props: AuthorCardProps) {
 
   const showOverlay = (isHovering || isSelectionMode) && !isSearching
 
+  const params = useParams()
   const handleCardClick = useCallback(() => {
     if (!isSearching) {
-      router.push(`/library/${author.libraryId}/authors/${author.id}`)
+      const libParam = typeof params?.library === 'string' && params.library ? params.library : author.libraryId
+      router.push(`/library/${libParam}/authors/${author.id}`)
     }
-  }, [author.id, author.libraryId, isSearching, router])
+  }, [author.id, author.libraryId, isSearching, params?.library, router])
 
   const handleEditClick = useCallback(
     (event: React.MouseEvent) => {

@@ -13,7 +13,7 @@ import { formatDuration } from '@/shared/lib/formatDuration'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { MediaProgress, Series } from '@/types/api'
 import { BookshelfView } from '@/types/api'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { memo, useId, useMemo, useState } from 'react'
 import { CheckCircle2, Circle } from 'lucide-react'
 
@@ -158,8 +158,10 @@ function SeriesCard(props: SeriesCardProps) {
 
   const isAlternativeBookshelfView = bookshelfView === BookshelfView.DETAIL
 
+  const params = useParams()
   const handleCardClick = () => {
-    router.push(`/library/${libraryId}/series/${series.id}`)
+    const libParam = typeof params?.library === 'string' && params.library ? params.library : libraryId
+    router.push(`/library/${libParam}/series/${series.id}`)
   }
 
   const handleSelectClick = (event: React.MouseEvent) => {

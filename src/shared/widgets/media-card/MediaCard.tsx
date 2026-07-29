@@ -22,7 +22,7 @@ import { computeProgress } from '@/shared/lib/mediaProgress'
 import type { BookMedia, BookshelfEntity, EReaderDevice, LibraryItem, MediaProgress, PodcastEpisode, PodcastMedia, UserPermissions } from '@/types/api'
 import { BookshelfView, isBookMedia, isBookMetadata, isPodcastLibraryItem } from '@/types/api'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { memo, useCallback, useEffect, useId, useMemo, useState, type ReactNode } from 'react'
 
 export interface MediaCardProps {
@@ -281,8 +281,10 @@ function MediaCard(props: MediaCardProps) {
     playerControls: playerHandler.controls
   })
 
+  const params = useParams()
   const handleCardClick = () => {
-    router.push(`/library/${libraryItem.libraryId}/item/${libraryItem.id}`)
+    const libParam = typeof params?.library === 'string' && params.library ? params.library : libraryItem.libraryId
+    router.push(`/library/${libParam}/item/${libraryItem.id}`)
   }
 
   return (

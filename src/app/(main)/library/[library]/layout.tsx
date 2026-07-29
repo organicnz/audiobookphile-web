@@ -1,6 +1,6 @@
 import { LibraryProvider } from '@/features/library/contexts/LibraryContext'
 import { getLibraries } from '@/shared/lib/api'
-import { getLibrarySlug, resolveLibraryFromParam } from '@/shared/lib/library-slugs'
+import { resolveLibraryFromParam } from '@/shared/lib/library-slugs'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import AppBar from '../../AppBar'
@@ -33,11 +33,6 @@ export default async function LibraryLayout({
   if (!resolved) {
     console.error('Error getting library data: unknown slug or id', paramValue)
     redirect('/')
-  }
-
-  if (resolved.isUuidRedirect) {
-    const canonicalSlug = getLibrarySlug(resolved.library, libraries)
-    redirect(`/library/${canonicalSlug}`)
   }
 
   const currentLibrary = resolved.library
