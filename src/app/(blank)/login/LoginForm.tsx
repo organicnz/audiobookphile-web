@@ -19,6 +19,11 @@ export default function LoginForm() {
   const [googleLoading, setGoogleLoading] = useState(false)
   const [magicLoading, setMagicLoading] = useState(false)
 
+  const [requires2FA, setRequires2FA] = useState(false)
+  const [tempToken, setTempToken] = useState('')
+  const [userId, setUserId] = useState('')
+  const [totpCode, setTotpCode] = useState('')
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
@@ -35,6 +40,14 @@ export default function LoginForm() {
 
         if (!res.ok || data.error) {
           setError(data.error?.message || data.error || 'Login failed. Please check your credentials.')
+          setLoading(false)
+          return
+        }
+
+        if (data.requires2FA) {
+          setRequires2FA(true)
+          setTempToken(data.tempToken || '')
+          setUserId(data.userId || '')
           setLoading(false)
           return
         }
@@ -90,6 +103,75 @@ export default function LoginForm() {
     [email, password, searchParams]
   )
 
+  const handle2FASubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      setError('')
+      setLoading(true)
+      try {
+        const res = await fetch('/api/auth/2fa/verify-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, tempToken, code: totpCode })
+        })
+
+        const data = await res.json()
+
+        if (!res.ok || data.error) {
+          setError(data.error?.message || data.error || 'Invalid two-factor authentication code.')
+          setLoading(false)
+          return
+        }
+
+        const supabase = createClient()
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.user.token,
+          refresh_token: data.user.refreshToken
+        })
+
+        if (sessionError) {
+          setError(sessionError.message)
+          setLoading(false)
+          return
+        }
+
+        const redirectUrl = searchParams.get('redirect')
+        if (redirectUrl) {
+          window.location.href = redirectUrl
+          return
+        }
+
+        if (data.userDefaultLibraryId) {
+          window.location.href = `/library/${data.userDefaultLibraryId}`
+          return
+        }
+
+        try {
+          const libsRes = await fetch('/api/libraries', {
+            headers: { Authorization: `Bearer ${data.user.token}` }
+          })
+          if (libsRes.ok) {
+            const libsData = await libsRes.json()
+            if (libsData?.libraries?.length > 0) {
+              window.location.href = `/library/${libsData.libraries[0].id}`
+              return
+            }
+          }
+        } catch (err) {
+          console.error('[LoginForm] Failed to fetch libraries:', err)
+        }
+
+        window.location.href = '/library'
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Unknown error'
+        console.error('[LoginForm] 2FA verify network error:', message)
+        setError('Unable to verify two-factor code. Please check your connection.')
+        setLoading(false)
+      }
+    },
+    [userId, tempToken, totpCode, searchParams]
+  )
+
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true)
     try {
@@ -119,6 +201,36 @@ export default function LoginForm() {
     } finally {
       setMagicLoading(false)
     }
+  }
+
+  if (requires2FA) {
+    return (
+      <AuthCard title="Two-Factor Authentication" onSubmit={handle2FASubmit}>
+        <div className="mb-4 flex flex-col gap-4">
+          <p className="text-foreground-muted text-center text-sm">Enter the 6-digit verification code from your authenticator app to finish signing in.</p>
+          <TextInput label="6-Digit Verification Code" value={totpCode} type="text" autocomplete="one-time-code" onChange={setTotpCode} />
+        </div>
+
+        {error && <div className="mb-4 text-center text-sm text-red-400">{error}</div>}
+
+        <div className="flex flex-col gap-3">
+          <Btn type="submit" loading={loading} className="w-full">
+            Verify & Sign in
+          </Btn>
+          <button
+            type="button"
+            onClick={() => {
+              setRequires2FA(false)
+              setTotpCode('')
+              setError('')
+            }}
+            className="text-foreground-muted hover:text-foreground text-center text-xs hover:underline"
+          >
+            Back to Login
+          </button>
+        </div>
+      </AuthCard>
+    )
   }
 
   return (

@@ -37,7 +37,9 @@ export default async function MainLayout({ children }: { children: React.ReactNo
           created_at: null,
           updated_at: null,
           language: null,
-          theme: null
+          theme: null,
+          is_2fa_enabled: null,
+          totp_secret: null
         }
       }}
     >

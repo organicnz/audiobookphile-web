@@ -1173,6 +1173,8 @@ export type Database = {
           created_at: string | null
           default_library_id: string | null
           id: string
+          is_2fa_enabled: boolean | null
+          totp_secret: string | null
           language: string | null
           theme: string | null
           updated_at: string | null
@@ -1183,6 +1185,8 @@ export type Database = {
           created_at?: string | null
           default_library_id?: string | null
           id: string
+          is_2fa_enabled?: boolean | null
+          totp_secret?: string | null
           language?: string | null
           theme?: string | null
           updated_at?: string | null
@@ -1193,6 +1197,8 @@ export type Database = {
           created_at?: string | null
           default_library_id?: string | null
           id?: string
+          is_2fa_enabled?: boolean | null
+          totp_secret?: string | null
           language?: string | null
           theme?: string | null
           updated_at?: string | null

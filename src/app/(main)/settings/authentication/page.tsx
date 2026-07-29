@@ -1,11 +1,23 @@
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { ExternalLink, Shield } from 'lucide-react'
 import SettingsContent from '../SettingsContent'
+import TwoFactorSettingsPanel from '@/features/auth/components/TwoFactorSettingsPanel'
+import { createClient } from '@/shared/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AuthenticationPage() {
   const t = await getTypeSafeTranslations()
+  const supabase = await createClient()
+  const {
+    data: { user }
+  } = await supabase.auth.getUser()
+  let is2faEnabled = false
+  if (user) {
+    const { data: profile } = await supabase.from('profiles').select('is_2fa_enabled').eq('id', user.id).maybeSingle()
+    is2faEnabled = profile?.is_2fa_enabled === true
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
   const isSupabaseCloud = supabaseUrl.includes('.supabase.co')
   const projectRef = isSupabaseCloud ? supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1] : null
@@ -18,7 +30,9 @@ export default async function AuthenticationPage() {
 
   return (
     <SettingsContent title={t('HeaderAuthentication')}>
-      <div className="space-y-4 p-6">
+      <div className="space-y-6 p-6">
+        <TwoFactorSettingsPanel initialEnabled={is2faEnabled} />
+
         <p className="text-foreground-muted text-sm">
           Authentication is handled by Supabase Auth. Configure providers, email templates, and security settings in your dashboard.
         </p>
