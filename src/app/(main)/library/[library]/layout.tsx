@@ -1,5 +1,6 @@
 import { LibraryProvider } from '@/features/library/contexts/LibraryContext'
 import { getLibraries } from '@/shared/lib/api'
+import { getLibrarySlug, resolveLibraryFromParam } from '@/shared/lib/library-slugs'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import AppBar from '../../AppBar'
@@ -17,7 +18,7 @@ export default async function LibraryLayout({
   children: React.ReactNode
   params: Promise<{ library: string }>
 }>) {
-  const { library: currentLibraryId } = await params
+  const { library: paramValue } = await params
 
   let libraries: import('@/types/api').Library[] = []
   try {
@@ -28,15 +29,22 @@ export default async function LibraryLayout({
     redirect('/')
   }
 
-  const currentLibrary = libraries.find((library) => library.id === currentLibraryId)
-  if (!currentLibrary) {
-    console.error('Error getting library data')
+  const resolved = resolveLibraryFromParam(paramValue, libraries)
+  if (!resolved) {
+    console.error('Error getting library data: unknown slug or id', paramValue)
     redirect('/')
   }
 
+  if (resolved.isUuidRedirect) {
+    const canonicalSlug = getLibrarySlug(resolved.library, libraries)
+    redirect(`/library/${canonicalSlug}`)
+  }
+
+  const currentLibrary = resolved.library
+
   return (
     <LibraryProvider library={currentLibrary}>
-      <AppBar libraries={libraries} currentLibraryId={currentLibraryId} />
+      <AppBar libraries={libraries} currentLibraryId={currentLibrary.id} />
       <LibraryLayoutWrapper>{children}</LibraryLayoutWrapper>
     </LibraryProvider>
   )

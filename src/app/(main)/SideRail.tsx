@@ -1,6 +1,7 @@
 'use client'
 
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
+import { getLibrarySlug } from '@/shared/lib/library-slugs'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
@@ -31,77 +32,78 @@ export default function SideRail({ serverVersion, installSource }: { serverVersi
   const userCanUpload = user.permissions.upload
 
   const currentLibraryId = library?.id ?? ''
+  const librarySlug = library ? getLibrarySlug(library) : currentLibraryId
   const currentLibraryMediaType = library?.mediaType ?? 'book'
 
   const buttons = [
     {
       icon: Home,
       label: t('ButtonHome'),
-      href: `/library/${currentLibraryId}`
+      href: `/library/${librarySlug}`
     },
     {
       icon: Clock,
       label: t('ButtonLatest'),
-      href: `/library/${currentLibraryId}/latest`,
+      href: `/library/${librarySlug}/latest`,
       mediaType: 'podcast'
     },
     {
       icon: LibraryIcon,
       label: t('ButtonLibrary'),
-      href: `/library/${currentLibraryId}/items`
+      href: `/library/${librarySlug}/items`
     },
     {
       icon: Layers,
       label: t('ButtonSeries'),
-      href: `/library/${currentLibraryId}/series`,
+      href: `/library/${librarySlug}/series`,
       mediaType: 'book'
     },
     {
       icon: FolderHeart,
       label: t('ButtonCollections'),
-      href: `/library/${currentLibraryId}/collections`,
+      href: `/library/${librarySlug}/collections`,
       mediaType: 'book'
     },
     {
       icon: ListMusic,
       label: t('ButtonPlaylists'),
-      href: `/library/${currentLibraryId}/playlists`
+      href: `/library/${librarySlug}/playlists`
     },
     {
       icon: Users,
       label: t('ButtonAuthors'),
-      href: `/library/${currentLibraryId}/authors`,
+      href: `/library/${librarySlug}/authors`,
       mediaType: 'book'
     },
     {
       icon: Mic2,
       label: t('LabelNarrators'),
-      href: `/library/${currentLibraryId}/narrators`,
+      href: `/library/${librarySlug}/narrators`,
       mediaType: 'book'
     },
     {
       icon: BarChart2,
       label: t('ButtonStats'),
-      href: `/library/${currentLibraryId}/stats`,
+      href: `/library/${librarySlug}/stats`,
       mediaType: 'book'
     },
     {
       icon: Plus,
       label: t('ButtonAdd'),
-      href: `/library/${currentLibraryId}/add-podcast`,
+      href: `/library/${librarySlug}/add-podcast`,
       mediaType: 'podcast'
     },
 
     {
       icon: Download,
       label: t('ButtonDownloadQueue'),
-      href: `/library/${currentLibraryId}/download-queue`,
+      href: `/library/${librarySlug}/download-queue`,
       mediaType: 'podcast'
     },
     {
       icon: AlertTriangle,
       label: t('ButtonIssues'),
-      href: `/library/${currentLibraryId}/issues`,
+      href: `/library/${librarySlug}/issues`,
       hidden: true
     }
   ]

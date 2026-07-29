@@ -1,5 +1,6 @@
 import { getCurrentUser } from '@/shared/lib/api'
 import { getLibraries } from '@/shared/lib/api/libraries'
+import { getLibrarySlug } from '@/shared/lib/library-slugs'
 import { redirect } from 'next/navigation'
 
 /**
@@ -16,24 +17,24 @@ export const GET = async () => {
 
     let libraryId = currentUser.userDefaultLibraryId
     const userType = currentUser.user.type
+    let allLibraries: import('@/types/api').Library[] = []
 
-    if (!libraryId) {
-      try {
-        const libs = await getLibraries()
-        console.log('[library/route.ts] libs:', JSON.stringify(libs))
-        if (libs?.libraries?.length > 0) {
-          libraryId = libs.libraries[0].id
-        } else {
-          console.log('[library/route.ts] libs.libraries is empty!')
-        }
-      } catch (err) {
-        console.error('[library/route.ts] getLibraries error:', err)
-        // Silently ignore and fall through
+    try {
+      const libs = await getLibraries()
+      allLibraries = libs?.libraries || []
+      console.log('[library/route.ts] libs:', JSON.stringify(libs))
+      if (!libraryId && allLibraries.length > 0) {
+        libraryId = allLibraries[0].id
       }
+    } catch (err) {
+      console.error('[library/route.ts] getLibraries error:', err)
+      // Silently ignore and fall through
     }
 
     if (libraryId) {
-      return redirect(`/library/${libraryId}`)
+      const targetLib = allLibraries.find((lib) => lib.id === libraryId)
+      const slug = targetLib ? getLibrarySlug(targetLib, allLibraries) : libraryId
+      return redirect(`/library/${slug}`)
     }
 
     if (['admin', 'root'].includes(userType)) {

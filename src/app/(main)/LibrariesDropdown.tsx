@@ -1,6 +1,7 @@
 'use client'
 
 import Dropdown from '@/shared/ui/Dropdown'
+import { getLibrarySlug } from '@/shared/lib/library-slugs'
 import { Library } from '@/types/api'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTransition } from 'react'
@@ -29,7 +30,8 @@ export default function LibrariesDropdown({ libraries, currentLibraryId }: Libra
       }
     }
 
-    return `/library/${libraryId}/${page}`
+    const slug = library ? getLibrarySlug(library, libraries) : libraryId
+    return page ? `/library/${slug}/${page}` : `/library/${slug}`
   }
 
   const libraryItems = libraries.map((library) => ({

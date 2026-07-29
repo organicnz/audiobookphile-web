@@ -1,4 +1,5 @@
-import { getLibraryPersonalized } from '@/shared/lib/api'
+import { getLibraries, getLibraryPersonalized } from '@/shared/lib/api'
+import { resolveLibraryFromParam } from '@/shared/lib/library-slugs'
 import LibraryClient from './LibraryClient'
 
 // Continue Listening and personalized shelves are per-user and per-session —
@@ -7,7 +8,18 @@ import LibraryClient from './LibraryClient'
 export const dynamic = 'force-dynamic'
 
 export default async function LibraryPage({ params }: { params: Promise<{ library: string }> }) {
-  const { library: libraryId } = await params
+  const { library: paramValue } = await params
+
+  let libraryId = paramValue
+  try {
+    const response = await getLibraries()
+    const resolved = resolveLibraryFromParam(paramValue, response.libraries)
+    if (resolved) {
+      libraryId = resolved.library.id
+    }
+  } catch (err) {
+    console.error('Error resolving library slug', err)
+  }
 
   let personalized
   try {
