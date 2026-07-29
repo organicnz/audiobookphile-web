@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { Shield, ShieldAlert, ShieldCheck, Copy, Check, Key, QrCode } from 'lucide-react'
+import { useState, useCallback, useEffect } from 'react'
+import { Shield, ShieldAlert, ShieldCheck, Copy, Check, Key, QrCode, Lock, Fingerprint, Smartphone } from 'lucide-react'
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
 import { createClient } from '@/shared/utils/supabase/client'
@@ -10,17 +10,49 @@ interface TwoFactorSettingsPanelProps {
   initialEnabled?: boolean
 }
 
+interface Auth2FAStatus {
+  enabled: boolean
+  totpEnrolled?: boolean
+  pinEnrolled?: boolean
+  biometricEnrolled?: boolean
+  methods?: string[]
+}
+
 export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFactorSettingsPanelProps) {
-  const [isEnabled, setIsEnabled] = useState(initialEnabled)
-  const [mode, setMode] = useState<'idle' | 'enrolling' | 'disabling'>('idle')
+  const [status, setStatus] = useState<Auth2FAStatus>({ enabled: initialEnabled })
+  const [mode, setMode] = useState<'idle' | 'enrollingTotp' | 'enrollingPin' | 'disabling'>('idle')
   const [secret, setSecret] = useState('')
   const [uri, setUri] = useState('')
   const [verificationCode, setVerificationCode] = useState('')
+  const [pinInput, setPinInput] = useState('')
   const [disableCode, setDisableCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [copied, setCopied] = useState(false)
+
+  const fetchStatus = useCallback(async () => {
+    try {
+      const supabase = createClient()
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData.session?.access_token
+      if (!token) return
+
+      const res = await fetch('/api/auth/2fa/status', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (res.ok) {
+        const data: Auth2FAStatus = await res.json()
+        setStatus(data)
+      }
+    } catch {
+      // Ignore network error on status fetch
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchStatus()
+  }, [fetchStatus])
 
   const handleCopySecret = useCallback(async () => {
     if (!secret) return
@@ -33,7 +65,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
     }
   }, [secret])
 
-  const handleStartEnroll = useCallback(async () => {
+  const handleStartEnrollTotp = useCallback(async () => {
     setError('')
     setSuccess('')
     setLoading(true)
@@ -64,7 +96,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
       setSecret(data.secret || '')
       setUri(data.uri || '')
       setVerificationCode('')
-      setMode('enrolling')
+      setMode('enrollingTotp')
     } catch {
       setError('Unable to reach server. Please check your connection.')
     } finally {
@@ -72,7 +104,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
     }
   }, [])
 
-  const handleVerifyEnroll = useCallback(
+  const handleVerifyEnrollTotp = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
       if (!verificationCode || verificationCode.trim().length !== 6) {
@@ -109,12 +141,12 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
           return
         }
 
-        setIsEnabled(true)
+        setStatus((prev) => ({ ...prev, enabled: true, totpEnrolled: true }))
         setMode('idle')
         setSecret('')
         setUri('')
         setVerificationCode('')
-        setSuccess('Two-factor authentication has been successfully enabled for your account.')
+        setSuccess('Authenticator app 2FA has been successfully enabled for your account.')
       } catch {
         setError('Unable to verify two-factor code. Please try again.')
       } finally {
@@ -124,14 +156,99 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
     [verificationCode]
   )
 
-  const handleDisable2FA = useCallback(
+  const handleEnrollPin = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
-      if (!disableCode || disableCode.trim().length !== 6) {
-        setError('Please enter your 6-digit code to disable 2FA.')
+      const cleaned = pinInput.trim()
+      if (cleaned.length < 4 || cleaned.length > 8 || !/^\d+$/.test(cleaned)) {
+        setError('PIN code must be between 4 and 8 digits.')
         return
       }
 
+      setError('')
+      setSuccess('')
+      setLoading(true)
+      try {
+        const supabase = createClient()
+        const { data: sessionData } = await supabase.auth.getSession()
+        const token = sessionData.session?.access_token
+        if (!token) {
+          setError('Your session has expired. Please log in again.')
+          setLoading(false)
+          return
+        }
+
+        const res = await fetch('/api/auth/2fa/enroll-pin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ pinCode: cleaned })
+        })
+
+        const data = await res.json()
+        if (!res.ok || !data.success) {
+          setError(data.error || 'Failed to enroll PIN code.')
+          setLoading(false)
+          return
+        }
+
+        setStatus((prev) => ({ ...prev, enabled: true, pinEnrolled: true }))
+        setMode('idle')
+        setPinInput('')
+        setSuccess('PIN code sign-in has been successfully enabled.')
+      } catch {
+        setError('Unable to save PIN code. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    },
+    [pinInput]
+  )
+
+  const handleEnrollBiometric = useCallback(async () => {
+    setError('')
+    setSuccess('')
+    setLoading(true)
+    try {
+      const supabase = createClient()
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData.session?.access_token
+      if (!token) {
+        setError('Your session has expired. Please log in again.')
+        setLoading(false)
+        return
+      }
+
+      const res = await fetch('/api/auth/2fa/enroll-biometric', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ deviceId: 'web-browser' })
+      })
+
+      const data = await res.json()
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Failed to enroll Biometric 2FA.')
+        setLoading(false)
+        return
+      }
+
+      setStatus((prev) => ({ ...prev, enabled: true, biometricEnrolled: true }))
+      setSuccess('Facial 2FA / Biometric sign-in has been successfully enabled.')
+    } catch {
+      setError('Unable to enroll Biometric 2FA. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const handleDisable2FA = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
       setError('')
       setSuccess('')
       setLoading(true)
@@ -151,20 +268,20 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify({ code: disableCode.trim() })
+          body: JSON.stringify({ code: disableCode.trim() || undefined })
         })
 
         const data = await res.json()
         if (!res.ok || !data.success) {
-          setError(data.error || 'Invalid verification code.')
+          setError(data.error || 'Failed to disable two-factor authentication.')
           setLoading(false)
           return
         }
 
-        setIsEnabled(false)
+        setStatus({ enabled: false, totpEnrolled: false, pinEnrolled: false, biometricEnrolled: false, methods: [] })
         setMode('idle')
         setDisableCode('')
-        setSuccess('Two-factor authentication has been disabled.')
+        setSuccess('All two-factor authentication methods have been disabled.')
       } catch {
         setError('Unable to disable two-factor authentication. Please try again.')
       } finally {
@@ -174,24 +291,26 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
     [disableCode]
   )
 
+  const isAnyEnabled = status.enabled || status.totpEnrolled || status.pinEnrolled || status.biometricEnrolled
+
   return (
     <div className="border-border bg-bg-light/80 rounded-2xl border p-6 shadow-xl backdrop-blur-md transition-all">
       <div className="border-border/50 flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
           <div className="bg-accent/15 text-accent flex h-11 w-11 items-center justify-center rounded-xl shadow-inner">
-            {isEnabled ? <ShieldCheck className="h-6 w-6 text-emerald-400" /> : <Shield className="h-6 w-6" />}
+            {isAnyEnabled ? <ShieldCheck className="h-6 w-6 text-emerald-400" /> : <Shield className="h-6 w-6" />}
           </div>
           <div>
-            <h3 className="text-foreground text-lg font-bold tracking-tight">Two-Factor Authentication (2FA)</h3>
-            <p className="text-foreground-muted text-xs">Secure your account with time-based one-time passcodes (TOTP).</p>
+            <h3 className="text-foreground text-lg font-bold tracking-tight">Multi-Factor Authentication (2FA)</h3>
+            <p className="text-foreground-muted text-xs">Secure your account with Authenticator Apps, PIN Codes, or Facial/Biometric passkeys.</p>
           </div>
         </div>
 
         <div>
-          {isEnabled ? (
+          {isAnyEnabled ? (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400">
               <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-              Enabled
+              Active
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-400">
@@ -207,18 +326,105 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
       {success && <div className="my-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-xs text-emerald-300">{success}</div>}
 
       {mode === 'idle' && (
-        <div className="mt-5 space-y-4">
+        <div className="mt-5 space-y-6">
           <p className="text-foreground-muted text-sm leading-relaxed">
-            Two-factor authentication adds an extra layer of defense to your account. In addition to your password, you will be prompted for a secure 6-digit
-            code from an authenticator app (Google Authenticator, Authy, Apple Keychain, or 1Password) whenever you sign in.
+            Choose one or more authentication methods below. Any enrolled method can be used during sign-in as a single source of truth verification.
           </p>
 
-          <div className="pt-2">
-            {!isEnabled ? (
-              <Btn onClick={handleStartEnroll} loading={loading} className="px-5 py-2.5">
-                Set Up Two-Factor Authentication
-              </Btn>
-            ) : (
+          <div className="grid gap-4 sm:grid-cols-3">
+            {/* Authenticator App */}
+            <div className="border-border bg-bg/50 flex flex-col justify-between rounded-xl border p-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Smartphone className="text-accent h-5 w-5" />
+                  <h4 className="text-foreground text-sm font-semibold">Authenticator App</h4>
+                </div>
+                <p className="text-foreground-muted mt-2 text-xs leading-relaxed">
+                  Generate 6-digit verification codes using Google Authenticator, 1Password, or Authy.
+                </p>
+              </div>
+              <div className="mt-4">
+                {status.totpEnrolled ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-400">
+                    <Check className="h-3 w-3" /> Enrolled
+                  </span>
+                ) : (
+                  <Btn onClick={handleStartEnrollTotp} loading={loading} className="w-full py-2 text-xs">
+                    Set Up TOTP
+                  </Btn>
+                )}
+              </div>
+            </div>
+
+            {/* PIN Code Sign-In */}
+            <div className="border-border bg-bg/50 flex flex-col justify-between rounded-xl border p-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Lock className="text-accent h-5 w-5" />
+                  <h4 className="text-foreground text-sm font-semibold">PIN Code Sign-In</h4>
+                </div>
+                <p className="text-foreground-muted mt-2 text-xs leading-relaxed">Set a secure 4 to 8 digit numerical PIN code as an authentication factor.</p>
+              </div>
+              <div className="mt-4">
+                {status.pinEnrolled ? (
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-400">
+                      <Check className="h-3 w-3" /> Enrolled
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setError('')
+                        setSuccess('')
+                        setPinInput('')
+                        setMode('enrollingPin')
+                      }}
+                      className="text-accent text-xs hover:underline"
+                    >
+                      Update
+                    </button>
+                  </div>
+                ) : (
+                  <Btn
+                    onClick={() => {
+                      setError('')
+                      setSuccess('')
+                      setPinInput('')
+                      setMode('enrollingPin')
+                    }}
+                    className="w-full py-2 text-xs"
+                  >
+                    Set Up PIN
+                  </Btn>
+                )}
+              </div>
+            </div>
+
+            {/* Facial 2FA / Biometric */}
+            <div className="border-border bg-bg/50 flex flex-col justify-between rounded-xl border p-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Fingerprint className="text-accent h-5 w-5" />
+                  <h4 className="text-foreground text-sm font-semibold">Facial 2FA / Biometric</h4>
+                </div>
+                <p className="text-foreground-muted mt-2 text-xs leading-relaxed">Sign in instantly with Face ID, Touch ID, or hardware security keys.</p>
+              </div>
+              <div className="mt-4">
+                {status.biometricEnrolled ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-400">
+                    <Check className="h-3 w-3" /> Active
+                  </span>
+                ) : (
+                  <Btn onClick={handleEnrollBiometric} loading={loading} className="w-full py-2 text-xs">
+                    Enable Facial 2FA
+                  </Btn>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {isAnyEnabled && (
+            <div className="pt-2">
               <Btn
                 onClick={() => {
                   setError('')
@@ -226,17 +432,17 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
                   setMode('disabling')
                 }}
                 color="bg-red-600/80 hover:bg-red-600"
-                className="px-5 py-2.5"
+                className="px-5 py-2.5 text-xs"
               >
-                Disable Two-Factor Authentication
+                Disable All 2FA Methods
               </Btn>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
 
-      {mode === 'enrolling' && (
-        <form onSubmit={handleVerifyEnroll} className="mt-6 space-y-6">
+      {mode === 'enrollingTotp' && (
+        <form onSubmit={handleVerifyEnrollTotp} className="mt-6 space-y-6">
           <div className="border-border bg-bg/60 space-y-4 rounded-xl border p-4">
             <h4 className="text-foreground flex items-center gap-2 text-sm font-semibold">
               <Key className="text-accent h-4 w-4" />
@@ -286,7 +492,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
 
           <div className="flex items-center gap-3 pt-2">
             <Btn type="submit" loading={loading} className="px-6 py-2.5">
-              Verify & Activate 2FA
+              Verify & Activate TOTP
             </Btn>
             <button
               type="button"
@@ -302,18 +508,53 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
         </form>
       )}
 
+      {mode === 'enrollingPin' && (
+        <form onSubmit={handleEnrollPin} className="mt-6 space-y-5">
+          <div className="border-border bg-bg/60 space-y-3 rounded-xl border p-4">
+            <h4 className="text-foreground flex items-center gap-2 text-sm font-semibold">
+              <Lock className="text-accent h-4 w-4" />
+              Set Up PIN Code Authentication
+            </h4>
+            <p className="text-foreground-muted text-xs leading-relaxed">
+              Enter a 4 to 8 digit numerical PIN code. You can use this PIN as an alternative during two-factor authentication sign-in.
+            </p>
+          </div>
+
+          <div className="max-w-xs">
+            <TextInput label="4-8 Digit PIN Code" value={pinInput} type="password" placeholder="••••••••" onChange={setPinInput} />
+          </div>
+
+          <div className="flex items-center gap-3 pt-2">
+            <Btn type="submit" loading={loading} className="px-6 py-2.5">
+              Save PIN Code
+            </Btn>
+            <button
+              type="button"
+              onClick={() => {
+                setMode('idle')
+                setError('')
+                setPinInput('')
+              }}
+              className="text-foreground-muted hover:text-foreground px-3 py-2 text-xs font-medium transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
       {mode === 'disabling' && (
         <form onSubmit={handleDisable2FA} className="mt-6 space-y-5">
           <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
             <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-400" />
             <p className="text-xs leading-relaxed text-amber-200/90">
-              Disabling two-factor authentication will remove the extra security verification step from your account during sign-in.
+              Disabling multi-factor authentication will remove all enrolled authentication methods from your account.
             </p>
           </div>
 
           <div className="max-w-xs">
             <TextInput
-              label="Enter your 6-digit authenticator code"
+              label="Enter 6-digit authenticator code (optional)"
               value={disableCode}
               type="text"
               autocomplete="one-time-code"
@@ -324,7 +565,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
 
           <div className="flex items-center gap-3 pt-2">
             <Btn type="submit" loading={loading} color="bg-red-600/80 hover:bg-red-600" className="px-6 py-2.5">
-              Confirm Disable 2FA
+              Confirm Disable All
             </Btn>
             <button
               type="button"

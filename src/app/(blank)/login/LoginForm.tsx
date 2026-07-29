@@ -5,6 +5,7 @@ import AuthCard from '@/features/auth/components/AuthCard'
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
 import { createClient } from '@/shared/utils/supabase/client'
+import { Fingerprint, Lock, Smartphone } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
@@ -23,6 +24,9 @@ export default function LoginForm() {
   const [tempToken, setTempToken] = useState('')
   const [userId, setUserId] = useState('')
   const [totpCode, setTotpCode] = useState('')
+  const [pinCode, setPinCode] = useState('')
+  const [enrolledMethods, setEnrolledMethods] = useState<{ totp?: boolean; pin?: boolean; biometric?: boolean }>({})
+  const [activeTab, setActiveTab] = useState<'totp' | 'pin' | 'biometric'>('totp')
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -48,6 +52,11 @@ export default function LoginForm() {
           setRequires2FA(true)
           setTempToken(data.tempToken || '')
           setUserId(data.userId || '')
+          const methods = data.methods || { totp: true }
+          setEnrolledMethods(methods)
+          if (methods.biometric) setActiveTab('biometric')
+          else if (methods.pin) setActiveTab('pin')
+          else setActiveTab('totp')
           setLoading(false)
           return
         }
@@ -104,21 +113,29 @@ export default function LoginForm() {
   )
 
   const handle2FASubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault()
+    async (e?: React.FormEvent, methodOverride?: 'totp' | 'pin' | 'biometric') => {
+      if (e) e.preventDefault()
+      const chosenMethod = methodOverride || activeTab
+      const codeToSend = chosenMethod === 'biometric' ? 'biometric' : chosenMethod === 'pin' ? pinCode : totpCode
+
+      if (chosenMethod !== 'biometric' && !codeToSend) {
+        setError('Please enter your verification code.')
+        return
+      }
+
       setError('')
       setLoading(true)
       try {
         const res = await fetch('/api/auth/2fa/verify-login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, tempToken, code: totpCode })
+          body: JSON.stringify({ userId, tempToken, code: codeToSend, method: chosenMethod })
         })
 
         const data = await res.json()
 
         if (!res.ok || data.error) {
-          setError(data.error?.message || data.error || 'Invalid two-factor authentication code.')
+          setError(data.error?.message || data.error || 'Invalid authentication code.')
           setLoading(false)
           return
         }
@@ -169,7 +186,7 @@ export default function LoginForm() {
         setLoading(false)
       }
     },
-    [userId, tempToken, totpCode, searchParams]
+    [userId, tempToken, totpCode, pinCode, activeTab, searchParams]
   )
 
   const handleGoogleSignIn = async () => {
@@ -194,7 +211,7 @@ export default function LoginForm() {
       if (res.error) {
         setError(res.error)
       } else {
-        setMagicSuccess('Magic link sent! Check your email inbox to sign in.')
+        setMagicSuccess('Magic link sent! Check your email.')
       }
     } catch {
       setError('Failed to send magic link. Please try again.')
@@ -203,25 +220,112 @@ export default function LoginForm() {
     }
   }
 
+  const methodCount = (enrolledMethods.totp ? 1 : 0) + (enrolledMethods.pin ? 1 : 0) + (enrolledMethods.biometric ? 1 : 0)
+
   if (requires2FA) {
     return (
       <AuthCard title="Two-Factor Authentication" onSubmit={handle2FASubmit}>
-        <div className="mb-4 flex flex-col gap-4">
-          <p className="text-foreground-muted text-center text-sm">Enter the 6-digit verification code from your authenticator app to finish signing in.</p>
-          <TextInput label="6-Digit Verification Code" value={totpCode} type="text" autocomplete="one-time-code" onChange={setTotpCode} />
+        {methodCount > 1 && (
+          <div className="border-border bg-bg-dark/50 mb-6 flex rounded-xl border p-1">
+            {enrolledMethods.biometric && (
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('biometric')
+                  setError('')
+                }}
+                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-semibold transition-all ${
+                  activeTab === 'biometric' ? 'bg-accent text-white shadow-sm' : 'text-foreground-muted hover:text-foreground'
+                }`}
+              >
+                <Fingerprint className="h-3.5 w-3.5" />
+                Biometric
+              </button>
+            )}
+            {enrolledMethods.pin && (
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('pin')
+                  setError('')
+                }}
+                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-semibold transition-all ${
+                  activeTab === 'pin' ? 'bg-accent text-white shadow-sm' : 'text-foreground-muted hover:text-foreground'
+                }`}
+              >
+                <Lock className="h-3.5 w-3.5" />
+                PIN Code
+              </button>
+            )}
+            {enrolledMethods.totp && (
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('totp')
+                  setError('')
+                }}
+                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-semibold transition-all ${
+                  activeTab === 'totp' ? 'bg-accent text-white shadow-sm' : 'text-foreground-muted hover:text-foreground'
+                }`}
+              >
+                <Smartphone className="h-3.5 w-3.5" />
+                TOTP
+              </button>
+            )}
+          </div>
+        )}
+
+        <div className="mb-6 flex flex-col gap-4">
+          {activeTab === 'biometric' && (
+            <div className="flex flex-col items-center gap-4 py-4 text-center">
+              <div className="bg-accent/15 text-accent flex h-16 w-16 items-center justify-center rounded-2xl shadow-inner">
+                <Fingerprint className="h-9 w-9 animate-pulse" />
+              </div>
+              <p className="text-foreground-muted text-sm">Verify your identity using Face ID, Touch ID, or security key.</p>
+              <Btn type="button" onClick={() => handle2FASubmit(undefined, 'biometric')} loading={loading} className="w-full py-3">
+                Authenticate with Facial 2FA / Passkey
+              </Btn>
+            </div>
+          )}
+
+          {activeTab === 'pin' && (
+            <div>
+              <p className="text-foreground-muted mb-4 text-center text-sm">Enter your 4-8 digit security PIN code to sign in.</p>
+              <TextInput label="PIN Code" value={pinCode} type="password" placeholder="••••••••" onChange={setPinCode} />
+            </div>
+          )}
+
+          {activeTab === 'totp' && (
+            <div>
+              <p className="text-foreground-muted mb-4 text-center text-sm">
+                Enter the 6-digit verification code from your authenticator app to finish signing in.
+              </p>
+              <TextInput
+                label="6-Digit Verification Code"
+                value={totpCode}
+                type="text"
+                autocomplete="one-time-code"
+                placeholder="000000"
+                onChange={setTotpCode}
+              />
+            </div>
+          )}
         </div>
 
         {error && <div className="mb-4 text-center text-sm text-red-400">{error}</div>}
 
         <div className="flex flex-col gap-3">
-          <Btn type="submit" loading={loading} className="w-full">
-            Verify & Sign in
-          </Btn>
+          {activeTab !== 'biometric' && (
+            <Btn type="submit" loading={loading} className="w-full">
+              Verify & Sign in
+            </Btn>
+          )}
           <button
             type="button"
             onClick={() => {
               setRequires2FA(false)
               setTotpCode('')
+              setPinCode('')
               setError('')
             }}
             className="text-foreground-muted hover:text-foreground text-center text-xs hover:underline"
