@@ -475,7 +475,8 @@ export default function DropdownMenu({
                   position: 'absolute',
                   top: menuPosition.top,
                   left: menuPosition.left,
-                  width: menuPosition.width,
+                  minWidth: `max(220px, ${menuPosition.width})`,
+                  width: 'max-content',
                   zIndex: 9999
                 }
               : {})

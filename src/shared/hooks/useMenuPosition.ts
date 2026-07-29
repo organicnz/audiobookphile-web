@@ -52,8 +52,13 @@ export const useMenuPosition = ({
       left = `${triggerBoundingBox.left - portalRect.left + portalContainerRef.current.scrollLeft}px`
       top = `${triggerBoundingBox.bottom - portalRect.top + portalContainerRef.current.scrollTop}px`
     } else {
-      // Position relative to the window/document
-      left = `${triggerBoundingBox.x}px`
+      // Position relative to the window/document with right-edge viewport overflow protection
+      let leftNum = triggerBoundingBox.x
+      const estimatedWidth = Math.max(220, triggerBoundingBox.width, menuRef.current?.offsetWidth || 0)
+      if (leftNum + estimatedWidth > window.innerWidth - 16) {
+        leftNum = Math.max(16, triggerBoundingBox.right - estimatedWidth)
+      }
+      left = `${leftNum}px`
       top = `${triggerBoundingBox.bottom + window.scrollY}px`
     }
 
