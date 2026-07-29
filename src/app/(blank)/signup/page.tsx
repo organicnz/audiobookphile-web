@@ -1,11 +1,9 @@
-import SignupForm from './SignupForm'
+import { redirect } from 'next/navigation'
 
-export const dynamic = 'force-dynamic'
-
+/**
+ * Signup page — DISABLED (invitation-only).
+ * Redirects to login since self-registration is not allowed.
+ */
 export default function SignupPage() {
-  return (
-    <div className="-mt-[var(--header-height)] flex min-h-full items-center justify-center">
-      <SignupForm />
-    </div>
-  )
+  redirect('/login')
 }

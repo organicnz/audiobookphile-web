@@ -44,20 +44,12 @@ export async function signInWithGoogle() {
   }
 }
 
-export async function signUp(email: string, password: string) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/signup`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
-  })
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}))
-    return { error: errorData.error || 'Failed to sign up.' }
-  }
-
-  return { success: true }
+/**
+ * Sign up — DISABLED (invitation-only).
+ * Public self-registration is not allowed. New users must be invited by an admin.
+ */
+export async function signUp(_email: string, _password: string) {
+  return { error: 'Public registration is disabled. Please contact an administrator for an invitation.' }
 }
 
 export async function forgotPassword(email: string) {
