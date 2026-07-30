@@ -1,5 +1,4 @@
 import { SupabaseClient } from '@supabase/supabase-js'
-import { apiRequest } from '@/shared/lib/api/client'
 import type { PlaybackSession, PlayMethod } from '@/types/api'
 import crypto from 'crypto'
 
@@ -72,10 +71,13 @@ export class PlaybackService {
       } as unknown as PlaybackSession
     }
     // Generate session via API
-    const data = await apiRequest<any>('/api/session-play', {
-      method: 'POST',
-      body: JSON.stringify({ itemId: libraryItemId, episodeId })
+    const { data, error } = await this.supabase.functions.invoke('api/session-play', {
+      body: { itemId: libraryItemId, episodeId }
     })
+
+    if (error) {
+      throw new Error(error.message || 'Failed to generate playback session')
+    }
 
     if (data?.error) {
       throw new Error(data.error.message || data.error)
