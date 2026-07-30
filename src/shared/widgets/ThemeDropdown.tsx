@@ -13,6 +13,7 @@ export default function ThemeDropdown(props: ThemeDropdownProps) {
   const t = useTranslations()
 
   const themeOptions = [
+    { text: t('LabelThemeSystem'), value: 'system' },
     { text: t('LabelThemeDark'), value: 'dark' },
     { text: t('LabelThemeLight'), value: 'light' },
     { text: t('LabelThemeBlack'), value: 'black' }

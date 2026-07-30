@@ -675,6 +675,7 @@
   "LabelThemeDark": "Ciemny",
   "LabelThemeLight": "Jasny",
   "LabelThemeSepia": "Sepia",
+  "LabelThemeSystem": "System",
   "LabelTimeDurationXHours": "{0} godzin",
   "LabelTimeDurationXMinutes": "{0} minuty",
   "LabelTimeDurationXSeconds": "{0} sekundy",

@@ -37,7 +37,7 @@ export async function updateSession(request: NextRequest) {
   // Set default theme cookie if missing
   const themeCookie = request.cookies.get('theme')?.value
   if (!themeCookie) {
-    supabaseResponse.cookies.set('theme', 'dark', {
+    supabaseResponse.cookies.set('theme', 'system', {
       httpOnly: false,
       secure: false,
       sameSite: 'lax',

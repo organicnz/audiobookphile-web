@@ -1,59 +1,17 @@
-/* Default theme */
+/* Default theme (System preferred / Light fallback) */
 :root,
-.theme-dark {
-  --tc-primary: #1e1e1e;
-  --tc-primary-hover: #282828;
-  --tc-background: #111111;
-  --tc-background-hover: #ffffff0b;
-  --tc-background-read-only: #161616;
-  --tc-background-disabled: #161616;
-  --tc-foreground: #ededed;
-  --tc-foreground-muted: #d1d5dc;
-  --tc-foreground-subdued: #bbbbbb;
-  --tc-border: #222222;
-
-  --tc-disabled: #737373;
-  --tc-read-only: #d1d5dc;
-
-  --tc-checkbox-disabled: #737373;
-  --tc-checkbox-bg-disabled: #161616;
-
-  --tc-button-selected-bg: #2d2d2d;
-  --tc-button-foreground-muted: #ededed;
-  --tc-button-foreground: #ffffff;
-
-  --tc-dropdown-item-hover: #1e1e1e;
-  --tc-dropdown-item-selected: #2d2d2d;
-  --tc-dropdown-menu-border: #222222;
-
-  --tc-nav-item-hover: #1e1e1e;
-  --tc-nav-item-selected: #2a2a2a;
-
-  --tc-table-header-bg: #161616;
-  --tc-table-row-bg-even: #141414;
-  --tc-table-row-bg-hover: #ffffff0b;
-
-  --tc-page-gradient: linear-gradient(to right bottom, #181818, #161616, #141414, #121212, #111111, #111111, #111111);
-
-  --tc-modal-content-box-shadow: 2px 8px 6px #111111aa;
-  --tc-shadow-media-player: 0px -6px 8px #1111113f;
-
-  --tc-track-bg: #1f2937;
-  --tc-track-progress: #f59e0b;
-}
-
-/* Light theme */
 .theme-light {
-  --tc-primary: #ededed;
-  --tc-primary-hover: #f5f5f5;
-  --tc-background: #fafafa;
-  --tc-background-hover: #0000001a;
-  --tc-background-read-only: #f5f5f5;
-  --tc-background-disabled: #e8e8e8;
-  --tc-foreground: #1a1a1a;
-  --tc-foreground-muted: #6b7280;
-  --tc-foreground-subdued: #94969a;
-  --tc-border: #d4d4d4;
+  --tc-primary: #ffffff;
+  --tc-primary-hover: #fdfbf7;
+  --tc-background: #faf9f6; /* Cream */
+  --tc-background-hover: #f2efe9;
+  --tc-background-read-only: #ffffff;
+  --tc-background-disabled: #eae6df;
+  --tc-foreground: #1a1a1a; /* Dark text */
+  --tc-foreground-muted: #5c5c5c;
+  --tc-foreground-subdued: #8c8c8c;
+  --tc-border: #e5e0d8;
+  --tc-glass-bg: rgba(250, 249, 246, 0.65);
 
   --tc-disabled: #9ca3af;
   --tc-read-only: #6b7280;
@@ -99,6 +57,96 @@
   --tc-track-progress: #374151;
 }
 
+/* System Dark Mode Override */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tc-primary: #ffffff;
+    --tc-primary-hover: #fdfbf7;
+    --tc-background: #111111; /* Dark */
+    --tc-background-hover: #1a1a1a;
+    --tc-background-read-only: #1f1f1f;
+    --tc-background-disabled: #2a2a2a;
+    --tc-foreground: #f5f5f5; /* Light text */
+    --tc-foreground-muted: #a3a3a3;
+    --tc-foreground-subdued: #808080;
+    --tc-border: #333333;
+    --tc-glass-bg: rgba(17, 17, 17, 0.65);
+
+    --tc-disabled: #a39e96;
+    --tc-read-only: #5c5c5c;
+
+    --tc-checkbox-disabled: #a39e96;
+    --tc-checkbox-bg-disabled: #eae6df;
+
+    --tc-button-selected-bg: #ffead1;
+    --tc-button-foreground-muted: #1a1a1a;
+    --tc-button-foreground: #ffffff;
+
+    --tc-dropdown-item-hover: #f2efe9;
+    --tc-dropdown-item-selected: #ffead1;
+    --tc-dropdown-menu-border: #e5e0d8;
+
+    --tc-nav-item-hover: #f2efe9;
+    --tc-nav-item-selected: #ffead1;
+
+    --tc-table-header-bg: #f2efe9;
+    --tc-table-row-bg-even: #ffffff;
+    --tc-table-row-bg-hover: #fdfbf7;
+
+    --tc-page-gradient: none;
+
+    --tc-modal-content-box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08);
+    --tc-shadow-media-player: 0px -4px 12px rgba(0, 0, 0, 0.05);
+
+    --tc-track-bg: #eae6df;
+    --tc-track-progress: #f97316; /* AudioBooth Orange */
+  }
+}
+
+/* Explicit Dark Theme Override */
+.theme-dark {
+  --tc-primary: #ffffff;
+  --tc-primary-hover: #fdfbf7;
+  --tc-background: #111111; /* Dark */
+  --tc-background-hover: #1a1a1a;
+  --tc-background-read-only: #1f1f1f;
+  --tc-background-disabled: #2a2a2a;
+  --tc-foreground: #f5f5f5; /* Light text */
+  --tc-foreground-muted: #a3a3a3;
+  --tc-foreground-subdued: #808080;
+  --tc-border: #333333;
+  --tc-glass-bg: rgba(17, 17, 17, 0.65);
+
+  --tc-disabled: #a39e96;
+  --tc-read-only: #5c5c5c;
+
+  --tc-checkbox-disabled: #a39e96;
+  --tc-checkbox-bg-disabled: #eae6df;
+
+  --tc-button-selected-bg: #ffead1;
+  --tc-button-foreground-muted: #1a1a1a;
+  --tc-button-foreground: #ffffff;
+
+  --tc-dropdown-item-hover: #f2efe9;
+  --tc-dropdown-item-selected: #ffead1;
+  --tc-dropdown-menu-border: #e5e0d8;
+
+  --tc-nav-item-hover: #f2efe9;
+  --tc-nav-item-selected: #ffead1;
+
+  --tc-table-header-bg: #f2efe9;
+  --tc-table-row-bg-even: #ffffff;
+  --tc-table-row-bg-hover: #fdfbf7;
+
+  --tc-page-gradient: none;
+
+  --tc-modal-content-box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08);
+  --tc-shadow-media-player: 0px -4px 12px rgba(0, 0, 0, 0.05);
+
+  --tc-track-bg: #eae6df;
+  --tc-track-progress: #f97316; /* AudioBooth Orange */
+}
+
 /* Black theme */
 .theme-black {
   --tc-primary: #0a0a0a;
@@ -111,6 +159,7 @@
   --tc-foreground-muted: #a3a3a3;
   --tc-foreground-subdued: #808080;
   --tc-border: #262626;
+  --tc-glass-bg: rgba(0, 0, 0, 0.65);
 
   --tc-disabled: #737373;
   --tc-read-only: #a3a3a3;

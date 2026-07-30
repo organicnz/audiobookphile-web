@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers'
 
-export type ThemeName = 'light' | 'dark' | 'black' | string
+export type ThemeName = 'system' | 'light' | 'dark' | 'black' | string
 
-export const DEFAULT_THEME: ThemeName = 'dark'
+export const DEFAULT_THEME: ThemeName = 'system'
 
 /**
  * Get the current theme from cookies (server-side)
