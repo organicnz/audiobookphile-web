@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js'
-
+import { apiRequest } from '@/shared/lib/api/client'
 import type { PlaybackSession, PlayMethod } from '@/types/api'
 import crypto from 'crypto'
 
@@ -71,18 +71,14 @@ export class PlaybackService {
         updated_at: nowMs
       } as unknown as PlaybackSession
     }
-    // Generate session via Edge Function
-    const { data, error } = await this.supabase.functions.invoke(`session-play`, {
+    // Generate session via API
+    const data = await apiRequest<any>('/api/session-play', {
       method: 'POST',
-      body: { itemId: libraryItemId, episodeId }
+      body: JSON.stringify({ itemId: libraryItemId, episodeId })
     })
 
-    if (error) {
-      throw new Error(`Failed to generate playback session: ${error.message}`)
-    }
-
     if (data?.error) {
-      throw new Error(data.error)
+      throw new Error(data.error.message || data.error)
     }
 
     return data as PlaybackSession

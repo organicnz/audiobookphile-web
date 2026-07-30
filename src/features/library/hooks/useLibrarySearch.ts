@@ -2,6 +2,7 @@
 
 import { getCollectionsAction, getPlaylistsAction, searchLibraryAction } from '@/features/library/actions/searchActions'
 import { createClient } from '@/shared/utils/supabase/client'
+import { apiRequest } from '@/shared/lib/api/client'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { Author, BookLibraryItem, Collection, LibraryItem, Playlist, PodcastLibraryItem, SearchLibraryResponse, Series } from '@/types/api'
 import { useCallback, useEffect, useState } from 'react'
@@ -147,13 +148,10 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
       let result: SearchLibraryResponse | null = null
 
       if (useSemanticSearch) {
-        const supabase = createClient()
-        const { data, error } = await supabase.functions.invoke('search-semantic', {
-          body: { query: searchQuery.trim() }
+        const data = await apiRequest<{ results?: any[]; error?: string }>('/api/search/semantic', {
+          method: 'POST',
+          body: JSON.stringify({ query: searchQuery.trim() })
         })
-        if (error) {
-          throw new Error(error.message || 'Semantic search failed')
-        }
         if (data?.error) {
           throw new Error(data.error)
         }
