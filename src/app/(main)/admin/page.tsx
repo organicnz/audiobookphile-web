@@ -14,7 +14,13 @@ async function AnalyticsData() {
   try {
     const resData = await apiRequest<any>('/api/admin-analytics', { method: 'GET' })
     if (resData?.error) throw new Error(resData.error)
-    return <AdminAnalyticsGrid data={resData} />
+    const safeData = {
+      totalUsers: resData?.totalUsers ?? 1,
+      totalLibraries: resData?.totalLibraries ?? 1,
+      totalItems: resData?.totalItems ?? 0,
+      activeSessions: resData?.activeSessions ?? 1
+    }
+    return <AdminAnalyticsGrid data={safeData} />
   } catch (error: any) {
     console.error('Failed to fetch admin analytics:', error)
     return (
@@ -33,7 +39,7 @@ async function AnalyticsData() {
 export default async function AdminDashboardPage() {
   const currentUser = await getCurrentUser()
 
-  if (!currentUser || !['admin', 'root'].includes(currentUser.user.type)) {
+  if (!currentUser?.user || !['admin', 'root'].includes(currentUser.user.type)) {
     return redirect('/')
   }
 

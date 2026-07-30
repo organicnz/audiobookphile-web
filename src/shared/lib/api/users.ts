@@ -107,7 +107,7 @@ export const getCurrentUser = cache(async (): Promise<UserLoginResponse | null> 
     const data = await apiRequest<UserLoginResponse>('/api/me', {
       method: 'GET'
     })
-    return data || null
+    return data?.user ? data : null
   } catch (err) {
     if (err instanceof UnauthorizedError) {
       return null

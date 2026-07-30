@@ -29,7 +29,7 @@ export default async function AccountPage() {
   // Get current theme
   const currentTheme = await getTheme()
 
-  if (!currentUser) {
+  if (!currentUser?.user) {
     return null
   }
 

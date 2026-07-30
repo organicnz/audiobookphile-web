@@ -19,7 +19,7 @@ export default async function SettingsLayout({ children }: Readonly<{ children: 
     redirect('/login')
   }
 
-  if (!currentUser) {
+  if (!currentUser?.user) {
     redirect('/login')
   }
 

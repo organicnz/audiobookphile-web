@@ -85,7 +85,7 @@ export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
           </div>
 
           <div className="mt-4 flex flex-col gap-1">
-            <h2 className="text-4xl font-bold tracking-tight text-white">{kpi.value.toLocaleString()}</h2>
+            <h2 className="text-4xl font-bold tracking-tight text-white">{(kpi.value ?? 0).toLocaleString()}</h2>
             <span className={`inline-flex w-fit items-center rounded-full px-2 py-0.5 text-xs font-medium ${kpi.trendColor}`}>{kpi.trend}</span>
           </div>
 
