@@ -42,7 +42,7 @@ jobs:
   deploy:
     name: Deploy to Vercel Production
     needs: verify
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != ''
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -53,15 +53,17 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install Vercel CLI
-        run: bun add -g vercel@latest
-
-      - name: Deploy to Vercel
+      - name: Check Vercel Token & Deploy
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN is unset; relying on native Vercel Git Integration deployment."
+            exit 0
+          fi
+          bun add -g vercel@latest
           vercel pull --yes --environment=production --token=$VERCEL_TOKEN
           vercel build --prod --token=$VERCEL_TOKEN
           vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
