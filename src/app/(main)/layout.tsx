@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import { MediaProvider } from '@/features/player/contexts/MediaContext'
 import { MetadataProvider } from '@/features/metadata/contexts/MetadataContext'
 import { TasksProvider } from '@/shared/contexts/TasksContext'
@@ -14,11 +15,11 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   try {
     userPayload = await getCurrentUser()
   } catch {
-    userPayload = { user: { id: 'test', email: 'test@test.com', username: 'test', type: 'admin' } }
+    userPayload = null
   }
 
   if (!userPayload || !userPayload.user) {
-    userPayload = { user: { id: 'test', email: 'test@test.com', username: 'test', type: 'admin' } }
+    return redirect('/login')
   }
 
   const { user } = userPayload

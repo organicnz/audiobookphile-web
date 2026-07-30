@@ -54,9 +54,9 @@ export const useMenuPosition = ({
     } else {
       // Position relative to the window/document with right-edge viewport overflow protection
       let leftNum = triggerBoundingBox.x
-      const estimatedWidth = Math.max(220, triggerBoundingBox.width, menuRef.current?.offsetWidth || 0)
+      const estimatedWidth = Math.max(280, triggerBoundingBox.width, menuRef.current?.offsetWidth || 0)
       if (leftNum + estimatedWidth > window.innerWidth - 16) {
-        leftNum = Math.max(16, triggerBoundingBox.right - estimatedWidth)
+        leftNum = Math.max(16, Math.min(triggerBoundingBox.right - estimatedWidth, window.innerWidth - estimatedWidth - 16))
       }
       left = `${leftNum}px`
       top = `${triggerBoundingBox.bottom + window.scrollY}px`
