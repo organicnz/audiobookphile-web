@@ -34,9 +34,13 @@ export default function LoginForm() {
       setError('')
       setLoading(true)
       try {
+        const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
         const res = await fetch('/api/login', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(anonKey ? { apikey: anonKey } : {})
+          },
           body: JSON.stringify({ username: email, password })
         })
 
@@ -88,7 +92,10 @@ export default function LoginForm() {
         // Fetch libraries on the client side to avoid server-side route handler bugs
         try {
           const libsRes = await fetch('/api/libraries', {
-            headers: { Authorization: `Bearer ${data.user.token}` }
+            headers: {
+              Authorization: `Bearer ${data.user.token}`,
+              ...(anonKey ? { apikey: anonKey } : {})
+            }
           })
           if (libsRes.ok) {
             const libsData = await libsRes.json()
