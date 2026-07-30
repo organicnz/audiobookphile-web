@@ -85,11 +85,11 @@ export function AdminInvitePanel() {
         <div className="space-y-4">
           {/* Email */}
           <div className="space-y-1.5">
-            <label htmlFor="invite-email" className="block text-xs font-medium tracking-wide text-white/60 uppercase">
+            <label htmlFor="invite-email" className="text-foreground-muted block text-xs font-medium tracking-wide uppercase">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/30" />
+              <Mail className="text-foreground-subdued pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
               <input
                 id="invite-email"
                 type="email"
@@ -98,15 +98,15 @@ export function AdminInvitePanel() {
                 placeholder="user@example.com"
                 required
                 disabled={isPending}
-                className="w-full rounded-xl border border-white/10 bg-white/5 py-2.5 pr-4 pl-10 text-sm text-white placeholder-white/30 transition-all outline-none focus:border-indigo-500/50 focus:bg-white/10 focus:ring-1 focus:ring-indigo-500/30 disabled:opacity-50"
+                className="border-border bg-background text-foreground placeholder-foreground-subdued focus:border-accent focus:bg-primary focus:ring-accent/30 w-full rounded-xl border py-2.5 pr-4 pl-10 text-sm transition-all outline-none focus:ring-1 disabled:opacity-50"
               />
             </div>
           </div>
 
           {/* Username (optional) */}
           <div className="space-y-1.5">
-            <label htmlFor="invite-username" className="block text-xs font-medium tracking-wide text-white/60 uppercase">
-              Username <span className="text-white/30">(optional)</span>
+            <label htmlFor="invite-username" className="text-foreground-muted block text-xs font-medium tracking-wide uppercase">
+              Username <span className="text-foreground-subdued">(optional)</span>
             </label>
             <input
               id="invite-username"
@@ -115,33 +115,33 @@ export function AdminInvitePanel() {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="johndoe"
               disabled={isPending}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-white/30 transition-all outline-none focus:border-indigo-500/50 focus:bg-white/10 focus:ring-1 focus:ring-indigo-500/30 disabled:opacity-50"
+              className="border-border bg-background text-foreground placeholder-foreground-subdued focus:border-accent focus:bg-primary focus:ring-accent/30 w-full rounded-xl border px-4 py-2.5 text-sm transition-all outline-none focus:ring-1 disabled:opacity-50"
             />
           </div>
 
           {/* User Type */}
           <div className="space-y-1.5">
-            <label htmlFor="invite-user-type" className="block text-xs font-medium tracking-wide text-white/60 uppercase">
+            <label htmlFor="invite-user-type" className="text-foreground-muted block text-xs font-medium tracking-wide uppercase">
               Role
             </label>
             <div className="relative">
-              <Shield className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-white/30" />
+              <Shield className="text-foreground-subdued pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
               <select
                 id="invite-user-type"
                 value={userType}
                 onChange={(e) => setUserType(e.target.value)}
                 disabled={isPending}
-                className="w-full appearance-none rounded-xl border border-white/10 bg-white/5 py-2.5 pr-10 pl-10 text-sm text-white transition-all outline-none focus:border-indigo-500/50 focus:bg-white/10 focus:ring-1 focus:ring-indigo-500/30 disabled:opacity-50"
+                className="border-border bg-background text-foreground focus:border-accent focus:bg-primary focus:ring-accent/30 w-full appearance-none rounded-xl border py-2.5 pr-10 pl-10 text-sm transition-all outline-none focus:ring-1 disabled:opacity-50"
               >
-                <option value="user" className="bg-zinc-900">
+                <option value="user" className="bg-primary text-foreground">
                   User
                 </option>
-                <option value="admin" className="bg-zinc-900">
+                <option value="admin" className="bg-primary text-foreground">
                   Admin
                 </option>
               </select>
               <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">
-                <svg className="h-4 w-4 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="text-foreground-subdued h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
@@ -174,7 +174,7 @@ export function AdminInvitePanel() {
         <button
           type="submit"
           disabled={isPending || !email}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition-all hover:from-indigo-500 hover:to-purple-500 hover:shadow-indigo-500/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+          className="bg-accent text-button-foreground shadow-accent/20 hover:bg-accent/90 hover:shadow-accent/30 mt-5 flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold shadow-lg transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
         >
           {isPending ? (
             <>
@@ -191,8 +191,8 @@ export function AdminInvitePanel() {
       </form>
 
       {/* Decorative glow */}
-      <div className="absolute -right-8 -bottom-8 h-32 w-32 rounded-full bg-indigo-500 opacity-[0.07] blur-2xl" />
-      <div className="absolute -top-8 -left-8 h-24 w-24 rounded-full bg-purple-500 opacity-[0.05] blur-2xl" />
+      <div className="bg-accent absolute -right-8 -bottom-8 h-32 w-32 rounded-full opacity-[0.07] blur-2xl" />
+      <div className="absolute -top-8 -left-8 h-24 w-24 rounded-full bg-amber-500 opacity-[0.05] blur-2xl" />
     </motion.div>
   )
 }

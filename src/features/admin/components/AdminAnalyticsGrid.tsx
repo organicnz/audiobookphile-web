@@ -39,33 +39,37 @@ export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
       title: 'Total Users',
       value: data.totalUsers,
       icon: Users,
-      color: 'bg-blue-500',
+      color: 'bg-amber-500',
+      iconColor: 'text-amber-400',
       trend: '+12% this week',
-      trendColor: 'text-emerald-400 bg-emerald-400/10'
+      trendColor: 'text-amber-400 bg-amber-500/15 border border-amber-500/20'
     },
     {
       title: 'Active Playback Sessions',
       value: data.activeSessions,
       icon: Activity,
-      color: 'bg-green-500',
+      color: 'bg-emerald-500',
+      iconColor: 'text-emerald-400',
       trend: 'Live',
-      trendColor: 'text-emerald-400 bg-emerald-400/10'
+      trendColor: 'text-emerald-400 bg-emerald-500/15 border border-emerald-500/20'
     },
     {
       title: 'Total Library Items',
       value: data.totalItems,
       icon: Book,
-      color: 'bg-purple-500',
+      color: 'bg-accent',
+      iconColor: 'text-accent',
       trend: '+45 this month',
-      trendColor: 'text-emerald-400 bg-emerald-400/10'
+      trendColor: 'text-accent bg-accent/15 border border-accent/20'
     },
     {
       title: 'Libraries Configured',
       value: data.totalLibraries,
       icon: Database,
       color: 'bg-orange-500',
+      iconColor: 'text-orange-400',
       trend: 'Stable',
-      trendColor: 'text-blue-400 bg-blue-400/10'
+      trendColor: 'text-orange-400 bg-orange-500/15 border border-orange-500/20'
     }
   ]
 
@@ -75,18 +79,18 @@ export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
         <motion.div
           key={kpi.title}
           variants={itemVariants}
-          className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl transition-all hover:border-white/20 hover:bg-white/10"
+          className="border-border bg-primary/80 hover:border-accent/40 hover:bg-primary-hover relative overflow-hidden rounded-2xl border p-6 shadow-xl backdrop-blur-md transition-all"
         >
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-white/60">{kpi.title}</p>
-            <div className={`rounded-lg p-2 ${kpi.color} bg-opacity-20`}>
-              <kpi.icon className="h-5 w-5 text-white" />
+            <p className="text-foreground-muted text-sm font-medium">{kpi.title}</p>
+            <div className={`rounded-lg p-2 ${kpi.color}/15`}>
+              <kpi.icon className={`h-5 w-5 ${kpi.iconColor}`} />
             </div>
           </div>
 
           <div className="mt-4 flex flex-col gap-1">
-            <h2 className="text-4xl font-bold tracking-tight text-white">{(kpi.value ?? 0).toLocaleString()}</h2>
-            <span className={`inline-flex w-fit items-center rounded-full px-2 py-0.5 text-xs font-medium ${kpi.trendColor}`}>{kpi.trend}</span>
+            <h2 className="text-foreground text-4xl font-bold tracking-tight">{(kpi.value ?? 0).toLocaleString()}</h2>
+            <span className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${kpi.trendColor}`}>{kpi.trend}</span>
           </div>
 
           {/* Decorative background circle */}
