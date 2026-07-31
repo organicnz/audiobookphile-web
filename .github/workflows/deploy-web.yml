@@ -10,6 +10,7 @@ on:
       - '.github/workflows/deploy-web.yml'
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   verify:
@@ -42,7 +43,7 @@ jobs:
   deploy:
     name: Deploy to Vercel Production
     needs: verify
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
