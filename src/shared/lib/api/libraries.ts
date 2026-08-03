@@ -127,32 +127,11 @@ export const getLibraryAuthors = cache(async (libraryId: string, queryParams?: s
 })
 
 export const getLibraryCollections = cache(async (libraryId: string, queryParams?: string): Promise<GetCollectionsResponse> => {
-  try {
-    return await apiRequest<GetCollectionsResponse>(`/api/libraries/${libraryId}/collections${queryParams ? `?${queryParams}` : ''}`, {})
-  } catch (error) {
-    return {
-      results: [],
-      total: 0,
-      limit: 50,
-      page: 0,
-      sortDesc: false,
-      minified: false,
-      include: ''
-    }
-  }
+  return await apiRequest<GetCollectionsResponse>(`/api/libraries/${libraryId}/collections${queryParams ? `?${queryParams}` : ''}`, {})
 })
 
 export const getLibraryPlaylists = cache(async (libraryId: string, queryParams?: string): Promise<GetPlaylistsResponse> => {
-  try {
-    return await apiRequest<GetPlaylistsResponse>(`/api/libraries/${libraryId}/playlists${queryParams ? `?${queryParams}` : ''}`, {})
-  } catch (error) {
-    return {
-      results: [],
-      total: 0,
-      limit: 50,
-      page: 0
-    }
-  }
+  return await apiRequest<GetPlaylistsResponse>(`/api/libraries/${libraryId}/playlists${queryParams ? `?${queryParams}` : ''}`, {})
 })
 
 export async function deduplicateLibrary(libraryId: string): Promise<{ success: boolean; removedCount: number }> {

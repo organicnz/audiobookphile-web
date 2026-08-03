@@ -1,5 +1,7 @@
 import 'server-only'
 
+import { apiRequest } from '@/shared/lib/api/client'
+
 export interface MediaProgressRow {
   id: string
   library_item_id: string
@@ -28,16 +30,13 @@ export interface UserStatsData {
 
 /**
  * Fetch all data needed for the user stats page server-side.
+ *
+ * Throws on network/API failure rather than swallowing errors silently —
+ * callers (Server Components) should handle the error boundary themselves.
  */
 export async function getUserStatsData(): Promise<UserStatsData> {
-  try {
-    const { apiRequest } = await import('@/shared/lib/api/client')
-    const data = await apiRequest<UserStatsData>('/api/me/stats', {
-      method: 'GET'
-    })
-    return data || { mediaProgress: [], recentSessions: [] }
-  } catch (err) {
-    console.error('[stats] getUserStatsData failed:', err)
-    return { mediaProgress: [], recentSessions: [] }
-  }
+  const data = await apiRequest<UserStatsData>('/api/me/stats', {
+    method: 'GET'
+  })
+  return data ?? { mediaProgress: [], recentSessions: [] }
 }

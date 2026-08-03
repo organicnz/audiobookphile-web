@@ -120,6 +120,10 @@ export function mapLibraryForMobile(lib: MobileLibraryInput): MobileLibraryModel
   // NOTE: This function produces dual snake_case + camelCase output for mobile
   // client compatibility. The return is cast to MobileLibraryModel since the Zod
   // schema only validates the camelCase subset. All fields are present at runtime.
+  //
+  // ⚠️  SYNC WARNING: This mapper duplicates logic from
+  //   audiobookphile-backend/supabase/functions/api/mappers.ts → mapLibraryForMobile
+  // If you change field mappings here, apply the same change in the backend copy.
   return _mapLibraryForMobile(lib) as MobileLibraryModel
 }
 
@@ -166,6 +170,15 @@ export function mapBookForMobile(item: MobileBookInput, progressRecord: MobilePr
   // NOTE: This function produces dual snake_case + camelCase output for mobile
   // client compatibility. The return is cast to MobileBookModel since the Zod
   // schema only validates the camelCase subset. All fields are present at runtime.
+  //
+  // ⚠️  SYNC WARNING: This mapper duplicates logic from
+  //   audiobookphile-backend/supabase/functions/api/mappers.ts → mapBookForMobile
+  // Key difference: the backend version includes duration estimation from file sizes
+  // (96kbps fallback). If you add/change field mappings here, apply the same change
+  // in the backend copy (and vice versa).
+  //
+  // The snake_case keys (library_id, is_file, etc.) are required by the iOS client.
+  // Do not remove them without verifying the mobile client no longer reads them.
 
   return _mapBookForMobile(item, progressRecord) as MobileBookModel
 }
