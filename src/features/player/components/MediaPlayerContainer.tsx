@@ -35,9 +35,8 @@ export default function MediaPlayerContainer() {
     if (!next) return
 
     // We only have the queue metadata here; fetch the full LibraryItem via the
-    // existing playItem path which re-uses the already-loaded item cache.
-    import('@/shared/lib/api/libraries')
-      .then(({ getLibraryItem }) => getLibraryItem(next.libraryItemId))
+    // existing server action which re-uses the already-loaded item cache.
+    getExpandedLibraryItemAction(next.libraryItemId)
       .then((item) => playItem({ libraryItem: item, episodeId: next.episodeId }))
       .catch((err) => console.error('[MediaPlayerContainer] Auto-advance failed:', err))
   }, [playerHandler.state.playerState, streamLibraryItem, playerQueueItems, playItem])
