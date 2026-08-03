@@ -1,64 +1,8 @@
-import {
-  Author,
-  AuthorImagePayload,
-  AuthorQuickMatchPayload,
-  AuthorResponse,
-  AuthorUpdateResponse,
-  BookSearchResult,
-  Collection,
-  CreateApiKeyPayload,
-  CreateCustomMetadataProviderPayload,
-  CreateCustomMetadataProviderResponse,
-  CreateUpdateApiKeyResponse,
-  FetchPodcastFeedResponse,
-  FFProbeData,
-  GetApiKeysResponse,
-  GetAuthorsResponse,
-  GetBackupsResponse,
-  GetCollectionsResponse,
-  GetCustomMetadataProvidersResponse,
-  GetFilesystemPathsResponse,
-  GetLibrariesResponse,
-  GetLibraryItemsResponse,
-  GetListeningSessionsResponse,
-  GetLoggerDataResponse,
-  GetNarratorsResponse,
-  GetOpenListeningSessionsResponse,
-  GetPlaylistsResponse,
-  GetRssFeedsResponse,
-  GetSeriesResponse,
-  GetUsersResponse,
-  Library,
-  LibraryFilterData,
-  LibraryItem,
-  MediaItemShare,
-  MetadataProvidersResponse,
-  MutateBackupsResponse,
-  OpenMediaItemSharePayload,
-  OpenRssFeedPayload,
-  OpenRssFeedResponse,
-  PersonalizedShelf,
-  Playlist,
-  PlaylistItemPayload,
-  PodcastSearchResult,
-  RssPodcastEpisode,
-  SaveLibraryOrderApiResponse,
-  SearchLibraryResponse,
-  Series,
-  ServerStatus,
-  TasksResponse,
-  UpdateAuthorPayload,
-  UpdateLibraryItemMediaPayload,
-  UpdateLibraryItemMediaResponse,
-  UploadCoverResponse,
-  User,
-  UserLoginResponse
-} from '@/types/api'
-import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
-import { cache } from 'react'
-import { apiRequest } from './client'
-import { headers } from 'next/headers'
+import { CreateApiKeyPayload, CreateUpdateApiKeyResponse, GetApiKeysResponse, GetUsersResponse, ServerStatus, User, UserLoginResponse } from '@/types/api'
 import { redirect } from 'next/navigation'
+import { cache } from 'react'
+import { UnauthorizedError } from '../apiErrors'
+import { apiRequest } from './client'
 
 export async function createApiKey(payload: CreateApiKeyPayload): Promise<CreateUpdateApiKeyResponse> {
   return apiRequest<CreateUpdateApiKeyResponse>('/api/api-keys', {
@@ -89,6 +33,7 @@ export const getData = cache(async <T extends Promise<unknown>[]>(...promises: T
   } catch (error) {
     // If any request is unauthorized, redirect to refresh token endpoint
     if (error instanceof UnauthorizedError) {
+      const { headers } = await import('next/headers')
       const currentPath = (await headers()).get('x-current-path')
       return redirect(`/internal-api/refresh?redirect=${encodeURIComponent(currentPath || '')}`)
     }

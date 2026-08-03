@@ -1,8 +1,4 @@
-import { cookies, headers } from 'next/headers'
-import { redirect } from 'next/navigation'
 import { NextResponse } from 'next/server'
-import { cache } from 'react'
-import { UserLoginResponse, ServerStatus } from '@/types/api'
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
 
 export function getServerBaseUrl() {
@@ -91,7 +87,6 @@ async function parseApiResponseBody<T>(response: Response): Promise<T> {
 export async function apiRequest<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   try {
     const isPublic = publicEndpoints.includes(endpoint)
-    const cookieStore = await cookies()
     const baseUrl = getServerBaseUrl()
     const url = `${baseUrl}${endpoint}`
 
