@@ -1,5 +1,6 @@
 'use client'
 
+import { getExpandedLibraryItemAction } from '@/features/player/actions/mediaActions'
 import { useMediaContext } from '@/features/player/contexts/MediaContext'
 import { useAudioPlayerHotkeys } from '@/features/player/hooks/useAudioPlayerHotkeys'
 import { useImageColor } from '@/shared/hooks/useImageColor'
