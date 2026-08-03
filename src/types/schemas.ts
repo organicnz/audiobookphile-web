@@ -1,20 +1,20 @@
 /**
- * ⚠️  SOURCE OF TRUTH
+ * ⚠️  COPY — DO NOT EDIT DIRECTLY
  *
- * This file is the canonical definition of all Zod schemas shared between
- * the backend edge functions and the web application.
+ * The canonical source of truth for these schemas lives at:
+ *   audiobookphile-backend/src/types/schemas.ts
  *
- * The web application keeps a copy at:
- *   audiobookphile-web/src/types/schemas.ts
- *
- * After editing this file:
- *   1. Run `pnpm generate-types` (or `npm run generate-types`) in the backend
- *      workspace to regenerate supabase.ts from the live database.
- *   2. Copy this file to the web location above.
+ * To update:
+ *   1. Edit the backend copy above.
+ *   2. Copy it here.
  *   3. Commit both changes together so the copies stay in sync.
+ *
+ * The web layer adds one web-only augmentation below: `BookMetadataModel` is
+ * pinned to `BookMetadataFlat` (from `@/types/api/models`) so that schema /
+ * interface drift is caught at compile time.
  */
-import { z } from 'zod'
 import type { BookMetadataFlat } from '@/types/api/models'
+import { z } from 'zod'
 
 export const AudioMetadataSchema = z.object({
   filename: z.string().nullish(),

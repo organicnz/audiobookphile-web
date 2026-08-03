@@ -39,19 +39,23 @@ export class NativeAudioProvider implements IAudioProvider {
     const trackDuration = currentTrack.duration || this.player.duration || 0
     const trackEnd = currentTrack.startOffset + trackDuration
 
-    if (trackDuration === 0 || (time >= currentTrack.startOffset && time <= trackEnd)) {
-      const offsetTime = time - currentTrack.startOffset
-      this.player.currentTime = Math.max(0, offsetTime)
+    // Seek within the currently-loaded track if it actually contains the target time.
+    // When trackDuration is 0 (metadata not yet loaded) we fall through to a
+    // cross-track seek so we don't set a bogus negative currentTime.
+    if (trackDuration > 0 && time >= currentTrack.startOffset && time <= trackEnd) {
+      this.player.currentTime = Math.max(0, time - currentTrack.startOffset)
     } else {
+      // Target time is in a different track — find and load it
       const trackIndex = this.audioTracks.findIndex((t) => t.containsTime(time))
       if (trackIndex >= 0) {
         this.startTime = time
         this.currentTrackIndex = trackIndex
         this.loadCurrentTrack()
-      } else {
-        const offsetTime = time - currentTrack.startOffset
-        this.player.currentTime = Math.max(0, offsetTime)
+      } else if (trackDuration > 0) {
+        // No matching track found but we have a valid duration — clamp to current track
+        this.player.currentTime = Math.max(0, time - currentTrack.startOffset)
       }
+      // If trackDuration === 0 and no track found, do nothing — metadata hasn't loaded yet
     }
   }
 

@@ -34,12 +34,15 @@ export default async function LibraryPage({ params }: { params: Promise<{ librar
     personalized = await getLibraryPersonalized(libraryId)
   } catch (err) {
     console.error('Error getting personalized data', err)
-    return null
   }
 
   if (!personalized) {
-    console.error('Error getting personalized data')
-    return null
+    return (
+      <div className="flex w-full flex-col items-center justify-center p-12 text-center">
+        <p className="text-lg font-medium">Unable to load library</p>
+        <p className="mt-2 text-sm text-gray-500">There was a problem fetching your library data. Try refreshing the page.</p>
+      </div>
+    )
   }
 
   return (
