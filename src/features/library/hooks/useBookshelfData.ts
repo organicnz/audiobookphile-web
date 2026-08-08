@@ -101,6 +101,20 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
           })
           return next
         })
+
+        // Proactively prefetch the next page for seamless scrolling performance
+        const nextPage = page + 1
+        if (nextPage * limit < total) {
+          const nextPageQueryKey = [...baseQueryKey, 'page', nextPage, 'limit', limit]
+          queryClient.prefetchQuery({
+            queryKey: nextPageQueryKey,
+            queryFn: async () => {
+              const response = await fetchEntityData(entityType, libraryId, buildPageQueryParams(entityType, query, nextPage, limit))
+              return response as any
+            },
+            staleTime: 5 * 60 * 1000
+          })
+        }
       } catch (err) {
         console.error('Failed to load bookshelf page', page, err)
         setError(err instanceof Error ? err : new Error('An unknown error occurred'))
