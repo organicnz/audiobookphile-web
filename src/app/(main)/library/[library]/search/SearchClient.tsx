@@ -62,6 +62,38 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
         </Btn>
       </form>
 
+      {/* AI Smart Search Quick Filter Pills */}
+      <div className="mb-8 flex flex-wrap items-center gap-2">
+        <span className="flex items-center gap-1 text-xs font-semibold text-cyan-400">
+          <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+          </svg>
+          AI Filters:
+        </span>
+        {[
+          { label: '🚀 Sci-Fi & Space', query: 'Sci-Fi Space' },
+          { label: '🕵️ Mystery & Thriller', query: 'Mystery Thriller' },
+          { label: '💡 Self-Growth & Focus', query: 'Productivity' },
+          { label: '⚔️ High Fantasy', query: 'Fantasy' },
+          { label: '🧠 Mind & Philosophy', query: 'Philosophy' }
+        ].map((pill) => (
+          <button
+            key={pill.label}
+            type="button"
+            onClick={() => {
+              startTransition(() => {
+                const params = new URLSearchParams(searchParams.toString())
+                params.set('q', pill.query)
+                router.push(`/library/${libraryId}/search?${params.toString()}`)
+              })
+            }}
+            className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-md transition-all hover:border-cyan-400/50 hover:bg-cyan-500/10 hover:text-cyan-300 active:scale-95"
+          >
+            {pill.label}
+          </button>
+        ))}
+      </div>
+
       {/* Results */}
       {initialQuery && (
         <p className="text-foreground-muted mb-4 text-sm">
