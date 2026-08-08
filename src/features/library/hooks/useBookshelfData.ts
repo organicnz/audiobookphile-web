@@ -77,7 +77,8 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
             const response = await fetchEntityData(entityType, libraryId, buildPageQueryParams(entityType, query, page, limit))
             return response as any
           },
-          staleTime: 5 * 60 * 1000 // 5 minutes
+          staleTime: 10 * 60 * 1000, // 10 minutes
+          gcTime: 60 * 60 * 1000 // 1 hour memory retention
         })
 
         const results = (data.results || data.authors || []) as BookshelfEntity[]
@@ -112,7 +113,8 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
               const response = await fetchEntityData(entityType, libraryId, buildPageQueryParams(entityType, query, nextPage, limit))
               return response as any
             },
-            staleTime: 5 * 60 * 1000
+            staleTime: 10 * 60 * 1000,
+            gcTime: 60 * 60 * 1000
           })
         }
       } catch (err) {
