@@ -965,3 +965,20 @@ export type FFProbeData = Record<string, unknown>
 export type MediaByType<T extends LibraryItem['mediaType']> = T extends 'book' ? BookMedia : T extends 'podcast' ? PodcastMedia : never
 
 export type MatchResult = BookSearchResult | PodcastSearchResult
+
+export interface ChapterAIInsights {
+  summary: string
+  keyTakeaways: string[]
+  mood?: string
+}
+
+export interface BookAIInsights {
+  bookId: string
+  title: string
+  author: string | null
+  summary: string
+  keyTakeaways: string[]
+  mood: string
+  themes: string[]
+  isCached: boolean
+}
