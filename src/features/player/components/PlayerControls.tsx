@@ -99,11 +99,11 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
               size="custom"
               loading={isLoading}
               outlined={false}
-              className="bg-foreground text-background hover:bg-foreground/90 h-14 w-14 shadow-xl sm:h-16 sm:w-16"
+              className="bg-primary hover:bg-primary/90 shadow-primary/30 h-14 w-14 rounded-full text-white shadow-lg ring-2 ring-white/25 transition-all sm:h-16 sm:w-16"
               onClick={playPause}
               icon={isPlaying ? Pause : Play}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.94 }}
               iconClass={isPlaying ? '' : 'ml-1'}
             />
           </div>

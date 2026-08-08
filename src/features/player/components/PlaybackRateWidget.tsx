@@ -138,22 +138,25 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
   }, [middlewareData.arrow, resolvedPlacement])
 
   const popoverContent = isOpen ? (
-    <div ref={popoverRef} id={`${widgetId}-popover`} role="dialog" style={floatingStyles} className="bg-background z-70 rounded-lg p-2 shadow-lg">
+    <div
+      ref={popoverRef}
+      id={`${widgetId}-popover`}
+      role="dialog"
+      style={floatingStyles}
+      className="bg-background/90 z-70 rounded-2xl border border-white/15 p-3 shadow-2xl backdrop-blur-xl"
+    >
       {/* Preset buttons row */}
-      <div className="mb-2 flex gap-0">
-        {PRESET_RATES.map((rate, index) => (
+      <div className="mb-3 flex gap-1">
+        {PRESET_RATES.map((rate) => (
           <button
             key={rate}
             type="button"
             onClick={() => handlePresetClick(rate)}
             className={mergeClasses(
-              'px-3 py-1.5 text-sm font-medium transition-colors',
-              'border-border border',
-              index === 0 ? 'rounded-l-md' : '',
-              index === PRESET_RATES.length - 1 ? 'rounded-r-md' : '',
+              'rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all',
               playbackRate === rate
-                ? 'bg-button-selected-bg text-button-foreground'
-                : 'text-button-foreground-muted hover:bg-button-selected-bg hover:text-button-foreground bg-transparent'
+                ? 'bg-primary border-primary shadow-primary/30 text-white shadow-md'
+                : 'text-foreground/70 hover:text-foreground border-white/10 bg-white/5 hover:bg-white/15'
             )}
           >
             {rate}x
@@ -164,19 +167,17 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
       {/* Increment/decrement row */}
       <div className="flex items-center gap-2">
         {/* Minus button */}
-        <IconBtn onClick={handleDecrement} icon={Minus} />
+        <IconBtn onClick={handleDecrement} icon={Minus} size="small" />
 
         {/* Current rate display */}
-        <div className="text-foreground flex min-w-[100px] flex-1 items-center justify-center text-3xl font-semibold tabular-nums">
-          {formatRate(playbackRate)}x
-        </div>
+        <div className="text-foreground flex min-w-[100px] flex-1 items-center justify-center text-2xl font-bold tabular-nums">{formatRate(playbackRate)}x</div>
 
         {/* Plus button */}
-        <IconBtn onClick={handleIncrement} icon={Plus} />
+        <IconBtn onClick={handleIncrement} icon={Plus} size="small" />
       </div>
 
       {/* Arrow */}
-      <div ref={arrowRef} style={arrowStyles} className="bg-background absolute h-2 w-2 rotate-45" />
+      <div ref={arrowRef} style={arrowStyles} className="bg-background/90 absolute h-2 w-2 rotate-45 border-r border-b border-white/15" />
     </div>
   ) : null
 
@@ -190,7 +191,7 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
         aria-expanded={isOpen}
         aria-controls={`${widgetId}-popover`}
         aria-label={`${t('LabelPlaybackRate')}: ${formatRate(playbackRate)}x`}
-        className="text-foreground-muted hover:text-foreground text-base font-medium tabular-nums transition-colors"
+        className="text-foreground/80 hover:text-foreground flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold tabular-nums backdrop-blur-md transition-all hover:bg-white/15 active:scale-95"
       >
         {formatRate(playbackRate)}x
       </button>

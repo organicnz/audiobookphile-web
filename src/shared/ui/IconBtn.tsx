@@ -13,6 +13,7 @@ interface IconBtnProps {
   outlined?: boolean
   borderless?: boolean
   loading?: boolean
+  isActive?: boolean
   size?: 'small' | 'medium' | 'large' | 'auto' | 'custom'
   iconClass?: string
   ariaLabel?: string
@@ -47,6 +48,7 @@ export default function IconBtn({
   outlined = true,
   borderless = false,
   loading = false,
+  isActive = false,
   size = 'medium',
   iconClass,
   ariaLabel,
@@ -67,7 +69,8 @@ export default function IconBtn({
   const isDisabled = disabled || loading
 
   const sizeClass = size === 'small' ? 'w-9' : size === 'large' ? 'w-11' : size === 'medium' ? 'w-10' : size === 'auto' ? 'w-auto' : ''
-  const classList = mergeClasses(sizeClass, className)
+  const activeClass = isActive ? 'bg-primary/20 text-primary border-primary/40 shadow-primary/20' : ''
+  const classList = mergeClasses(sizeClass, activeClass, className)
 
   const iconSize = size === 'small' ? 18 : size === 'large' ? 24 : 20
 

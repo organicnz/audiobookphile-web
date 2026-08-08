@@ -47,12 +47,12 @@ const ButtonBase = ({
 }: ButtonBaseProps) => {
   const buttonClass = mergeClasses(
     'relative flex items-center justify-center overflow-hidden transition-all duration-200 select-none font-sans font-semibold',
-    'rounded-xl border shadow-sm',
-    !borderless && 'bg-primary/80 backdrop-blur-md border-white/10 hover:border-white/20',
+    'rounded-2xl border shadow-md shadow-black/20',
+    !borderless && 'bg-white/10 backdrop-blur-md border-white/15 hover:border-white/30 hover:bg-white/15',
     borderless && 'border-transparent bg-transparent shadow-none text-foreground/60 hover:text-foreground',
 
     // Focus states
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
 
     // Sizing
     size === 'small'
@@ -79,9 +79,9 @@ const ButtonBase = ({
 
   const animationProps = !disabled
     ? {
-        whileHover: whileHover ?? { scale: 1.02, y: -1 },
-        whileTap: whileTap ?? { scale: 0.97 },
-        transition: transition ?? { type: 'spring', stiffness: 500, damping: 25 }
+        whileHover: whileHover ?? { scale: 1.03, y: -1 },
+        whileTap: whileTap ?? { scale: 0.96 },
+        transition: transition ?? { type: 'spring', stiffness: 450, damping: 22 }
       }
     : {}
 

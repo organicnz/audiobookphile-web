@@ -132,16 +132,16 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
       id={`${widgetId}-popover`}
       role="dialog"
       style={floatingStyles}
-      className="bg-background z-70 flex flex-col gap-2 rounded-lg p-3 shadow-lg"
+      className="bg-background/90 z-70 flex flex-col gap-2 rounded-2xl border border-white/15 p-3.5 shadow-2xl backdrop-blur-xl"
     >
-      <div className="text-foreground mb-1 text-center text-sm font-semibold">Sleep Timer</div>
-      <div className="grid grid-cols-5 gap-1">
+      <div className="text-foreground mb-1 text-center text-xs font-bold tracking-wider uppercase opacity-70">Sleep Timer</div>
+      <div className="grid grid-cols-5 gap-1.5">
         {PRESET_DURATIONS.map((minutes) => (
           <button
             key={minutes}
             type="button"
             onClick={() => handleStartTimer(minutes)}
-            className="border-border text-button-foreground-muted hover:bg-button-selected-bg hover:text-button-foreground rounded-md border px-3 py-1.5 text-sm font-medium transition-colors"
+            className="text-foreground/80 hover:bg-primary hover:border-primary hover:shadow-primary/30 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold transition-all hover:text-white hover:shadow-md active:scale-95"
           >
             {minutes}m
           </button>
@@ -151,12 +151,12 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
         <button
           type="button"
           onClick={handleStopTimer}
-          className="bg-error/10 text-error hover:bg-error/20 mt-2 w-full rounded-md py-1.5 text-sm font-medium transition-colors"
+          className="bg-error/15 text-error border-error/30 hover:bg-error/25 mt-2 w-full rounded-xl border py-1.5 text-xs font-bold transition-all active:scale-95"
         >
           Cancel Timer
         </button>
       )}
-      <div ref={arrowRef} style={arrowStyles} className="bg-background absolute h-2 w-2 rotate-45" />
+      <div ref={arrowRef} style={arrowStyles} className="bg-background/90 absolute h-2 w-2 rotate-45 border-r border-b border-white/15" />
     </div>
   ) : null
 
@@ -170,12 +170,14 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
         aria-controls={`${widgetId}-popover`}
         aria-label="Sleep Timer"
         className={mergeClasses(
-          'flex items-center gap-1.5 p-2 transition-colors',
-          sleepTimerRemaining !== null ? 'text-primary' : 'text-foreground/60 hover:text-foreground'
+          'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold backdrop-blur-md transition-all active:scale-95',
+          sleepTimerRemaining !== null
+            ? 'bg-primary/20 text-primary border-primary/40 shadow-primary/20 shadow-md'
+            : 'text-foreground/70 hover:text-foreground border-white/10 bg-white/5 hover:bg-white/15'
         )}
       >
-        <Moon size={20} />
-        {sleepTimerRemaining !== null && <span className="text-xs font-semibold tabular-nums">{formatRemainingTime(sleepTimerRemaining)}</span>}
+        <Moon size={15} />
+        {sleepTimerRemaining !== null && <span className="tabular-nums">{formatRemainingTime(sleepTimerRemaining)}</span>}
       </button>
 
       {mounted && typeof document !== 'undefined' && createPortal(popoverContent, document.body)}

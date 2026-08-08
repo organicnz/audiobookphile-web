@@ -1,5 +1,6 @@
 'use client'
 
+import Btn from '@/shared/ui/Btn'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { getLibraryItemCoverSrc, getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import Link from 'next/link'
@@ -18,35 +19,34 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
-  const items = useMemo(() => {
-    if (!initialResults) return []
-    if (Array.isArray(initialResults)) return initialResults
-    if (Array.isArray(initialResults.results)) {
-      return initialResults.results.map((r: any) => r.libraryItem || r)
-    }
-    if (Array.isArray(initialResults.book)) {
-      return initialResults.book.map((r: any) => r.libraryItem || r)
-    }
-    return []
-  }, [initialResults])
-
   const handleSearch = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
-      const form = e.currentTarget
-      const q = (form.elements.namedItem('q') as HTMLInputElement).value.trim()
-      if (!q) return
+      const formData = new FormData(e.currentTarget)
+      const q = (formData.get('q') as string) || ''
       startTransition(() => {
-        router.push(`/library/${libraryId}/search?q=${encodeURIComponent(q)}`)
+        const params = new URLSearchParams(searchParams.toString())
+        if (q) {
+          params.set('q', q)
+        } else {
+          params.delete('q')
+        }
+        router.push(`/library/${libraryId}/search?${params.toString()}`)
       })
     },
-    [libraryId, router]
+    [libraryId, router, searchParams]
   )
+
+  const items = useMemo(() => {
+    return initialResults?.results || initialResults?.items || []
+  }, [initialResults])
 
   const placeholder = getPlaceholderCoverUrl()
 
   return (
-    <div className="w-full p-6">
+    <div className="container mx-auto px-4 py-6">
+      <h1 className="mb-6 text-2xl font-bold">{t('ButtonSearch')}</h1>
+
       {/* Search bar */}
       <form onSubmit={handleSearch} className="mb-8 flex gap-2">
         <input
@@ -57,9 +57,9 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
           className="bg-bg-light border-border focus:ring-primary flex-1 rounded-md border px-4 py-2 text-sm focus:ring-2 focus:outline-none"
           autoFocus
         />
-        <button type="submit" disabled={isPending} className="bg-primary rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50">
-          {isPending ? '...' : t('ButtonSearch')}
-        </button>
+        <Btn type="submit" loading={isPending} disabled={isPending} size="small">
+          {t('ButtonSearch')}
+        </Btn>
       </form>
 
       {/* Results */}

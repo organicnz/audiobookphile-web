@@ -1,5 +1,6 @@
 'use client'
 
+import Btn from '@/shared/ui/Btn'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useUser } from '@/shared/contexts/UserContext'
@@ -283,9 +284,9 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
         <div className="flex h-full flex-col items-center justify-center p-10 text-center">
           <p className="mb-2 text-red-500">{t('MessageFailedToLoadData')}</p>
           <p className="mb-4 text-sm text-gray-500">{error.message}</p>
-          <button onClick={() => loadPage(0)} className="rounded bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600">
+          <Btn onClick={() => loadPage(0)} size="small">
             {t('ButtonRetry')}
-          </button>
+          </Btn>
         </div>
       )}
 
