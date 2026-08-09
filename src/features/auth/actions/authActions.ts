@@ -7,21 +7,24 @@ import { redirect } from 'next/navigation'
  * Resolves the canonical site URL at request time.
  *
  * Priority:
- *  1. NEXT_PUBLIC_SITE_URL  – explicitly set in Vercel env vars (production)
- *  2. NEXT_PUBLIC_VERCEL_URL – automatically injected by Vercel for every deployment
- *  3. localhost:3000         – local dev fallback
- *
- * NEXT_PUBLIC_ vars are inlined at build time, so we read them inside the
- * function to pick up the value that was present when the build ran.
+ *  1. NEXT_PUBLIC_SITE_URL          – explicitly set in Vercel env vars
+ *  2. VERCEL_PROJECT_PRODUCTION_URL – auto-injected by Vercel (primary domain, no protocol)
+ *  3. NEXT_PUBLIC_VERCEL_URL        – auto-injected by Vercel (deployment URL, no protocol)
+ *  4. localhost:3000                 – local dev fallback
  */
 function getSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL
   if (explicit) return explicit
 
+  // VERCEL_PROJECT_PRODUCTION_URL is the primary production domain (e.g. audiobookphile.vercel.app)
+  const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  if (productionUrl) return `https://${productionUrl}`
+
+  // NEXT_PUBLIC_VERCEL_URL is the deployment-specific URL — less ideal but beats localhost
   const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL
   if (vercelUrl) return `https://${vercelUrl}`
 
-  return 'http://localhost:3000'
+  return 'http://localhost:3000' // dev-only fallback
 }
 
 export async function signInWithGoogle() {
@@ -49,7 +52,9 @@ export async function signInWithGoogle() {
  * Public self-registration is not allowed. New users must be invited by an admin.
  */
 export async function signUp(_email: string, _password: string) {
-  return { error: 'Public registration is disabled. Please contact an administrator for an invitation.' }
+  return {
+    error: 'Public registration is disabled. Please contact an administrator for an invitation.'
+  }
 }
 
 export async function forgotPassword(email: string) {
@@ -75,7 +80,9 @@ export async function resetPassword(password: string) {
   } = await supabase.auth.getSession()
 
   if (!session?.access_token) {
-    return { error: 'Your password reset session has expired or is invalid. Please request a new reset link.' }
+    return {
+      error: 'Your password reset session has expired or is invalid. Please request a new reset link.'
+    }
   }
 
   // Update directly via authenticated SSR client

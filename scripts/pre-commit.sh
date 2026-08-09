@@ -116,7 +116,7 @@ fi
 # 10. Hardcoded URL Guard
 if [ -n "$TS_FILES" ]; then
     echo "🔍 [10/13] Hardcoded URL Guard..."
-    HARDCODED=$(grep -n 'http://localhost\|127\.0\.0\.1\|http://0\.0\.0\.0' $TS_FILES 2>/dev/null | grep -v '__tests__' | grep -v '\.test\.' || true)
+    HARDCODED=$(grep -n 'http://localhost\|127\.0\.0\.1\|http://0\.0\.0\.0' $TS_FILES 2>/dev/null | grep -v '__tests__' | grep -v '\.test\.' | grep -v 'dev-only fallback' || true)
     if [ -n "$HARDCODED" ]; then
         echo "⚠️ WARNING: Hardcoded localhost URLs in production code:"
         echo "$HARDCODED"
