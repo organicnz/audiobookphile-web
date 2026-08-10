@@ -1,37 +1,8 @@
-import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/shared/lib/api/users'
-import { apiRequest } from '@/shared/lib/api/client'
-import { AdminAnalyticsGrid } from '@/features/admin/components/AdminAnalyticsGrid'
-import { AdminAnalyticsSkeleton } from '@/features/admin/components/AdminAnalyticsSkeleton'
+import AdminAnalyticsWidget from '@/features/admin/components/AdminAnalyticsWidget'
 
 export const dynamic = 'force-dynamic'
-
-async function AnalyticsData() {
-  try {
-    const resData = await apiRequest<any>('/api/admin-analytics', { method: 'GET' })
-    if (resData?.error) throw new Error(resData.error)
-    const safeData = {
-      totalUsers: resData?.totalUsers ?? 1,
-      totalLibraries: resData?.totalLibraries ?? 1,
-      totalItems: resData?.totalItems ?? 0,
-      activeSessions: resData?.activeSessions ?? 1
-    }
-    return <AdminAnalyticsGrid data={safeData} />
-  } catch (error: any) {
-    console.error('Failed to fetch analytics:', error)
-    return (
-      <AdminAnalyticsGrid
-        data={{
-          totalUsers: 1,
-          totalLibraries: 1,
-          totalItems: 0,
-          activeSessions: 1
-        }}
-      />
-    )
-  }
-}
 
 export default async function AnalyticsPage() {
   const currentUser = await getCurrentUser()
@@ -47,9 +18,7 @@ export default async function AnalyticsPage() {
         <p className="text-foreground-muted">Monitor your server&apos;s health and user activity.</p>
       </div>
 
-      <Suspense fallback={<AdminAnalyticsSkeleton />}>
-        <AnalyticsData />
-      </Suspense>
+      <AdminAnalyticsWidget />
     </div>
   )
 }

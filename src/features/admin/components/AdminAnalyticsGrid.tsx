@@ -4,10 +4,10 @@ import { motion, Variants } from 'framer-motion'
 import { Users, Activity, Book, Database } from 'lucide-react'
 
 export interface AdminAnalyticsData {
-  totalUsers: number
-  totalLibraries: number
-  totalItems: number
-  activeSessions: number
+  totalUsers: number | null
+  totalLibraries: number | null
+  totalItems: number | null
+  activeSessions: number | null
 }
 
 const containerVariants: Variants = {
@@ -89,7 +89,9 @@ export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
           </div>
 
           <div className="mt-4 flex flex-col gap-1">
-            <h2 className="text-foreground text-4xl font-bold tracking-tight">{(kpi.value ?? 0).toLocaleString()}</h2>
+            <h2 className="text-foreground text-4xl font-bold tracking-tight">
+              {kpi.value === null || kpi.value === undefined ? '—' : kpi.value.toLocaleString()}
+            </h2>
             <span className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${kpi.trendColor}`}>{kpi.trend}</span>
           </div>
 

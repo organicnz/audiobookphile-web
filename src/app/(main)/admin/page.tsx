@@ -2,8 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Settings, ShieldAlert, Sparkles } from 'lucide-react'
 import { getCurrentUser } from '@/shared/lib/api'
-import { apiRequest } from '@/shared/lib/api/client'
-import { AdminAnalyticsGrid } from '@/features/admin/components/AdminAnalyticsGrid'
+import AdminAnalyticsWidget from '@/features/admin/components/AdminAnalyticsWidget'
 import { AdminInvitePanel } from '@/features/admin/components/AdminInvitePanel'
 
 export const dynamic = 'force-dynamic'
@@ -13,26 +12,6 @@ export default async function AdminDashboardPage() {
 
   if (!currentUser?.user || !['admin', 'root'].includes(currentUser.user.type)) {
     return redirect('/')
-  }
-
-  let probeResult = ''
-  let analyticsData = {
-    totalUsers: 1,
-    totalLibraries: 1,
-    totalItems: 0,
-    activeSessions: 1
-  }
-  try {
-    const resData = await apiRequest<any>('/api/admin-analytics', { method: 'GET' })
-    probeResult = JSON.stringify(resData).slice(0, 500)
-    analyticsData = {
-      totalUsers: resData?.totalUsers ?? 1,
-      totalLibraries: resData?.totalLibraries ?? 1,
-      totalItems: resData?.totalItems ?? 0,
-      activeSessions: resData?.activeSessions ?? 1
-    }
-  } catch (error: any) {
-    probeResult = `THREW: ${error?.message ?? String(error)} ${error?.stack ?? ''}`.slice(0, 500)
   }
 
   const roleBadge = currentUser.user.type === 'root' ? 'ROOT ADMINISTRATOR' : 'ADMINISTRATOR'
@@ -77,11 +56,10 @@ export default async function AdminDashboardPage() {
         <p className="text-foreground-muted mt-2 text-base">Real-time server telemetry, active sessions, and user invite management.</p>
       </div>
 
-      {/* Analytics Telemetry Grid */}
+      {/* Analytics Telemetry Grid (client-fetched) */}
       <div className="mb-12">
         <h2 className="text-foreground-subdued mb-4 text-xs font-bold tracking-wider uppercase">System Analytics</h2>
-        <AdminAnalyticsGrid data={analyticsData} />
-        <pre className="border-border bg-primary/60 mt-4 rounded-xl border p-4 text-xs break-all whitespace-pre-wrap opacity-70">live probe: {probeResult}</pre>
+        <AdminAnalyticsWidget />
       </div>
 
       {/* User Management & Invitations */}
