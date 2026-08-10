@@ -24,6 +24,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         </div>
         <h1 className="mb-2 text-4xl font-bold">Something went wrong</h1>
         <p className="text-foreground-muted mx-auto max-w-md">An unexpected error occurred. We&apos;ve been notified and are looking into it.</p>
+        {error?.digest && <p className="text-foreground-subdued mt-4 font-mono text-xs">digest: {error.digest}</p>}
       </div>
 
       <div className="flex gap-4">
