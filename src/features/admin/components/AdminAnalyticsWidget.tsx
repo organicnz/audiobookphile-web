@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { apiRequest } from '@/shared/lib/api/client'
+import { apiRequest } from '@/shared/lib/api/browser'
 import { AdminAnalyticsGrid, type AdminAnalyticsData } from './AdminAnalyticsGrid'
 import { AdminAnalyticsSkeleton } from './AdminAnalyticsSkeleton'
 
