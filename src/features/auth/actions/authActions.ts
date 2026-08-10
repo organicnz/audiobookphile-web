@@ -112,21 +112,33 @@ export async function resetPassword(password: string) {
 export async function signInWithMagicLink(email: string) {
   const siteUrl = getSiteUrl()
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/magic-link`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email,
-      redirectTo: `${siteUrl}/auth/callback?next=/library`
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/magic-link`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(anonKey ? { apikey: anonKey } : {})
+      },
+      body: JSON.stringify({
+        email,
+        redirectTo: `${siteUrl}/auth/callback?next=/library`
+      })
     })
-  })
 
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}))
-    return { error: errorData.error || 'Failed to send magic link.' }
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}))
+      return { error: errorData.error || 'Failed to send magic link.' }
+    }
+
+    return { success: true }
+  } catch (err) {
+    console.error('[signInWithMagicLink] Network error:', err)
+    return {
+      error: 'Unable to connect. Please check your connection and try again.'
+    }
   }
-
-  return { success: true }
 }
 
 export async function inviteUserByEmail(email: string, username?: string, userType?: string) {

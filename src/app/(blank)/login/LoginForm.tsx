@@ -215,13 +215,17 @@ export default function LoginForm() {
     setMagicLoading(true)
     try {
       const res = await signInWithMagicLink(email)
-      if (res.error) {
+      if (res?.error) {
         setError(res.error)
-      } else {
+      } else if (res?.success) {
         setMagicSuccess('Magic link sent! Check your email.')
+      } else {
+        setError('Unexpected response. Please try again.')
       }
-    } catch {
-      setError('Failed to send magic link. Please try again.')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      console.error('[LoginForm] Magic link error:', message)
+      setError(message || 'Failed to send magic link. Please try again.')
     } finally {
       setMagicLoading(false)
     }
