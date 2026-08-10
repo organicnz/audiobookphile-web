@@ -1,13 +1,30 @@
 'use client'
 
 import { useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs'
 import Btn from '@/shared/ui/Btn'
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    // Log the error to an error reporting service
+    Sentry.captureException(error, {
+      tags: { digest: error?.digest ?? 'none' }
+    })
     console.error('Application Error:', error)
   }, [error])
+
+  const buildDiagnostics = () => {
+    return [
+      `digest: ${error?.digest ?? 'none'}`,
+      `route: ${window.location.pathname}${window.location.search}`,
+      `time: ${new Date().toISOString()}`,
+      `ua: ${navigator.userAgent}`,
+      `error: ${error?.name}: ${error?.message}`
+    ].join('\n')
+  }
+
+  const copyDiagnostics = () => {
+    navigator.clipboard?.writeText(buildDiagnostics())
+  }
 
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-6 text-center">
@@ -25,6 +42,17 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         <h1 className="mb-2 text-4xl font-bold">Something went wrong</h1>
         <p className="text-foreground-muted mx-auto max-w-md">An unexpected error occurred. We&apos;ve been notified and are looking into it.</p>
         {error?.digest && <p className="text-foreground-subdued mt-4 font-mono text-xs">digest: {error.digest}</p>}
+        {typeof window !== 'undefined' && (
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <button
+              onClick={copyDiagnostics}
+              className="border-border text-foreground-subdued hover:text-foreground rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors"
+            >
+              Copy diagnostics
+            </button>
+            {typeof window !== 'undefined' && <span className="text-foreground-subdued font-mono text-xs">{window.location.pathname}</span>}
+          </div>
+        )}
       </div>
 
       <div className="flex gap-4">
