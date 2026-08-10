@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
+import { getCurrentUser } from '@/shared/lib/api/users'
 import AppBar from '../AppBar'
 
 export const metadata: Metadata = {
@@ -6,7 +8,15 @@ export const metadata: Metadata = {
   description: 'audiobookphile server administration and telemetry'
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const currentUser = await getCurrentUser()
+
+  if (!currentUser?.user || !['admin', 'root'].includes(currentUser.user.type)) {
+    redirect('/')
+  }
+
   return (
     <>
       <AppBar />
