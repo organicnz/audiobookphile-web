@@ -4,7 +4,6 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getLocale } from 'next-intl/server'
 
 import { Providers } from '@/shared/Providers'
-import { Analytics } from '@vercel/analytics/react'
 import { CardSizeProvider } from '../features/library/contexts/CardSizeContext'
 import { ToastProvider } from '../shared/contexts/ToastContext'
 import { getTheme } from '../shared/lib/theme'
@@ -47,7 +46,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <ToastProvider>
               <CardSizeProvider>
                 <Providers>{children}</Providers>
-                <Analytics />
               </CardSizeProvider>
             </ToastProvider>
           </NextIntlClientProvider>
