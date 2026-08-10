@@ -1,106 +1,46 @@
-import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { ArrowLeft, Settings, ShieldAlert, Sparkles } from 'lucide-react'
 import { getCurrentUser } from '@/shared/lib/api/users'
-import { apiRequest } from '@/shared/lib/api/client'
-import { AdminAnalyticsGrid } from '@/features/admin/components/AdminAnalyticsGrid'
-import { AdminAnalyticsSkeleton } from '@/features/admin/components/AdminAnalyticsSkeleton'
-import { AdminInvitePanel } from '@/features/admin/components/AdminInvitePanel'
+import { getServerBaseUrl } from '@/shared/lib/api/client'
 
 export const dynamic = 'force-dynamic'
 
-async function AnalyticsData() {
+async function probe(endpoint: string) {
   try {
-    const resData = await apiRequest<any>('/api/admin-analytics', { method: 'GET' })
-    if (resData?.error) throw new Error(resData.error)
-    const safeData = {
-      totalUsers: resData?.totalUsers ?? 1,
-      totalLibraries: resData?.totalLibraries ?? 1,
-      totalItems: resData?.totalItems ?? 0,
-      activeSessions: resData?.activeSessions ?? 1
-    }
-    return <AdminAnalyticsGrid data={safeData} />
-  } catch (error: any) {
-    console.error('Failed to fetch admin analytics:', error)
-    return (
-      <AdminAnalyticsGrid
-        data={{
-          totalUsers: 1,
-          totalLibraries: 1,
-          totalItems: 0,
-          activeSessions: 1
-        }}
-      />
-    )
+    const res = await fetch(`${getServerBaseUrl()}${endpoint}`, {
+      headers: {
+        apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
+      }
+    })
+    const body = await res.text()
+    return `${res.status} | ${body.slice(0, 160)}`
+  } catch (e) {
+    return `THREW: ${e instanceof Error ? e.message : String(e)}`
   }
 }
 
-export default async function AdminDashboardPage() {
-  const currentUser = await getCurrentUser()
+export default async function AdminDiagnosticsPage() {
+  let currentUser
+  try {
+    currentUser = await getCurrentUser()
+  } catch {
+    currentUser = null
+  }
 
   if (!currentUser?.user || !['admin', 'root'].includes(currentUser.user.type)) {
     return redirect('/')
   }
 
-  const roleBadge = currentUser.user.type === 'root' ? 'ROOT ADMINISTRATOR' : 'ADMINISTRATOR'
+  const me = await probe('/api/me')
+  const analytics = await probe('/api/admin-analytics')
 
   return (
-    <div className="mx-auto w-full max-w-6xl p-6 md:p-10">
-      {/* Bleeding-Edge Navigation Banner */}
-      <div className="border-border bg-primary/80 mb-8 flex flex-col gap-4 rounded-2xl border p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="/library"
-            className="border-border bg-primary hover:border-accent/40 hover:bg-primary-hover group text-foreground inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold shadow-sm transition-all hover:shadow-md"
-          >
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-            <span>Return to Library</span>
-          </Link>
-
-          <Link
-            href="/settings"
-            className="border-border bg-primary/50 hover:border-border hover:bg-primary text-foreground-muted hover:text-foreground inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all"
-          >
-            <Settings className="text-foreground-muted h-4 w-4" />
-            <span>Server Settings</span>
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="border-accent/30 bg-accent/15 text-accent inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold tracking-wider uppercase">
-            <ShieldAlert className="text-accent h-3.5 w-3.5" />
-            <span>{roleBadge}</span>
-          </span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
-            <span>Live System</span>
-          </span>
-        </div>
-      </div>
-
-      {/* Dashboard Title & Intro */}
-      <div className="mb-8">
-        <h1 className="text-foreground text-3xl font-extrabold tracking-tight md:text-4xl">Admin Dashboard</h1>
-        <p className="text-foreground-muted mt-2 text-base">Real-time server telemetry, active sessions, and user invite management.</p>
-      </div>
-
-      {/* Analytics Telemetry Grid */}
-      <div className="mb-12">
-        <h2 className="text-foreground-subdued mb-4 text-xs font-bold tracking-wider uppercase">System Analytics</h2>
-        <Suspense fallback={<AdminAnalyticsSkeleton />}>
-          <AnalyticsData />
-        </Suspense>
-      </div>
-
-      {/* User Management & Invitations */}
-      <div className="border-border bg-primary/80 rounded-2xl border p-6 backdrop-blur-xl">
-        <h2 className="text-foreground mb-1 text-xl font-bold tracking-tight">User Management</h2>
-        <p className="text-foreground-muted mb-6 text-sm">Invite new members to your server. Newly invited users will receive an enrollment token via email.</p>
-        <div className="max-w-xl">
-          <AdminInvitePanel />
-        </div>
-      </div>
+    <div className="mx-auto w-full max-w-4xl p-8">
+      <h1 className="mb-4 text-2xl font-bold">ADMIN DIAGNOSTICS</h1>
+      <pre className="mb-4 rounded-xl border border-white/10 bg-white/5 p-4 text-xs break-all whitespace-pre-wrap">
+        user: {JSON.stringify({ type: currentUser.user.type, email: currentUser.user.email, id: currentUser.user.id })}
+      </pre>
+      <pre className="mb-4 rounded-xl border border-white/10 bg-white/5 p-4 text-xs break-all whitespace-pre-wrap">me probe: {me}</pre>
+      <pre className="rounded-xl border border-white/10 bg-white/5 p-4 text-xs break-all whitespace-pre-wrap">analytics probe: {analytics}</pre>
     </div>
   )
 }
