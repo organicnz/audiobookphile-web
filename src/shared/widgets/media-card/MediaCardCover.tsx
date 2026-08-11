@@ -75,7 +75,7 @@ export default function MediaCardCover({
   const handleImageError = useCallback(() => {
     if (retryCount < 2) {
       // Retry with a staggered backoff to avoid hammering the rate limit
-      const delay = (retryCount + 1) * 1500 + Math.random() * 1000
+      const delay = (retryCount + 1) * 1500 + (crypto.getRandomValues(new Uint32Array(1))[0] % 1000)
       setTimeout(() => {
         setRetryCount((c) => c + 1)
       }, delay)

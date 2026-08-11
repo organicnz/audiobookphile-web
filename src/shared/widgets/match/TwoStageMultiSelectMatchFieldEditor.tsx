@@ -44,7 +44,7 @@ function TwoStageMultiSelectMatchFieldEditor({
         // Fallback: add all items
         currentValue.forEach((series) => {
           onItemAdded({
-            value: series.id || `new-${Math.floor(Math.random() * 10000)}`,
+            value: series.id || `new-${crypto.randomUUID()}`,
             content: { value: series.name, modifier: series.sequence || '' }
           })
         })

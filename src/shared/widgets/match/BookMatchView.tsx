@@ -111,7 +111,7 @@ export default function BookMatchView({
   const seriesItems = useMemo(() => {
     if (!selectedMatch?.series) return []
     return selectedMatch.series.map((s: { series: string; sequence?: string; id?: string; name?: string }) => ({
-      value: s.id || `new-${Math.floor(Math.random() * 10000)}`,
+      value: s.id || `new-${crypto.randomUUID()}`,
       content: { value: s.name || s.series, modifier: s.sequence || '' }
     }))
   }, [selectedMatch])
@@ -151,7 +151,7 @@ export default function BookMatchView({
 
   const handleSeriesReplaceAll = useCallback((items: { id?: string; name: string; sequence?: string }[]) => {
     const convertedSeries = items.map((s) => ({
-      id: s.id || `new-${Math.floor(Math.random() * 10000)}`,
+      id: s.id || `new-${crypto.randomUUID()}`,
       name: s.name,
       series: s.name,
       sequence: s.sequence || ''
@@ -189,7 +189,7 @@ export default function BookMatchView({
 
       if (key === 'series' && Array.isArray(selectedMatch.series)) {
         updatePayload.metadata!.series = selectedMatch.series.map((s) => ({
-          id: `new-${Math.floor(Math.random() * 10000)}`,
+          id: `new-${crypto.randomUUID()}`,
           name: s.series,
           sequence: s.sequence || ''
         }))
@@ -201,9 +201,7 @@ export default function BookMatchView({
             : String(authorValue)
                 .split(',')
                 .map((au: string) => au.trim())
-          updatePayload.metadata!.authors = authorNames
-            .filter((au: string) => !!au)
-            .map((name: string) => ({ id: `new-${Math.floor(Math.random() * 10000)}`, name }))
+          updatePayload.metadata!.authors = authorNames.filter((au: string) => !!au).map((name: string) => ({ id: `new-${crypto.randomUUID()}`, name }))
         }
       } else if (key === 'narrator') {
         const narratorValue = selectedMatch.narrator

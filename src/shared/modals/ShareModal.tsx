@@ -29,8 +29,10 @@ interface ShareModalProps {
 function getRandomSlug(length = 10) {
   const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
+  const randomValues = new Uint32Array(length)
+  crypto.getRandomValues(randomValues)
   for (let i = 0; i < length; i++) {
-    result += alphabet[Math.floor(Math.random() * alphabet.length)]
+    result += alphabet[randomValues[i] % alphabet.length]
   }
   return result
 }

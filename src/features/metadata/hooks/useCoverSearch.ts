@@ -58,7 +58,7 @@ export function useCoverSearch(onError: (message: string) => void): UseCoverSear
 
   // Generate unique request ID
   const generateRequestId = useCallback(() => {
-    return `cover-search-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    return `cover-search-${Date.now()}-${crypto.randomUUID()}`
   }, [])
 
   // Socket event handlers
@@ -140,7 +140,6 @@ export function useCoverSearch(onError: (message: string) => void): UseCoverSear
       return
     }
 
-    console.log('cancelSearch: Cancelling search', currentSearchRequestId)
     emit<string>('cancel_cover_search', currentSearchRequestId)
     setCurrentSearchRequestId(null)
     setSearchInProgress(false)

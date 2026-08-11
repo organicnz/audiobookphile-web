@@ -25,7 +25,15 @@ if [ -n "$DANGEROUS_XSS" ]; then
     exit 1
 fi
 
-# 3. Unpinned Wildcard Package Audit
+# 3. Cryptographic Token Security (Math.random)
+MATH_RANDOM=$(grep -r -n -E 'Math\.random\(|Double\.random\(' src/ 2>/dev/null || true)
+if [ -n "$MATH_RANDOM" ]; then
+    echo "❌ SECURITY AUDIT FAILED: Insecure random number generator found (use crypto.randomUUID or crypto.getRandomValues):"
+    echo "$MATH_RANDOM"
+    exit 1
+fi
+
+# 4. Unpinned Wildcard Package Audit
 UNPINNED_PKGS=$(grep -n '"\*"' package.json 2>/dev/null || true)
 if [ -n "$UNPINNED_PKGS" ]; then
     echo "⚠️ PACKAGE AUDIT WARNING: Unpinned wildcard package dependency '*' found in package.json:"

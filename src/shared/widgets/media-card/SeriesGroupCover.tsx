@@ -151,7 +151,7 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
 
       if (retryCount < MAX_RETRIES) {
         // Retry with a staggered backoff to avoid hammering the rate limit
-        const delay = (retryCount + 1) * 1500 + Math.random() * 1000
+        const delay = (retryCount + 1) * 1500 + (crypto.getRandomValues(new Uint32Array(1))[0] % 1000)
         setTimeout(() => {
           incrementRetry(bookId)
           // Re-trigger image load by bumping a retry param
