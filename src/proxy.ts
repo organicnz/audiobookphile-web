@@ -15,8 +15,6 @@ import { NextResponse, type NextRequest } from 'next/server'
  * @see https://nextjs.org/docs/messages/middleware-to-proxy
  */
 export async function proxy(request: NextRequest) {
-  console.log(`[Proxy] Handling request: ${request.nextUrl.pathname}`)
-
   // Handle Preflight OPTIONS requests globally for cross-platform apps
   if (request.method === 'OPTIONS') {
     return new NextResponse(null, {
@@ -39,8 +37,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Intercept Audiobookphile mobile app login requests
-  if (request.nextUrl.pathname === '/login' && request.method === 'POST') {
+  // Intercept Audiobookphile mobile app login requests (exclude Next.js Server Actions)
+  if (request.nextUrl.pathname === '/login' && request.method === 'POST' && !request.headers.has('next-action')) {
     return NextResponse.rewrite(new URL('/api/login', request.url))
   }
 
