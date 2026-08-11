@@ -58,8 +58,8 @@ export async function signUp(_email: string, _password: string) {
 }
 
 export async function forgotPassword(email: string) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/forgot-password`, {
+  const siteUrl = getSiteUrl()
+  const res = await fetch(`${siteUrl}/api/auth/forgot-password`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email })
@@ -111,11 +111,10 @@ export async function resetPassword(password: string) {
 
 export async function signInWithMagicLink(email: string) {
   const siteUrl = getSiteUrl()
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   try {
-    const res = await fetch(`${supabaseUrl}/functions/v1/api/auth/magic-link`, {
+    const res = await fetch(`${siteUrl}/api/auth/magic-link`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
