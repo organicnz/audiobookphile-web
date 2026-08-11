@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { apiRequest } from '@/shared/lib/api/browser'
+import { apiFetch } from '@/shared/lib/api/browser'
 import { AdminAnalyticsGrid, type AdminAnalyticsData } from './AdminAnalyticsGrid'
 import { AdminAnalyticsSkeleton } from './AdminAnalyticsSkeleton'
 
@@ -12,25 +12,33 @@ const EMPTY: AdminAnalyticsData = {
   activeSessions: null
 }
 
+function sanitize(resData: AdminAnalyticsData): AdminAnalyticsData {
+  return {
+    totalUsers: typeof resData?.totalUsers === 'number' ? resData.totalUsers : null,
+    totalLibraries: typeof resData?.totalLibraries === 'number' ? resData.totalLibraries : null,
+    totalItems: typeof resData?.totalItems === 'number' ? resData.totalItems : null,
+    activeSessions: typeof resData?.activeSessions === 'number' ? resData.activeSessions : null
+  }
+}
+
 export default function AdminAnalyticsWidget() {
   const [data, setData] = useState<AdminAnalyticsData>(EMPTY)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     let cancelled = false
-    apiRequest<AdminAnalyticsData>('/api/admin-analytics', { method: 'GET' })
-      .then((resData) => {
-        if (cancelled) return
-        setData({
-          totalUsers: typeof resData?.totalUsers === 'number' ? resData.totalUsers : null,
-          totalLibraries: typeof resData?.totalLibraries === 'number' ? resData.totalLibraries : null,
-          totalItems: typeof resData?.totalItems === 'number' ? resData.totalItems : null,
-          activeSessions: typeof resData?.activeSessions === 'number' ? resData.activeSessions : null
-        })
-      })
-      .catch(() => {
-        if (!cancelled) setData(EMPTY)
-      })
+    // Non-throwing fetch (P2.2): read .ok explicitly, never let an endpoint
+    // failure throw or console.error — render "—" instead.
+    apiFetch<AdminAnalyticsData>('/api/admin-analytics', { method: 'GET' })
+      .then(
+        (result) => {
+          if (cancelled) return
+          setData(result.ok ? sanitize(result.data) : EMPTY)
+        },
+        () => {
+          if (!cancelled) setData(EMPTY)
+        }
+      )
       .finally(() => {
         if (!cancelled) setReady(true)
       })

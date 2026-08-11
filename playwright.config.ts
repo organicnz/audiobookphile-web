@@ -11,7 +11,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    baseURL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000', // dev-only fallback
     trace: 'on-first-retry'
   },
 
@@ -24,7 +24,11 @@ export default defineConfig({
 
   webServer: {
     command: 'bun run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI
+    // When testing a deployed preview (CI), wait on the remote URL instead of
+    // booting a local dev server; reuseExistingServer skips the launch since
+    // the remote site answers.
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000', // dev-only fallback
+    reuseExistingServer: true,
+    timeout: 120_000
   }
 })

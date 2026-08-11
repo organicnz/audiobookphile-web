@@ -1,6 +1,7 @@
-import { getLibraries, getLibraryPersonalized } from '@/shared/lib/api'
+import { apiFetch } from '@/shared/lib/api/client'
 import { getLibrarySlug, resolveLibraryFromParam } from '@/shared/lib/library-slugs'
 import { redirect } from 'next/navigation'
+import type { GetLibrariesResponse, PersonalizedShelf } from '@/types/api'
 import LibraryClient from './LibraryClient'
 
 // Continue Listening and personalized shelves are per-user and per-session —
@@ -12,8 +13,9 @@ export default async function LibraryPage({ params }: { params: Promise<{ librar
   const { library: paramValue } = await params
 
   let libraryId = paramValue
-  try {
-    const response = await getLibraries()
+  const librariesResult = await apiFetch<GetLibrariesResponse>('/api/libraries', {})
+  if (librariesResult.ok) {
+    const response = librariesResult.data
     const resolved = resolveLibraryFromParam(paramValue, response.libraries)
     if (resolved) {
       if (resolved.isUuidRedirect) {
@@ -22,21 +24,11 @@ export default async function LibraryPage({ params }: { params: Promise<{ librar
       }
       libraryId = resolved.library.id
     }
-  } catch (err) {
-    if (err && typeof err === 'object' && 'digest' in err && typeof err.digest === 'string' && err.digest.includes('NEXT_REDIRECT')) {
-      throw err
-    }
-    console.error('Error resolving library slug', err)
   }
 
-  let personalized
-  try {
-    personalized = await getLibraryPersonalized(libraryId)
-  } catch (err) {
-    console.error('Error getting personalized data', err)
-  }
+  const personalizedResult = await apiFetch<PersonalizedShelf[]>(`/api/libraries/${libraryId}/personalized?include=rssfeed,share`, {})
 
-  if (!personalized) {
+  if (!personalizedResult.ok) {
     return (
       <div className="flex w-full flex-col items-center justify-center p-12 text-center">
         <p className="text-lg font-medium">Unable to load library</p>
@@ -47,7 +39,7 @@ export default async function LibraryPage({ params }: { params: Promise<{ librar
 
   return (
     <div className="w-full">
-      <LibraryClient personalized={personalized} />
+      <LibraryClient personalized={personalizedResult.data} />
     </div>
   )
 }

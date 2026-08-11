@@ -57,3 +57,66 @@ export async function parseApiResponseBody<T>(response: Response): Promise<T> {
     return undefined as T
   }
 }
+
+export type ApiErrorType = 'http' | 'unauthorized' | 'network'
+
+export type ApiErrorDetail = {
+  type: ApiErrorType
+  status: number
+  statusText: string
+  message: string
+  cause?: unknown
+}
+
+export type ApiResult<T> = { ok: true; data: T } | { ok: false; error: ApiErrorDetail }
+
+/**
+ * Single non-throwing fetch core (P2.2): never throws for HTTP errors, never
+ * logs them either — the incident class was a 500 being both thrown and
+ * console.error'd from a telemetry fetch. HTTP errors are returned as
+ * `{ ok: false, error }`; callers read `.ok` explicitly.
+ */
+export async function fetchAsResult<T = unknown>(input: RequestInfo | URL, init?: RequestInit): Promise<ApiResult<T>> {
+  try {
+    const response = await fetch(input, init)
+
+    if (response.status === 401) {
+      return {
+        ok: false,
+        error: {
+          type: 'unauthorized',
+          status: 401,
+          statusText: response.statusText,
+          message: 'Unauthorized'
+        }
+      }
+    }
+
+    if (!response.ok) {
+      const text = await response.text()
+      return {
+        ok: false,
+        error: {
+          type: 'http',
+          status: response.status,
+          statusText: response.statusText,
+          message: text || `HTTP ${response.status}: ${response.statusText}`
+        }
+      }
+    }
+
+    const data = await parseApiResponseBody<T>(response)
+    return { ok: true, data }
+  } catch (cause) {
+    return {
+      ok: false,
+      error: {
+        type: 'network',
+        status: 0,
+        statusText: 'Network error',
+        message: 'Network error',
+        cause
+      }
+    }
+  }
+}

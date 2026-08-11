@@ -1,66 +1,80 @@
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
-import { getServerBaseUrl, parseApiResponseBody } from './base'
+import { getServerBaseUrl, fetchAsResult, type ApiResult } from './base'
 
 /**
- * Browser-only authenticated API request.
+ * Browser-only authenticated API request — non-throwing (P2.2): returns
+ * `{ ok: true, data }` or `{ ok: false, error }`, never throws for HTTP
+ * errors and never logs them. Client components read `.ok` explicitly.
  * Never import src/shared/utils/supabase/server from this module: it pulls
  * next/headers into the client bundle and breaks Turbopack builds.
  */
+export async function apiFetch<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<ApiResult<T>> {
+  const baseUrl = getServerBaseUrl()
+  const url = `${baseUrl}${endpoint}`
+
+  const fetchHeaders = new Headers(options.headers as Record<string, string>)
+
+  if (!(options.body instanceof FormData) && !fetchHeaders.has('Content-Type')) {
+    fetchHeaders.set('Content-Type', 'application/json')
+  }
+
+  if (!fetchHeaders.has('apikey') && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    fetchHeaders.set('apikey', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+  }
+
+  const { createClient } = await import('@/shared/utils/supabase/client')
+  const supabase = await createClient()
+
+  const { data: sessionData } = await supabase.auth.getSession()
+  let accessToken = sessionData.session?.access_token ?? null
+
+  if (!accessToken) {
+    const { data: userData } = await supabase.auth.getUser()
+    if (userData.user) {
+      const { data: refreshedSession } = await supabase.auth.getSession()
+      accessToken = refreshedSession.session?.access_token ?? null
+    }
+  }
+
+  if (!accessToken) {
+    return {
+      ok: false,
+      error: {
+        type: 'unauthorized',
+        status: 401,
+        statusText: 'Unauthorized',
+        message: 'No authentication token found'
+      }
+    }
+  }
+
+  fetchHeaders.set('Authorization', `Bearer ${accessToken}`)
+
+  return fetchAsResult<T>(url, { ...options, headers: fetchHeaders })
+}
+
+/**
+ * Throwing adapter for existing call sites that rely on thrown errors.
+ * Same single fetch core; never logs HTTP failures.
+ */
 export async function apiRequest<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   try {
-    const baseUrl = getServerBaseUrl()
-    const url = `${baseUrl}${endpoint}`
+    const result = await apiFetch<T>(endpoint, options)
+    if (result.ok) return result.data
 
-    const fetchHeaders = new Headers(options.headers as Record<string, string>)
-
-    if (!(options.body instanceof FormData) && !fetchHeaders.has('Content-Type')) {
-      fetchHeaders.set('Content-Type', 'application/json')
+    const { error } = result
+    if (error.type === 'unauthorized') {
+      throw new UnauthorizedError(error.message)
     }
-
-    if (!fetchHeaders.has('apikey') && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      fetchHeaders.set('apikey', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+    if (error.type === 'http') {
+      throw new ApiError(error.message, error.status, error.statusText)
     }
-
-    const { createClient } = await import('@/shared/utils/supabase/client')
-    const supabase = await createClient()
-
-    const { data: sessionData } = await supabase.auth.getSession()
-    let accessToken = sessionData.session?.access_token ?? null
-
-    if (!accessToken) {
-      const { data: userData } = await supabase.auth.getUser()
-      if (userData.user) {
-        const { data: refreshedSession } = await supabase.auth.getSession()
-        accessToken = refreshedSession.session?.access_token ?? null
-      }
-    }
-
-    if (!accessToken) {
-      throw new UnauthorizedError('No authentication token found')
-    }
-
-    fetchHeaders.set('Authorization', `Bearer ${accessToken}`)
-
-    const response = await fetch(url, {
-      ...options,
-      headers: fetchHeaders
-    })
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new UnauthorizedError('Unauthorized')
-      }
-
-      const errorMessage = await response.text()
-      throw new ApiError(errorMessage || `HTTP ${response.status}: ${response.statusText}`, response.status, response.statusText)
-    }
-
-    return parseApiResponseBody<T>(response)
+    throw new NetworkError(error.message, error.cause)
   } catch (error) {
     if (error instanceof UnauthorizedError || error instanceof ApiError) {
       throw error
     }
-    console.error('API request failed:', error)
+    if (error instanceof NetworkError) throw error
     throw new NetworkError('Network error', error)
   }
 }

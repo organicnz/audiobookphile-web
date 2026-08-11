@@ -1,5 +1,6 @@
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
-import { getLibraries } from '@/shared/lib/api'
+import { apiFetch } from '@/shared/lib/api/client'
+import type { GetLibrariesResponse } from '@/types/api'
 import { Settings, Library, Users, SlidersHorizontal, Headphones, DatabaseBackup, Key } from 'lucide-react'
 import Link from 'next/link'
 import SettingsContent from './SettingsContent'
@@ -9,7 +10,8 @@ export const dynamic = 'force-dynamic'
 
 export default async function SettingsPage() {
   const t = await getTypeSafeTranslations()
-  const { libraries } = await getLibraries().catch(() => ({ libraries: [] }))
+  const librariesResult = await apiFetch<GetLibrariesResponse>('/api/libraries', {})
+  const libraries = librariesResult.ok ? librariesResult.data.libraries : []
 
   const cards = [
     {

@@ -2,14 +2,14 @@ name: Deploy Next.js Web App (Vercel Production)
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'src/**'
       - 'package.json'
       - 'bun.lock'
       - '.github/workflows/deploy-web.yml'
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -41,10 +41,12 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
 
   deploy:
-    name: Deploy to Vercel Production
+    name: Deploy to Vercel (Preview Build)
     needs: verify
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    outputs:
+      deployment_url: ${{ steps.deploy.outputs.deployment_url }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -55,6 +57,7 @@ jobs:
           bun-version: latest
 
       - name: Check Vercel Token & Deploy
+        id: deploy
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -67,4 +70,53 @@ jobs:
           bun add -g vercel@latest
           vercel pull --yes --environment=production --token=$VERCEL_TOKEN
           vercel build --prod --token=$VERCEL_TOKEN
-          vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=$VERCEL_TOKEN | tail -1)
+          echo "deployment_url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+
+  e2e:
+    name: E2E Smoke (Playwright)
+    needs: deploy
+    if: needs.deploy.outputs.deployment_url != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Install Playwright Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Run E2E Smoke Against Preview
+        run: bun run test
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ needs.deploy.outputs.deployment_url }}
+          PLAYWRIGHT_ADMIN_EMAIL: ${{ secrets.PLAYWRIGHT_ADMIN_EMAIL }}
+          PLAYWRIGHT_ADMIN_PASSWORD: ${{ secrets.PLAYWRIGHT_ADMIN_PASSWORD }}
+          PLAYWRIGHT_MEMBER_EMAIL: ${{ secrets.PLAYWRIGHT_MEMBER_EMAIL }}
+          PLAYWRIGHT_MEMBER_PASSWORD: ${{ secrets.PLAYWRIGHT_MEMBER_PASSWORD }}
+        timeout-minutes: 15
+
+  promote:
+    name: Promote Preview to Production
+    needs: e2e
+    if: needs.deploy.outputs.deployment_url != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Promote Deployment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          bun add -g vercel@latest
+          vercel promote ${{ needs.deploy.outputs.deployment_url }} --yes --token=$VERCEL_TOKEN

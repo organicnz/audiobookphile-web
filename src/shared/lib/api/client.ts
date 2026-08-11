@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
-import { getServerBaseUrl, getClientBaseUrlFromRequest, parseApiResponseBody } from './base'
+import { getServerBaseUrl, getClientBaseUrlFromRequest, parseApiResponseBody, fetchAsResult, type ApiResult } from './base'
 
 /**
  * Send the browser to /login with an error hint and drop refresh cookie (session cannot continue).
@@ -22,76 +22,85 @@ export function getUserDefaultUrlPath(userDefaultLibraryId: string | null, userT
 }
 
 /**
- * Make an authenticated API request to the server
- * Throws UnauthorizedError, ApiError, or NetworkError on failure
+ * Single authenticated fetch layer (P2.2). Never throws for HTTP or network
+ * errors — returns `{ ok: true, data }` or `{ ok: false, error }`; server
+ * components read `.ok` explicitly. Use this for data reads.
  *
- * On 401 (or missing access token with a refresh cookie), exchanges the refresh token for new
- * session tokens, updates Next.js cookies when possible, and retries once. Server actions return updated cookies to the browser.
+ * On 401 (or missing access token with a refresh cookie), exchanges the refresh
+ * token for new session tokens, updates Next.js cookies when possible, and
+ * retries once. Server actions return updated cookies to the browser.
+ */
+export async function apiFetch<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<ApiResult<T>> {
+  const isPublic = publicEndpoints.includes(endpoint)
+  const baseUrl = getServerBaseUrl()
+  const url = `${baseUrl}${endpoint}`
+
+  const isFormData = options.body instanceof FormData
+
+  const fetchHeaders = new Headers(options.headers as Record<string, string>)
+
+  if (!isFormData && !fetchHeaders.has('Content-Type')) {
+    fetchHeaders.set('Content-Type', 'application/json')
+  }
+
+  if (!fetchHeaders.has('apikey') && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    fetchHeaders.set('apikey', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+  }
+
+  if (!isPublic) {
+    const { createClient } = await import('@/shared/utils/supabase/server')
+    const supabase = await createClient()
+
+    // First try to get the active session locally
+    const { data: sessionData } = await supabase.auth.getSession()
+
+    let accessToken: string | null = sessionData.session?.access_token ?? null
+
+    if (!accessToken) {
+      // Fallback to getUser which forces a refresh if the token is expired
+      const { data: userData } = await supabase.auth.getUser()
+      if (userData.user) {
+        const { data: refreshedSession } = await supabase.auth.getSession()
+        accessToken = refreshedSession.session?.access_token ?? null
+      }
+    }
+
+    if (!accessToken) {
+      return {
+        ok: false,
+        error: {
+          type: 'unauthorized',
+          status: 401,
+          statusText: 'Unauthorized',
+          message: 'No authentication token found'
+        }
+      }
+    }
+
+    fetchHeaders.set('Authorization', `Bearer ${accessToken}`)
+  }
+
+  return fetchAsResult<T>(url, { ...options, headers: fetchHeaders })
+}
+
+/**
+ * Throwing adapter for mutation call sites (server actions etc.) that need
+ * thrown errors for control flow. Same single fetch core; never logs HTTP
+ * failures.
  */
 export async function apiRequest<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   try {
-    const isPublic = publicEndpoints.includes(endpoint)
-    const baseUrl = getServerBaseUrl()
-    const url = `${baseUrl}${endpoint}`
+    const result = await apiFetch<T>(endpoint, options)
+    if (result.ok) return result.data
 
-    const isFormData = options.body instanceof FormData
-
-    const fetchHeaders = new Headers(options.headers as Record<string, string>)
-
-    if (!isFormData && !fetchHeaders.has('Content-Type')) {
-      fetchHeaders.set('Content-Type', 'application/json')
+    const { error } = result
+    if (error.type === 'unauthorized') {
+      throw new UnauthorizedError(error.message)
     }
-
-    if (!fetchHeaders.has('apikey') && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      fetchHeaders.set('apikey', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+    if (error.type === 'http') {
+      throw new ApiError(error.message, error.status, error.statusText)
     }
-
-    let accessToken: string | null = null
-
-    if (!isPublic) {
-      const { createClient } = await import('@/shared/utils/supabase/server')
-      const supabase = await createClient()
-
-      // First try to get the active session locally
-      const { data: sessionData } = await supabase.auth.getSession()
-
-      if (sessionData.session) {
-        accessToken = sessionData.session.access_token
-      } else {
-        // Fallback to getUser which forces a refresh if the token is expired
-        const { data: userData } = await supabase.auth.getUser()
-        if (userData.user) {
-          const { data: refreshedSession } = await supabase.auth.getSession()
-          if (refreshedSession.session) {
-            accessToken = refreshedSession.session.access_token
-          }
-        }
-      }
-
-      if (!accessToken) {
-        console.error(`[apiRequest] Throwing UnauthorizedError for ${endpoint} because accessToken could not be retrieved from Supabase`)
-        throw new UnauthorizedError('No authentication token found')
-      }
-
-      fetchHeaders.set('Authorization', `Bearer ${accessToken}`)
-    }
-
-    let response = await fetch(url, {
-      ...options,
-      headers: fetchHeaders
-    })
-
-    if (!response.ok) {
-      console.error(`[apiRequest] Failed for ${url}: status ${response.status}`)
-      if (response.status === 401) {
-        throw new UnauthorizedError('Unauthorized')
-      }
-
-      const errorMessage = await response.text()
-      throw new ApiError(errorMessage || `HTTP ${response.status}: ${response.statusText}`, response.status, response.statusText)
-    }
-
-    return parseApiResponseBody<T>(response)
+    throw new NetworkError(error.message, error.cause)
   } catch (error) {
     if (error && typeof error === 'object' && 'digest' in error && typeof error.digest === 'string' && error.digest.includes('NEXT_REDIRECT')) {
       throw error
@@ -99,7 +108,7 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
     if (error instanceof UnauthorizedError || error instanceof ApiError) {
       throw error
     }
-    console.error('API request failed:', error)
+    if (error instanceof NetworkError) throw error
     throw new NetworkError('Network error', error)
   }
 }
