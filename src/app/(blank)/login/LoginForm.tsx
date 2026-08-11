@@ -31,8 +31,16 @@ export default function LoginForm() {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
-      setError('')
-      setLoading(true)
+      if (!email.trim()) {
+        setError('Email or username is required.')
+        setLoading(false)
+        return
+      }
+      if (!password || password.length < 8) {
+        setError('Password must be at least 8 characters.')
+        setLoading(false)
+        return
+      }
       try {
         const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
         const res = await fetch('/api/login', {
