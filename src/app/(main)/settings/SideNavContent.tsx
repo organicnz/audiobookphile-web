@@ -24,6 +24,10 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
   const userContext = useUser()
   const isAdminOrRoot = ['admin', 'root'].includes(userContext?.user?.type ?? '')
 
+  // Non-admins may only access their own account security settings.
+  // Everything else in /settings is admin/root-only (enforced in proxy).
+  const userAccessibleHrefs = new Set(['/settings/authentication'])
+
   const groups: NavGroup[] = [
     {
       title: 'Overview',
@@ -60,6 +64,15 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
     }
   ]
 
+  const visibleGroups = isAdminOrRoot
+    ? groups
+    : groups
+        .map((group) => ({
+          ...group,
+          items: group.items.filter((item) => userAccessibleHrefs.has(item.href))
+        }))
+        .filter((group) => group.items.length > 0)
+
   return (
     <div className="flex h-full flex-col justify-between">
       <div className="flex-1 overflow-y-auto px-3 py-4">
@@ -94,7 +107,7 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
 
         {/* Grouped Navigation Links */}
         <div className="space-y-6">
-          {groups.map((group) => (
+          {visibleGroups.map((group) => (
             <div key={group.title} className="space-y-1">
               <p className="text-xxs px-2 font-bold tracking-wider text-white/40 uppercase">{group.title}</p>
               <div className="space-y-0.5">

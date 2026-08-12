@@ -44,7 +44,42 @@ export async function proxy(request: NextRequest) {
 
   const response = await updateSession(request)
 
-  if (request.nextUrl.pathname !== '/') {
+  const pathname = request.nextUrl.pathname
+
+  // Two-factor settings (incl. passkey enrollment) are available to all
+  // authenticated users; every other /settings page requires admin/root.
+  if (pathname === '/settings' || pathname.startsWith('/settings/')) {
+    if (pathname === '/settings/authentication') {
+      return response
+    }
+    try {
+      const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll()
+          },
+          setAll() {
+            // Read-only in this context — session writes handled by updateSession above
+          }
+        }
+      })
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
+      if (!user) {
+        return NextResponse.redirect(new URL('/login', request.nextUrl.origin))
+      }
+      const { data: profile } = await supabase.from('profiles').select('user_type').eq('id', user.id).maybeSingle()
+      const type = profile?.user_type
+      if (type !== 'admin' && type !== 'root') {
+        return NextResponse.redirect(new URL('/library', request.nextUrl.origin))
+      }
+    } catch {
+      return NextResponse.redirect(new URL('/library', request.nextUrl.origin))
+    }
+  }
+
+  if (pathname !== '/') {
     return response
   }
 

@@ -23,11 +23,6 @@ export default async function SettingsLayout({ children }: Readonly<{ children: 
     redirect('/login')
   }
 
-  // Redirect to library page if user is not admin or root
-  if (!['admin', 'root'].includes(currentUser.user.type)) {
-    return redirect('/library')
-  }
-
   return (
     <SettingsDrawerProvider>
       <AppBar />
