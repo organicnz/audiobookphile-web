@@ -1,13 +1,22 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { Shield, ShieldAlert, ShieldCheck, Copy, Check, Key, QrCode, Lock, Fingerprint, Smartphone } from 'lucide-react'
+import { Shield, ShieldAlert, ShieldCheck, Copy, Check, Key, QrCode, Lock, Fingerprint, Smartphone, Trash2 } from 'lucide-react'
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
 import { createClient } from '@/shared/utils/supabase/client'
+import { performPasskeyRegistration, removePasskey, webAuthnErrorMessage } from '@/features/auth/lib/webauthn'
 
 interface TwoFactorSettingsPanelProps {
   initialEnabled?: boolean
+}
+
+interface PasskeyInfo {
+  id: string
+  credentialId: string
+  deviceName?: string
+  createdAt?: string
+  lastUsedAt?: string
 }
 
 interface Auth2FAStatus {
@@ -16,6 +25,7 @@ interface Auth2FAStatus {
   pinEnrolled?: boolean
   biometricEnrolled?: boolean
   methods?: string[]
+  passkeys?: PasskeyInfo[]
 }
 
 export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFactorSettingsPanelProps) {
@@ -211,40 +221,67 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
     setError('')
     setSuccess('')
     setLoading(true)
+    let token = ''
     try {
       const supabase = createClient()
       const { data: sessionData } = await supabase.auth.getSession()
-      const token = sessionData.session?.access_token
+      token = sessionData.session?.access_token || ''
       if (!token) {
         setError('Your session has expired. Please log in again.')
         setLoading(false)
         return
       }
 
-      const res = await fetch('/api/auth/2fa/enroll-biometric', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ deviceId: 'web-browser' })
+      const existingIds = (status.passkeys || []).map((pk) => pk.credentialId)
+      const result = await performPasskeyRegistration(token, {
+        deviceName: 'Web Browser',
+        existingCredentialIds: existingIds
       })
 
-      const data = await res.json()
-      if (!res.ok || !data.success) {
-        setError(data.error || 'Failed to enroll Biometric 2FA.')
+      if (!result.success) {
+        setError('Passkey registration failed.')
         setLoading(false)
         return
       }
 
       setStatus((prev) => ({ ...prev, enabled: true, biometricEnrolled: true }))
-      setSuccess('Facial 2FA / Biometric sign-in has been successfully enabled.')
-    } catch {
-      setError('Unable to enroll Biometric 2FA. Please try again.')
+      await fetchStatus()
+      setSuccess('Facial 2FA / Biometric passkey has been successfully enabled for this device.')
+    } catch (err) {
+      console.error('[TwoFactorSettingsPanel] Passkey enrollment error:', err)
+      setError(webAuthnErrorMessage(err))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [status.passkeys, fetchStatus])
+
+  const handleRemovePasskey = useCallback(
+    async (credentialId: string) => {
+      setError('')
+      setSuccess('')
+      setLoading(true)
+      try {
+        const supabase = createClient()
+        const { data: sessionData } = await supabase.auth.getSession()
+        const token = sessionData.session?.access_token
+        if (!token) {
+          setError('Your session has expired. Please log in again.')
+          setLoading(false)
+          return
+        }
+
+        await removePasskey(token, credentialId)
+        await fetchStatus()
+        setSuccess('Passkey has been removed from your account.')
+      } catch (err) {
+        console.error('[TwoFactorSettingsPanel] Passkey removal error:', err)
+        setError(err instanceof Error ? err.message : 'Failed to remove passkey.')
+      } finally {
+        setLoading(false)
+      }
+    },
+    [fetchStatus]
+  )
 
   const handleDisable2FA = useCallback(
     async (e: React.FormEvent) => {
@@ -278,7 +315,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
           return
         }
 
-        setStatus({ enabled: false, totpEnrolled: false, pinEnrolled: false, biometricEnrolled: false, methods: [] })
+        setStatus({ enabled: false, totpEnrolled: false, pinEnrolled: false, biometricEnrolled: false, methods: [], passkeys: [] })
         setMode('idle')
         setDisableCode('')
         setSuccess('All two-factor authentication methods have been disabled.')
@@ -411,9 +448,38 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
               </div>
               <div className="mt-4">
                 {status.biometricEnrolled ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-400">
-                    <Check className="h-3 w-3" /> Active
-                  </span>
+                  <div className="space-y-2">
+                    {(status.passkeys || []).length === 0 ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-400">
+                        <Check className="h-3 w-3" /> Active
+                      </span>
+                    ) : (
+                      <ul className="space-y-2">
+                        {status.passkeys!.map((passkey) => (
+                          <li key={passkey.id} className="border-border bg-bg/60 flex items-center justify-between gap-2 rounded-lg border px-3 py-2">
+                            <div className="min-w-0">
+                              <p className="text-foreground truncate text-xs font-medium">{passkey.deviceName || 'Passkey'}</p>
+                              <p className="text-foreground-muted text-[10px]">
+                                {passkey.createdAt ? `Registered ${new Date(passkey.createdAt).toLocaleDateString()}` : 'Registered'}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRemovePasskey(passkey.credentialId)}
+                              disabled={loading}
+                              className="text-foreground-muted flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-colors hover:text-red-400 disabled:opacity-50"
+                              title={`Remove ${passkey.deviceName || 'passkey'}`}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <Btn onClick={handleEnrollBiometric} loading={loading} className="w-full py-2 text-xs">
+                      Add Another Passkey
+                    </Btn>
+                  </div>
                 ) : (
                   <Btn onClick={handleEnrollBiometric} loading={loading} className="w-full py-2 text-xs">
                     Enable Facial 2FA

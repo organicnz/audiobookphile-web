@@ -2,6 +2,7 @@
 
 import { signInWithGoogle, signInWithMagicLink } from '@/features/auth/actions/authActions'
 import AuthCard from '@/features/auth/components/AuthCard'
+import { performPasskeyLogin, webAuthnErrorMessage } from '@/features/auth/lib/webauthn'
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
 import { createClient } from '@/shared/utils/supabase/client'
@@ -27,6 +28,56 @@ export default function LoginForm() {
   const [pinCode, setPinCode] = useState('')
   const [enrolledMethods, setEnrolledMethods] = useState<{ totp?: boolean; pin?: boolean; biometric?: boolean }>({})
   const [activeTab, setActiveTab] = useState<'totp' | 'pin' | 'biometric'>('totp')
+
+  const completeSession = useCallback(
+    async (accessToken: string, refreshToken: string, defaultLibraryId?: string | null): Promise<boolean> => {
+      const supabase = createClient()
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken
+      })
+
+      if (sessionError) {
+        setError(sessionError.message)
+        setLoading(false)
+        return false
+      }
+
+      const redirectUrl = searchParams.get('redirect')
+      if (redirectUrl) {
+        window.location.href = redirectUrl
+        return true
+      }
+
+      if (defaultLibraryId) {
+        window.location.href = `/library/${defaultLibraryId}`
+        return true
+      }
+
+      try {
+        const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+        const libsRes = await fetch('/api/libraries', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            ...(anonKey ? { apikey: anonKey } : {})
+          }
+        })
+        if (libsRes.ok) {
+          const libsData = await libsRes.json()
+          if (libsData?.libraries?.length > 0) {
+            window.location.href = `/library/${libsData.libraries[0].id}`
+            return true
+          }
+        }
+      } catch (err) {
+        console.error('[LoginForm] Failed to fetch libraries:', err)
+      }
+
+      window.location.href = '/library'
+      return true
+    },
+    [searchParams]
+  )
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -74,49 +125,7 @@ export default function LoginForm() {
         }
 
         // Establish session with Supabase using returned tokens to set SSR cookies
-        const supabase = createClient()
-        const { error: sessionError } = await supabase.auth.setSession({
-          access_token: data.user.token,
-          refresh_token: data.user.refreshToken
-        })
-
-        if (sessionError) {
-          setError(sessionError.message)
-          setLoading(false)
-          return
-        }
-
-        const redirectUrl = searchParams.get('redirect')
-        if (redirectUrl) {
-          window.location.href = redirectUrl
-          return
-        }
-
-        if (data.userDefaultLibraryId) {
-          window.location.href = `/library/${data.userDefaultLibraryId}`
-          return
-        }
-
-        // Fetch libraries on the client side to avoid server-side route handler bugs
-        try {
-          const libsRes = await fetch('/api/libraries', {
-            headers: {
-              Authorization: `Bearer ${data.user.token}`,
-              ...(anonKey ? { apikey: anonKey } : {})
-            }
-          })
-          if (libsRes.ok) {
-            const libsData = await libsRes.json()
-            if (libsData?.libraries?.length > 0) {
-              window.location.href = `/library/${libsData.libraries[0].id}`
-              return
-            }
-          }
-        } catch (err) {
-          console.error('[LoginForm] Failed to fetch libraries:', err)
-        }
-
-        window.location.href = '/library'
+        completeSession(data.user.token, data.user.refreshToken, data.userDefaultLibraryId)
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'
         console.error('[LoginForm] Network error:', message)
@@ -124,16 +133,35 @@ export default function LoginForm() {
         setLoading(false)
       }
     },
-    [email, password, searchParams]
+    [email, password, searchParams, completeSession]
   )
+
+  const handlePasskeySignIn = useCallback(async () => {
+    setError('')
+    setLoading(true)
+    try {
+      const data = await performPasskeyLogin(userId, tempToken)
+      completeSession(data.user.token, data.user.refreshToken, data.userDefaultLibraryId)
+    } catch (err) {
+      console.error('[LoginForm] Passkey sign-in error:', err)
+      setError(webAuthnErrorMessage(err))
+      setLoading(false)
+    }
+  }, [userId, tempToken, completeSession])
 
   const handle2FASubmit = useCallback(
     async (e?: React.FormEvent, methodOverride?: 'totp' | 'pin' | 'biometric') => {
       if (e) e.preventDefault()
       const chosenMethod = methodOverride || activeTab
-      const codeToSend = chosenMethod === 'biometric' ? 'biometric' : chosenMethod === 'pin' ? pinCode : totpCode
 
-      if (chosenMethod !== 'biometric' && !codeToSend) {
+      if (chosenMethod === 'biometric') {
+        await handlePasskeySignIn()
+        return
+      }
+
+      const codeToSend = chosenMethod === 'pin' ? pinCode : totpCode
+
+      if (!codeToSend) {
         setError('Please enter your verification code.')
         return
       }
@@ -155,45 +183,7 @@ export default function LoginForm() {
           return
         }
 
-        const supabase = createClient()
-        const { error: sessionError } = await supabase.auth.setSession({
-          access_token: data.user.token,
-          refresh_token: data.user.refreshToken
-        })
-
-        if (sessionError) {
-          setError(sessionError.message)
-          setLoading(false)
-          return
-        }
-
-        const redirectUrl = searchParams.get('redirect')
-        if (redirectUrl) {
-          window.location.href = redirectUrl
-          return
-        }
-
-        if (data.userDefaultLibraryId) {
-          window.location.href = `/library/${data.userDefaultLibraryId}`
-          return
-        }
-
-        try {
-          const libsRes = await fetch('/api/libraries', {
-            headers: { Authorization: `Bearer ${data.user.token}` }
-          })
-          if (libsRes.ok) {
-            const libsData = await libsRes.json()
-            if (libsData?.libraries?.length > 0) {
-              window.location.href = `/library/${libsData.libraries[0].id}`
-              return
-            }
-          }
-        } catch (err) {
-          console.error('[LoginForm] Failed to fetch libraries:', err)
-        }
-
-        window.location.href = '/library'
+        completeSession(data.user.token, data.user.refreshToken, data.userDefaultLibraryId)
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error'
         console.error('[LoginForm] 2FA verify network error:', message)
@@ -201,7 +191,7 @@ export default function LoginForm() {
         setLoading(false)
       }
     },
-    [userId, tempToken, totpCode, pinCode, activeTab, searchParams]
+    [userId, tempToken, totpCode, pinCode, activeTab, handlePasskeySignIn]
   )
 
   const handleGoogleSignIn = async () => {
