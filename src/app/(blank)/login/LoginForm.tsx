@@ -133,7 +133,7 @@ export default function LoginForm() {
         setLoading(false)
       }
     },
-    [email, password, searchParams, completeSession]
+    [email, password, completeSession]
   )
 
   const handlePasskeySignIn = useCallback(async () => {
@@ -191,7 +191,7 @@ export default function LoginForm() {
         setLoading(false)
       }
     },
-    [userId, tempToken, totpCode, pinCode, activeTab, handlePasskeySignIn]
+    [userId, tempToken, totpCode, pinCode, activeTab, handlePasskeySignIn, completeSession]
   )
 
   const handleGoogleSignIn = async () => {

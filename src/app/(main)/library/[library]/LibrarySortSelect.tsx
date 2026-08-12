@@ -1,7 +1,7 @@
 'use client'
 
 import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
-import { useLibrary } from '@/features/library/contexts/LibraryContext'
+import { useLibrary, LibrarySettingKey } from '@/features/library/contexts/LibraryContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { EntityType } from '@/types/api'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react'
@@ -52,15 +52,15 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
       const val = String(value)
       if (currentSortBy === val) {
         // Toggle direction
-        let key = 'orderDesc'
+        let key: LibrarySettingKey = 'orderDesc'
         if (isSeries) key = 'seriesSortDesc'
         else if (isAuthors) key = 'authorSortDesc'
 
-        updateSetting(key as any, !currentSortDesc)
+        updateSetting(key, !currentSortDesc)
       } else {
         // New sort
-        let key = 'orderBy'
-        let descKey = 'orderDesc'
+        let key: LibrarySettingKey = 'orderBy'
+        let descKey: LibrarySettingKey = 'orderDesc'
         if (isSeries) {
           key = 'seriesSortBy'
           descKey = 'seriesSortDesc'
@@ -69,9 +69,9 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
           descKey = 'authorSortDesc'
         }
 
-        updateSetting(key as any, val)
+        updateSetting(key, val)
         if (defaultsToAsc(val)) {
-          updateSetting(descKey as any, false)
+          updateSetting(descKey, false)
         }
       }
     },
