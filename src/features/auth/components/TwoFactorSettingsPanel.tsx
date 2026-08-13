@@ -36,6 +36,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
   const [verificationCode, setVerificationCode] = useState('')
   const [pinInput, setPinInput] = useState('')
   const [disableCode, setDisableCode] = useState('')
+  const [disablePin, setDisablePin] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -305,7 +306,10 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify({ code: disableCode.trim() || undefined })
+          body: JSON.stringify({
+            code: disableCode.trim() || undefined,
+            pinCode: disablePin.trim() || undefined
+          })
         })
 
         const data = await res.json()
@@ -318,6 +322,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
         setStatus({ enabled: false, totpEnrolled: false, pinEnrolled: false, biometricEnrolled: false, methods: [], passkeys: [] })
         setMode('idle')
         setDisableCode('')
+        setDisablePin('')
         setSuccess('All two-factor authentication methods have been disabled.')
       } catch {
         setError('Unable to disable two-factor authentication. Please try again.')
@@ -325,7 +330,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
         setLoading(false)
       }
     },
-    [disableCode]
+    [disableCode, disablePin]
   )
 
   const isAnyEnabled = status.enabled || status.totpEnrolled || status.pinEnrolled || status.biometricEnrolled
@@ -618,7 +623,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
             </p>
           </div>
 
-          <div className="max-w-xs">
+          <div className="max-w-xs space-y-4">
             <TextInput
               label="Enter 6-digit authenticator code (optional)"
               value={disableCode}
@@ -626,6 +631,14 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
               autocomplete="one-time-code"
               placeholder="000000"
               onChange={setDisableCode}
+            />
+            <TextInput
+              label="Enter your PIN code (optional)"
+              value={disablePin}
+              type="password"
+              autocomplete="current-password"
+              placeholder="••••"
+              onChange={setDisablePin}
             />
           </div>
 

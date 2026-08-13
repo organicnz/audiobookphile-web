@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/shared/utils/supabase/server'
 import type { EmailOtpType } from '@supabase/supabase-js'
 
+const APP_DEEP_LINK_SCHEME = 'audiobookphile://'
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
 
@@ -12,6 +14,12 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const tokenHash = searchParams.get('token_hash')
   const type = (searchParams.get('type') ?? 'magiclink') as EmailOtpType
+
+  // If the iOS app requested the magic link (client=ios), complete the
+  // exchange here and bounce the session to the app via its custom URL
+  // scheme instead of a browser redirect.
+  const client = searchParams.get('client')
+  const server = searchParams.get('server')
 
   // if "next" is in param, use it as the redirect URL
   let next = searchParams.get('next') ?? (type === 'recovery' ? '/reset-password' : '/')
@@ -25,14 +33,20 @@ export async function GET(request: Request) {
     const supabase = await createClient()
 
     if (code) {
-      const { error } = await supabase.auth.exchangeCodeForSession(code)
-      if (!error) {
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+      if (!error && data.session) {
+        if (client === 'ios') {
+          return bounceToApp(data.session.access_token, data.session.refresh_token, data.session.user.id, server)
+        }
         const destination = next === '/' ? '/library' : next
         return NextResponse.redirect(`${origin}${destination}`)
       }
     } else if (tokenHash) {
-      const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
-      if (!error) {
+      const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
+      if (!error && data.session) {
+        if (client === 'ios') {
+          return bounceToApp(data.session.access_token, data.session.refresh_token, data.session.user.id, server)
+        }
         const destination = type === 'recovery' ? '/reset-password' : next === '/' ? '/library' : next
         return NextResponse.redirect(`${origin}${destination}`)
       }
@@ -41,4 +55,15 @@ export async function GET(request: Request) {
 
   // return the user to an error page with instructions
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+}
+
+function bounceToApp(accessToken: string, refreshToken: string | null, userId: string, server?: string | null) {
+  const url = new URL('auth/callback', APP_DEEP_LINK_SCHEME)
+  url.searchParams.set('accessToken', accessToken)
+  url.searchParams.set('refreshToken', refreshToken ?? '')
+  url.searchParams.set('userId', userId)
+  if (server) {
+    url.searchParams.set('server', server)
+  }
+  return NextResponse.redirect(url.toString())
 }
