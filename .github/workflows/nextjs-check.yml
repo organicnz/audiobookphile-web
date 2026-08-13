@@ -14,24 +14,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        id: checkout
+        uses: actions/checkout@v4
 
       - name: Setup Bun
+        id: bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
       - name: Install Dependencies
-        run: bun install --frozen-lockfile
+        id: deps
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Next.js CI Checks" deps \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|tsc:Run TypeScript Checks|lint:Run Linter" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
+          bun install --frozen-lockfile
 
       - name: Run TypeScript Checks
-        run: bun tsc --noEmit
+        id: tsc
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Next.js CI Checks" tsc \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|tsc:Run TypeScript Checks|lint:Run Linter" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }}"
+          bun tsc --noEmit
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy' }}
 
       - name: Run Linter
-        run: bun run lint
+        id: lint
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Next.js CI Checks" lint \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|tsc:Run TypeScript Checks|lint:Run Linter" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};tsc=${{ steps.tsc.outcome }}"
+          bun run lint
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy' }}

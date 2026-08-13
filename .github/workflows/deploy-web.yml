@@ -18,27 +18,59 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
+        id: checkout
         uses: actions/checkout@v4
 
       - name: Setup Bun
+        id: bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
       - name: Install Dependencies
-        run: bun install
+        id: deps
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Verify Web Build & Linting" deps \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
+          bun install
 
       - name: Security Audit
-        run: ./scripts/security-audit.sh
+        id: audit
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Verify Web Build & Linting" audit \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }}"
+          ./scripts/security-audit.sh
 
       - name: Typecheck
-        run: bun run typecheck
+        id: typecheck
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Verify Web Build & Linting" typecheck \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};audit=${{ steps.audit.outcome }}"
+          bun run typecheck
 
       - name: Lint
-        run: bun run lint
+        id: lint
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Verify Web Build & Linting" lint \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};audit=${{ steps.audit.outcome }};typecheck=${{ steps.typecheck.outcome }}"
+          bun run lint
 
       - name: Build Next.js Bundle
-        run: bun run build
+        id: build
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Verify Web Build & Linting" build \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};audit=${{ steps.audit.outcome }};typecheck=${{ steps.typecheck.outcome }};lint=${{ steps.lint.outcome }}"
+          bun run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
@@ -52,9 +84,11 @@ jobs:
       deployment_url: ${{ steps.deploy.outputs.deployment_url }}
     steps:
       - name: Checkout Repository
+        id: checkout
         uses: actions/checkout@v4
 
       - name: Setup Bun
+        id: bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
@@ -66,6 +100,10 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Deploy to Vercel (Preview Build)" deploy \
+            "checkout:Checkout Repository|bun:Setup Bun|deploy:Check Vercel Token & Deploy" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
           if [ -z "$VERCEL_TOKEN" ]; then
             echo "VERCEL_TOKEN is unset; relying on native Vercel Git Integration deployment."
             exit 0
@@ -83,21 +121,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
+        id: checkout
         uses: actions/checkout@v4
 
       - name: Setup Bun
+        id: bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
       - name: Install Dependencies
-        run: bun install
+        id: deps
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "E2E Smoke (Playwright)" deps \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|browsers:Install Playwright Chromium|e2e:Run E2E Smoke Against Preview" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
+          bun install
 
       - name: Install Playwright Chromium
-        run: bunx playwright install --with-deps chromium
+        id: browsers
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "E2E Smoke (Playwright)" browsers \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|browsers:Install Playwright Chromium|e2e:Run E2E Smoke Against Preview" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }}"
+          bunx playwright install --with-deps chromium
 
       - name: Run E2E Smoke Against Preview
-        run: bun run test
+        id: e2e
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "E2E Smoke (Playwright)" e2e \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|browsers:Install Playwright Chromium|e2e:Run E2E Smoke Against Preview" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};browsers=${{ steps.browsers.outcome }}"
+          bun run test
         env:
           NEXT_PUBLIC_SITE_URL: ${{ needs.deploy.outputs.deployment_url }}
           PLAYWRIGHT_ADMIN_EMAIL: ${{ secrets.PLAYWRIGHT_ADMIN_EMAIL }}
@@ -113,13 +171,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Bun
+        id: bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
 
       - name: Promote Deployment
+        id: promote
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Promote Preview to Production" promote \
+            "bun:Setup Bun|promote:Promote Deployment"
           bun add -g vercel@latest
           vercel promote ${{ needs.deploy.outputs.deployment_url }} --yes --token=$VERCEL_TOKEN
