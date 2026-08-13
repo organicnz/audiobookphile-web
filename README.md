@@ -29,17 +29,19 @@ Copy `.env.example` to `.env.local` for local development:
 cp .env.example .env.local
 ```
 
-| Variable                        | Description                                            |
-| ------------------------------- | ------------------------------------------------------ |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Your Supabase project URL                              |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon/public key                          |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Server-side service role key (never expose to browser) |
-| `NEXT_PUBLIC_SITE_URL`          | Public URL of your app (required for OAuth redirects)  |
-| `B2_ENDPOINT`                   | (Optional) Backblaze B2 S3 endpoint url                |
-| `B2_REGION`                     | (Optional) Backblaze B2 S3 region                      |
-| `B2_BUCKET_NAME`                | (Optional) Backblaze B2 Bucket name                    |
-| `B2_KEY_ID`                     | (Optional) Backblaze B2 Key ID                         |
-| `B2_APP_KEY`                    | (Optional) Backblaze B2 Application Key                |
+| Variable                        | Description                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Your Supabase project URL                                                                                    |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon/public key                                                                                |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Server-side service role key (never expose to browser)                                                       |
+| `NEXT_PUBLIC_SITE_URL`          | Public URL of your app (required for OAuth redirects)                                                        |
+| `NEXT_PUBLIC_POSTHOG_KEY`       | (Optional) PostHog analytics + feature flags (flags use `useFeatureFlag`, see `src/shared/lib/analytics.ts`) |
+| `NEXT_PUBLIC_POSTHOG_HOST`      | (Optional) PostHog ingest host (default `https://us.i.posthog.com`)                                          |
+| `B2_ENDPOINT`                   | (Optional) Backblaze B2 S3 endpoint url                                                                      |
+| `B2_REGION`                     | (Optional) Backblaze B2 S3 region                                                                            |
+| `B2_BUCKET_NAME`                | (Optional) Backblaze B2 Bucket name                                                                          |
+
+Feature flags are read from PostHog. Existing flags: `passkey_2fa` (kill-switch for passkey/biometric 2FA — defaults ON, disable in PostHog to turn off without a deploy). | `B2_KEY_ID` | (Optional) Backblaze B2 Key ID | | `B2_APP_KEY` | (Optional) Backblaze B2 Application Key |
 
 > `SUPABASE_SERVICE_ROLE_KEY` must never be prefixed with `NEXT_PUBLIC_` and must never appear in client-side code.
 

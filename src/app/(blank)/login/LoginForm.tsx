@@ -6,10 +6,11 @@ import { performPasskeyLogin, webAuthnErrorMessage } from '@/features/auth/lib/w
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
 import { createClient } from '@/shared/utils/supabase/client'
+import { useFeatureFlag } from '@/shared/lib/analytics'
 import { Fingerprint, Lock, Smartphone } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export default function LoginForm() {
   const searchParams = useSearchParams()
@@ -117,9 +118,12 @@ export default function LoginForm() {
           setUserId(data.userId || '')
           const methods = data.methods || { totp: true }
           setEnrolledMethods(methods)
-          if (methods.biometric) setActiveTab('biometric')
+          // Default to TOTP when available; only fall through to another
+          // method if TOTP was never set up. Never auto-select a method that
+          // is merely suggested (i.e. not enrolled) — the user must opt in.
+          if (methods.totp) setActiveTab('totp')
           else if (methods.pin) setActiveTab('pin')
-          else setActiveTab('totp')
+          else setActiveTab('biometric')
           setLoading(false)
           return
         }
@@ -229,63 +233,51 @@ export default function LoginForm() {
     }
   }
 
+  // Kill-switch flag: WebAuthn/passkey flows are gated so a browser quirk can
+  // disable biometric 2FA instantly from PostHog without a deploy. Default ON.
+  const passkey2FAEnabled = useFeatureFlag('passkey_2fa', true)
+
+  useEffect(() => {
+    if (!passkey2FAEnabled && activeTab === 'biometric') {
+      setActiveTab('totp')
+    }
+  }, [passkey2FAEnabled, activeTab])
+
   const methodCount = (enrolledMethods.totp ? 1 : 0) + (enrolledMethods.pin ? 1 : 0) + (enrolledMethods.biometric ? 1 : 0)
+
+  const methodTabs = [
+    ...(passkey2FAEnabled ? [{ key: 'biometric' as const, label: 'Biometric', icon: Fingerprint, enrolled: enrolledMethods.biometric === true }] : []),
+    { key: 'pin' as const, label: 'PIN Code', icon: Lock, enrolled: enrolledMethods.pin === true },
+    { key: 'totp' as const, label: 'TOTP', icon: Smartphone, enrolled: enrolledMethods.totp === true }
+  ]
 
   if (requires2FA) {
     return (
       <AuthCard title="Two-Factor Authentication" onSubmit={handle2FASubmit}>
-        {methodCount > 1 && (
+        {(methodCount > 1 || methodTabs.some((m) => !m.enrolled)) && (
           <div className="border-border bg-bg-dark/50 mb-6 flex rounded-xl border p-1">
-            {enrolledMethods.biometric && (
+            {methodTabs.map(({ key, label, icon: TabIcon, enrolled }) => (
               <button
+                key={key}
                 type="button"
                 onClick={() => {
-                  setActiveTab('biometric')
+                  setActiveTab(key)
                   setError('')
                 }}
                 className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-semibold transition-all ${
-                  activeTab === 'biometric' ? 'bg-accent text-white shadow-sm' : 'text-foreground-muted hover:text-foreground'
+                  activeTab === key ? 'bg-accent text-white shadow-sm' : 'text-foreground-muted hover:text-foreground'
                 }`}
               >
-                <Fingerprint className="h-3.5 w-3.5" />
-                Biometric
+                <TabIcon className="h-3.5 w-3.5" />
+                {label}
+                {!enrolled && <span className={activeTab === key ? 'font-normal text-white/70' : 'text-accent'}>· Set up</span>}
               </button>
-            )}
-            {enrolledMethods.pin && (
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveTab('pin')
-                  setError('')
-                }}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-semibold transition-all ${
-                  activeTab === 'pin' ? 'bg-accent text-white shadow-sm' : 'text-foreground-muted hover:text-foreground'
-                }`}
-              >
-                <Lock className="h-3.5 w-3.5" />
-                PIN Code
-              </button>
-            )}
-            {enrolledMethods.totp && (
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveTab('totp')
-                  setError('')
-                }}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-semibold transition-all ${
-                  activeTab === 'totp' ? 'bg-accent text-white shadow-sm' : 'text-foreground-muted hover:text-foreground'
-                }`}
-              >
-                <Smartphone className="h-3.5 w-3.5" />
-                TOTP
-              </button>
-            )}
+            ))}
           </div>
         )}
 
         <div className="mb-6 flex flex-col gap-4">
-          {activeTab === 'biometric' && (
+          {activeTab === 'biometric' && enrolledMethods.biometric && (
             <div className="flex flex-col items-center gap-4 py-4 text-center">
               <div className="bg-accent/15 text-accent flex h-16 w-16 items-center justify-center rounded-2xl shadow-inner">
                 <Fingerprint className="h-9 w-9 animate-pulse" />
@@ -297,14 +289,14 @@ export default function LoginForm() {
             </div>
           )}
 
-          {activeTab === 'pin' && (
+          {activeTab === 'pin' && enrolledMethods.pin && (
             <div>
               <p className="text-foreground-muted mb-4 text-center text-sm">Enter your 4-8 digit security PIN code to sign in.</p>
               <TextInput label="PIN Code" value={pinCode} type="password" placeholder="••••••••" onChange={setPinCode} />
             </div>
           )}
 
-          {activeTab === 'totp' && (
+          {activeTab === 'totp' && enrolledMethods.totp && (
             <div>
               <p className="text-foreground-muted mb-4 text-center text-sm">
                 Enter the 6-digit verification code from your authenticator app to finish signing in.
@@ -319,12 +311,33 @@ export default function LoginForm() {
               />
             </div>
           )}
+
+          {!enrolledMethods[activeTab] && (
+            <div className="border-border bg-bg-light/30 flex flex-col gap-3 rounded-xl border p-4 text-center">
+              <p className="text-foreground-muted text-sm">
+                {activeTab === 'biometric'
+                  ? 'Biometric 2FA is not set up yet.'
+                  : activeTab === 'pin'
+                    ? 'A PIN code is not set up yet.'
+                    : 'TOTP 2FA is not set up yet.'}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = '/settings/security'
+                }}
+                className="text-accent text-sm hover:underline"
+              >
+                Enable {activeTab === 'biometric' ? 'Biometric' : activeTab === 'pin' ? 'PIN' : 'TOTP'} in Settings
+              </button>
+            </div>
+          )}
         </div>
 
         {error && <div className="mb-4 text-center text-sm text-red-400">{error}</div>}
 
         <div className="flex flex-col gap-3">
-          {activeTab !== 'biometric' && (
+          {activeTab !== 'biometric' && enrolledMethods[activeTab] && (
             <Btn type="submit" loading={loading} className="w-full">
               Verify & Sign in
             </Btn>

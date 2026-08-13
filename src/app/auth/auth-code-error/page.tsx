@@ -1,17 +1,35 @@
-'use client'
-
+import AuthCard from '@/features/auth/components/AuthCard'
+import Btn from '@/shared/ui/Btn'
 import Link from 'next/link'
+import { AlertTriangle } from 'lucide-react'
+
+export const dynamic = 'force-dynamic'
 
 export default function AuthCodeErrorPage() {
   return (
-    <div className="flex min-h-full flex-col items-center justify-center p-4 text-center">
-      <h1 className="mb-4 text-2xl font-bold text-red-500">Authentication Error</h1>
-      <p className="text-foreground-muted mb-8">
-        There was an error while trying to complete your sign-in. This often happens if the authentication link has expired or has already been used.
-      </p>
-      <Link href="/login" className="bg-primary text-button-foreground hover:bg-primary/80 rounded-lg px-6 py-2 transition-colors">
-        Return to Login
-      </Link>
+    <div className="-mt-[var(--header-height)] flex min-h-full items-center justify-center">
+      <AuthCard title="Link not valid" subtitle="This link is invalid, has expired, or was opened in a different browser or device." icon={AlertTriangle}>
+        <div className="mb-6 flex flex-col gap-3">
+          <p className="text-foreground-muted text-sm">Email links are single-use and expire quickly. Please request a new link:</p>
+          <ul className="text-foreground-muted list-inside list-disc space-y-1 text-left text-sm">
+            <li>
+              <Link href="/forgot-password" className="text-accent hover:underline">
+                Request a new password reset link
+              </Link>
+            </li>
+            <li>
+              <Link href="/login" className="text-accent hover:underline">
+                Request a new magic link from the login page
+              </Link>
+            </li>
+          </ul>
+          <p className="text-foreground-muted text-sm">If the link still fails, sign in with your password instead.</p>
+        </div>
+
+        <Btn to="/login" className="w-full">
+          Go to Login
+        </Btn>
+      </AuthCard>
     </div>
   )
 }

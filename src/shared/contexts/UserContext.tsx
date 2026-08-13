@@ -3,6 +3,7 @@
 import type { EReaderDevice, MediaProgress, AudioBookmark } from '@/types/api'
 import type { Profile } from '@/types/index'
 import { createClient } from '@/shared/utils/supabase/client'
+import { identifyUser, resetAnalytics } from '@/shared/lib/analytics'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 // ---------------------------------------------------------------------------
@@ -112,6 +113,7 @@ export function UserProvider({ children, initialUser }: { children: ReactNode; i
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         // MainLayout will redirect
+        resetAnalytics()
       }
     })
     return () => subscription.unsubscribe()
@@ -119,6 +121,15 @@ export function UserProvider({ children, initialUser }: { children: ReactNode; i
 
   useEffect(() => {
     setUserData(initialUser)
+    // This provider is only mounted for authenticated users (main layout
+    // redirects to /login otherwise), so identify is always safe here. No PII
+    // beyond the username is sent as a trait.
+    if (initialUser.profile?.id) {
+      identifyUser(initialUser.id, {
+        username: initialUser.profile.username ?? undefined,
+        user_type: initialUser.profile.user_type ?? undefined
+      })
+    }
   }, [initialUser])
 
   const { profile } = userData

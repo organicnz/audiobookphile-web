@@ -223,10 +223,13 @@ test('passkey enrollment + passkey sign-in round trip', async ({ page, request }
   await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD)
   await page.getByRole('button', { name: 'Sign in' }).click()
 
-  // 2FA challenge with the biometric tab active by default
+  // 2FA challenge: TOTP is the default tab; the biometric method is available
+  // on demand and must never auto-trigger.
   await expect(page.getByText('Two-Factor Authentication')).toBeVisible({ timeout: 30000 })
   await expect(page.getByText('Biometric', { exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Authenticate with Facial 2FA/ })).toHaveCount(0)
 
+  await page.getByRole('button', { name: /Biometric/ }).click()
   await page.getByRole('button', { name: /Authenticate with Facial 2FA/ }).click()
   await page.waitForURL((url) => url.pathname.startsWith('/library'), { timeout: 30000 })
 })

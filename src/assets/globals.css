@@ -2,6 +2,7 @@
 @source "../"; /* used for launching nextjs from another directory */
 @source "../../cypress/tests/**/*.cy.tsx";
 
+@import './tokens.generated.css'; /* generated from design-system/tokens.json */
 @import './app.css';
 @import './themes.css';
 
@@ -46,10 +47,11 @@
 
   --color-bg: var(--tc-background);
   --color-accent: #f59e0b;
-  --color-error: #ff5252;
-  --color-info: #2196f3;
-  --color-success: #4caf50;
-  --color-warning: #fb8c00;
+  /* Status colors sourced from the shared design system (design-system/tokens.json) */
+  --color-error: var(--design-error);
+  --color-info: var(--design-info);
+  --color-success: var(--design-success);
+  --color-warning: var(--design-warning);
   --color-darkgreen: rgb(34, 127, 35);
   --color-black-50: #bbbbbb;
   --color-black-100: #666666;
