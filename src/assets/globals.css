@@ -46,7 +46,7 @@
   --spacing-96e: 24em;
 
   --color-bg: var(--tc-background);
-  --color-accent: #f59e0b;
+  --color-accent: var(--design-accent);
   /* Status colors sourced from the shared design system (design-system/tokens.json) */
   --color-error: var(--design-error);
   --color-info: var(--design-info);

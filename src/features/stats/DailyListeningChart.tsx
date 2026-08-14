@@ -101,7 +101,7 @@ export default function DailyListeningChart({ daysListening }: DailyListeningCha
             {/* Line */}
             <polyline
               fill="none"
-              stroke="#f59e0b"
+              stroke="var(--design-accent)"
               strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -148,7 +148,13 @@ export default function DailyListeningChart({ daysListening }: DailyListeningCha
                     className="transition-transform duration-150 ease-out group-hover:scale-125"
                     style={{ transformBox: 'fill-box', transformOrigin: '0px 0px' }}
                   >
-                    <circle r={4} cx={0} cy={0} fill="#f59e0b" className="pointer-events-none transition-colors duration-150 group-hover:fill-yellow-300" />
+                    <circle
+                      r={4}
+                      cx={0}
+                      cy={0}
+                      fill="var(--design-accent)"
+                      className="pointer-events-none transition-colors duration-150 group-hover:fill-yellow-300"
+                    />
                   </g>
                 </g>
               )
