@@ -116,14 +116,15 @@ export default function LoginForm() {
           setRequires2FA(true)
           setTempToken(data.tempToken || '')
           setUserId(data.userId || '')
-          const methods = data.methods || { totp: true }
+          // Fail closed: only treat methods the server explicitly reports as
+          // enrolled. Never assume TOTP is set up when the payload is missing
+          // or partial — otherwise a user with no configured method is asked
+          // for a code they never created.
+          const methods = data.methods || {}
           setEnrolledMethods(methods)
-          // Default to TOTP when available; only fall through to another
-          // method if TOTP was never set up. Never auto-select a method that
-          // is merely suggested (i.e. not enrolled) — the user must opt in.
           if (methods.totp) setActiveTab('totp')
           else if (methods.pin) setActiveTab('pin')
-          else setActiveTab('biometric')
+          else if (methods.biometric) setActiveTab('biometric')
           setLoading(false)
           return
         }
@@ -243,20 +244,19 @@ export default function LoginForm() {
     }
   }, [passkey2FAEnabled, activeTab])
 
-  const methodCount = (enrolledMethods.totp ? 1 : 0) + (enrolledMethods.pin ? 1 : 0) + (enrolledMethods.biometric ? 1 : 0)
-
   const methodTabs = [
     ...(passkey2FAEnabled ? [{ key: 'biometric' as const, label: 'Biometric', icon: Fingerprint, enrolled: enrolledMethods.biometric === true }] : []),
     { key: 'pin' as const, label: 'PIN Code', icon: Lock, enrolled: enrolledMethods.pin === true },
     { key: 'totp' as const, label: 'TOTP', icon: Smartphone, enrolled: enrolledMethods.totp === true }
-  ]
+  ].filter((m) => m.enrolled)
+  const hasEnrolledMethods = methodTabs.length > 0
 
   if (requires2FA) {
     return (
       <AuthCard title="Two-Factor Authentication" onSubmit={handle2FASubmit}>
-        {(methodCount > 1 || methodTabs.some((m) => !m.enrolled)) && (
+        {methodTabs.length > 1 && (
           <div className="border-border bg-bg-dark/50 mb-6 flex rounded-xl border p-1">
-            {methodTabs.map(({ key, label, icon: TabIcon, enrolled }) => (
+            {methodTabs.map(({ key, label, icon: TabIcon }) => (
               <button
                 key={key}
                 type="button"
@@ -270,13 +270,19 @@ export default function LoginForm() {
               >
                 <TabIcon className="h-3.5 w-3.5" />
                 {label}
-                {!enrolled && <span className={activeTab === key ? 'font-normal text-white/70' : 'text-accent'}>· Set up</span>}
               </button>
             ))}
           </div>
         )}
 
         <div className="mb-6 flex flex-col gap-4">
+          {!hasEnrolledMethods && (
+            <div className="border-border bg-bg-light/30 flex flex-col gap-3 rounded-xl border p-4 text-center">
+              <p className="text-foreground-muted text-sm">No two-factor methods are configured for this account, so no verification code can be requested.</p>
+              <p className="text-foreground-muted text-xs">Please contact an administrator to reconfigure your security settings.</p>
+            </div>
+          )}
+
           {activeTab === 'biometric' && enrolledMethods.biometric && (
             <div className="flex flex-col items-center gap-4 py-4 text-center">
               <div className="bg-accent/15 text-accent flex h-16 w-16 items-center justify-center rounded-2xl shadow-inner">
@@ -309,27 +315,6 @@ export default function LoginForm() {
                 placeholder="000000"
                 onChange={setTotpCode}
               />
-            </div>
-          )}
-
-          {!enrolledMethods[activeTab] && (
-            <div className="border-border bg-bg-light/30 flex flex-col gap-3 rounded-xl border p-4 text-center">
-              <p className="text-foreground-muted text-sm">
-                {activeTab === 'biometric'
-                  ? 'Biometric 2FA is not set up yet.'
-                  : activeTab === 'pin'
-                    ? 'A PIN code is not set up yet.'
-                    : 'TOTP 2FA is not set up yet.'}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  window.location.href = '/settings/security'
-                }}
-                className="text-accent text-sm hover:underline"
-              >
-                Enable {activeTab === 'biometric' ? 'Biometric' : activeTab === 'pin' ? 'PIN' : 'TOTP'} in Settings
-              </button>
             </div>
           )}
         </div>
