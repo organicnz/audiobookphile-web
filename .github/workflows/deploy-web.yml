@@ -3,18 +3,13 @@ name: Deploy Next.js Web App (Vercel Production)
 on:
   push:
     branches: [main]
-    paths:
-      - 'src/**'
-      - 'package.json'
-      - 'bun.lock'
-      - '.github/workflows/deploy-web.yml'
   pull_request:
     branches: [main]
   workflow_dispatch:
 
 concurrency:
   group: deploy-web-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   verify:
@@ -38,7 +33,7 @@ jobs:
           step_tree "Verify Web Build & Linting" deps \
             "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
             "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
-          bun install
+          bun install --frozen-lockfile
 
       - name: Security Audit
         id: audit
@@ -177,6 +172,9 @@ jobs:
     needs: verify
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-web-prod-${{ github.ref }}
+      cancel-in-progress: false
     outputs:
       deployment_url: ${{ steps.deploy.outputs.deployment_url }}
     steps:
@@ -234,7 +232,7 @@ jobs:
           step_tree "E2E Smoke (Playwright)" deps \
             "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|browsers:Install Playwright Chromium|e2e:Run E2E Smoke Against Preview" \
             "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
-          bun install
+          bun install --frozen-lockfile
 
       - name: Install Playwright Chromium
         id: browsers
