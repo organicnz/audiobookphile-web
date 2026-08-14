@@ -84,12 +84,12 @@ To enable this, provide the `B2_*` environment variables. The client and backend
 
 ## CI/CD (GitHub Actions)
 
-The repository comes pre-configured with two GitHub Actions:
+The repository comes pre-configured with two GitHub Actions workflows:
 
-1. **Next.js Checks (`nextjs-check.yml`)**: Runs TypeScript and Linter checks on PRs.
-2. **Edge Functions Deploy (`edge-functions.yml`)**: Deploys Supabase Edge Functions on pushes to `main`.
+1. **Deploy Next.js Web App (`deploy-web.yml`)**: On pushes to `main` and PRs, runs the full verification pipeline (security audit, typecheck, lint, production build), then Lighthouse and bundle size-limit checks. On `main` pushes it deploys to Vercel via the Vercel CLI, runs a gated E2E smoke test against the preview deployment, and promotes it to production.
+2. **CodeQL Security Scan (`codeql.yml`)**: Static security analysis on pushes, PRs, and a weekly schedule.
 
-Ensure you configure your GitHub Repository Secrets (`SUPABASE_PROJECT_ID`, `SUPABASE_ACCESS_TOKEN`, `SUPABASE_SERVICE_ROLE_KEY`) to enable Edge Function deployments.
+Ensure you configure your GitHub Repository Secrets (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `LHCI_GITHUB_APP_TOKEN`, `PLAYWRIGHT_ADMIN_EMAIL`, `PLAYWRIGHT_ADMIN_PASSWORD`, `PLAYWRIGHT_MEMBER_EMAIL`, `PLAYWRIGHT_MEMBER_PASSWORD`) to enable production deploys and E2E verification.
 
 ## Docker (Local / Self-Hosted)
 
