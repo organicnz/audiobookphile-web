@@ -10,10 +10,14 @@ export async function GET(request: Request) {
   // Email links issued by GoTrue carry `token_hash` (+ type) for both the
   // PKCE and implicit flows. Some flows (browser-initiated PKCE) may also
   // arrive as `code`, which requires the code verifier stored in the
-  // browser that initiated the OTP.
+  // browser that initiated the OTP. Server-side clients that don't opt into
+  // PKCE (e.g. the iOS app's magic-link flow through the edge API) are
+  // redirected with `access_token` + `refresh_token` directly in the query.
   const code = searchParams.get('code')
   const tokenHash = searchParams.get('token_hash')
   const type = (searchParams.get('type') ?? 'magiclink') as EmailOtpType
+  const accessToken = searchParams.get('access_token')
+  const refreshToken = searchParams.get('refresh_token')
 
   // If the iOS app requested the magic link (client=ios), complete the
   // exchange here and bounce the session to the app via its custom URL
@@ -29,7 +33,7 @@ export async function GET(request: Request) {
     next = '/'
   }
 
-  if (code || tokenHash) {
+  if (code || tokenHash || (accessToken && refreshToken)) {
     const supabase = await createClient()
 
     if (code) {
@@ -43,6 +47,16 @@ export async function GET(request: Request) {
       }
     } else if (tokenHash) {
       const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
+      if (!error && data.session) {
+        if (client === 'ios') {
+          return bounceToApp(data.session.access_token, data.session.refresh_token, data.session.user.id, server)
+        }
+        const destination = type === 'recovery' ? '/reset-password' : next === '/' ? '/library' : next
+        return NextResponse.redirect(`${origin}${destination}`)
+      }
+    } else if (accessToken && refreshToken) {
+      // Implicit flow: GoTrue redirects with the session tokens in the URL.
+      const { data, error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
       if (!error && data.session) {
         if (client === 'ios') {
           return bounceToApp(data.session.access_token, data.session.refresh_token, data.session.user.id, server)
