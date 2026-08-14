@@ -12,6 +12,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: deploy-web-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     name: Verify Web Build & Linting
@@ -74,6 +78,99 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+
+  lighthouse:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        id: bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        id: deps
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Lighthouse Performance Audit" deps \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|audit:Run Lighthouse CI" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
+          bun install --frozen-lockfile
+
+      - name: Build Next.js Bundle
+        id: build
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Lighthouse Performance Audit" build \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|audit:Run Lighthouse CI" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }}"
+          bun run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+
+      - name: Run Lighthouse CI
+        id: audit
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Lighthouse Performance Audit" audit \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|audit:Run Lighthouse CI" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};build=${{ steps.build.outcome }}"
+          bunx lhci autorun
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  size-limit:
+    name: Bundle Size Limit
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        id: bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        id: deps
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Bundle Size Limit" deps \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|check:Check Size Limit" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
+          bun install --frozen-lockfile
+
+      - name: Build Next.js Bundle
+        id: build
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Bundle Size Limit" build \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|check:Check Size Limit" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }}"
+          bun run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+
+      - name: Check Size Limit
+        id: check
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "Bundle Size Limit" check \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|check:Check Size Limit" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};build=${{ steps.build.outcome }}"
+          bunx size-limit
 
   deploy:
     name: Deploy to Vercel (Preview Build)
