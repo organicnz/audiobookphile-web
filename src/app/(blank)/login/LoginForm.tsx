@@ -9,10 +9,11 @@ import { createClient } from '@/shared/utils/supabase/client'
 import { useFeatureFlag } from '@/shared/lib/analytics'
 import { Fingerprint, Lock, Smartphone } from 'lucide-react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
 export default function LoginForm() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -237,6 +238,26 @@ export default function LoginForm() {
   // Kill-switch flag: WebAuthn/passkey flows are gated so a browser quirk can
   // disable biometric 2FA instantly from PostHog without a deploy. Default ON.
   const passkey2FAEnabled = useFeatureFlag('passkey_2fa', true)
+
+  // Magic-link / recovery emails whose redirect_to isn't on the Supabase
+  // allow-list (e.g. path-scoped targets, localhost) are redirected by GoTrue
+  // to the Site URL root with the session tokens in the URL fragment. `/`
+  // redirects here, the fragment survives, and no server route can read it —
+  // so complete the sign-in from the hash exactly like /auth/confirm does.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.substring(1))
+    const accessToken = params.get('access_token')
+    const refreshToken = params.get('refresh_token')
+    if (!accessToken || !refreshToken) return
+    const type = params.get('type')
+    window.history.replaceState(null, '', window.location.pathname + window.location.search)
+    if (type === 'recovery') {
+      const supabase = createClient()
+      supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(() => router.replace('/reset-password'))
+      return
+    }
+    completeSession(accessToken, refreshToken)
+  }, [completeSession, router])
 
   useEffect(() => {
     if (!passkey2FAEnabled && activeTab === 'biometric') {

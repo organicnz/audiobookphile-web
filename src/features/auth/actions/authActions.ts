@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/shared/utils/supabase/server'
+import { createClient as createSupabaseJsClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
 
 /**
@@ -25,6 +26,22 @@ function getSiteUrl(): string {
   if (vercelUrl) return `https://${vercelUrl}`
 
   return 'http://localhost:3000' // dev-only fallback
+}
+
+/**
+ * Email-link flows (magic link, password reset) must run on the implicit flow.
+ * @supabase/ssr's server client forces PKCE, whose emailed links only work in
+ * the browser that requested them (the code verifier lives in its cookies).
+ * Email links get opened by the mail app in whatever browser is default, so a
+ * plain client — which defaults to implicit — sends links that carry the
+ * session tokens in the URL fragment. /auth/confirm parses the fragment
+ * client-side and completes the sign-in in any browser, matching the
+ * backend's /api/auth/magic-link route.
+ */
+function createEmailLinkClient() {
+  return createSupabaseJsClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false }
+  })
 }
 
 export async function signInWithGoogle() {
@@ -59,9 +76,9 @@ export async function signUp(_email: string, _password: string) {
 
 export async function forgotPassword(email: string) {
   const siteUrl = getSiteUrl()
-  const supabase = await createClient()
+  const supabase = createEmailLinkClient()
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl}/auth/callback?next=/reset-password`
+    redirectTo: `${siteUrl}/auth/confirm?next=/reset-password`
   })
 
   if (error) {
@@ -109,14 +126,14 @@ export async function resetPassword(password: string) {
 
 export async function signInWithMagicLink(email: string) {
   const siteUrl = getSiteUrl()
-  const supabase = await createClient()
+  const supabase = createEmailLinkClient()
 
   try {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         shouldCreateUser: false,
-        emailRedirectTo: `${siteUrl}/auth/callback?next=/library`
+        emailRedirectTo: `${siteUrl}/auth/confirm?next=/library`
       }
     })
 

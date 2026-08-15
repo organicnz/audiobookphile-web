@@ -67,8 +67,14 @@ export async function GET(request: Request) {
     }
   }
 
-  // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+  // Implicit-flow links arrive with the session tokens in the URL *fragment*,
+  // which is never sent to the server — none of the branches above can see
+  // them. Browsers preserve the fragment across a 3xx redirect, so hand the
+  // request (query intact) to the client-side confirm page, which parses the
+  // hash and completes the sign-in. Links with no usable token at all are
+  // bounced to the error page from there.
+  const query = searchParams.toString()
+  return NextResponse.redirect(`${origin}/auth/confirm${query ? `?${query}` : ''}`)
 }
 
 function bounceToApp(accessToken: string, refreshToken: string | null, userId: string, server?: string | null) {
