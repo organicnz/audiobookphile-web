@@ -23,13 +23,13 @@ Audiobookphile is designed for users who want a beautiful, premium "Liquid Glass
 
 ## Environment Variables
 
-The canonical env source lives in the backend repo (`audiobookphile-backend/env/`). Generate your local env from it:
+The canonical env source lives in the backend repo (`audiobookphile-backend/env/local.env`). Generate your local env from it:
 
 ```bash
-../audiobookphile-backend/scripts/sync-env.sh        # local
-# or, for production-shaped values:
-../audiobookphile-backend/scripts/sync-env.sh --prod
+../audiobookphile-backend/scripts/sync-env.sh
 ```
+
+Production and CI values are configured on the platforms (Vercel env vars, Supabase Edge Function secrets, GitHub Actions secrets) — never in env files.
 
 `.env.example` lists every variable with documentation for the open-source community. Secrets are never stored in these files — configure them in Vercel (web), Supabase Vault, or Edge Function secrets.
 
