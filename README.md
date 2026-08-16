@@ -23,11 +23,15 @@ Audiobookphile is designed for users who want a beautiful, premium "Liquid Glass
 
 ## Environment Variables
 
-Copy `.env.example` to `.env.local` for local development:
+The canonical env source lives in the backend repo (`audiobookphile-backend/env/`). Generate your local env from it:
 
 ```bash
-cp .env.example .env.local
+../audiobookphile-backend/scripts/sync-env.sh        # local
+# or, for production-shaped values:
+../audiobookphile-backend/scripts/sync-env.sh --prod
 ```
+
+`.env.example` lists every variable with documentation for the open-source community. Secrets are never stored in these files — configure them in Vercel (web), Supabase Vault, or Edge Function secrets.
 
 | Variable                        | Description                                                                                                  |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -37,11 +41,8 @@ cp .env.example .env.local
 | `NEXT_PUBLIC_SITE_URL`          | Public URL of your app (required for OAuth redirects)                                                        |
 | `NEXT_PUBLIC_POSTHOG_KEY`       | (Optional) PostHog analytics + feature flags (flags use `useFeatureFlag`, see `src/shared/lib/analytics.ts`) |
 | `NEXT_PUBLIC_POSTHOG_HOST`      | (Optional) PostHog ingest host (default `https://us.i.posthog.com`)                                          |
-| `B2_ENDPOINT`                   | (Optional) Backblaze B2 S3 endpoint url                                                                      |
-| `B2_REGION`                     | (Optional) Backblaze B2 S3 region                                                                            |
-| `B2_BUCKET_NAME`                | (Optional) Backblaze B2 Bucket name                                                                          |
 
-Feature flags are read from PostHog. Existing flags: `passkey_2fa` (kill-switch for passkey/biometric 2FA — defaults ON, disable in PostHog to turn off without a deploy). | `B2_KEY_ID` | (Optional) Backblaze B2 Key ID | | `B2_APP_KEY` | (Optional) Backblaze B2 Application Key |
+Feature flags are read from PostHog. Existing flags: `passkey_2fa` (kill-switch for passkey/biometric 2FA — defaults ON, disable in PostHog to turn off without a deploy).
 
 > `SUPABASE_SERVICE_ROLE_KEY` must never be prefixed with `NEXT_PUBLIC_` and must never appear in client-side code.
 

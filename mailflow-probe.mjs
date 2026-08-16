@@ -20,7 +20,7 @@ function loadEnvFile(filePath) {
 
 const env = loadEnvFile('/Users/organic/dev/work/audiobookphile/audiobookphile-web/.env.local')
 const url = env.NEXT_PUBLIC_SUPABASE_URL
-const serviceKey = env.SUPABASE_SERVICE_KEY
+const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY ?? env.SUPABASE_SERVICE_KEY
 const site = 'https://audiobookphile.vercel.app'
 const login = 'abp' + Date.now().toString()
 const domain = '1secmail.com'
