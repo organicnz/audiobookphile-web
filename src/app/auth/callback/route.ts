@@ -5,6 +5,7 @@ import type { EmailOtpType } from '@supabase/supabase-js'
 const APP_DEEP_LINK_SCHEME = 'audiobookphile://'
 
 export async function GET(request: Request) {
+  const url = new URL(request.url)
   const { searchParams, origin } = new URL(request.url)
 
   // Email links issued by GoTrue carry `token_hash` (+ type) for both the
@@ -13,6 +14,22 @@ export async function GET(request: Request) {
   // browser that initiated the OTP. Server-side clients that don't opt into
   // PKCE (e.g. the iOS app's magic-link flow through the edge API) are
   // redirected with `access_token` + `refresh_token` directly in the query.
+
+  // URL fragments (`#...`) persist across redirects and contain token info
+  // for implicit flows sent via email — browsers never send fragments to
+  // servers, so we extract them here and parse as if they were query params.
+  const fragment = url.hash.substring(1)
+  if (fragment) {
+    try {
+      const fragmentParams = new URLSearchParams(fragment)
+      searchParams.set('access_token', fragmentParams.get('access_token') || '')
+      searchParams.set('refresh_token', fragmentParams.get('refresh_token') || '')
+      searchParams.set('type', fragmentParams.get('type') || 'magiclink')
+    } catch {
+      // Invalid fragment — fall back to original behavior
+    }
+  }
+
   const code = searchParams.get('code')
   const tokenHash = searchParams.get('token_hash')
   const type = (searchParams.get('type') ?? 'magiclink') as EmailOtpType
@@ -67,16 +84,12 @@ export async function GET(request: Request) {
     }
   }
 
-  // Implicit-flow links arrive with the session tokens in the URL *fragment*,
-  // which is never sent to the server — none of the branches above can see
-  // them. Browsers preserve the fragment across a 3xx redirect, so hand the
-  // request (query intact) to the client-side confirm page, which parses the
-  // hash and completes the sign-in. Links with no usable token at all are
-  // bounced to the error page from there.
+  // Fallback for malformed fragments that couldn't be parsed or handled.
   const query = searchParams.toString()
-  return NextResponse.redirect(`${origin}/auth/confirm${query ? `?${query}` : ''}`)
+  return NextResponse.redirect(`${origin}/library${query ? `?${query}` : ''}`)
 }
 
+// Handle deep-link bounce to the iOS app.
 function bounceToApp(accessToken: string, refreshToken: string | null, userId: string, server?: string | null) {
   const url = new URL('auth/callback', APP_DEEP_LINK_SCHEME)
   url.searchParams.set('accessToken', accessToken)
