@@ -102,6 +102,10 @@ docker compose up --build
 
 The app will be available at [http://localhost:3000](http://localhost:3000).
 
+## Credits
+
+Audiobookphile's web app descends from the [Audiobookshelf web client](https://github.com/advplyr/audiobookshelf). We forked it to build a serverless architecture (Supabase backend) that Audiobookshelf's self-hosted model never needed, and have since diverged significantly — this repository is a standalone project and no longer tracks upstream.
+
 ## Contributing
 
 Pull requests are welcome. For major changes, open an issue first to discuss what you'd like to change. Please ensure you do not use any GPLv3 assets or proprietary logos from other projects when contributing.
