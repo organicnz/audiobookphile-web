@@ -36,6 +36,8 @@ All five variables below are optional as a group. When any of them is absent the
 | `B2_KEY_ID` | Prod / Preview / Dev — optional | B2 key ID (analogous to `AWS_ACCESS_KEY_ID`). | Storage sync falls back to Supabase storage. |
 | `B2_APP_KEY` | Prod / Preview / Dev — optional | B2 application key (analogous to `AWS_SECRET_ACCESS_KEY`). | Storage sync falls back to Supabase storage. |
 | `B2_REGION` | Prod / Preview / Dev — optional | B2 region string used to construct the S3-compatible endpoint. Defaults to `us-west-004`. | The default region is used; change only if your bucket is in a different region. |
+| `B2_TERTIARY_*` | Prod / Preview / Dev — optional | Same five variables prefixed `B2_TERTIARY_` (`B2_TERTIARY_ENDPOINT`, `B2_TERTIARY_BUCKET_NAME`, `B2_TERTIARY_KEY_ID`, `B2_TERTIARY_APP_KEY`, `B2_TERTIARY_REGION`) select the third B2 bucket (`audiobookphile-b2-tertiary`). Used by the backend edge functions, not the web server. | Edge functions fall back to the secondary / primary tier. |
+| `ACTIVE_B2_TIER` | Supabase Edge Function secrets only | `tertiary` (current), `secondary`, or `primary` — which bucket new uploads are presigned into. | New uploads presign to `primary`. |
 
 ---
 
