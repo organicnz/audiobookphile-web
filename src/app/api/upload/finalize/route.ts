@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (cookieHeader) headers['Cookie'] = cookieHeader
     if (anonKey) headers['apikey'] = anonKey
 
-    const edgeUrl = `${supabaseUrl}/functions/v1/upload-finalize`
+    const edgeUrl = `${supabaseUrl}/functions/v1/api/upload/finalize`
     const res = await fetch(edgeUrl, {
       method: 'POST',
       headers,

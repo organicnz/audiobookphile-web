@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     if (cookieHeader) headers['Cookie'] = cookieHeader
     if (anonKey) headers['apikey'] = anonKey
 
-    const edgeUrl = `${supabaseUrl}/functions/v1/upload-presign`
+    const edgeUrl = `${supabaseUrl}/functions/v1/api/upload-presign`
     const res = await fetch(edgeUrl, {
       method: 'POST',
       headers,
