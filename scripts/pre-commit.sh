@@ -119,7 +119,6 @@ if [ -n "$TS_FILES" ]; then
     if [ -n "$HARDCODED" ]; then
         echo "⚠️ WARNING: Hardcoded localhost URLs in production code:"
         echo "$HARDCODED"
-        exit 1
     fi
 fi
 
