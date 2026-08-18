@@ -1,6 +1,7 @@
-import { test, expect, type APIRequestContext } from '@playwright/test'
+import { test, expect } from './fixtures'
 import { readFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
+import { type APIRequestContext } from '@playwright/test'
 
 /**
  * End-to-end check that a REGULAR (non-admin) user can enroll a passkey from

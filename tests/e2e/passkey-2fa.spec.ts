@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures'
 
 /**
  * End-to-end passkey (WebAuthn) 2FA flow against the deployed site.

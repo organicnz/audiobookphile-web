@@ -234,14 +234,14 @@ jobs:
             "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
           bun install --frozen-lockfile
 
-      - name: Install Playwright Chromium
+      - name: Install Playwright Chromium & WebKit
         id: browsers
         run: |
           . .github/scripts/step-tree.sh
           step_tree "E2E Smoke (Playwright)" browsers \
-            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|browsers:Install Playwright Chromium|e2e:Run E2E Smoke Against Preview" \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|browsers:Install Playwright Chromium & WebKit|e2e:Run E2E Smoke Against Preview" \
             "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }}"
-          bunx playwright install --with-deps chromium
+          bunx playwright install --with-deps chromium webkit
 
       - name: Run E2E Smoke Against Preview
         id: e2e
@@ -281,3 +281,64 @@ jobs:
             "bun:Setup Bun|promote:Promote Deployment"
           bun add -g vercel@latest
           vercel promote ${{ needs.deploy.outputs.deployment_url }} --yes --token=$VERCEL_TOKEN
+
+  e2e-pr:
+    name: E2E Smoke (Playwright Local)
+    needs: verify
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        id: bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        id: deps
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "E2E Smoke (Playwright Local)" deps \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|browsers:Install Playwright Chromium & WebKit|e2e:Run E2E Smoke Locally" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
+          bun install --frozen-lockfile
+
+      - name: Build Next.js Bundle
+        id: build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "E2E Smoke (Playwright Local)" build \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|browsers:Install Playwright Chromium & WebKit|e2e:Run E2E Smoke Locally" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }}"
+          bun run build
+
+      - name: Install Playwright Chromium & WebKit
+        id: browsers
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "E2E Smoke (Playwright Local)" browsers \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|browsers:Install Playwright Chromium & WebKit|e2e:Run E2E Smoke Locally" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};build=${{ steps.build.outcome }}"
+          bunx playwright install --with-deps chromium webkit
+
+      - name: Run E2E Smoke Locally
+        id: e2e
+        env:
+          PLAYWRIGHT_ADMIN_EMAIL: ${{ secrets.PLAYWRIGHT_ADMIN_EMAIL }}
+          PLAYWRIGHT_ADMIN_PASSWORD: ${{ secrets.PLAYWRIGHT_ADMIN_PASSWORD }}
+          PLAYWRIGHT_MEMBER_EMAIL: ${{ secrets.PLAYWRIGHT_MEMBER_EMAIL }}
+          PLAYWRIGHT_MEMBER_PASSWORD: ${{ secrets.PLAYWRIGHT_MEMBER_PASSWORD }}
+        run: |
+          . .github/scripts/step-tree.sh
+          step_tree "E2E Smoke (Playwright Local)" e2e \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|browsers:Install Playwright Chromium & WebKit|e2e:Run E2E Smoke Locally" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};build=${{ steps.build.outcome }};browsers=${{ steps.browsers.outcome }}"
+          bun run test
+        timeout-minutes: 15
