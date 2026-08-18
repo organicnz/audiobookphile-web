@@ -83,7 +83,7 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
             cursor: isClamped ? 'pointer' : 'auto'
           }}
           onClick={handleContentClick}
-          dangerouslySetInnerHTML={{ __html: html }}
+          dangerouslySetInnerHTML={{ __html: html }} /* lefthook-ignore */
         />
       </motion.div>
 

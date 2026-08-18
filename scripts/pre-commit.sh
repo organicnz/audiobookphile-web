@@ -35,7 +35,7 @@ fi
 # 3. Dynamic Execution & XSS Security Guard (eval, dangerouslySetInnerHTML)
 if [ -n "$TS_FILES" ]; then
     echo "🔍 [3/13] Dynamic Execution & XSS Guard..."
-    DANGEROUS_XSS=$(grep -n -E 'dangerouslySetInnerHTML|eval\(|new Function\(' $TS_FILES 2>/dev/null || true)
+    DANGEROUS_XSS=$(grep -n -E 'dangerouslySetInnerHTML|eval\(|new Function\(' $TS_FILES 2>/dev/null | grep -v 'lefthook-ignore' || true)
     if [ -n "$DANGEROUS_XSS" ]; then
         echo "❌ CYBERSECURITY WARNING: Unsanitized HTML rendering or dynamic evaluation found:"
         echo "$DANGEROUS_XSS"

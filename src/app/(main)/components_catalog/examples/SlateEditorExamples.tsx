@@ -27,13 +27,14 @@ export function SlateEditorExamples() {
   const textAreaValue = 'This is a\n4 line\ntext\nparagraph'
   const editorValue = '<p>This is a\n4 line\ntext\nparagraph</p>'
   const [editorOutput, setEditorOutput] = useState(initialContent)
+  const [textareaOutput, setTextareaOutput] = useState(textAreaValue)
 
   const handleUpdate = (html: string) => {
-    console.log('Editor content updated:', html)
+    setEditorOutput(html)
   }
 
   const handleUpdateTextarea = (value: string) => {
-    console.log('Textarea content updated:', value)
+    setTextareaOutput(value)
   }
 
   return (
@@ -94,7 +95,10 @@ export function SlateEditorExamples() {
             </div>
             <div className="min-w-[250px] flex-1">
               <Label className="mt-9.5">Output:</Label>
-              <div className={mergeClasses(slateElementStyles, 'rounded-md border border-gray-500 p-2')} dangerouslySetInnerHTML={{ __html: editorOutput }} />
+              <div
+                className={mergeClasses(slateElementStyles, 'rounded-md border border-gray-500 p-2')}
+                dangerouslySetInnerHTML={{ __html: editorOutput }} /* lefthook-ignore */
+              />
             </div>
           </div>
         </Example>

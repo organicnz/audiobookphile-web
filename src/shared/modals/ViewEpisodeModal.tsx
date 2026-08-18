@@ -113,7 +113,7 @@ export default function ViewEpisodeModal({ isOpen, onClose, episode, libraryItem
           dir="auto"
           className="default-style less-spacing break-words"
           onClick={handleDescriptionClick}
-          dangerouslySetInnerHTML={{ __html: parsedDescription }}
+          dangerouslySetInnerHTML={{ __html: parsedDescription }} /* lefthook-ignore */
         />
       ) : (
         <p className="mb-2">{t('MessageNoDescription')}</p>

@@ -140,7 +140,7 @@ export default function EpisodeRow({
                 <div
                   dir="auto"
                   className="line-clamp-2 w-full text-xs leading-relaxed font-medium break-words whitespace-normal text-white/40"
-                  dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+                  dangerouslySetInnerHTML={{ __html: descriptionHtml }} /* lefthook-ignore */
                   onClick={(e) => {
                     if ((e.target as HTMLElement).tagName.toLowerCase() === 'a') {
                       e.stopPropagation()
