@@ -391,7 +391,7 @@ export default function LoginForm() {
             <span className="border-border w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-bg text-foreground-muted px-2">Or continue with</span>
+            <span className="bg-bg text-foreground px-2">Or continue with</span>
           </div>
         </div>
 

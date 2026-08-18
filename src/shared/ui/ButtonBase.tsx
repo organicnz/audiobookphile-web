@@ -2,9 +2,9 @@
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import React from 'react'
+import React, { forwardRef } from 'react'
 
-const MotionLink = motion(Link)
+const MotionLink = motion.create(Link)
 
 interface ButtonBaseProps {
   id?: string
