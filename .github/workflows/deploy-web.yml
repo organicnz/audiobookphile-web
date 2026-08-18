@@ -35,40 +35,31 @@ jobs:
             "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }}"
           bun install --frozen-lockfile
 
-      - name: Security Audit
-        id: audit
+      - name: Run Lefthook pre-commit
+        id: pre_commit
         run: |
           . .github/scripts/step-tree.sh
-          step_tree "Verify Web Build & Linting" audit \
-            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
+          step_tree "Verify Web Build & Linting" pre_commit \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|pre_commit:Run Lefthook pre-commit|pre_push:Run Lefthook pre-push|build:Build Next.js Bundle" \
             "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }}"
-          ./scripts/security-audit.sh
+          bunx lefthook run pre-commit --all-files
 
-      - name: Typecheck
-        id: typecheck
+      - name: Run Lefthook pre-push
+        id: pre_push
         run: |
           . .github/scripts/step-tree.sh
-          step_tree "Verify Web Build & Linting" typecheck \
-            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
-            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};audit=${{ steps.audit.outcome }}"
-          bun run typecheck
-
-      - name: Lint
-        id: lint
-        run: |
-          . .github/scripts/step-tree.sh
-          step_tree "Verify Web Build & Linting" lint \
-            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
-            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};audit=${{ steps.audit.outcome }};typecheck=${{ steps.typecheck.outcome }}"
-          bun run lint
+          step_tree "Verify Web Build & Linting" pre_push \
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|pre_commit:Run Lefthook pre-commit|pre_push:Run Lefthook pre-push|build:Build Next.js Bundle" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};pre_commit=${{ steps.pre_commit.outcome }}"
+          bunx lefthook run pre-push --all-files
 
       - name: Build Next.js Bundle
         id: build
         run: |
           . .github/scripts/step-tree.sh
           step_tree "Verify Web Build & Linting" build \
-            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|audit:Security Audit|typecheck:Typecheck|lint:Lint|build:Build Next.js Bundle" \
-            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};audit=${{ steps.audit.outcome }};typecheck=${{ steps.typecheck.outcome }};lint=${{ steps.lint.outcome }}"
+            "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|pre_commit:Run Lefthook pre-commit|pre_push:Run Lefthook pre-push|build:Build Next.js Bundle" \
+            "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};pre_commit=${{ steps.pre_commit.outcome }};pre_push=${{ steps.pre_push.outcome }}"
           bun run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
