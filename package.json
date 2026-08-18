@@ -58,6 +58,7 @@
     "@axe-core/playwright": "^4.13.0",
     "@biomejs/biome": "^2.5.5",
     "@eslint/eslintrc": "^3.3.1",
+    "@evilmartians/lefthook": "^2.1.10",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.61.0",
     "@size-limit/preset-app": "^12.1.0",

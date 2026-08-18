@@ -42,6 +42,7 @@
         "@axe-core/playwright": "^4.13.0",
         "@biomejs/biome": "^2.5.5",
         "@eslint/eslintrc": "^3.3.1",
+        "@evilmartians/lefthook": "^2.1.10",
         "@lhci/cli": "^0.15.1",
         "@playwright/test": "^1.61.0",
         "@size-limit/preset-app": "^12.1.0",
@@ -383,6 +384,8 @@
     "@eslint/object-schema": ["@eslint/object-schema@2.1.6", "", {}, "sha512-RBMg5FRL0I0gs51M/guSAj5/e14VQ4tpZnQNWwuDT66P14I43ItmPfIZRhO9fUVIPOAQXU47atlywZ/czoqFPA=="],
 
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.3.5", "", { "dependencies": { "@eslint/core": "0.15.2", "levn": "0.4.1" } }, "sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w=="],
+
+    "@evilmartians/lefthook": ["@evilmartians/lefthook@2.1.10", "", { "os": [ "linux", "win32", "darwin", ], "cpu": [ "x64", "ia32", "arm64", ], "bin": { "lefthook": "bin/index.js" } }, "sha512-l5tiHiPQQdFE27g8j8Y1fgvGP9jiIxaxU3Bejq845hJn3M1OT2+QwjB/oqIIb7px2cTxUqFndTCSxK+HPY40rg=="],
 
     "@floating-ui/core": ["@floating-ui/core@1.7.3", "", { "dependencies": { "@floating-ui/utils": "0.2.10" } }, "sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w=="],
 

@@ -48,9 +48,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <div>
                 <h1 className="text-error mb-4 text-2xl font-bold">Something went wrong</h1>
                 <p className="text-foreground-muted mb-4">We&apos;re sorry for the inconvenience. Please refresh and try again.</p>
-                <button onClick={() => window.location.reload()} className="bg-primary rounded-lg px-6 py-2 text-white transition-opacity hover:opacity-90">
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                <a href="/" className="bg-primary inline-block rounded-lg px-6 py-2 text-white transition-opacity hover:opacity-90">
                   Refresh
-                </button>
+                </a>
               </div>
             </div>
           }
