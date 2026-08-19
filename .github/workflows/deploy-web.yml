@@ -258,7 +258,7 @@ jobs:
     steps:
       - name: Setup Bun
         id: bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
@@ -285,7 +285,7 @@ jobs:
 
       - name: Setup Bun
         id: bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
