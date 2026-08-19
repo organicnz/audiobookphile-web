@@ -15,6 +15,6 @@ export async function getTasksAction(): Promise<{
   tasks: Task[]
   queuedTaskData?: { embedMetadata: { libraryItemId: string }[] }
 }> {
-  console.warn('[toolsActions] getTasks is not available in the Supabase-backed version')
+  // Stub: tasks are not used in the Supabase-backed version
   return { tasks: [] }
 }
