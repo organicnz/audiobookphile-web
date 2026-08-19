@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'nodejs'
+export const maxDuration = 60
+
 export async function POST(req: NextRequest) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
@@ -26,7 +29,16 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(body)
     })
 
-    const data = await res.json().catch(() => ({ error: `Edge Function returned status ${res.status}` }))
+    const text = await res.text()
+    let data: Record<string, unknown>
+    try {
+      data = JSON.parse(text)
+    } catch {
+      data = {
+        error: `Edge Function returned status ${res.status}`,
+        detail: text.slice(0, 500)
+      }
+    }
     return NextResponse.json(data, { status: res.status })
   } catch (error: unknown) {
     const err = error as Error
