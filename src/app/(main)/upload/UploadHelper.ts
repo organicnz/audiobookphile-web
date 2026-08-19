@@ -477,7 +477,8 @@ export async function upload(
       size: f.size,
       type: f.type,
       storagePath: uploadedPaths[i]
-    }))
+    })),
+    overwrite: item.overwrite
   })
 
   const baseUrl = '/api/upload/finalize'

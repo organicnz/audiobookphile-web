@@ -20,6 +20,7 @@ export interface ItemToUpload extends CleanedItem {
   uploadError?: string
   uploadComplete?: boolean
   uploadFailed?: boolean
+  overwrite?: boolean
 }
 
 export function useUploader(libraries: Library[]) {
@@ -205,7 +206,17 @@ export function useUploader(libraries: Library[]) {
       try {
         const existingBookId = await checkExistingBook(item.title, item.author || '', selectedLibrary!, currentLibraryMediaType! || 'book')
         if (existingBookId) {
+          const confirmed = window.confirm(
+            `An audiobook with the title '${item.title}' already exists. Do you want to proceed and overwrite/append files to it?`
+          )
+          if (!confirmed) {
+            item.uploadFailed = true
+            item.uploadError = 'Cancelled due to existing book'
+            setUploadItems([...items])
+            continue
+          }
           item.bookId = existingBookId
+          item.overwrite = true
         }
       } catch (err) {
         console.warn('Failed to check for existing book:', err)
