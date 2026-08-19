@@ -12,6 +12,7 @@ type MyFixtures = {
   memberPage: Page
   api: import('@playwright/test').APIRequestContext
   makeAxeBuilder: () => AxeBuilder
+  axeEnabled: boolean
   autoAxe: void
 }
 
@@ -21,7 +22,7 @@ async function performLogin(page: Page, email?: string, password?: string) {
   }
   await page.goto('/login')
   await page.getByLabel('Email').fill(email)
-  await page.getByLabel('Password').fill(password)
+  await page.getByRole('textbox', { name: 'Password' }).fill(password)
   await page.getByRole('button', { name: 'Sign in' }).click()
   await page.waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 30_000 })
 }
@@ -61,10 +62,11 @@ export const test = base.extend<MyFixtures>({
         .exclude('iframe')
     await use(makeAxeBuilder)
   },
+  axeEnabled: [true, { option: true }],
   autoAxe: [
-    async ({ page, makeAxeBuilder }, use) => {
+    async ({ page, makeAxeBuilder, axeEnabled }, use) => {
       await use()
-      if (page.url() === 'about:blank') return
+      if (!axeEnabled || page.url() === 'about:blank') return
       const accessibilityScanResults = await makeAxeBuilder().analyze()
       expect(accessibilityScanResults.violations).toEqual([])
     },
