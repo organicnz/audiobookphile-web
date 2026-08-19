@@ -500,7 +500,8 @@ export async function upload(
     const err = await response.json().catch(() => ({
       error: `HTTP ${response.status}`
     }))
-    throw new Error(err.error || `Upload failed with status ${response.status}`)
+    const detail = err.detail ? ` — ${err.detail}` : ''
+    throw new Error((err.error || `Upload failed with status ${response.status}`) + detail)
   }
 
   if (onProgress) {
