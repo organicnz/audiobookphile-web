@@ -94,6 +94,6 @@ import { withSentryConfig } from '@sentry/nextjs'
 
 export default withSentryConfig(nextConfig, {
   silent: true,
-  org: 'zalesie',
+  org: 'organicnz',
   project: 'audiobookphile'
 })
