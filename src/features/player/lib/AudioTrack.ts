@@ -53,6 +53,6 @@ export class AudioTrack {
    * Check if a given time falls within this track
    */
   containsTime(time: number): boolean {
-    return time >= this.startOffset && time < this.startOffset + this.duration
+    return time >= this.startOffset && time <= this.startOffset + this.duration
   }
 }

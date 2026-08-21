@@ -33,29 +33,28 @@ export class NativeAudioProvider implements IAudioProvider {
   }
 
   seek(time: number): void {
-    const currentTrack = this.currentTrack
-    if (!currentTrack) return
+    if (!this.audioTracks.length) return
 
-    const trackDuration = currentTrack.duration || this.player.duration || 0
-    const trackEnd = currentTrack.startOffset + trackDuration
+    const lastTrack = this.audioTracks[this.audioTracks.length - 1]
+    const totalDuration = lastTrack.startOffset + lastTrack.duration
+    const clampedTime = Math.max(0, Math.min(time, totalDuration > 0 ? totalDuration : time))
 
-    // Seek within the currently-loaded track if it actually contains the target time.
-    // When trackDuration is 0 (metadata not yet loaded) we fall through to a
-    // cross-track seek so we don't set a bogus negative currentTime.
-    if (trackDuration > 0 && time >= currentTrack.startOffset && time <= trackEnd) {
-      this.player.currentTime = Math.max(0, time - currentTrack.startOffset)
+    // Find the track that contains clampedTime
+    let trackIndex = this.audioTracks.findIndex((t) => t.containsTime(clampedTime))
+    if (trackIndex === -1) {
+      trackIndex = this.audioTracks.length - 1
+    }
+
+    if (trackIndex === this.currentTrackIndex && this.player.src) {
+      const track = this.audioTracks[trackIndex]
+      const maxTrackTime = track.duration > 0 ? track.duration : Infinity
+      const offsetTime = Math.max(0, Math.min(clampedTime - track.startOffset, maxTrackTime))
+      this.player.currentTime = offsetTime
+      this.onTrackLoad(offsetTime)
     } else {
-      // Target time is in a different track — find and load it
-      const trackIndex = this.audioTracks.findIndex((t) => t.containsTime(time))
-      if (trackIndex >= 0) {
-        this.startTime = time
-        this.currentTrackIndex = trackIndex
-        this.loadCurrentTrack()
-      } else if (trackDuration > 0) {
-        // No matching track found but we have a valid duration — clamp to current track
-        this.player.currentTime = Math.max(0, time - currentTrack.startOffset)
-      }
-      // If trackDuration === 0 and no track found, do nothing — metadata hasn't loaded yet
+      this.startTime = clampedTime
+      this.currentTrackIndex = trackIndex
+      this.loadCurrentTrack()
     }
   }
 

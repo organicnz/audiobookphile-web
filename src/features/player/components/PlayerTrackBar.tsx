@@ -100,10 +100,11 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
       const rect = trackRef.current?.getBoundingClientRect()
       if (!rect || !rect.width) return null
       const offsetX = Math.max(0, Math.min(clientX - rect.left, rect.width))
-      const perc = offsetX / rect.width
-      const baseTime = useChapterTrack ? currentChapterStart : 0
+      const perc = Math.max(0, Math.min(offsetX / rect.width, 1))
       const dur = useChapterTrack ? currentChapterDuration : duration
-      const time = baseTime + perc * dur
+      if (!dur || dur <= 0 || isNaN(dur)) return null
+      const baseTime = useChapterTrack ? currentChapterStart : 0
+      const time = Math.max(baseTime, Math.min(baseTime + perc * dur, baseTime + dur))
       if (isNaN(time)) return null
       return { time, perc: perc * 100 }
     },
@@ -117,6 +118,7 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
       if (!rect || !rect.width) return
       const offsetX = Math.max(0, Math.min(clientX - rect.left, rect.width))
       const dur = useChapterTrack ? currentChapterDuration : duration
+      if (!dur || dur <= 0) return
       const progressTime = (offsetX / rect.width) * dur
       const totalTime = (useChapterTrack ? currentChapterStart : 0) + progressTime
 
@@ -151,7 +153,6 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
       if (isLoading || e.button !== 0) return
 
       // Capture the pointer so that dragging outside the element still works
-      // Note: We use global window listeners instead of setPointerCapture for better compatibility with nested elements
       e.preventDefault() // prevent text selection
       setIsDragging(true)
       setIsHovering(true)
@@ -187,11 +188,13 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
     }
 
     const onUp = (e: PointerEvent) => {
+      const r = getSeekFromClientX(e.clientX)
+      if (r && !isNaN(r.time)) {
+        seek(r.time)
+      }
       setIsDragging(false)
       setIsHovering(false)
       setDragPercent(null)
-      const r = getSeekFromClientX(e.clientX)
-      if (r) seek(r.time)
     }
 
     window.addEventListener('pointermove', onMove)

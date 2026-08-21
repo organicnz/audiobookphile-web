@@ -104,8 +104,11 @@ export class HlsAudioProvider implements IAudioProvider {
   }
 
   seek(time: number): void {
-    const offsetTime = time - (this.currentTrack?.startOffset ?? 0)
-    this.player.currentTime = Math.max(0, offsetTime)
+    const track = this.currentTrack
+    const startOffset = track?.startOffset ?? 0
+    const offsetTime = Math.max(0, time - startOffset)
+    this.player.currentTime = offsetTime
+    this.onTrackLoad(offsetTime)
   }
 
   getCurrentTrackIndex(): number {

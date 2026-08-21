@@ -210,8 +210,10 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   getCurrentTime(): number {
-    const trackOffset = this.currentTrack?.startOffset ?? 0
-    return this.player ? trackOffset + this.player.currentTime : 0
+    const track = this.currentTrack
+    if (!track || !this.player) return 0
+    const playerTime = !isNaN(this.player.currentTime) ? this.player.currentTime : 0
+    return track.startOffset + (playerTime > 0 ? playerTime : this.trackStartTime)
   }
 
   getDuration(): number {
@@ -240,9 +242,11 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
     if (!this.player || !this.provider) return
 
     this.playWhenReady = playWhenReady
+    const prevTrackIndex = this.provider.getCurrentTrackIndex()
     this.provider.seek(time)
+    const newTrackIndex = this.provider.getCurrentTrackIndex()
 
-    if (playWhenReady && this.player.paused) {
+    if (prevTrackIndex === newTrackIndex && playWhenReady && this.player.paused) {
       this.play()
     }
   }
