@@ -157,6 +157,9 @@ jobs:
             "checkout:Checkout Repository|bun:Setup Bun|deps:Install Dependencies|build:Build Next.js Bundle|check:Check Size Limit" \
             "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }};build=${{ steps.build.outcome }}"
           bunx size-limit
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
 
   deploy:
     name: Deploy to Vercel (Preview Build)
@@ -322,6 +325,8 @@ jobs:
       - name: Run E2E Smoke Locally
         id: e2e
         env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
           PLAYWRIGHT_ADMIN_EMAIL: ${{ secrets.PLAYWRIGHT_ADMIN_EMAIL }}
           PLAYWRIGHT_ADMIN_PASSWORD: ${{ secrets.PLAYWRIGHT_ADMIN_PASSWORD }}
           PLAYWRIGHT_MEMBER_EMAIL: ${{ secrets.PLAYWRIGHT_MEMBER_EMAIL }}

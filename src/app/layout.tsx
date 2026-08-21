@@ -3,9 +3,7 @@ import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale } from 'next-intl/server'
 
-import { ErrorBoundary } from '@/shared/ErrorBoundary'
 import { Providers } from '@/shared/Providers'
-import GlobalError from './error'
 import { CardSizeProvider } from '../features/library/contexts/CardSizeContext'
 import { ToastProvider } from '../shared/contexts/ToastContext'
 import { getTheme } from '../shared/lib/theme'
@@ -43,23 +41,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={`theme-${theme}`}>
       <body className="overflow-hidden" suppressHydrationWarning>
-        <ErrorBoundary
-          onError={({ error, resetErrorBoundaries }) => (
-            <GlobalError error={error as Error & { digest?: string }} reset={resetErrorBoundaries} />
-          )}
-        >
-          <div key="providers">
-            <PostHogProvider>
-              <NextIntlClientProvider>
-                <ToastProvider>
-                  <CardSizeProvider>
-                    <Providers>{children}</Providers>
-                  </CardSizeProvider>
-                </ToastProvider>
-              </NextIntlClientProvider>
-            </PostHogProvider>
-          </div>
-        </ErrorBoundary>
+        <div key="providers">
+          <PostHogProvider>
+            <NextIntlClientProvider>
+              <ToastProvider>
+                <CardSizeProvider>
+                  <Providers>{children}</Providers>
+                </CardSizeProvider>
+              </ToastProvider>
+            </NextIntlClientProvider>
+          </PostHogProvider>
+        </div>
       </body>
     </html>
   )
