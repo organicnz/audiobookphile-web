@@ -19,8 +19,10 @@ pre-push:
   parallel: false
   commands:
     security-audit:
+      files: git diff --name-only HEAD main --
       run: ./scripts/security-audit.sh
     typecheck-and-test:
+      files: git diff --name-only HEAD main --
       run: bun run typecheck && bun test src/__tests__
 
 post-merge:
