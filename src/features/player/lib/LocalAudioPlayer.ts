@@ -90,6 +90,16 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   private retryCount = 0
+  private recoveryTimer: ReturnType<typeof setTimeout> | null = null
+  private recoveryGeneration = 0
+
+  private cancelRecovery(): void {
+    if (this.recoveryTimer) {
+      clearTimeout(this.recoveryTimer)
+      this.recoveryTimer = null
+    }
+    this.recoveryGeneration++
+  }
 
   private handleError = (event: Event): void => {
     console.warn('[LocalAudioPlayer] Audio playback warning/error:', event)
@@ -97,15 +107,18 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
     if (this.retryCount < 3 && this.player && this.currentTrack) {
       this.retryCount++
       const resumeTime = this.getCurrentTime()
-      console.log(`[LocalAudioPlayer] Attempting auto-recovery (${this.retryCount}/3) at ${resumeTime}s...`)
-      setTimeout(() => {
-        if (this.player && this.provider) {
+      this.cancelRecovery()
+      const currentGen = this.recoveryGeneration
+      const activeProvider = this.provider
+      this.recoveryTimer = setTimeout(() => {
+        if (this.player && this.provider === activeProvider && this.recoveryGeneration === currentGen) {
           this.seek(resumeTime, true)
         }
       }, 500)
       return
     }
 
+    this.cancelRecovery()
     this.retryCount = 0
     const error = new Error('Audio playback error')
     console.error('[LocalAudioPlayer] Fatal Error:', event)
@@ -114,6 +127,7 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   private handleLoadedMetadata = (): void => {
+    this.cancelRecovery()
     this.retryCount = 0
 
     if (!this.isHlsTranscode && this.player) {
@@ -141,6 +155,8 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   set(libraryItem: LibraryItem | null, tracks: AudioTrack[], isHlsTranscode: boolean, startTime: number, playWhenReady = false): void {
+    this.cancelRecovery()
+    this.retryCount = 0
     this.libraryItem = libraryItem
     this.audioTracks = tracks
     this.isHlsTranscode = isHlsTranscode
@@ -164,6 +180,9 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   destroy(): void {
+    this.cancelRecovery()
+    this.retryCount = 0
+
     if (this.provider) {
       this.provider.destroy()
       this.provider = null

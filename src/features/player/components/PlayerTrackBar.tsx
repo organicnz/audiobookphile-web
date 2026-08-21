@@ -146,14 +146,16 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
     [useChapterTrack, currentChapterStart, currentChapterDuration, duration, effectivePlaybackRate, chapters]
   )
 
+  const activePointerIdRef = useRef<number | null>(null)
+
   // ─── Pointer events (Unified Mouse & Touch) ──────────────────────────────────
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       // Ignore if loading or if it's a right-click (button 2)
       if (isLoading || e.button !== 0) return
 
-      // Capture the pointer so that dragging outside the element still works
       e.preventDefault() // prevent text selection
+      activePointerIdRef.current = e.pointerId
       setIsDragging(true)
       setIsHovering(true)
       const r = getSeekFromClientX(e.clientX)
@@ -182,12 +184,15 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
     if (!isDragging) return
 
     const onMove = (e: PointerEvent) => {
+      if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) return
       updateHoverUI(e.clientX)
       const r = getSeekFromClientX(e.clientX)
       if (r) setDragPercent(r.perc)
     }
 
     const onUp = (e: PointerEvent) => {
+      if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) return
+      activePointerIdRef.current = null
       const r = getSeekFromClientX(e.clientX)
       if (r && !isNaN(r.time)) {
         seek(r.time)
@@ -197,14 +202,22 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
       setDragPercent(null)
     }
 
+    const onCancel = (e: PointerEvent) => {
+      if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) return
+      activePointerIdRef.current = null
+      setIsDragging(false)
+      setIsHovering(false)
+      setDragPercent(null)
+    }
+
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerup', onUp)
-    window.addEventListener('pointercancel', onUp)
+    window.addEventListener('pointercancel', onCancel)
 
     return () => {
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup', onUp)
-      window.removeEventListener('pointercancel', onUp)
+      window.removeEventListener('pointercancel', onCancel)
     }
   }, [isDragging, getSeekFromClientX, updateHoverUI, seek])
 

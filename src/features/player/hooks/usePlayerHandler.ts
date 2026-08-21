@@ -368,13 +368,23 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
   useEffect(() => {
     if (typeof window === 'undefined' || !('mediaSession' in navigator)) return
 
-    if (displayTitle) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: displayTitle,
-        artist: displayAuthor || 'Audiobookphile',
-        album: currentChapter?.title || displayTitle
+    if (!displayTitle) {
+      navigator.mediaSession.metadata = null
+      navigator.mediaSession.playbackState = 'none'
+      const actions: MediaSessionAction[] = ['play', 'pause', 'stop', 'seekbackward', 'seekforward', 'seekto']
+      actions.forEach((action) => {
+        try {
+          navigator.mediaSession.setActionHandler(action, null)
+        } catch {}
       })
+      return
     }
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: displayTitle,
+      artist: displayAuthor || 'Audiobookphile',
+      album: currentChapter?.title || displayTitle
+    })
 
     navigator.mediaSession.setActionHandler('play', () => playerRef.current?.play())
     navigator.mediaSession.setActionHandler('pause', () => playerRef.current?.pause())
@@ -399,6 +409,15 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
       } catch {
         // Ignore edge-case timestamp mismatch errors
       }
+    }
+
+    return () => {
+      const actions: MediaSessionAction[] = ['play', 'pause', 'stop', 'seekbackward', 'seekforward', 'seekto']
+      actions.forEach((action) => {
+        try {
+          navigator.mediaSession.setActionHandler(action, null)
+        } catch {}
+      })
     }
   }, [displayTitle, displayAuthor, currentChapter?.title, playerState, duration, currentTime, settings.playbackRate, jumpBackward, jumpForward, seek])
 

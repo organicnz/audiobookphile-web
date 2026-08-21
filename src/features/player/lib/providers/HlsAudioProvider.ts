@@ -82,6 +82,7 @@ export class HlsAudioProvider implements IAudioProvider {
               break
             default:
               console.error('[HLS] Unrecoverable fatal error:', data)
+              this.player.dispatchEvent(new Event('error'))
               this.destroy()
               break
           }
