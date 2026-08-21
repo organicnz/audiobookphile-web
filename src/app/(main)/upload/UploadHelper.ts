@@ -12,15 +12,21 @@ export interface FileWithMetadata extends File {
 function getMimeType(filename: string): string {
   const ext = filename.split('.').pop()?.toLowerCase()
   switch (ext) {
+    // Audio & Audio Containers
     case 'm4b':
     case 'm4a':
+    case 'mp4':
+    case 'm4v':
       return 'audio/mp4'
     case 'mp3':
+    case 'mpeg':
+    case 'mpg':
       return 'audio/mpeg'
     case 'flac':
       return 'audio/flac'
     case 'ogg':
     case 'oga':
+    case 'ogv':
       return 'audio/ogg'
     case 'opus':
       return 'audio/opus'
@@ -31,9 +37,78 @@ function getMimeType(filename: string): string {
       return 'audio/webm'
     case 'aac':
       return 'audio/aac'
+    case 'wma':
+    case 'wmv':
+    case 'asf':
+      return 'audio/x-ms-wma'
+    case 'aiff':
+    case 'aif':
+      return 'audio/aiff'
+    case 'caf':
+      return 'audio/x-caf'
+    case 'awb':
+    case '3gp':
+      return 'audio/amr-wb'
     case 'mkv':
     case 'mka':
       return 'audio/x-matroska'
+    case 'avi':
+      return 'video/x-msvideo'
+    case 'mov':
+      return 'video/quicktime'
+    case 'flv':
+      return 'video/x-flv'
+
+    // E-Books & Documents
+    case 'epub':
+      return 'application/epub+zip'
+    case 'pdf':
+      return 'application/pdf'
+    case 'mobi':
+    case 'prc':
+      return 'application/x-mobipocket-ebook'
+    case 'azw':
+    case 'azw3':
+      return 'application/vnd.amazon.ebook'
+    case 'cbr':
+      return 'application/vnd.comicbook-rar'
+    case 'cbz':
+      return 'application/vnd.comicbook+zip'
+    case 'fb2':
+      return 'application/x-fb2'
+    case 'djvu':
+      return 'image/vnd.djvu'
+
+    // Images
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg'
+    case 'png':
+      return 'image/png'
+    case 'webp':
+      return 'image/webp'
+    case 'avif':
+      return 'image/avif'
+    case 'gif':
+      return 'image/gif'
+    case 'svg':
+      return 'image/svg+xml'
+
+    // Metadata & Lyrics / Chapters
+    case 'cue':
+      return 'application/x-cue'
+    case 'lrc':
+      return 'text/plain'
+    case 'opf':
+    case 'xml':
+      return 'application/xml'
+    case 'abs':
+    case 'json':
+      return 'application/json'
+    case 'txt':
+    case 'nfo':
+      return 'text/plain'
+
     default:
       return 'application/octet-stream'
   }
@@ -284,7 +359,7 @@ export async function upload(
         headers,
         body: JSON.stringify({
           filename: storagePath,
-          contentType: file.type || file.mime_type || 'application/octet-stream',
+          contentType: file.type || file.mime_type || getMimeType(file.name) || 'application/octet-stream',
           size: file.size
         })
       })
@@ -401,7 +476,7 @@ export async function upload(
           const xhr = new XMLHttpRequest()
           xhr.open('PUT', uploadUrl, true)
 
-          const contentType = file.type || file.mime_type || 'application/octet-stream'
+          const contentType = file.type || file.mime_type || getMimeType(file.name) || 'application/octet-stream'
 
           // For B2 presigned URLs, Content-Type is embedded in the URL params but NOT
           // included in X-Amz-SignedHeaders. Sending it as a request header causes B2 to
@@ -477,7 +552,7 @@ export async function upload(
     files: item.itemFiles.map((f, i) => ({
       name: f.name,
       size: f.size,
-      type: f.type,
+      type: f.type || f.mime_type || getMimeType(f.name) || 'audio/mp4',
       storagePath: uploadedPaths[i]
     })),
     overwrite: item.overwrite

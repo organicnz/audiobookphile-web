@@ -1,7 +1,7 @@
 import path from 'path'
 
 export const SupportedFileTypes = {
-  image: ['png', 'jpg', 'jpeg', 'webp'],
+  image: ['png', 'jpg', 'jpeg', 'webp', 'avif', 'gif', 'svg'],
   audio: [
     'm4b',
     'mp3',
@@ -37,10 +37,10 @@ export const SupportedFileTypes = {
     'asf',
     '3gp'
   ],
-  ebook: ['epub', 'pdf', 'mobi', 'azw3', 'cbr', 'cbz'],
+  ebook: ['epub', 'pdf', 'mobi', 'azw', 'azw3', 'cbr', 'cbz', 'fb2', 'djvu', 'prc'],
   info: ['nfo'],
   text: ['txt'],
-  metadata: ['opf', 'abs', 'xml', 'json']
+  metadata: ['opf', 'abs', 'xml', 'json', 'cue', 'lrc']
 }
 
 export const sanitizeFileName = (filename: string, colonReplacement = ' - '): string => {

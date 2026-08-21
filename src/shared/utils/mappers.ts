@@ -97,6 +97,138 @@ function createSkeletonBook(row: Pick<LibraryItemRow, 'id' | 'title'>): BookMedi
   }
 }
 
+const ALL_AUDIO_EXTENSIONS = [
+  '.mp3',
+  '.m4b',
+  '.m4a',
+  '.aac',
+  '.flac',
+  '.ogg',
+  '.oga',
+  '.ogv',
+  '.opus',
+  '.wav',
+  '.webm',
+  '.webma',
+  '.wma',
+  '.aiff',
+  '.aif',
+  '.caf',
+  '.awb',
+  '.mka',
+  '.mkv',
+  '.mp4',
+  '.m4v'
+]
+
+function resolveAudioMimeAndCodec(extRaw: string, currentMime?: string, currentCodec?: string) {
+  const ext = extRaw.toLowerCase().replace(/^\./, '')
+  let mimeType = currentMime || ''
+  if (!mimeType || mimeType === 'audio/mpeg' || mimeType === 'application/octet-stream') {
+    switch (ext) {
+      case 'm4b':
+      case 'm4a':
+      case 'mp4':
+      case 'm4v':
+        mimeType = 'audio/mp4'
+        break
+      case 'mp3':
+      case 'mpeg':
+      case 'mpg':
+        mimeType = 'audio/mpeg'
+        break
+      case 'flac':
+        mimeType = 'audio/flac'
+        break
+      case 'opus':
+        mimeType = 'audio/opus'
+        break
+      case 'ogg':
+      case 'oga':
+      case 'ogv':
+        mimeType = 'audio/ogg'
+        break
+      case 'aac':
+        mimeType = 'audio/aac'
+        break
+      case 'wav':
+        mimeType = 'audio/wav'
+        break
+      case 'webm':
+      case 'webma':
+        mimeType = 'audio/webm'
+        break
+      case 'wma':
+      case 'wmv':
+      case 'asf':
+        mimeType = 'audio/x-ms-wma'
+        break
+      case 'aiff':
+      case 'aif':
+        mimeType = 'audio/aiff'
+        break
+      case 'caf':
+        mimeType = 'audio/x-caf'
+        break
+      case 'awb':
+      case '3gp':
+        mimeType = 'audio/amr-wb'
+        break
+      case 'mka':
+      case 'mkv':
+        mimeType = 'audio/x-matroska'
+        break
+      default:
+        mimeType = currentMime || 'audio/mpeg'
+    }
+  }
+
+  let codec = currentCodec || ''
+  if (!codec || codec === 'mp3') {
+    switch (ext) {
+      case 'm4b':
+      case 'm4a':
+      case 'mp4':
+      case 'm4v':
+      case 'aac':
+        codec = 'aac'
+        break
+      case 'flac':
+        codec = 'flac'
+        break
+      case 'opus':
+        codec = 'opus'
+        break
+      case 'ogg':
+      case 'oga':
+      case 'ogv':
+        codec = 'vorbis'
+        break
+      case 'wav':
+      case 'aiff':
+      case 'aif':
+        codec = 'pcm'
+        break
+      case 'wma':
+      case 'wmv':
+      case 'asf':
+        codec = 'wma'
+        break
+      case 'caf':
+        codec = 'aac'
+        break
+      case 'awb':
+      case '3gp':
+        codec = 'amr-wb'
+        break
+      default:
+        codec = currentCodec || 'mp3'
+    }
+  }
+
+  return { mimeType, codec }
+}
+
 function mapBook(book: LibraryItemRow): BookMedia {
   if (!book) {
     return createSkeletonBook({} as Pick<LibraryItemRow, 'id' | 'title'>)
@@ -104,24 +236,26 @@ function mapBook(book: LibraryItemRow): BookMedia {
 
   let audioFiles = (book.audio_files as any[] | null) || []
   if (audioFiles.length === 0 && Array.isArray((book as Record<string, unknown>).library_files)) {
-    const audioExts = ['.mp3', '.m4b', '.m4a', '.aac', '.flac', '.ogg', '.opus', '.wma']
     const extracted = ((book as Record<string, unknown>).library_files as Record<string, unknown>[])
       .filter((lf) => {
         const metadata = (lf.metadata as Record<string, unknown>) || {}
         const ext = String(metadata.ext || '').toLowerCase()
         const relPath = String(metadata.relPath || metadata.filename || lf.path || '').toLowerCase()
-        return audioExts.some((e) => ext.endsWith(e) || relPath.endsWith(e))
+        return ALL_AUDIO_EXTENSIONS.some((e) => ext.endsWith(e) || relPath.endsWith(e))
       })
       .map((lf, idx) => {
         const metadata = (lf.metadata as Record<string, unknown>) || {}
+        const ext = String(metadata.ext || '').toLowerCase()
+        const { mimeType, codec } = resolveAudioMimeAndCodec(ext, metadata.mimeType as string, metadata.codec as string)
+
         return {
           index: idx,
           ino: lf.ino,
           metadata,
           size: Number(lf.size) || Number(metadata.size) || 0,
           duration: Number(lf.duration) || Number(metadata.duration) || 0,
-          mimeType: String(metadata.mimeType || 'audio/mpeg'),
-          codec: String(metadata.codec || 'mp3')
+          mimeType,
+          codec
         }
       })
     if (extracted.length > 0) {
@@ -135,6 +269,13 @@ function mapBook(book: LibraryItemRow): BookMedia {
       if (!af || typeof af !== 'object') return null
       const a = af as Record<string, unknown>
       const meta = a.metadata && typeof a.metadata === 'object' ? (a.metadata as Record<string, unknown>) : {}
+      const ext = String(meta?.ext || (meta?.filename as string)?.split('.').pop() || '').toLowerCase()
+      const { mimeType, codec } = resolveAudioMimeAndCodec(
+        ext,
+        (a.mimeType as string) || (a.mime_type as string) || (meta?.mimeType as string),
+        (a.codec as string) || (meta?.codec as string)
+      )
+
       return {
         ...a,
         metadata: a.metadata || {
@@ -152,8 +293,8 @@ function mapBook(book: LibraryItemRow): BookMedia {
         duration: (a.duration as number) ?? 0,
         title: (meta?.filename as string) ?? `Track ${i + 1}`,
         contentUrl: (meta?.path as string) ?? '',
-        mimeType: (a.mimeType as string) ?? 'audio/mpeg',
-        codec: (a.codec as string) ?? '',
+        mimeType,
+        codec,
         timeBase: (a.timeBase as string) ?? '1/1000',
         channels: (a.channels as number) ?? 2,
         channelLayout: (a.channelLayout as string) ?? 'stereo',

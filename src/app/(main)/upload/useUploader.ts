@@ -192,7 +192,24 @@ export function useUploader(libraries: Library[]) {
   const handleStartUpload = async () => {
     setUploadProcessing(true)
     setUploadFinished(false)
-    const cookie = await getCookie()
+    let cookie = ''
+    try {
+      cookie = await getCookie()
+    } catch (e) {
+      console.warn('Server Action getCookie failed, falling back to browser client session:', e)
+    }
+
+    if (!cookie) {
+      try {
+        const { createClient } = await import('@/shared/utils/supabase/client')
+        const supabase = createClient()
+        const { data } = await supabase.auth.getSession()
+        cookie = data?.session?.access_token ?? ''
+      } catch (clientErr) {
+        console.warn('Browser client session retrieval failed:', clientErr)
+      }
+    }
+
     if (!cookie) {
       setErrors('ErrorUnauthorized')
       setUploadProcessing(false)

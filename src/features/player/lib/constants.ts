@@ -6,4 +6,21 @@ export const SUBSEQUENT_SYNC_INTERVAL = 10 // seconds - subsequent syncs every t
 export const VOLUME_HOTKEY_STEP = 0.05
 
 // Playable MIME types that we check browser support for
-export const AUDIO_MIME_TYPES = ['audio/flac', 'audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/aac', 'audio/x-ms-wma', 'audio/x-aiff', 'audio/webm'] as const
+export const AUDIO_MIME_TYPES = [
+  'audio/flac',
+  'audio/mpeg',
+  'audio/mp4',
+  'audio/x-m4b',
+  'audio/m4a',
+  'audio/ogg',
+  'audio/aac',
+  'audio/wav',
+  'audio/x-wav',
+  'audio/x-ms-wma',
+  'audio/x-aiff',
+  'audio/aiff',
+  'audio/x-caf',
+  'audio/amr-wb',
+  'audio/x-matroska',
+  'audio/webm'
+] as const
