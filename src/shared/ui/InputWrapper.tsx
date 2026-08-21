@@ -53,7 +53,7 @@ const InputWrapper = ({
 
   return (
     <>
-      <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }} className={wrapperClass} cy-id="control-wrapper"  onClick={handleClick}>
+      <div className={wrapperClass} cy-id="control-wrapper" onClick={handleClick}>
         {children}
       </div>
       {error && <div className="text-error mt-1 text-sm">{typeof error === 'string' ? error : 'Invalid value'}</div>}
