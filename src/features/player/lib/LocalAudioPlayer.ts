@@ -76,21 +76,41 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
 
   private handleEnded = (): void => {
     if (this.provider?.nextTrack()) {
-      // next track will start loading
+      // Next track is loading — ensure it auto-plays when metadata is ready
+      this.playWhenReady = true
     } else {
       this.emit('stateChange', PlayerState.FINISHED)
       this.emit('finished', undefined)
     }
   }
 
+  private retryCount = 0
+
   private handleError = (event: Event): void => {
+    console.warn('[LocalAudioPlayer] Audio playback warning/error:', event)
+    // Attempt automatic recovery up to 3 times before declaring a fatal error
+    if (this.retryCount < 3 && this.player && this.currentTrack) {
+      this.retryCount++
+      const resumeTime = this.getCurrentTime()
+      console.log(`[LocalAudioPlayer] Attempting auto-recovery (${this.retryCount}/3) at ${resumeTime}s...`)
+      setTimeout(() => {
+        if (this.player && this.provider) {
+          this.seek(resumeTime, true)
+        }
+      }, 500)
+      return
+    }
+
+    this.retryCount = 0
     const error = new Error('Audio playback error')
-    console.error('[LocalAudioPlayer] Error:', event)
+    console.error('[LocalAudioPlayer] Fatal Error:', event)
     this.emit('stateChange', PlayerState.ERROR)
     this.emit('error', error)
   }
 
   private handleLoadedMetadata = (): void => {
+    this.retryCount = 0
+
     if (!this.isHlsTranscode && this.player) {
       this.player.currentTime = this.trackStartTime
     }
@@ -105,9 +125,7 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   private handleTimeUpdate = (): void => {
-    if (this.player?.paused) {
-      this.emit('timeupdate', this.getCurrentTime())
-    }
+    this.emit('timeupdate', this.getCurrentTime())
   }
 
   private handleTrackLoad = (trackStartTime: number) => {

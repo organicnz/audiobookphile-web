@@ -364,6 +364,44 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
     playerRef.current?.setPlaybackRate(newRate)
   }, [playerSettings])
 
+  // Synchronize MediaSession API for OS-level background playback resilience
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('mediaSession' in navigator)) return
+
+    if (displayTitle) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: displayTitle,
+        artist: displayAuthor || 'Audiobookphile',
+        album: currentChapter?.title || displayTitle
+      })
+    }
+
+    navigator.mediaSession.setActionHandler('play', () => playerRef.current?.play())
+    navigator.mediaSession.setActionHandler('pause', () => playerRef.current?.pause())
+    navigator.mediaSession.setActionHandler('stop', () => playerRef.current?.pause())
+    navigator.mediaSession.setActionHandler('seekbackward', () => jumpBackward())
+    navigator.mediaSession.setActionHandler('seekforward', () => jumpForward())
+    navigator.mediaSession.setActionHandler('seekto', (details) => {
+      if (typeof details.seekTime === 'number') {
+        seek(details.seekTime)
+      }
+    })
+
+    navigator.mediaSession.playbackState = playerState === PlayerState.PLAYING ? 'playing' : playerState === PlayerState.PAUSED ? 'paused' : 'none'
+
+    if (duration > 0 && typeof navigator.mediaSession.setPositionState === 'function') {
+      try {
+        navigator.mediaSession.setPositionState({
+          duration: Math.max(0, duration),
+          playbackRate: Math.max(0.1, settings.playbackRate || 1),
+          position: Math.min(Math.max(0, currentTime), duration)
+        })
+      } catch {
+        // Ignore edge-case timestamp mismatch errors
+      }
+    }
+  }, [displayTitle, displayAuthor, currentChapter?.title, playerState, duration, currentTime, settings.playbackRate, jumpBackward, jumpForward, seek])
+
   const closePlayer = useCallback(async () => {
     stopSyncInterval()
     await closeSession(

@@ -70,14 +70,30 @@ export class HlsAudioProvider implements IAudioProvider {
       })
 
       this.hlsInstance.on(Hls.Events.ERROR, (_event, data) => {
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              console.warn('[HLS] Fatal network error encountered, attempting reload/recovery...', data)
+              this.hlsInstance?.startLoad()
+              break
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.warn('[HLS] Fatal media error encountered, attempting recovery...', data)
+              this.hlsInstance?.recoverMediaError()
+              break
+            default:
+              console.error('[HLS] Unrecoverable fatal error:', data)
+              this.destroy()
+              break
+          }
+          return
+        }
+
         if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
-          console.error('[HLS] Buffer stalled error')
+          console.warn('[HLS] Buffer stalled, waiting for stream...')
         } else if (data.details === Hls.ErrorDetails.FRAG_LOAD_ERROR) {
           if (data.errorAction?.action !== 5) {
-            console.error('[HLS] Fragment load error', data)
+            console.warn('[HLS] Fragment load error, retry in progress', data)
           }
-        } else {
-          console.error('[HLS] Error:', data.type, data.details, data)
         }
       })
 
