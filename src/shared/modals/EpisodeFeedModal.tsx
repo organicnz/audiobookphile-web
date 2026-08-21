@@ -286,10 +286,10 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
             const publishedLabel = t('LabelPublished', { 0: publishedString })
 
             return (
-              <div
+              <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
                 key={episode.guid || episode.cleanUrl}
                 className={`border-border relative flex cursor-pointer items-center border-b last:border-0 ${bgClass}`}
-                onClick={() => toggleSelectEpisode(episode)}
+                 onClick={() => toggleSelectEpisode(episode)}
               >
                 <div className="flex w-12 flex-none items-center justify-center p-3 sm:w-16">
                   {episode.isDownloaded ? (
@@ -297,8 +297,8 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
                   ) : episode.isDownloading ? (
                     <Download size={20} className="text-primary animate-pulse" />
                   ) : (
-                    <div
-                      onClick={(e) => {
+                    <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
+                       onClick={(e) => {
                         e.stopPropagation()
                         toggleSelectEpisode(episode)
                       }}

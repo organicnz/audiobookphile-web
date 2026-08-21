@@ -65,7 +65,7 @@ export async function searchBooksAction(_provider: string, title: string, author
             series: [],
             genres: info.categories?.slice(0, 3) || [],
             tags: [],
-            isbn: info.industryIdentifiers?.find((i: any) => i.type === 'ISBN_13')?.identifier || undefined,
+            isbn: info.industryIdentifiers?.find((i: unknown) => i.type === 'ISBN_13')?.identifier || undefined,
             asin: undefined,
             language: info.language || undefined,
             publisher: info.publisher || undefined,

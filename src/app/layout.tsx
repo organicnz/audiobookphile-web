@@ -5,6 +5,7 @@ import { getLocale } from 'next-intl/server'
 
 import { ErrorBoundary } from '@/shared/ErrorBoundary'
 import { Providers } from '@/shared/Providers'
+import GlobalError from './error'
 import { CardSizeProvider } from '../features/library/contexts/CardSizeContext'
 import { ToastProvider } from '../shared/contexts/ToastContext'
 import { getTheme } from '../shared/lib/theme'
@@ -43,18 +44,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} className={`theme-${theme}`}>
       <body className="overflow-hidden" suppressHydrationWarning>
         <ErrorBoundary
-          fallback={
-            <div className="bg-background flex min-h-screen items-center justify-center p-6">
-              <div>
-                <h1 className="text-error mb-4 text-2xl font-bold">Something went wrong</h1>
-                <p className="text-foreground-muted mb-4">We&apos;re sorry for the inconvenience. Please refresh and try again.</p>
-                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-                <a href="/" className="bg-primary inline-block rounded-lg px-6 py-2 text-white transition-opacity hover:opacity-90">
-                  Refresh
-                </a>
-              </div>
-            </div>
-          }
+          onError={({ error, resetErrorBoundaries }) => (
+            <GlobalError error={error as Error & { digest?: string }} reset={resetErrorBoundaries} />
+          )}
         >
           <div key="providers">
             <PostHogProvider>

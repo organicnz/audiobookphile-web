@@ -4,6 +4,7 @@ import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import DOMPurify from 'isomorphic-dompurify'
 
 interface ExpandableHtmlProps {
   html: string
@@ -71,7 +72,7 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
         }}
         className="relative"
       >
-        <div
+        <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
           ref={contentRef}
           className="default-style less-spacing max-w-none overflow-hidden transition-all duration-300"
           dir="auto"
@@ -82,8 +83,8 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
             overflow: isExpanded ? 'visible' : 'hidden',
             cursor: isClamped ? 'pointer' : 'auto'
           }}
-          onClick={handleContentClick}
-          dangerouslySetInnerHTML={{ __html: html }} /* lefthook-ignore */
+           onClick={handleContentClick}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }} /* lefthook-ignore */
         />
       </motion.div>
 

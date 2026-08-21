@@ -23,7 +23,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     // Redirect to the first track's signed URL
     return NextResponse.redirect(data.tracks[0].url)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Download error:', error)
     if (error?.status === 401) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

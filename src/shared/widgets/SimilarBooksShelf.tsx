@@ -83,9 +83,9 @@ export default function SimilarBooksShelf({ libraryItem }: SimilarBooksShelfProp
           }
 
           if (item.mediaType === 'book') {
-            return <BookMediaCard key={item.id} {...(props as any)} />
+            return <BookMediaCard key={item.id} {...(props as unknown)} />
           }
-          return <PodcastMediaCard key={item.id} {...(props as any)} />
+          return <PodcastMediaCard key={item.id} {...(props as unknown)} />
         })}
       </BookShelfRow>
     </div>

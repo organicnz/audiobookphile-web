@@ -13,8 +13,8 @@ interface IndicatorProps {
 const Indicator = ({ tooltipText, children, className, ariaLabel, role = 'note' }: IndicatorProps) => {
   const effectiveAriaLabel = ariaLabel || tooltipText
 
-  if (children && typeof children === 'object' && 'render' in (children as any)) {
-    const Icon = children as any
+  if (children && typeof children === 'object' && 'render' in (children as unknown)) {
+    const Icon = children as unknown
     return (
       <Tooltip text={tooltipText} position="top">
         <div className={mergeClasses('flex items-center justify-center', className)} role={role} aria-label={effectiveAriaLabel}>

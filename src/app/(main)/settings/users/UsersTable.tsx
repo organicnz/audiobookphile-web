@@ -94,7 +94,7 @@ export default function UsersTable({ profiles, dateFormat, timeFormat }: UsersTa
     {
       label: '',
       accessor: (profile) => (
-        <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+        <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }} className="flex items-center justify-end gap-1"  onClick={(e) => e.stopPropagation()}>
           {profile.user_type !== 'root' && (
             <IconBtn
               ariaLabel={t('ButtonUserDelete', { 0: profile.username ?? profile.id })}

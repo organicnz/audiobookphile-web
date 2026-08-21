@@ -480,10 +480,10 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
           <div className="mx-auto w-full max-w-2xl pt-8">
             {/* Track bar */}
             <div className="mb-2">
-              <div
+              <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
                 ref={trackRef}
                 className="relative h-2 w-full cursor-pointer overflow-hidden rounded-full bg-white/10 transition-transform duration-100 hover:scale-y-125"
-                onClick={handleTrackClick}
+                 onClick={handleTrackClick}
               >
                 {/* Buffered */}
                 <div

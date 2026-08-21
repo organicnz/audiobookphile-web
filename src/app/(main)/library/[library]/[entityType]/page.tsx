@@ -37,7 +37,7 @@ async function fetchInitialData(entityType: EntityType, libraryId: string, searc
       default:
         return null
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error.name === 'UnauthorizedError') {
       const { redirect } = require('next/navigation')
       redirect('/login')

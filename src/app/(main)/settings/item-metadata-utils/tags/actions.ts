@@ -2,13 +2,15 @@
 
 import { removeTag as apiRemoveTag, renameTag as apiRenameTag } from '@/shared/lib/api/misc'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 
 export type RemoveTagApiResponse = {
   numItemsUpdated: number
 }
 
 export async function removeTag(tag: string): Promise<RemoveTagApiResponse> {
-  const { numItemsUpdated } = await apiRemoveTag(tag)
+  const validatedTag = z.string().min(1).max(100).parse(tag)
+  const { numItemsUpdated } = await apiRemoveTag(validatedTag)
   if (numItemsUpdated > 0) {
     revalidatePath('/settings/item-metadata-utils/tags')
   }
@@ -21,7 +23,9 @@ export type RenameTagApiResponse = {
 }
 
 export async function renameTag(tag: string, newTagName: string): Promise<RenameTagApiResponse> {
-  const { tagMerged, numItemsUpdated } = await apiRenameTag(tag, newTagName)
+  const validatedTag = z.string().min(1).max(100).parse(tag)
+  const validatedNewTagName = z.string().min(1).max(100).parse(newTagName)
+  const { tagMerged, numItemsUpdated } = await apiRenameTag(validatedTag, validatedNewTagName)
   if (numItemsUpdated > 0) {
     revalidatePath('/settings/item-metadata-utils/tags')
   }

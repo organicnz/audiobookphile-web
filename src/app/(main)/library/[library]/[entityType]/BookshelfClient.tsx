@@ -18,7 +18,7 @@ import { ENTITY_CONFIGS } from './entity-config'
 
 interface BookshelfClientProps {
   entityType: EntityType
-  initialData?: any
+  initialData?: unknown
   // Different APIs return different structures:
   // - items/series/collections/playlists: { results: T[], total?: number }
   // - authors: { authors: Author[], total?: number }

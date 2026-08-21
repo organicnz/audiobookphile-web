@@ -16,7 +16,7 @@ export async function saveNarrator(libraryId: string, narratorId: string, newNam
     await apiUpdateNarrator(narratorId, { name: newName })
     revalidatePath(`/library/${libraryId}/narrators`)
     return { updated: 1 }
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw new Error(error.message)
   }
 }
@@ -26,7 +26,7 @@ export async function deleteNarrator(libraryId: string, narratorId: string): Pro
     await apiDeleteNarrator(narratorId)
     revalidatePath(`/library/${libraryId}/narrators`)
     return { updated: 1 }
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw new Error(error.message)
   }
 }

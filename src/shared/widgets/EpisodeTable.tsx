@@ -164,11 +164,11 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
     startFetchingRSSTransition(async () => {
       try {
         const payload = await fetchPodcastFeedAction(feedUrl)
-        if (!payload || !(payload as any).podcast?.episodes?.length) {
+        if (!payload || !(payload as unknown).podcast?.episodes?.length) {
           showToast(t('ToastPodcastNoEpisodesInFeed'), { type: 'info' })
           return
         }
-        setPodcastFeedEpisodes((payload as any).podcast.episodes)
+        setPodcastFeedEpisodes((payload as unknown).podcast.episodes)
         setIsEpisodeFeedModalOpen(true)
       } catch (error) {
         console.error('Failed to get feed', error)

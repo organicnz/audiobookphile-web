@@ -55,5 +55,46 @@ module.exports = [
   // Disable React Compiler rules introduced in eslint-config-next@16
   {
     rules: reactCompilerRulesOff
+  },
+  {
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': [
+        'warn',
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true,
+          allowDirectConstAssertionInArrowFunctions: true,
+        }
+      ],
+      '@typescript-eslint/naming-convention': [
+        'warn',
+        {
+          selector: 'default',
+          format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+          leadingUnderscore: 'allow',
+        },
+        {
+          selector: 'variable',
+          format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+          leadingUnderscore: 'allow',
+        },
+        {
+          selector: 'typeLike',
+          format: ['PascalCase'],
+        },
+        {
+          selector: 'property',
+          format: null, // Often properties come from APIs and we can't control their case
+        },
+        {
+           selector: 'parameter',
+           format: ['camelCase', 'PascalCase'],
+           leadingUnderscore: 'allow',
+        }
+      ]
+    }
   }
 ]
+

@@ -11,7 +11,7 @@ export default async function UserPage({ params }: { params: Promise<{ user: str
   const { user: userId } = await params
 
   const { users } = await getUsers()
-  const user = users.find((u: any) => u.id === userId)
+  const user = users.find((u: unknown) => u.id === userId)
 
   if (!user) {
     return null
@@ -26,7 +26,7 @@ export default async function UserPage({ params }: { params: Promise<{ user: str
           </div>
           <span className="text-sm font-black tracking-widest uppercase">{t('LabelBackToUsers')}</span>
         </Link>
-        <UserClient user={user as any} />
+        <UserClient user={user as unknown} />
       </div>
     </div>
   )

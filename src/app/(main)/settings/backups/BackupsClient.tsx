@@ -62,10 +62,10 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
   const dateFormat = serverSettings.dateFormat ?? 'MM/dd/yyyy'
   const timeFormat = serverSettings.timeFormat ?? 'HH:mm'
 
-  const [backupsToKeep, setBackupsToKeep] = useState((serverSettings as any).backupsToKeep ? String((serverSettings as any).backupsToKeep) : '')
-  const [maxBackupSize, setMaxBackupSize] = useState((serverSettings as any).maxBackupSize ? String((serverSettings as any).maxBackupSize) : '')
+  const [backupsToKeep, setBackupsToKeep] = useState((serverSettings as unknown).backupsToKeep ? String((serverSettings as unknown).backupsToKeep) : '')
+  const [maxBackupSize, setMaxBackupSize] = useState((serverSettings as unknown).maxBackupSize ? String((serverSettings as unknown).maxBackupSize) : '')
 
-  const backupSchedule = (serverSettings as any).backupSchedule as string | false | undefined
+  const backupSchedule = (serverSettings as unknown).backupSchedule as string | false | undefined
 
   useEffect(() => {
     if (!appliedBackupToast) return
@@ -413,7 +413,7 @@ function BackupsTable({ backups, dateFormat, timeFormat, onRestore, onDownload, 
       {
         label: '',
         accessor: (backup) => (
-          <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+          <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }} className="flex items-center justify-end gap-2"  onClick={(e) => e.stopPropagation()}>
             {backupIsRestorable(backup) ? (
               <Btn size="small" onClick={() => onRestore?.(backup)}>
                 {t('ButtonRestore')}

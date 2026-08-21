@@ -25,9 +25,9 @@ interface IconBtnProps {
   className?: string
   ref?: React.Ref<HTMLButtonElement>
   tabIndex?: number
-  whileHover?: any
-  whileTap?: any
-  transition?: any
+  whileHover?: unknown
+  whileTap?: unknown
+  transition?: unknown
   [key: string]: unknown
 }
 

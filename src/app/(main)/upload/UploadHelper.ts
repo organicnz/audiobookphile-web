@@ -313,10 +313,11 @@ export async function upload(
       }
     }
 
-    await new Promise<void>(async (resolve, reject) => {
-      if (!uploadUrl) {
-        return reject(new Error(`Failed to obtain a valid presigned upload URL for ${file.name}`))
-      }
+    await new Promise<void>((resolve, reject) => {
+      (async () => {
+        if (!uploadUrl) {
+          return reject(new Error(`Failed to obtain a valid presigned upload URL for ${file.name}`))
+        }
 
       // --- Multipart upload path (B2 files > 50 MB) ---
       if (uploadUrl === '__multipart__' && multipartData) {
@@ -460,6 +461,7 @@ export async function upload(
       }
 
       attemptUpload()
+      })().catch(reject)
     })
   }
 

@@ -7,6 +7,7 @@ import { formatDuration } from '@/shared/lib/formatDuration'
 import { bytesPretty } from '@/shared/lib/string'
 import { PodcastEpisode, PodcastLibraryItem } from '@/types/api'
 import React, { useCallback, useMemo } from 'react'
+import DOMPurify from 'isomorphic-dompurify'
 
 export interface ViewEpisodeModalProps {
   isOpen: boolean
@@ -109,11 +110,11 @@ export default function ViewEpisodeModal({ isOpen, onClose, episode, libraryItem
       </p>
 
       {parsedDescription ? (
-        <div
+        <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
           dir="auto"
           className="default-style less-spacing break-words"
-          onClick={handleDescriptionClick}
-          dangerouslySetInnerHTML={{ __html: parsedDescription }} /* lefthook-ignore */
+           onClick={handleDescriptionClick}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(parsedDescription) }} /* lefthook-ignore */
         />
       ) : (
         <p className="mb-2">{t('MessageNoDescription')}</p>

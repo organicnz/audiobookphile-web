@@ -11,8 +11,8 @@ export interface MediaOverlayIconBtnProps {
   className?: string
   selected?: boolean
   cyId?: string
-  whileHover?: any
-  transition?: any
+  whileHover?: unknown
+  transition?: unknown
 }
 
 export default function MediaOverlayIconBtn({

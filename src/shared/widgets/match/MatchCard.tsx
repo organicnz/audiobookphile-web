@@ -235,13 +235,13 @@ export default function MatchCard({ book, isPodcast = false, currentBookDuration
       {bookCovers.length > 1 && (
         <div className="flex">
           {bookCovers.map((cover, index) => (
-            <div
+            <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
               key={index}
               className={mergeClasses(
                 'cursor-pointer border-2 border-transparent hover:border-yellow-300',
                 cover === finalSelectedCover ? 'border-yellow-200' : ''
               )}
-              onClick={(e) => handleCoverClick(e, cover)}
+               onClick={(e) => handleCoverClick(e, cover)}
             >
               <div className="relative mr-1 h-20 w-12">
                 <Image src={cover} alt="" fill className="object-cover" unoptimized />

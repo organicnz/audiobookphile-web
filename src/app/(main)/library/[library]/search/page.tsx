@@ -7,7 +7,7 @@ export default async function SearchPage({ params, searchParams }: { params: Pro
   const { library: libraryId } = await params
   const { q: query } = await searchParams
 
-  let results: any = null
+  let results: unknown = null
   if (query && query.trim().length > 0) {
     try {
       results = await searchLibrary(libraryId, query.trim(), 24)

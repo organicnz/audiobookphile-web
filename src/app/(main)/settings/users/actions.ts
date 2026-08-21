@@ -8,7 +8,7 @@ export async function deleteUser(userId: string): Promise<void> {
   try {
     await apiDeleteUser(userId)
     revalidatePath('/settings/users')
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw new Error(error.message)
   }
 }

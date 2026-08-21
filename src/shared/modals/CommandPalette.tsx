@@ -193,9 +193,9 @@ export default function CommandPalette() {
               const isActive = index === activeIndex
 
               return (
-                <div
+                <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
                   key={item.id}
-                  onClick={() => executeAction(item)}
+                   onClick={() => executeAction(item)}
                   onMouseEnter={() => setActiveIndex(index)}
                   className={mergeClasses(
                     'flex cursor-pointer items-center rounded-lg px-3 py-2 transition-colors',

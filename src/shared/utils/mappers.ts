@@ -1,4 +1,4 @@
-import { BookMedia, Library, LibraryItem, LibrarySettings, PodcastMedia } from '@/types/api'
+import { BookMedia, Library, LibraryItem, LibrarySettings, PodcastMedia, AudioFile, AudioTrack, Chapter, PodcastEpisode } from '@/types/api'
 import type { Database } from '@/types/supabase'
 import { parseTitleAndAuthor } from './titleAuthorParser'
 
@@ -160,8 +160,12 @@ function mapBook(book: LibraryItemRow): BookMedia {
         chapters: (a.chapters as unknown[]) ?? [],
         embeddedCoverArt: (a.embeddedCoverArt as string | null) ?? null,
         metaTags: (a.metaTags as Record<string, unknown>) ?? {},
-        isDirectPlaySupported: true
-      }
+        isDirectPlaySupported: true,
+        ino: (a.ino as string) ?? '',
+        addedAt: (a.addedAt as number) ?? 0,
+        updatedAt: (a.updatedAt as number) ?? 0,
+        bitRate: (a.bitRate as number) ?? 0
+      } as AudioTrack
     })
     .filter(Boolean)
 
@@ -172,7 +176,7 @@ function mapBook(book: LibraryItemRow): BookMedia {
           .map((ba) => ba.authors?.name)
           .filter(Boolean)
           .join(', ')
-      : (book as any).author_names_first_last || ''
+      : ((book as unknown as Record<string, unknown>).author_names_first_last as string) || ''
 
   if (!rawAuthors || rawAuthors === 'Unknown Author') {
     const parsed = parseTitleAndAuthor(title)
@@ -190,11 +194,11 @@ function mapBook(book: LibraryItemRow): BookMedia {
     libraryItemId: book.id,
     coverPath: book.cover_path ?? undefined,
     tags: (book.tags as string[]) || [],
-    audioFiles: audioFiles as never,
-    tracks: tracks.filter(Boolean) as never,
+    audioFiles: audioFiles as AudioFile[],
+    tracks: tracks.filter(Boolean) as AudioTrack[],
     numTracks: tracks.length,
     numAudioFiles: audioFiles.length,
-    chapters: (book.chapters as never) || [],
+    chapters: (book.chapters as unknown as Chapter[]) || [],
     metadata: {
       title,
       subtitle: book.subtitle ?? undefined,
@@ -256,7 +260,7 @@ function mapPodcast(podcast: PodcastEpisodesRow): PodcastMedia {
           updatedAt: e.updated_at ? new Date(e.updated_at as string).getTime() : 0
         }
       })
-      .filter(Boolean) as never,
+      .filter(Boolean) as PodcastEpisode[],
     metadata: {
       title: (p.title as string) || 'Unknown',
       author: p.author as string | undefined,

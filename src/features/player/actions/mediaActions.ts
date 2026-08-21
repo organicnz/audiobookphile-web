@@ -42,7 +42,7 @@ export async function rescanLibraryItemAction(libraryItemId: string) {
   if (!item?.media?.metadata?.title) return { result: 'UPTODATE' }
 
   const title = item.media.metadata.title
-  const author = (item.media.metadata as any).authorName || (item.media.metadata as any).author
+  const author = (item.media.metadata as unknown).authorName || (item.media.metadata as unknown).author
 
   await autoFetchCoverAction(libraryItemId, title, author)
   return { result: 'UPDATED' }

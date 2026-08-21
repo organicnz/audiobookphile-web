@@ -75,7 +75,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
           queryKey: pageQueryKey,
           queryFn: async () => {
             const response = await fetchEntityData(entityType, libraryId, buildPageQueryParams(entityType, query, page, limit))
-            return response as any
+            return response as unknown
           },
           staleTime: 10 * 60 * 1000, // 10 minutes
           gcTime: 60 * 60 * 1000 // 1 hour memory retention
@@ -111,7 +111,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
             queryKey: nextPageQueryKey,
             queryFn: async () => {
               const response = await fetchEntityData(entityType, libraryId, buildPageQueryParams(entityType, query, nextPage, limit))
-              return response as any
+              return response as unknown
             },
             staleTime: 10 * 60 * 1000,
             gcTime: 60 * 60 * 1000

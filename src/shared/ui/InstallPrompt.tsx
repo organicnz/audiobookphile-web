@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 export function InstallPrompt() {
   const [isInstallable, setIsInstallable] = useState(false)
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
+  const [deferredPrompt, setDeferredPrompt] = useState<unknown>(null)
   const [isInstalled, setIsInstalled] = useState(false)
 
   useEffect(() => {

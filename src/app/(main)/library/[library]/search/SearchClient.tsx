@@ -10,7 +10,7 @@ import { useCallback, useMemo, useTransition } from 'react'
 interface SearchClientProps {
   libraryId: string
   initialQuery: string
-  initialResults: any
+  initialResults: unknown
 }
 
 export default function SearchClient({ libraryId, initialQuery, initialResults }: SearchClientProps) {
@@ -102,7 +102,7 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
       )}
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {items.map((item: any) => {
+        {items.map((item: unknown) => {
           const itemId = item.id
           if (!itemId) return null
 

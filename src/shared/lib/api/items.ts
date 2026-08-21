@@ -667,8 +667,8 @@ export const getLoggerData = cache(async (): Promise<GetLoggerDataResponse> => {
   return apiRequest<GetLoggerDataResponse>('/api/logger-data', {})
 })
 
-export async function updateNarrator(narratorId: string, payload: any): Promise<any> {
-  return apiRequest<any>(`/api/narrators/${narratorId}`, {
+export async function updateNarrator(narratorId: string, payload: unknown): Promise<unknown> {
+  return apiRequest<unknown>(`/api/narrators/${narratorId}`, {
     method: 'PATCH',
     body: JSON.stringify(payload)
   })
