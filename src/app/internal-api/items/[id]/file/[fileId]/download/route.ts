@@ -14,7 +14,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     // Redirect to the signed URL
     return NextResponse.redirect(data.url)
-  } catch (error: unknown) {
+  } catch (error: any) {
     console.error('Download error:', error)
     if (error?.status === 401) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

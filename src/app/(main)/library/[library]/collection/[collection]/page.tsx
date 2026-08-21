@@ -19,7 +19,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ col
 
   return (
     <div className="w-full p-8">
-      <CollectionClient collection={collection as unknown} />
+      <CollectionClient collection={collection as any} />
     </div>
   )
 }

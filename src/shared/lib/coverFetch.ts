@@ -175,7 +175,7 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
     if (!searchRes.ok) return null
 
     const data = await searchRes.json()
-    const docs = data?.docs as unknown[]
+    const docs = data?.docs as any[]
     if (!docs?.length) return null
 
     const withCover = docs.find((d) => d.cover_i) || docs[0]
@@ -218,7 +218,7 @@ async function fetchFromGoogleBooks(title: string, author?: string): Promise<Fet
     if (!searchRes.ok) return null
 
     const data = await searchRes.json()
-    const items = data?.items as unknown[]
+    const items = data?.items as any[]
     if (!items?.length) return null
 
     const item = items.find((it) => it.volumeInfo?.imageLinks?.thumbnail) || items[0]

@@ -209,10 +209,10 @@ export default function GlobalSearchMenu({
 
           if (onItemSelect) {
             return (
-              <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
+              <div
                 key={itemKey}
                 {...commonProps}
-                 onClick={() => {
+                onClick={() => {
                   onItemSelect(result)
                   onItemClick()
                 }}

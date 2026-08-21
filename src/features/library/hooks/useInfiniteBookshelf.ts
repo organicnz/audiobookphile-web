@@ -23,12 +23,17 @@ export interface BookshelfPage {
   nextPage?: number
 }
 
-export function useInfiniteBookshelf({ libraryId, entityType, query, limit }: UseInfiniteBookshelfProps): UseInfiniteQueryResult<InfiniteData<BookshelfPage>, Error> {
+export function useInfiniteBookshelf({
+  libraryId,
+  entityType,
+  query,
+  limit
+}: UseInfiniteBookshelfProps): UseInfiniteQueryResult<InfiniteData<BookshelfPage>, Error> {
   const queryClient = useQueryClient()
 
   const queryKey = ['bookshelf', libraryId, entityType, query]
 
-  const queryFn = async ({ pageParam = 0 }: { pageParam?: unknown }): Promise<BookshelfPage> => {
+  const queryFn = async ({ pageParam = 0 }: { pageParam?: any }): Promise<BookshelfPage> => {
     const pageNum = typeof pageParam === 'number' ? pageParam : 0
     const queryParams = `${query}${query ? '&' : ''}limit=${limit}&page=${pageNum}&minified=1`
 

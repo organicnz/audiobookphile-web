@@ -131,7 +131,7 @@ export default function LibraryItemModal(props: LibraryItemModalProps) {
             {mediaTitle}
           </h2>
           {resolvedItem && 'authors' in resolvedItem.media.metadata && (
-            <p className="truncate text-sm font-medium text-white/60">{(resolvedItem.media.metadata.authors as unknown[])?.map((a) => a.name).join(', ')}</p>
+            <p className="truncate text-sm font-medium text-white/60">{(resolvedItem.media.metadata.authors as any[])?.map((a) => a.name).join(', ')}</p>
           )}
         </div>
       </motion.div>

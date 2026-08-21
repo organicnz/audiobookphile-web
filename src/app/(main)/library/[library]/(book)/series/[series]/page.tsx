@@ -19,7 +19,7 @@ export default async function SeriesPage({ params }: { params: Promise<{ series:
 
   return (
     <div className="w-full p-8">
-      <SeriesClient series={series as unknown} libraryItems={libraryItems as unknown} />
+      <SeriesClient series={series as any} libraryItems={libraryItems as any} />
     </div>
   )
 }

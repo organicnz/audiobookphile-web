@@ -14,7 +14,7 @@ export interface FlatResultItem {
   link?: string
   imageSrc?: string
 
-  originalItem?: unknown
+  originalItem?: any
   isPlaceholder?: boolean // For "Thinking", "No Results"
   placeholderText?: string
   author?: string

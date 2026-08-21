@@ -183,7 +183,7 @@ function LibraryItemEditModalContent({ isOpen, startSaveTransition, isSavePendin
             }
             return
           }
-          const next = (updatedItem as unknown).libraryItem as BookLibraryItem | PodcastLibraryItem
+          const next = (updatedItem as any).libraryItem as BookLibraryItem | PodcastLibraryItem
           showToast(t('ToastItemUpdateSuccess'), { type: 'success' })
           syncResolvedItem(next)
           onSaved?.(next)

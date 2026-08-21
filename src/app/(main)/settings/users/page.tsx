@@ -6,5 +6,5 @@ export const dynamic = 'force-dynamic'
 export default async function UsersPage() {
   const profiles = await getUsers()
 
-  return <UsersClient profiles={(profiles as unknown).users || profiles} />
+  return <UsersClient profiles={(profiles as any).users || profiles} />
 }

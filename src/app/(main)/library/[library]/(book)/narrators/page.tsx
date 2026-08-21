@@ -16,7 +16,7 @@ export default async function NarratorsPage({ params }: { params: Promise<{ libr
 
   return (
     <div className="w-full p-8">
-      <NarratorsClient libraryId={libraryId} narrators={narrators as unknown} />
+      <NarratorsClient libraryId={libraryId} narrators={narrators as any} />
     </div>
   )
 }

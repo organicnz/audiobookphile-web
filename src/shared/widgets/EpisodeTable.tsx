@@ -164,11 +164,11 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
     startFetchingRSSTransition(async () => {
       try {
         const payload = await fetchPodcastFeedAction(feedUrl)
-        if (!payload || !(payload as unknown).podcast?.episodes?.length) {
+        if (!payload || !(payload as any).podcast?.episodes?.length) {
           showToast(t('ToastPodcastNoEpisodesInFeed'), { type: 'info' })
           return
         }
-        setPodcastFeedEpisodes((payload as unknown).podcast.episodes)
+        setPodcastFeedEpisodes((payload as any).podcast.episodes)
         setIsEpisodeFeedModalOpen(true)
       } catch (error) {
         console.error('Failed to get feed', error)
@@ -200,7 +200,7 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
       startTransition(async () => {
         try {
           await deleteLibraryItemMediaEpisodeAction(libraryItem.id, episode.id, hardDelete)
-        } catch (err: unknown) {
+        } catch (err: any) {
           console.error('Failed to remove episode', err)
           showToast(t('ToastItemDeletedFailed'), { type: 'error' })
         }

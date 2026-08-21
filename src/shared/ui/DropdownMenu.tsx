@@ -22,7 +22,7 @@ export interface DropdownMenuItem {
   subtext?: string
   keepOpen?: boolean
   rightIcon?: React.ReactNode
-  icon?: unknown
+  icon?: any
   onClick?: () => void
   className?: string
   subitems?: DropdownMenuSubitem[]

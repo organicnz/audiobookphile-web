@@ -25,7 +25,7 @@ export async function syncProgressToSupabase(payload: SupabaseProgressPayload) {
         isFinished: payload.is_finished
       })
     })
-  } catch (error: unknown) {
+  } catch (error: any) {
     // Only log actual database errors, ignoring network transient issues if needed
     // or using a proper logger.
     console.error(`[Supabase] Progress sync failed for ${payload.library_item_id}:`, error.message)

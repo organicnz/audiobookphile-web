@@ -8,7 +8,7 @@ export async function deleteUser(userId: string): Promise<void> {
   try {
     await apiDeleteUser(userId)
     revalidatePath('/settings/users')
-  } catch (error: unknown) {
+  } catch (error: any) {
     throw new Error(error.message)
   }
 }
@@ -16,7 +16,7 @@ export async function deleteUser(userId: string): Promise<void> {
 export async function fetchLibraries(): Promise<Library[]> {
   try {
     const response = await getLibraries()
-    return response.libraries as unknown as Library[]
+    return response.libraries as any as Library[]
   } catch (e) {
     return []
   }

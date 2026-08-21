@@ -25,10 +25,10 @@ interface IconBtnProps {
   className?: string
   ref?: React.Ref<HTMLButtonElement>
   tabIndex?: number
-  whileHover?: unknown
-  whileTap?: unknown
-  transition?: unknown
-  [key: string]: unknown
+  whileHover?: any
+  whileTap?: any
+  transition?: any
+  [key: string]: any
 }
 
 const LoadingSpinner = memo(() => (

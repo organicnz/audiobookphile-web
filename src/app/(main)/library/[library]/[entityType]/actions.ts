@@ -27,8 +27,8 @@ export async function updateAuthorAction(
   editedAuthor: Partial<Author>
 ): Promise<{ updated: boolean; merged?: boolean; author: Author } | null> {
   try {
-    return await apiUpdateAuthor(authorId, editedAuthor as unknown)
-  } catch (error: unknown) {
+    return await apiUpdateAuthor(authorId, editedAuthor as any)
+  } catch (error: any) {
     throw new Error(error.message)
   }
 }
@@ -36,7 +36,7 @@ export async function updateAuthorAction(
 export async function deleteAuthorAction(authorId: string) {
   try {
     await apiDeleteAuthor(authorId)
-  } catch (error: unknown) {
+  } catch (error: any) {
     throw new Error(error.message)
   }
 }
@@ -46,7 +46,7 @@ export async function deleteAuthorAction(authorId: string) {
  */
 export async function submitAuthorImageAction(authorId: string, url: string) {
   try {
-    return await apiSubmitAuthorImage(authorId, { url } as unknown)
+    return await apiSubmitAuthorImage(authorId, { url } as any)
   } catch (err) {
     console.error('[submitAuthorImage] failed:', err)
     return null
@@ -56,7 +56,7 @@ export async function submitAuthorImageAction(authorId: string, url: string) {
 export async function removeAuthorImageAction(authorId: string) {
   try {
     await apiRemoveAuthorImage(authorId)
-  } catch (error: unknown) {
+  } catch (error: any) {
     throw new Error(error.message)
   }
 }

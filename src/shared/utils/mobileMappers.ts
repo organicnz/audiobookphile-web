@@ -188,7 +188,7 @@ function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgress
   const authors =
     item.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || item.books?.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || []
   const authorNames = authors.map((a: any) => a.name)
-  const rawAuthorFallback = (item as unknown).author_names_first_last || (item as unknown).author || ''
+  const rawAuthorFallback = (item as any).author_names_first_last || (item as any).author || ''
 
   let finalTitle = item.books?.title || item.title || 'Unknown Title'
   let authorName = authorNames.join(', ') || rawAuthorFallback

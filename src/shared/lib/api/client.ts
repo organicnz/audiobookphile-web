@@ -128,5 +128,5 @@ export type SessionRefreshResult = SessionRefreshTokens & {
 }
 
 type SessionCookieSetter = {
-  set(name: string, value: string, options: unknown): void
+  set(name: string, value: string, options: any): void
 }

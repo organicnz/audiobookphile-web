@@ -74,7 +74,7 @@ export default function Btn({
   return (
     <ButtonBase
       to={to}
-      size={size as unknown}
+      size={size as any}
       className={mergeClasses('relative font-bold tracking-tight', color, className)}
       disabled={disabled || loading}
       type={type}

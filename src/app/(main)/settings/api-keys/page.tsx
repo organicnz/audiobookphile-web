@@ -15,7 +15,7 @@ export default async function ApiKeysPage() {
       : supabaseUrl.replace(':8000', ':54323').replace('/v1', '')
 
   return (
-    <SettingsContent title={t('HeaderAPIKeys' as unknown)}>
+    <SettingsContent title={t('HeaderAPIKeys' as any)}>
       <div className="space-y-4 p-6">
         <p className="text-foreground-muted text-sm">API keys for this deployment are managed in your Supabase dashboard.</p>
         <div className="bg-bg-light border-border space-y-3 rounded-lg border p-4">

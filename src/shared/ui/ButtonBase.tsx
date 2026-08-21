@@ -20,10 +20,10 @@ interface ButtonBaseProps {
   ariaLabel?: string
   className?: string
   ref?: React.Ref<HTMLButtonElement>
-  whileHover?: unknown
-  whileTap?: unknown
-  transition?: unknown
-  [key: string]: unknown
+  whileHover?: any
+  whileTap?: any
+  transition?: any
+  [key: string]: any
 }
 
 const ButtonBase = ({

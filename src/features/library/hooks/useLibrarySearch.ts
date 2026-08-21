@@ -162,11 +162,11 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
         const items = data?.results || []
         result = {
           book: items
-            .filter((item: unknown) => item.mediaType === 'book')
-            .map((item: unknown) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
+            .filter((item: any) => item.mediaType === 'book')
+            .map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
           podcast: items
-            .filter((item: unknown) => item.mediaType === 'podcast')
-            .map((item: unknown) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
+            .filter((item: any) => item.mediaType === 'podcast')
+            .map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
           tags: [],
           authors: [],
           series: [],

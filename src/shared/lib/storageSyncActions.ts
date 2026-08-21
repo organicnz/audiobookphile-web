@@ -6,7 +6,7 @@ import type { SyncReport } from '@/shared/lib/storageSync'
 // Shared: build the sync report
 // ---------------------------------------------------------------------------
 
-export async function buildSyncReport(db: unknown): Promise<SyncReport> {
+export async function buildSyncReport(db: any): Promise<SyncReport> {
   await verifyAdminOrThrow()
   console.log('[storage-sync] Building sync report via Edge API...')
   return await apiRequest<SyncReport>('/api/storage-sync', {
@@ -18,9 +18,9 @@ export async function buildSyncReport(db: unknown): Promise<SyncReport> {
 // Action: import-orphans
 // ---------------------------------------------------------------------------
 
-export async function handleImportOrphans(db: unknown) {
+export async function handleImportOrphans(db: any) {
   await verifyAdminOrThrow()
-  return await apiRequest<unknown>('/api/storage-sync?action=import-orphans', {
+  return await apiRequest<any>('/api/storage-sync?action=import-orphans', {
     method: 'POST'
   })
 }
@@ -29,9 +29,9 @@ export async function handleImportOrphans(db: unknown) {
 // Action: mark-missing
 // ---------------------------------------------------------------------------
 
-export async function handleMarkMissing(db: unknown) {
+export async function handleMarkMissing(db: any) {
   await verifyAdminOrThrow()
-  return await apiRequest<unknown>('/api/storage-sync?action=mark-missing', {
+  return await apiRequest<any>('/api/storage-sync?action=mark-missing', {
     method: 'POST'
   })
 }
@@ -40,9 +40,9 @@ export async function handleMarkMissing(db: unknown) {
 // Action: cleanup-orphans
 // ---------------------------------------------------------------------------
 
-export async function handleCleanupOrphans(db: unknown) {
+export async function handleCleanupOrphans(db: any) {
   await verifyAdminOrThrow()
-  return await apiRequest<unknown>('/api/storage-sync?action=cleanup-orphans', {
+  return await apiRequest<any>('/api/storage-sync?action=cleanup-orphans', {
     method: 'POST'
   })
 }
