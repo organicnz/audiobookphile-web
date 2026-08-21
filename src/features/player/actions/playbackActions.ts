@@ -9,6 +9,7 @@ interface SessionSyncData {
   timeListened: number
   libraryItemId?: string
   episodeId?: string | null
+  seekEpoch?: number
 }
 
 /**
@@ -42,7 +43,8 @@ export async function syncPlaybackSession(sessionId: string, syncData: SessionSy
         duration: syncData.duration,
         progress: syncData.duration && syncData.duration > 0 ? syncData.currentTime / syncData.duration : 0,
         timeListened: syncData.timeListened,
-        episodeId: syncData.episodeId || undefined
+        episodeId: syncData.episodeId || undefined,
+        seekEpoch: syncData.seekEpoch
       })
     })
   } catch (err) {

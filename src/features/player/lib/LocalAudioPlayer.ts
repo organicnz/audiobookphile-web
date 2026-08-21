@@ -19,6 +19,11 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   private trackStartTime = 0
   private playWhenReady = false
 
+  // Monotonic Seek Transaction Epochs
+  private activeSeekEpoch = 0
+  private acknowledgedSeekEpoch = 0
+  private optimisticSeekTime: number | null = null
+
   readonly playableMimeTypes: string[] = []
 
   constructor() {
@@ -76,21 +81,55 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
 
   private handleEnded = (): void => {
     if (this.provider?.nextTrack()) {
-      // next track will start loading
+      // Next track is loading — ensure it auto-plays when metadata is ready
+      this.playWhenReady = true
     } else {
       this.emit('stateChange', PlayerState.FINISHED)
       this.emit('finished', undefined)
     }
   }
 
+  private retryCount = 0
+  private recoveryTimer: ReturnType<typeof setTimeout> | null = null
+  private recoveryGeneration = 0
+
+  private cancelRecovery(): void {
+    if (this.recoveryTimer) {
+      clearTimeout(this.recoveryTimer)
+      this.recoveryTimer = null
+    }
+    this.recoveryGeneration++
+  }
+
   private handleError = (event: Event): void => {
+    console.warn('[LocalAudioPlayer] Audio playback warning/error:', event)
+    // Attempt automatic recovery up to 3 times before declaring a fatal error
+    if (this.retryCount < 3 && this.player && this.currentTrack) {
+      this.retryCount++
+      const resumeTime = this.getCurrentTime()
+      this.cancelRecovery()
+      const currentGen = this.recoveryGeneration
+      const activeProvider = this.provider
+      this.recoveryTimer = setTimeout(() => {
+        if (this.player && this.provider === activeProvider && this.recoveryGeneration === currentGen) {
+          this.seek(resumeTime, true)
+        }
+      }, 500)
+      return
+    }
+
+    this.cancelRecovery()
+    this.retryCount = 0
     const error = new Error('Audio playback error')
-    console.error('[LocalAudioPlayer] Error:', event)
+    console.error('[LocalAudioPlayer] Fatal Error:', event)
     this.emit('stateChange', PlayerState.ERROR)
     this.emit('error', error)
   }
 
   private handleLoadedMetadata = (): void => {
+    this.cancelRecovery()
+    this.retryCount = 0
+
     if (!this.isHlsTranscode && this.player) {
       this.player.currentTime = this.trackStartTime
     }
@@ -105,9 +144,10 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   private handleTimeUpdate = (): void => {
-    if (this.player?.paused) {
-      this.emit('timeupdate', this.getCurrentTime())
+    if (this.activeSeekEpoch !== this.acknowledgedSeekEpoch) {
+      return
     }
+    this.emit('timeupdate', this.getCurrentTime())
   }
 
   private handleTrackLoad = (trackStartTime: number) => {
@@ -115,6 +155,8 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   set(libraryItem: LibraryItem | null, tracks: AudioTrack[], isHlsTranscode: boolean, startTime: number, playWhenReady = false): void {
+    this.cancelRecovery()
+    this.retryCount = 0
     this.libraryItem = libraryItem
     this.audioTracks = tracks
     this.isHlsTranscode = isHlsTranscode
@@ -138,6 +180,9 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   destroy(): void {
+    this.cancelRecovery()
+    this.retryCount = 0
+
     if (this.provider) {
       this.provider.destroy()
       this.provider = null
@@ -192,8 +237,13 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   getCurrentTime(): number {
-    const trackOffset = this.currentTrack?.startOffset ?? 0
-    return this.player ? trackOffset + this.player.currentTime : 0
+    if (this.optimisticSeekTime !== null && this.activeSeekEpoch !== this.acknowledgedSeekEpoch) {
+      return this.optimisticSeekTime
+    }
+    const track = this.currentTrack
+    if (!track || !this.player) return 0
+    const playerTime = !isNaN(this.player.currentTime) ? this.player.currentTime : 0
+    return track.startOffset + (playerTime > 0 ? playerTime : this.trackStartTime)
   }
 
   getDuration(): number {
@@ -221,12 +271,25 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   seek(time: number, playWhenReady: boolean): void {
     if (!this.player || !this.provider) return
 
-    this.playWhenReady = playWhenReady
-    this.provider.seek(time)
+    this.activeSeekEpoch++
+    const thisEpoch = this.activeSeekEpoch
+    this.optimisticSeekTime = time
 
-    if (playWhenReady && this.player.paused) {
+    this.playWhenReady = playWhenReady
+    const prevTrackIndex = this.provider.getCurrentTrackIndex()
+    this.provider.seek(time)
+    const newTrackIndex = this.provider.getCurrentTrackIndex()
+
+    if (prevTrackIndex === newTrackIndex && playWhenReady && this.player.paused) {
       this.play()
     }
+
+    setTimeout(() => {
+      if (this.activeSeekEpoch === thisEpoch) {
+        this.acknowledgedSeekEpoch = thisEpoch
+        this.optimisticSeekTime = null
+      }
+    }, 200)
   }
 
   private isValidDuration(duration: number): boolean {

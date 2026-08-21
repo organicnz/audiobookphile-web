@@ -100,10 +100,11 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
       const rect = trackRef.current?.getBoundingClientRect()
       if (!rect || !rect.width) return null
       const offsetX = Math.max(0, Math.min(clientX - rect.left, rect.width))
-      const perc = offsetX / rect.width
-      const baseTime = useChapterTrack ? currentChapterStart : 0
+      const perc = Math.max(0, Math.min(offsetX / rect.width, 1))
       const dur = useChapterTrack ? currentChapterDuration : duration
-      const time = baseTime + perc * dur
+      if (!dur || dur <= 0 || isNaN(dur)) return null
+      const baseTime = useChapterTrack ? currentChapterStart : 0
+      const time = Math.max(baseTime, Math.min(baseTime + perc * dur, baseTime + dur))
       if (isNaN(time)) return null
       return { time, perc: perc * 100 }
     },
@@ -117,6 +118,7 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
       if (!rect || !rect.width) return
       const offsetX = Math.max(0, Math.min(clientX - rect.left, rect.width))
       const dur = useChapterTrack ? currentChapterDuration : duration
+      if (!dur || dur <= 0) return
       const progressTime = (offsetX / rect.width) * dur
       const totalTime = (useChapterTrack ? currentChapterStart : 0) + progressTime
 
@@ -144,12 +146,16 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
     [useChapterTrack, currentChapterStart, currentChapterDuration, duration, effectivePlaybackRate, chapters]
   )
 
-  // ─── Mouse events ────────────────────────────────────────────────────────────
+  const activePointerIdRef = useRef<number | null>(null)
 
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
+  // ─── Pointer events (Unified Mouse & Touch) ──────────────────────────────────
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      // Ignore if loading or if it's a right-click (button 2)
       if (isLoading || e.button !== 0) return
-      e.preventDefault()
+
+      e.preventDefault() // prevent text selection
+      activePointerIdRef.current = e.pointerId
       setIsDragging(true)
       setIsHovering(true)
       const r = getSeekFromClientX(e.clientX)
@@ -158,95 +164,62 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
     [isLoading, getSeekFromClientX]
   )
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      updateHoverUI(e.clientX)
-      setIsHovering(true)
-      if (isDragging) {
-        const r = getSeekFromClientX(e.clientX)
-        if (r) setDragPercent(r.perc)
-      }
-    },
-    [isDragging, updateHoverUI, getSeekFromClientX]
-  )
+  const handlePointerEnter = useCallback(() => {
+    if (!isDragging) setIsHovering(true)
+  }, [isDragging])
 
-  const handleMouseLeave = useCallback(() => {
+  const handlePointerLeave = useCallback(() => {
     if (!isDragging) setIsHovering(false)
   }, [isDragging])
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      updateHoverUI(e.clientX)
+    },
+    [updateHoverUI]
+  )
 
   // Global pointermove + pointerup so dragging works even outside the element
   useEffect(() => {
     if (!isDragging) return
+
     const onMove = (e: PointerEvent) => {
+      if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) return
       updateHoverUI(e.clientX)
       const r = getSeekFromClientX(e.clientX)
       if (r) setDragPercent(r.perc)
     }
+
     const onUp = (e: PointerEvent) => {
+      if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) return
+      activePointerIdRef.current = null
+      const r = getSeekFromClientX(e.clientX)
+      if (r && !isNaN(r.time)) {
+        seek(r.time)
+      }
       setIsDragging(false)
       setIsHovering(false)
       setDragPercent(null)
-      const r = getSeekFromClientX(e.clientX)
-      if (r) seek(r.time)
     }
+
+    const onCancel = (e: PointerEvent) => {
+      if (activePointerIdRef.current !== null && e.pointerId !== activePointerIdRef.current) return
+      activePointerIdRef.current = null
+      setIsDragging(false)
+      setIsHovering(false)
+      setDragPercent(null)
+    }
+
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerup', onUp)
+    window.addEventListener('pointercancel', onCancel)
+
     return () => {
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointercancel', onCancel)
     }
   }, [isDragging, getSeekFromClientX, updateHoverUI, seek])
-
-  // ─── Touch events ────────────────────────────────────────────────────────────
-
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      if (isLoading) return
-      const t = e.touches[0]
-      setIsDragging(true)
-      setIsHovering(true)
-      const r = getSeekFromClientX(t.clientX)
-      if (r) setDragPercent(r.perc)
-      updateHoverUI(t.clientX)
-    },
-    [isLoading, getSeekFromClientX, updateHoverUI]
-  )
-
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      if (!isDragging) return
-      e.preventDefault() // prevent page scroll while scrubbing
-      const t = e.touches[0]
-      const r = getSeekFromClientX(t.clientX)
-      if (r) setDragPercent(r.perc)
-      updateHoverUI(t.clientX)
-    },
-    [isDragging, getSeekFromClientX, updateHoverUI]
-  )
-
-  const handleTouchEnd = useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      setIsDragging(false)
-      setIsHovering(false)
-      setDragPercent(null)
-      const t = e.changedTouches[0]
-      const r = getSeekFromClientX(t.clientX)
-      if (r) seek(r.time)
-    },
-    [getSeekFromClientX, seek]
-  )
-
-  // ─── Click (simple tap without drag) ─────────────────────────────────────────
-  const handleClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (isLoading || !trackWidth) return
-      // pointerup already handled the seek for drags; only handle true clicks
-      if (isDragging) return
-      const r = getSeekFromClientX(e.clientX)
-      if (r) seek(r.time)
-    },
-    [isLoading, trackWidth, isDragging, getSeekFromClientX, seek]
-  )
 
   return (
     <div>
@@ -262,16 +235,13 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
           aria-valuetext={currentTimeFormatted}
           tabIndex={0}
           className={mergeClasses(
-            'bg-track-bg relative h-2 w-full rounded-full ring-1 ring-white/5 transition-transform duration-100',
+            'bg-track-bg relative h-2 w-full touch-none rounded-full ring-1 ring-white/5 transition-transform duration-100',
             isDragging ? 'scale-y-150 cursor-grabbing' : 'cursor-pointer hover:scale-y-125'
           )}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          onClick={handleClick}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          onPointerDown={handlePointerDown}
+          onPointerEnter={handlePointerEnter}
+          onPointerLeave={handlePointerLeave}
+          onPointerMove={handlePointerMove}
           onKeyDown={(e) => {
             const step = e.shiftKey ? 30 : 5
             if (e.key === 'ArrowLeft') seek(Math.max(0, currentTime - step))
