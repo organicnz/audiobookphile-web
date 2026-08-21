@@ -236,6 +236,14 @@ export default function MatchCard({ book, isPodcast = false, currentBookDuration
         <div className="flex">
           {bookCovers.map((cover, index) => (
             <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  e.currentTarget.click()
+                }
+              }}
               key={index}
               className={mergeClasses(
                 'cursor-pointer border-2 border-transparent hover:border-yellow-300',

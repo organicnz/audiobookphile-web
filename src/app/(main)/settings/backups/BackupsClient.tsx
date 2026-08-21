@@ -413,7 +413,18 @@ function BackupsTable({ backups, dateFormat, timeFormat, onRestore, onDownload, 
       {
         label: '',
         accessor: (backup) => (
-          <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+          <div
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                e.currentTarget.click()
+              }
+            }}
+            className="flex items-center justify-end gap-2"
+            onClick={(e) => e.stopPropagation()}
+          >
             {backupIsRestorable(backup) ? (
               <Btn size="small" onClick={() => onRestore?.(backup)}>
                 {t('ButtonRestore')}

@@ -13,6 +13,7 @@ import { MediaProgress, PodcastEpisode } from '@/types/api'
 import { Play, Pause, ListPlus, Edit, Trash2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
+import DOMPurify from 'isomorphic-dompurify'
 
 /** Fixed height of a single episode row (px). Used by EpisodeTable virtualizer and minHeight. */
 export const EPISODE_ROW_HEIGHT_PX = 176
@@ -117,7 +118,18 @@ export default function EpisodeRow({
         onMouseLeave={() => setIsHovering(false)}
       >
         {/* Main content */}
-        <div className="flex h-full flex-col rounded-xl" onClick={handleRowClick}>
+        <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              e.currentTarget.click()
+            }
+          }}
+          className="flex h-full flex-col rounded-xl"
+          onClick={handleRowClick}
+        >
           <div className="flex min-h-0 w-full flex-1">
             <div className="flex min-w-0 grow flex-col justify-start">
               {/* Title */}
@@ -138,9 +150,17 @@ export default function EpisodeRow({
               {/* Subtitle/Description */}
               <div className="relative mt-2 mb-1 flex h-10 min-h-0 items-start overflow-hidden pe-12">
                 <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      e.currentTarget.click()
+                    }
+                  }}
                   dir="auto"
                   className="line-clamp-2 w-full text-xs leading-relaxed font-medium break-words whitespace-normal text-white/40"
-                  dangerouslySetInnerHTML={{ __html: descriptionHtml }} /* lefthook-ignore */
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(descriptionHtml) }} /* lefthook-ignore */
                   onClick={(e) => {
                     if ((e.target as HTMLElement).tagName.toLowerCase() === 'a') {
                       e.stopPropagation()
@@ -179,6 +199,14 @@ export default function EpisodeRow({
 
             {/* Selection checkbox area */}
             <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  e.currentTarget.click()
+                }
+              }}
               className={`absolute top-4 right-3 z-10 flex flex-shrink-0 items-center justify-center transition-all duration-300 ${isHovering || isSelected || isSelectionMode ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}`}
               onClick={(e) => e.stopPropagation()}
             >
@@ -204,7 +232,17 @@ export default function EpisodeRow({
               <div className="mx-1 h-4 w-px bg-white/5" />
 
               <Tooltip position="top" text={userIsFinished ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')} className="flex-shrink-0">
-                <div onClick={(e) => e.stopPropagation()}>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      e.currentTarget.click()
+                    }
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <ReadIconBtn borderless isRead={userIsFinished} onClick={() => onToggleFinished(episode)} />
                 </div>
               </Tooltip>
@@ -236,7 +274,18 @@ export default function EpisodeRow({
               {userCanDelete && <IconBtn borderless className="hover:text-error text-white/20" onClick={handleDeleteClick} icon={Trash2} />}
 
               {episode.audioFile && contextMenuItems.length > 0 && (
-                <div onClick={(e) => e.stopPropagation()} className="ms-auto flex-shrink-0">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      e.currentTarget.click()
+                    }
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="ms-auto flex-shrink-0"
+                >
                   <ContextMenuDropdown
                     items={contextMenuItems}
                     autoWidth

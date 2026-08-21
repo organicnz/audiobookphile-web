@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { useCallback, useMemo } from 'react'
 import { GripVertical } from 'lucide-react'
 import { matchAll, requestScanLibrary } from './actions'
+import { escapeHtml } from '@/shared/lib/escape'
 
 interface LibrariesListRowProps {
   item: Library
@@ -78,7 +79,7 @@ export default function LibrariesListRow({ item, handleDeleteLibrary, handleEdit
     <div className="text-foreground/50 hover:text-foreground flex items-center gap-4 border-b border-white/5 px-4 py-2 transition-all duration-200 hover:bg-white/5">
       {isLibraryTaskRunning ? <LoadingSpinner size="la-sm" /> : <LibraryIcon icon={item.icon} className="opacity-80" />}
       <Link className="text-foreground hover:text-primary py-2 text-[13px] font-bold transition-colors" href={`/library/${item.id}`}>
-        {item.name}
+        {escapeHtml(item.name)}
       </Link>
       <div className="grow" />
       {!isLibraryTaskRunning && (

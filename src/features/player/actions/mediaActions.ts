@@ -95,7 +95,7 @@ export async function fetchPodcastFeedAction(_rssFeed: string) {
   return null
 }
 
-export async function downloadPodcastEpisodesAction(_libraryItemId: string, _episodes: unknown[]) {
+export async function downloadPodcastEpisodesAction(_libraryItemId: string, _episodes: any[]) {
   return null
 }
 

@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale } from 'next-intl/server'
 
-import { ErrorBoundary } from '@/shared/ErrorBoundary'
 import { Providers } from '@/shared/Providers'
 import { CardSizeProvider } from '../features/library/contexts/CardSizeContext'
 import { ToastProvider } from '../shared/contexts/ToastContext'
@@ -42,32 +41,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={`theme-${theme}`}>
       <body className="overflow-hidden" suppressHydrationWarning>
-        <ErrorBoundary
-          fallback={
-            <div className="bg-background flex min-h-screen items-center justify-center p-6">
-              <div>
-                <h1 className="text-error mb-4 text-2xl font-bold">Something went wrong</h1>
-                <p className="text-foreground-muted mb-4">We&apos;re sorry for the inconvenience. Please refresh and try again.</p>
-                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-                <a href="/" className="bg-primary inline-block rounded-lg px-6 py-2 text-white transition-opacity hover:opacity-90">
-                  Refresh
-                </a>
-              </div>
-            </div>
-          }
-        >
-          <div key="providers">
-            <PostHogProvider>
-              <NextIntlClientProvider>
-                <ToastProvider>
-                  <CardSizeProvider>
-                    <Providers>{children}</Providers>
-                  </CardSizeProvider>
-                </ToastProvider>
-              </NextIntlClientProvider>
-            </PostHogProvider>
-          </div>
-        </ErrorBoundary>
+        <div key="providers">
+          <PostHogProvider>
+            <NextIntlClientProvider>
+              <ToastProvider>
+                <CardSizeProvider>
+                  <Providers>{children}</Providers>
+                </CardSizeProvider>
+              </ToastProvider>
+            </NextIntlClientProvider>
+          </PostHogProvider>
+        </div>
       </body>
     </html>
   )

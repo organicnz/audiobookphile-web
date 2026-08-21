@@ -306,160 +306,162 @@ export async function upload(
         const errData = await presignRes.json().catch(() => ({}))
         throw new Error(errData.error || `Presign failed: ${presignRes.status}`)
       }
-    } catch (e: unknown) {
+    } catch (e: any) {
       console.warn('Failed to get presigned URL:', e)
       if (e instanceof Error && e.message.includes('Presign failed')) {
         throw e
       }
     }
 
-    await new Promise<void>(async (resolve, reject) => {
-      if (!uploadUrl) {
-        return reject(new Error(`Failed to obtain a valid presigned upload URL for ${file.name}`))
-      }
+    await new Promise<void>((resolve, reject) => {
+      ;(async () => {
+        if (!uploadUrl) {
+          return reject(new Error(`Failed to obtain a valid presigned upload URL for ${file.name}`))
+        }
 
-      // --- Multipart upload path (B2 files > 50 MB) ---
-      if (uploadUrl === '__multipart__' && multipartData) {
-        const { uploadId, partUrls, partSize } = multipartData
-        const parts: { PartNumber: number; ETag: string }[] = []
-        let partUploadedBytes = 0
-        try {
-          for (let i = 0; i < partUrls.length; i++) {
-            const partNumber = i + 1
-            const start = i * partSize
-            const end = Math.min(start + partSize, file.size)
-            const chunk = (file as File).slice(start, end)
-            await new Promise<void>((res, rej) => {
-              const xhr = new XMLHttpRequest()
-              xhr.open('PUT', partUrls[i], true)
-              xhr.upload.onprogress = (event) => {
-                if (event.lengthComputable && onProgress) {
-                  const loaded = uploadedBytes + partUploadedBytes + event.loaded
-                  onProgress({
-                    percent: Math.round((loaded / totalSize) * 100),
-                    loaded,
-                    total: totalSize
-                  })
+        // --- Multipart upload path (B2 files > 50 MB) ---
+        if (uploadUrl === '__multipart__' && multipartData) {
+          const { uploadId, partUrls, partSize } = multipartData
+          const parts: { PartNumber: number; ETag: string }[] = []
+          let partUploadedBytes = 0
+          try {
+            for (let i = 0; i < partUrls.length; i++) {
+              const partNumber = i + 1
+              const start = i * partSize
+              const end = Math.min(start + partSize, file.size)
+              const chunk = (file as File).slice(start, end)
+              await new Promise<void>((res, rej) => {
+                const xhr = new XMLHttpRequest()
+                xhr.open('PUT', partUrls[i], true)
+                xhr.upload.onprogress = (event) => {
+                  if (event.lengthComputable && onProgress) {
+                    const loaded = uploadedBytes + partUploadedBytes + event.loaded
+                    onProgress({
+                      percent: Math.round((loaded / totalSize) * 100),
+                      loaded,
+                      total: totalSize
+                    })
+                  }
                 }
-              }
-              xhr.onload = () => {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                  const etag = xhr.getResponseHeader('ETag') || `"${partNumber}"`
-                  parts.push({ PartNumber: partNumber, ETag: etag })
-                  partUploadedBytes += chunk.size
-                  res()
-                } else {
-                  rej(new Error(`Part ${partNumber} failed: HTTP ${xhr.status}`))
+                xhr.onload = () => {
+                  if (xhr.status >= 200 && xhr.status < 300) {
+                    const etag = xhr.getResponseHeader('ETag') || `"${partNumber}"`
+                    parts.push({ PartNumber: partNumber, ETag: etag })
+                    partUploadedBytes += chunk.size
+                    res()
+                  } else {
+                    rej(new Error(`Part ${partNumber} failed: HTTP ${xhr.status}`))
+                  }
                 }
-              }
-              xhr.onerror = () => rej(new Error(`Part ${partNumber} network error`))
-              xhr.timeout = 3600000
-              xhr.send(chunk)
-            })
-          }
-          // Complete the multipart upload server-side
-          const presignUrl = '/api/upload/presign'
-          const completeHeaders: Record<string, string> = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${cookie}`
-          }
-          if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-            completeHeaders['apikey'] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-          }
-
-          const completeRes = await fetch(presignUrl, {
-            method: 'POST',
-            headers: completeHeaders,
-            body: JSON.stringify({
-              action: 'complete-multipart',
-              filename: storagePath,
-              uploadId,
-              parts
-            })
-          })
-          if (!completeRes.ok) {
-            const err = (await completeRes.json().catch(() => ({}))) as {
-              error?: string
+                xhr.onerror = () => rej(new Error(`Part ${partNumber} network error`))
+                xhr.timeout = 3600000
+                xhr.send(chunk)
+              })
             }
-            return reject(new Error(`Complete multipart failed: ${err.error ?? completeRes.status}`))
-          }
-          uploadedBytes += file.size
-          uploadedPaths.push(providerPrefix + storagePath)
-          return resolve()
-        } catch (err: unknown) {
-          return reject(err instanceof Error ? err : new Error(String(err)))
-        }
-      }
+            // Complete the multipart upload server-side
+            const presignUrl = '/api/upload/presign'
+            const completeHeaders: Record<string, string> = {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${cookie}`
+            }
+            if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+              completeHeaders['apikey'] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+            }
 
-      // --- Single-part upload path ---
-      const MAX_RETRIES = 3
-      let attempt = 0
-
-      const attemptUpload = () => {
-        attempt++
-        const xhr = new XMLHttpRequest()
-        xhr.open('PUT', uploadUrl, true)
-
-        const contentType = file.type || file.mime_type || 'application/octet-stream'
-
-        // For B2 presigned URLs, Content-Type is embedded in the URL params but NOT
-        // included in X-Amz-SignedHeaders. Sending it as a request header causes B2 to
-        // return a 403 (signature mismatch) which has no CORS headers, making the browser
-        // report it as a CORS error. Only set Content-Type for Supabase uploads.
-        if (providerPrefix === 'supabase://') {
-          xhr.setRequestHeader('Content-Type', contentType)
-          xhr.setRequestHeader('x-upsert', 'true')
-        }
-
-        xhr.upload.onprogress = (event) => {
-          if (event.lengthComputable && onProgress) {
-            const chunkLoaded = uploadedBytes + event.loaded
-            onProgress({
-              percent: Math.round((chunkLoaded / totalSize) * 100),
-              loaded: chunkLoaded,
-              total: totalSize
+            const completeRes = await fetch(presignUrl, {
+              method: 'POST',
+              headers: completeHeaders,
+              body: JSON.stringify({
+                action: 'complete-multipart',
+                filename: storagePath,
+                uploadId,
+                parts
+              })
             })
-          }
-        }
-
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
+            if (!completeRes.ok) {
+              const err = (await completeRes.json().catch(() => ({}))) as {
+                error?: string
+              }
+              return reject(new Error(`Complete multipart failed: ${err.error ?? completeRes.status}`))
+            }
             uploadedBytes += file.size
             uploadedPaths.push(providerPrefix + storagePath)
-            resolve()
-          } else {
-            if (attempt < MAX_RETRIES && (xhr.status >= 500 || xhr.status === 429)) {
-              console.warn(`Upload failed with ${xhr.status}, retrying (${attempt}/${MAX_RETRIES})...`)
-              setTimeout(attemptUpload, 2000 * attempt)
-            } else {
-              reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status} ${xhr.responseText}`))
+            return resolve()
+          } catch (err: any) {
+            return reject(err instanceof Error ? err : new Error(String(err)))
+          }
+        }
+
+        // --- Single-part upload path ---
+        const MAX_RETRIES = 3
+        let attempt = 0
+
+        const attemptUpload = () => {
+          attempt++
+          const xhr = new XMLHttpRequest()
+          xhr.open('PUT', uploadUrl, true)
+
+          const contentType = file.type || file.mime_type || 'application/octet-stream'
+
+          // For B2 presigned URLs, Content-Type is embedded in the URL params but NOT
+          // included in X-Amz-SignedHeaders. Sending it as a request header causes B2 to
+          // return a 403 (signature mismatch) which has no CORS headers, making the browser
+          // report it as a CORS error. Only set Content-Type for Supabase uploads.
+          if (providerPrefix === 'supabase://') {
+            xhr.setRequestHeader('Content-Type', contentType)
+            xhr.setRequestHeader('x-upsert', 'true')
+          }
+
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable && onProgress) {
+              const chunkLoaded = uploadedBytes + event.loaded
+              onProgress({
+                percent: Math.round((chunkLoaded / totalSize) * 100),
+                loaded: chunkLoaded,
+                total: totalSize
+              })
             }
           }
-        }
 
-        xhr.onerror = () => {
-          if (attempt < MAX_RETRIES) {
-            console.warn(`Network error, retrying (${attempt}/${MAX_RETRIES})...`)
-            setTimeout(attemptUpload, 2000 * attempt)
-          } else {
-            reject(new Error(`Network error uploading ${file.name}`))
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              uploadedBytes += file.size
+              uploadedPaths.push(providerPrefix + storagePath)
+              resolve()
+            } else {
+              if (attempt < MAX_RETRIES && (xhr.status >= 500 || xhr.status === 429)) {
+                console.warn(`Upload failed with ${xhr.status}, retrying (${attempt}/${MAX_RETRIES})...`)
+                setTimeout(attemptUpload, 2000 * attempt)
+              } else {
+                reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status} ${xhr.responseText}`))
+              }
+            }
           }
-        }
 
-        xhr.ontimeout = () => {
-          if (attempt < MAX_RETRIES) {
-            console.warn(`Upload timed out, retrying (${attempt}/${MAX_RETRIES})...`)
-            setTimeout(attemptUpload, 2000 * attempt)
-          } else {
-            reject(new Error(`Upload timed out for ${file.name}`))
+          xhr.onerror = () => {
+            if (attempt < MAX_RETRIES) {
+              console.warn(`Network error, retrying (${attempt}/${MAX_RETRIES})...`)
+              setTimeout(attemptUpload, 2000 * attempt)
+            } else {
+              reject(new Error(`Network error uploading ${file.name}`))
+            }
           }
+
+          xhr.ontimeout = () => {
+            if (attempt < MAX_RETRIES) {
+              console.warn(`Upload timed out, retrying (${attempt}/${MAX_RETRIES})...`)
+              setTimeout(attemptUpload, 2000 * attempt)
+            } else {
+              reject(new Error(`Upload timed out for ${file.name}`))
+            }
+          }
+
+          xhr.timeout = 3600000
+          xhr.send(file)
         }
 
-        xhr.timeout = 3600000
-        xhr.send(file)
-      }
-
-      attemptUpload()
+        attemptUpload()
+      })().catch(reject)
     })
   }
 

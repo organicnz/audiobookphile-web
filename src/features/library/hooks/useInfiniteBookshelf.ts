@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient, UseInfiniteQueryResult, InfiniteData } from '@tanstack/react-query'
 import {
   fetchLibraryItemsAction,
   fetchAuthorsAction,
@@ -17,13 +17,25 @@ interface UseInfiniteBookshelfProps {
   limit: number
 }
 
-export function useInfiniteBookshelf({ libraryId, entityType, query, limit }: UseInfiniteBookshelfProps) {
+export interface BookshelfPage {
+  results: BookshelfEntity[]
+  total: number
+  nextPage?: number
+}
+
+export function useInfiniteBookshelf({
+  libraryId,
+  entityType,
+  query,
+  limit
+}: UseInfiniteBookshelfProps): UseInfiniteQueryResult<InfiniteData<BookshelfPage>, Error> {
   const queryClient = useQueryClient()
 
   const queryKey = ['bookshelf', libraryId, entityType, query]
 
-  const queryFn = async ({ pageParam = 0 }) => {
-    const queryParams = `${query}${query ? '&' : ''}limit=${limit}&page=${pageParam}&minified=1`
+  const queryFn = async ({ pageParam = 0 }: { pageParam?: any }): Promise<BookshelfPage> => {
+    const pageNum = typeof pageParam === 'number' ? pageParam : 0
+    const queryParams = `${query}${query ? '&' : ''}limit=${limit}&page=${pageNum}&minified=1`
 
     let response: any
     switch (entityType) {
@@ -50,25 +62,25 @@ export function useInfiniteBookshelf({ libraryId, entityType, query, limit }: Us
     return {
       results,
       total,
-      nextPage: results.length === limit ? pageParam + 1 : undefined
+      nextPage: results.length === limit ? pageNum + 1 : undefined
     }
   }
 
-  const infiniteQuery = useInfiniteQuery({
+  const infiniteQuery = useInfiniteQuery<BookshelfPage, Error, InfiniteData<BookshelfPage>, string[], number>({
     queryKey,
     queryFn,
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage
+    getNextPageParam: (lastPage: BookshelfPage) => lastPage.nextPage
   })
 
   // Real-time updates via Socket.io
   const updateItemInCache = useCallback(
     (updater: (item: BookshelfEntity) => BookshelfEntity) => {
-      queryClient.setQueriesData({ queryKey: ['bookshelf', libraryId] }, (oldData: any) => {
+      queryClient.setQueriesData({ queryKey: ['bookshelf', libraryId] }, (oldData: InfiniteData<BookshelfPage> | undefined) => {
         if (!oldData) return oldData
         return {
           ...oldData,
-          pages: oldData.pages.map((page: any) => ({
+          pages: oldData.pages.map((page: BookshelfPage) => ({
             ...page,
             results: page.results.map(updater)
           }))

@@ -200,7 +200,7 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
       startTransition(async () => {
         try {
           await deleteLibraryItemMediaEpisodeAction(libraryItem.id, episode.id, hardDelete)
-        } catch (err: unknown) {
+        } catch (err: any) {
           console.error('Failed to remove episode', err)
           showToast(t('ToastItemDeletedFailed'), { type: 'error' })
         }

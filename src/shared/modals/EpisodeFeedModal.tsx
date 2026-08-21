@@ -287,6 +287,14 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
 
             return (
               <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    e.currentTarget.click()
+                  }
+                }}
                 key={episode.guid || episode.cleanUrl}
                 className={`border-border relative flex cursor-pointer items-center border-b last:border-0 ${bgClass}`}
                 onClick={() => toggleSelectEpisode(episode)}
@@ -298,6 +306,14 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
                     <Download size={20} className="text-primary animate-pulse" />
                   ) : (
                     <div
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          e.currentTarget.click()
+                        }
+                      }}
                       onClick={(e) => {
                         e.stopPropagation()
                         toggleSelectEpisode(episode)

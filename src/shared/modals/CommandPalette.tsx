@@ -194,6 +194,14 @@ export default function CommandPalette() {
 
               return (
                 <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      e.currentTarget.click()
+                    }
+                  }}
                   key={item.id}
                   onClick={() => executeAction(item)}
                   onMouseEnter={() => setActiveIndex(index)}

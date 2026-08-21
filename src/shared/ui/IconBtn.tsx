@@ -28,7 +28,7 @@ interface IconBtnProps {
   whileHover?: any
   whileTap?: any
   transition?: any
-  [key: string]: unknown
+  [key: string]: any
 }
 
 const LoadingSpinner = memo(() => (

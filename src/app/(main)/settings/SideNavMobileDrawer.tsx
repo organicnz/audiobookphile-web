@@ -24,6 +24,14 @@ export default function SideNavMobileDrawer({ serverVersion, installSource }: Si
     <>
       {/* Backdrop */}
       <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            e.currentTarget.click()
+          }
+        }}
         className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-100 ease-in-out md:hidden ${
           isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}

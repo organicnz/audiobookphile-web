@@ -67,12 +67,12 @@ export interface MobileBookInput {
     explicit?: boolean | null
     abridged?: boolean | null
     cover_path?: string | null
-    tags?: unknown[] | null
-    genres?: unknown[] | null
-    narrators?: unknown[] | null
-    audio_files?: unknown[] | null
-    chapters?: unknown[] | null
-    ebook_file?: unknown | null
+    tags?: any[] | null
+    genres?: any[] | null
+    narrators?: any[] | null
+    audio_files?: any[] | null
+    chapters?: any[] | null
+    ebook_file?: any | null
     duration?: number | null
     size?: number | null
     book_authors?: Array<{
@@ -127,7 +127,7 @@ export function mapLibraryForMobile(lib: MobileLibraryInput): MobileLibraryModel
   return _mapLibraryForMobile(lib) as MobileLibraryModel
 }
 
-function _mapLibraryForMobile(lib: MobileLibraryInput): unknown {
+function _mapLibraryForMobile(lib: MobileLibraryInput): any {
   return {
     id: lib.id,
     name: lib.name || 'Library',
@@ -183,7 +183,7 @@ export function mapBookForMobile(item: MobileBookInput, progressRecord: MobilePr
   return _mapBookForMobile(item, progressRecord) as MobileBookModel
 }
 
-function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgressInput | null): unknown {
+function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgressInput | null): any {
   // 1. Authors & Title
   const authors =
     item.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || item.books?.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || []

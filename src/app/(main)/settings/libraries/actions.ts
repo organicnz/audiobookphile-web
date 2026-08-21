@@ -4,36 +4,50 @@ import type { GetFilesystemPathsResponse, Library, SaveLibraryOrderApiResponse }
 import { createLibrary as apiCreateLibrary, updateLibrary as apiUpdateLibrary, deleteLibrary as apiDeleteLibrary } from '@/shared/lib/api'
 import { matchAll as apiMatchAll } from '@/shared/lib/api/items'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+
+const LibraryPayloadSchema = z
+  .object({
+    id: z.string().optional(),
+    name: z.string().max(256).optional(),
+    icon: z.string().optional(),
+    mediaType: z.string().optional(),
+    provider: z.string().optional(),
+    displayOrder: z.number().optional()
+  })
+  .passthrough()
 
 export async function createLibrary(newLibrary: Library): Promise<Library> {
   try {
-    const library = await apiCreateLibrary(newLibrary as any)
+    const parsed = LibraryPayloadSchema.parse(newLibrary)
+    const library = await apiCreateLibrary(parsed as any as Library)
     revalidatePath('/settings/libraries')
-    return library as unknown as Library
-  } catch (error: any) {
-    throw new Error(error.message)
+    return library as any as Library
+  } catch (error: unknown) {
+    throw new Error((error as Error).message)
   }
 }
 
 export async function editLibrary(libraryId: string, updatedLibrary: Library): Promise<Library> {
   try {
-    const library = await apiUpdateLibrary(libraryId, updatedLibrary as any)
+    const parsed = LibraryPayloadSchema.parse(updatedLibrary)
+    const library = await apiUpdateLibrary(libraryId, parsed as any as Library)
     revalidatePath('/settings/libraries')
-    return library as unknown as Library
-  } catch (error: any) {
-    throw new Error(error.message)
+    return library as any as Library
+  } catch (error: unknown) {
+    throw new Error((error as Error).message)
   }
 }
 
 export async function saveLibraryOrder(reorderObjects: { id: string; newOrder: number }[]): Promise<SaveLibraryOrderApiResponse> {
   try {
     for (const item of reorderObjects) {
-      await apiUpdateLibrary(item.id, { displayOrder: item.newOrder } as any)
+      await apiUpdateLibrary(item.id, { displayOrder: item.newOrder } as any as Library)
     }
     revalidatePath('/settings/libraries')
-    return { libraries: [] } as unknown as SaveLibraryOrderApiResponse
-  } catch (error: any) {
-    throw new Error(error.message)
+    return { libraries: [] } as any as SaveLibraryOrderApiResponse
+  } catch (error: unknown) {
+    throw new Error((error as Error).message)
   }
 }
 
@@ -42,8 +56,8 @@ export async function deleteLibrary(libraryId: string): Promise<Library> {
     await apiDeleteLibrary(libraryId)
     revalidatePath('/settings/libraries')
     return {} as Library
-  } catch (error: any) {
-    throw new Error(error.message)
+  } catch (error: unknown) {
+    throw new Error((error as Error).message)
   }
 }
 
@@ -54,12 +68,12 @@ export async function requestScanLibrary(_libraryId: string): Promise<void> {
 export async function matchAll(libraryId: string): Promise<void> {
   try {
     await apiMatchAll(libraryId)
-  } catch (error: any) {
-    throw new Error(error.message)
+  } catch (error: unknown) {
+    throw new Error((error as Error).message)
   }
 }
 
 export async function getFilesystemPaths(_path: string, _level: number): Promise<GetFilesystemPathsResponse> {
   console.warn('[libraries/actions] getFilesystemPaths is not available in the Supabase-backed version')
-  return { directories: [] } as unknown as GetFilesystemPathsResponse
+  return { directories: [] } as any as GetFilesystemPathsResponse
 }

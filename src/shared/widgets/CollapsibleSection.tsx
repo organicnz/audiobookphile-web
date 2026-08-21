@@ -132,7 +132,19 @@ export default function CollapsibleSection({
   return (
     <div className={mergeClasses('w-full', className)}>
       {/* Header - clickable to toggle */}
-      <div id={headerId} className={headerClasses} onClick={handleHeaderClick}>
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            e.currentTarget.click()
+          }
+        }}
+        id={headerId}
+        className={headerClasses}
+        onClick={handleHeaderClick}
+      >
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 border-none bg-transparent p-0 text-left text-inherit md:gap-2">
           <div className="flex min-w-0 flex-shrink-0 items-center gap-2">
             <p className="overflow-hidden font-medium text-ellipsis whitespace-nowrap">{title}</p>

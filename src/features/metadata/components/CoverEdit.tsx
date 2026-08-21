@@ -247,6 +247,14 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
               <div className="absolute top-0 left-0 h-16 w-full bg-gradient-to-b from-black/60 to-transparent" />
               {userCanDelete && (
                 <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      e.currentTarget.click()
+                    }
+                  }}
                   className={mergeClasses(
                     'absolute top-1 right-1 h-8 w-8 rounded-full p-1 text-red-500',
                     isPendingUpdate ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:text-red-400'
@@ -295,6 +303,14 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
                 <div className="flex flex-wrap items-center justify-center pb-2">
                   {localCovers.map((localCoverFile) => (
                     <div
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          e.currentTarget.click()
+                        }
+                      }}
                       key={localCoverFile.ino}
                       className={mergeClasses(
                         'm-0.5 mb-5 border-2',
@@ -362,6 +378,14 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
           ) : (
             coversFound.map((cover) => (
               <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    e.currentTarget.click()
+                  }
+                }}
                 key={cover}
                 className={mergeClasses(
                   'm-0.5 mb-5 border-2',

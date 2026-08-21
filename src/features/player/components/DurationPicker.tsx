@@ -292,7 +292,19 @@ export default function DurationPicker({
           />
         </div>
 
-        <div aria-hidden="true" className={sepClass} onClick={() => mRef.current?.focus()} onMouseDown={(e) => e.preventDefault()}>
+        <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              e.currentTarget.click()
+            }
+          }}
+          className={sepClass}
+          onClick={() => mRef.current?.focus()}
+          onMouseDown={(e) => e.preventDefault()}
+        >
           :
         </div>
 
@@ -324,7 +336,19 @@ export default function DurationPicker({
           />
         </div>
 
-        <div aria-hidden="true" className={sepClass} onClick={() => sRef.current?.focus()} onMouseDown={(e) => e.preventDefault()}>
+        <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              e.currentTarget.click()
+            }
+          }}
+          className={sepClass}
+          onClick={() => sRef.current?.focus()}
+          onMouseDown={(e) => e.preventDefault()}
+        >
           :
         </div>
 

@@ -83,7 +83,18 @@ export default function CollapsibleTable({
           </div>
           <div className="grow" />
           {hasHeaderActions && (
-            <div className="flex flex-shrink-0 items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  e.currentTarget.click()
+                }
+              }}
+              className="flex flex-shrink-0 items-center gap-2"
+              onClick={(e) => e.stopPropagation()}
+            >
               {headerActions}
             </div>
           )}

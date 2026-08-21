@@ -86,7 +86,7 @@ export default function Menu({
 
   return (
     <div className={mergeClasses('relative w-fit', className)}>
-      <div ref={triggerRef} onClick={toggleMenu} onKeyDown={handleKeyDown} className="cursor-pointer">
+      <div ref={triggerRef} onClick={toggleMenu} onKeyDown={handleKeyDown} className="cursor-pointer" role="button" tabIndex={0}>
         {trigger(showMenu)}
       </div>
 
