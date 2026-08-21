@@ -19,6 +19,11 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   private trackStartTime = 0
   private playWhenReady = false
 
+  // Monotonic Seek Transaction Epochs
+  private activeSeekEpoch = 0
+  private acknowledgedSeekEpoch = 0
+  private optimisticSeekTime: number | null = null
+
   readonly playableMimeTypes: string[] = []
 
   constructor() {
@@ -125,6 +130,9 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   private handleTimeUpdate = (): void => {
+    if (this.activeSeekEpoch !== this.acknowledgedSeekEpoch) {
+      return
+    }
     this.emit('timeupdate', this.getCurrentTime())
   }
 
@@ -210,6 +218,9 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   }
 
   getCurrentTime(): number {
+    if (this.optimisticSeekTime !== null && this.activeSeekEpoch !== this.acknowledgedSeekEpoch) {
+      return this.optimisticSeekTime
+    }
     const track = this.currentTrack
     if (!track || !this.player) return 0
     const playerTime = !isNaN(this.player.currentTime) ? this.player.currentTime : 0
@@ -241,6 +252,10 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
   seek(time: number, playWhenReady: boolean): void {
     if (!this.player || !this.provider) return
 
+    this.activeSeekEpoch++
+    const thisEpoch = this.activeSeekEpoch
+    this.optimisticSeekTime = time
+
     this.playWhenReady = playWhenReady
     const prevTrackIndex = this.provider.getCurrentTrackIndex()
     this.provider.seek(time)
@@ -249,6 +264,13 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
     if (prevTrackIndex === newTrackIndex && playWhenReady && this.player.paused) {
       this.play()
     }
+
+    setTimeout(() => {
+      if (this.activeSeekEpoch === thisEpoch) {
+        this.acknowledgedSeekEpoch = thisEpoch
+        this.optimisticSeekTime = null
+      }
+    }, 200)
   }
 
   private isValidDuration(duration: number): boolean {

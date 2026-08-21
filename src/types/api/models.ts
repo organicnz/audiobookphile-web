@@ -887,6 +887,7 @@ export interface PlaybackSession {
   startedAt: number
   updatedAt: number
   audioTracks: AudioTrackData[]
+  manifestUrl?: string
   libraryItem: LibraryItem | null
   open?: boolean
   /** Only for share sessions - it's the only way the share player can know the library cover aspect ratio */
