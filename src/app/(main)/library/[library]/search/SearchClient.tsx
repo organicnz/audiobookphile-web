@@ -1,6 +1,7 @@
 'use client'
 
 import Btn from '@/shared/ui/Btn'
+import { sanitizeDisplayTitle } from '@/shared/utils/titleAuthorParser'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { getLibraryItemCoverSrc, getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import Link from 'next/link'
@@ -106,7 +107,7 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
           const itemId = item.id
           if (!itemId) return null
 
-          const title = item.media?.metadata?.title || item.title || 'Unknown'
+          const title = sanitizeDisplayTitle(item.media?.metadata?.title || item.title || 'Unknown')
           const author = item.media?.metadata?.authorName || item.author_names_first_last || ''
           const coverSrc =
             item.coverPath || item.cover_path

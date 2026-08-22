@@ -1,6 +1,7 @@
 'use client'
 
 import AddToCollectionModal from '@/shared/modals/AddToCollectionModal'
+import { sanitizeDisplayTitle } from '@/shared/utils/titleAuthorParser'
 import AddToPlaylistModal from '@/shared/modals/AddToPlaylistModal'
 import LibraryItemEditModal from '@/shared/modals/LibraryItemEditModal'
 import MatchModal from '@/shared/modals/MatchModal'
@@ -194,9 +195,11 @@ function MediaCard(props: MediaCardProps) {
     if (episode) return episode.title
     const ignorePrefix = orderBy === 'media.metadata.title' && sortingIgnorePrefix
     if (ignorePrefix && metadata.titleIgnorePrefix) {
-      return metadata.titleIgnorePrefix
+      return sanitizeDisplayTitle(metadata.titleIgnorePrefix)
     }
-    return title || '\u00A0'
+    // Scraped titles carry redundant suffix tags ('[96] Unabridged', '(1517)') —
+    // sanitize at render so the DB can be cleaned up lazily.
+    return sanitizeDisplayTitle(title) || '\u00A0'
   })()
 
   const displaySubtitle = (() => {

@@ -21,6 +21,7 @@ import LibraryItemActionButtons from './LibraryItemActionButtons'
 import LibraryItemCover from './LibraryItemCover'
 import LibraryItemDetails from './LibraryItemDetails'
 import SimilarBooksShelf from '@/shared/widgets/SimilarBooksShelf'
+import { sanitizeDisplayTitle } from '@/shared/utils/titleAuthorParser'
 
 interface LibraryItemClientProps {
   libraryItem: BookLibraryItem | PodcastLibraryItem
@@ -97,7 +98,7 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
           </div>
           <div className="flex-1">
             <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-semibold md:text-3xl">{metadata?.title || ''}</h1>
+              <h1 className="text-2xl font-semibold md:text-3xl">{metadata?.title ? sanitizeDisplayTitle(metadata.title) : ''}</h1>
               {subtitle && <h2 className="text-foreground-muted text-xl font-medium md:text-2xl">{subtitle}</h2>}
               {podcastAuthor && <h2 className="text-foreground text-lg font-medium md:text-xl">{t('LabelByAuthor', { 0: podcastAuthor })}</h2>}
               {bookSeries.length > 0 && (
