@@ -1,5 +1,5 @@
 import type { MobileBookModel, MobileLibraryModel } from '@/types/schemas'
-import { parseTitleAndAuthor } from './titleAuthorParser'
+import { parseTitleAndAuthor, prettifyFilenameTitle, sanitizeDisplayTitle } from './titleAuthorParser'
 
 // Safe date helper — handles null/undefined from Supabase rows
 function toMs(value: string | null | undefined, fallback = 0): number {
@@ -202,6 +202,10 @@ function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgress
       authorName = 'Unknown Author'
     }
   }
+
+  // Scraped titles carry redundant suffix tags ('[96] Unabridged', '(1517)')
+  // that duplicate the separate subtitle/series/year metadata fields.
+  finalTitle = sanitizeDisplayTitle(finalTitle)
 
   const authorNameLF = authors.map((a: any) => a.name_lf || a.name).join(', ') || authorName
 
