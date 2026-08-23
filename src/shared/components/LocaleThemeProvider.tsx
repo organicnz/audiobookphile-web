@@ -1,8 +1,9 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
+import { NextIntlClientProvider } from 'next-intl'
 
-interface LocaleThemeContextValue {
+type LocaleThemeContextValue = {
   locale: string
   theme: string
   mounted: boolean
@@ -14,9 +15,21 @@ const LocaleThemeContext = createContext<LocaleThemeContextValue>({
   mounted: false
 })
 
-export function LocaleThemeProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocale] = useState('en-us')
-  const [theme, setTheme] = useState('system')
+type LocaleThemeProviderProps = {
+  children: React.ReactNode
+  initialLocale: string
+  initialTheme: string
+  initialMessages: Record<string, string>
+}
+
+export function LocaleThemeProvider({
+  children,
+  initialLocale,
+  initialTheme,
+  initialMessages
+}: LocaleThemeProviderProps) {
+  const [locale, setLocale] = useState(initialLocale)
+  const [theme, setTheme] = useState(initialTheme)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -45,7 +58,13 @@ export function LocaleThemeProvider({ children }: { children: React.ReactNode })
     document.documentElement.lang = localeFromCookie
   }, [])
 
-  return <LocaleThemeContext.Provider value={{ locale, theme, mounted }}>{mounted ? children : <>{children}</>}</LocaleThemeContext.Provider>
+  return (
+    <LocaleThemeContext.Provider value={{ locale, theme, mounted }}>
+      <NextIntlClientProvider locale={locale} messages={initialMessages}>
+        {mounted ? children : <>{children}</>}
+      </NextIntlClientProvider>
+    </LocaleThemeContext.Provider>
+  )
 }
 
 export function useLocaleTheme() {

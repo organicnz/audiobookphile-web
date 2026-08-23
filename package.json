@@ -61,7 +61,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@evilmartians/lefthook": "^2.1.10",
     "@lhci/cli": "^0.15.1",
-    "@playwright/test": "^1.61.0",
+    "@playwright/test": "1.61.0",
     "@size-limit/preset-app": "^12.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
@@ -84,7 +84,7 @@
     "supabase": "^2.98.2",
     "tailwindcss": "^4",
     "ts-morph": "^28.0.0",
-    "typescript": "^5"
+    "typescript": "^7.1.0-dev.20260822.1"
   },
   "devEngines": {
     "runtime": {
