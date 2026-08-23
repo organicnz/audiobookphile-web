@@ -1,5 +1,9 @@
+export const dynamic = 'force-dynamic'
 import { CheckboxExamples } from '../examples/CheckboxExamples'
 import { ToggleSwitchExamples } from '../examples/ToggleSwitchExamples'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default function CheckboxComponentsPage() {
   return (

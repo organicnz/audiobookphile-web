@@ -1,8 +1,12 @@
+export const dynamic = 'force-dynamic'
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { getUsers } from '@/shared/lib/api'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import UserClient from './UserClient'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default async function UserPage({ params }: { params: Promise<{ user: string }> }) {
   const t = await getTypeSafeTranslations()

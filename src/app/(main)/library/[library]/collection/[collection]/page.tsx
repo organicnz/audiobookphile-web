@@ -1,5 +1,9 @@
+export const dynamic = 'force-dynamic'
 import { getCollection, getCurrentUser } from '@/shared/lib/api'
 import CollectionClient from './CollectionClient'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default async function CollectionPage({ params }: { params: Promise<{ collection: string; library: string }> }) {
   const { collection: collectionId } = await params

@@ -2,15 +2,31 @@
 
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import { motion } from 'framer-motion'
-import { LucideIcon } from 'lucide-react'
+import { Mail, Lock, User, AlertCircle, Smartphone, Fingerprint, Key, Shield, AlertTriangle, ShieldAlert, MailCheck } from 'lucide-react'
+
+type IconName = 'mail' | 'lock' | 'user' | 'alert-circle' | 'smartphone' | 'fingerprint' | 'key' | 'shield' | 'alert-triangle' | 'shield-alert' | 'mail-check'
+
+const iconMap: Record<IconName, React.ComponentType<{ size?: number; className?: string }>> = {
+  mail: Mail,
+  lock: Lock,
+  user: User,
+  'alert-circle': AlertCircle,
+  smartphone: Smartphone,
+  fingerprint: Fingerprint,
+  key: Key,
+  shield: Shield,
+  'alert-triangle': AlertTriangle,
+  'shield-alert': ShieldAlert,
+  'mail-check': MailCheck
+}
 
 interface AuthCardProps {
   /** Card title */
   title: string
   /** Optional subtitle shown below the title */
   subtitle?: string
-  /** Optional LucideIcon shown above the title */
-  icon?: LucideIcon
+  /** Optional icon name shown above the title */
+  icon?: IconName
   /** Render as a <form> element when provided; plain <div> otherwise */
   onSubmit?: (e: React.FormEvent) => void
   children: React.ReactNode
@@ -30,7 +46,8 @@ export default function AuthCard({ title, subtitle, icon, onSubmit, children, cl
 
   const getIcon = () => {
     if (!icon) return null
-    const IconComp = icon
+    const IconComp = iconMap[icon]
+    if (!IconComp) return null
     return <IconComp size={48} className="text-accent mx-auto mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
   }
 

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import TextInput from '@/shared/ui/TextInput'
 
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
@@ -9,6 +10,9 @@ import { cookies } from 'next/headers'
 import LogoutBtn from './LogoutBtn'
 import ThemeSelector from './ThemeSelector'
 import UserLanguageSelector from './UserLanguageSelector'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default async function AccountPage() {
   let currentUser

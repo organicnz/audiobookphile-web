@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { SettingsDrawerProvider } from '@/shared/contexts/SettingsDrawerContext'
 import { getCurrentUser } from '@/shared/lib/api'
 import type { Metadata } from 'next'
@@ -5,6 +6,9 @@ import { redirect } from 'next/navigation'
 import '../../../assets/globals.css'
 import AppBar from '../AppBar'
 import SettingsLayoutWrapper from './SettingsLayoutWrapper'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export const metadata: Metadata = {
   title: 'audiobookphile',

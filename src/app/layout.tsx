@@ -1,13 +1,11 @@
 import '@/assets/globals.css'
 import type { Metadata } from 'next'
-import { NextIntlClientProvider } from 'next-intl'
-import { getLocale } from 'next-intl/server'
 
 import { Providers } from '@/shared/Providers'
 import { CardSizeProvider } from '../features/library/contexts/CardSizeContext'
 import { ToastProvider } from '../shared/contexts/ToastContext'
-import { getTheme } from '../shared/lib/theme'
 import ErrorBoundary from '@/shared/components/ErrorBoundary'
+import { LocaleThemeProvider } from '@/shared/components/LocaleThemeProvider'
 
 export const viewport = {
   width: 'device-width',
@@ -35,16 +33,16 @@ export const metadata: Metadata = {
 
 import { PostHogProvider } from '@/shared/PostHogProvider'
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = await getLocale()
-  const theme = await getTheme()
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={locale} className={`theme-${theme}`} data-scroll-behavior="smooth">
+    <html lang="en-us" className="theme-system" data-scroll-behavior="smooth">
       <body className="overflow-hidden" suppressHydrationWarning>
         <div key="providers">
           <PostHogProvider>
-            <NextIntlClientProvider>
+            <LocaleThemeProvider>
               <ToastProvider>
                 <CardSizeProvider>
                   <ErrorBoundary title="Audiobookphile Error">
@@ -52,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   </ErrorBoundary>
                 </CardSizeProvider>
               </ToastProvider>
-            </NextIntlClientProvider>
+            </LocaleThemeProvider>
           </PostHogProvider>
         </div>
       </body>

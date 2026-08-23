@@ -1,7 +1,11 @@
+export const dynamic = 'force-dynamic'
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/shared/lib/api/users'
 import AppBar from '../AppBar'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export const metadata: Metadata = {
   title: 'audiobookphile - Admin Dashboard',

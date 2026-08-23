@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { LibraryProvider } from '@/features/library/contexts/LibraryContext'
 import { getLibraries } from '@/shared/lib/api'
 import { resolveLibraryFromParam } from '@/shared/lib/library-slugs'
@@ -5,6 +6,9 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import AppBar from '../../AppBar'
 import LibraryLayoutWrapper from './LibraryLayoutWrapper'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export const metadata: Metadata = {
   title: 'audiobookphile',

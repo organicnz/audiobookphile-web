@@ -1,7 +1,11 @@
+export const dynamic = 'force-dynamic'
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { getLibraries, getLibraryFilterData } from '@/shared/lib/api'
 import SettingsContent from '../../SettingsContent'
 import GenresClient from './GenresClient'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default async function ItemMetadataUtilsGenresPage() {
   const t = await getTypeSafeTranslations()

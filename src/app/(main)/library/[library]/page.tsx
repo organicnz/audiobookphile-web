@@ -1,8 +1,12 @@
+export const dynamic = 'force-dynamic'
 import { apiFetch } from '@/shared/lib/api/client'
 import { getLibrarySlug, resolveLibraryFromParam } from '@/shared/lib/library-slugs'
 import { redirect } from 'next/navigation'
 import type { GetLibrariesResponse, PersonalizedShelf } from '@/types/api'
 import LibraryClient from './LibraryClient'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 // Continue Listening and personalized shelves are per-user and per-session —
 // never serve a cached version. Force dynamic rendering so every page load

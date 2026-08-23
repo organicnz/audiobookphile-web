@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { CronExpressionBuilderExamples } from '../examples/CronExpressionBuilderExamples'
 import { DropdownExamples } from '../examples/DropdownExamples'
 import { DurationPickerExamples } from '../examples/DurationPickerExamples'
@@ -9,6 +10,9 @@ import { SlateEditorExamples } from '../examples/SlateEditorExamples'
 import { TextInputExamples } from '../examples/TextInputExamples'
 import { TextareaInputExamples } from '../examples/TextareaInputExamples'
 import { TwoStageMultiSelectExamples } from '../examples/TwoStageMultiSelectExamples'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default function InputComponentsPage() {
   return (

@@ -1,9 +1,13 @@
+export const dynamic = 'force-dynamic'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Settings, ShieldAlert, Sparkles } from 'lucide-react'
 import { getCurrentUser } from '@/shared/lib/api'
 import AdminAnalyticsWidget from '@/features/admin/components/AdminAnalyticsWidget'
 import { AdminInvitePanel } from '@/features/admin/components/AdminInvitePanel'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default async function AdminDashboardPage() {
   const currentUser = await getCurrentUser()

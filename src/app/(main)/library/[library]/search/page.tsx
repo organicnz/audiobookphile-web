@@ -1,5 +1,9 @@
+export const dynamic = 'force-dynamic'
 import { searchLibrary } from '@/shared/lib/api'
 import SearchClient from './SearchClient'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default async function SearchPage({ params, searchParams }: { params: Promise<{ library: string }>; searchParams: Promise<{ q?: string }> }) {
   const { library: libraryId } = await params

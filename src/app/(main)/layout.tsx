@@ -1,57 +1,13 @@
-import { redirect } from 'next/navigation'
-import { MediaProvider } from '@/features/player/contexts/MediaContext'
-import { MetadataProvider } from '@/features/metadata/contexts/MetadataContext'
-import { TasksProvider } from '@/shared/contexts/TasksContext'
-import { UserProvider } from '@/shared/contexts/UserContext'
-import { CommandPaletteProvider } from '@/shared/contexts/CommandPaletteContext'
-import CommandPalette from '@/shared/modals/CommandPalette'
-import { InstallPrompt } from '@/shared/ui/InstallPrompt'
-import { getCurrentUser } from '@/shared/lib/api'
+import { Suspense } from 'react'
+import { UserDataFetcher } from './UserDataFetcher'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
-  let userPayload
-  try {
-    userPayload = await getCurrentUser()
-  } catch {
-    userPayload = null
-  }
-
-  if (!userPayload || !userPayload.user) {
-    return redirect('/login')
-  }
-
-  const { user } = userPayload
-
   return (
-    <UserProvider
-      initialUser={{
-        id: user.id,
-        email: user.email,
-        profile: {
-          id: user.id,
-          username: user.username,
-          user_type: user.type,
-          default_library_id: userPayload.userDefaultLibraryId ?? null,
-          created_at: null,
-          updated_at: null,
-          language: null,
-          theme: null,
-          is_2fa_enabled: null,
-          totp_secret: null
-        }
-      }}
-    >
-      <TasksProvider>
-        <MetadataProvider>
-          <MediaProvider>
-            <CommandPaletteProvider>
-              {children}
-              <CommandPalette />
-              <InstallPrompt />
-            </CommandPaletteProvider>
-          </MediaProvider>
-        </MetadataProvider>
-      </TasksProvider>
-    </UserProvider>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <UserDataFetcher>{children}</UserDataFetcher>
+    </Suspense>
   )
 }

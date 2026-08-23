@@ -1,7 +1,6 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import React, { memo } from 'react'
 import ButtonBase from './ButtonBase'
@@ -14,6 +13,7 @@ interface BtnProps {
   loading?: boolean
   disabled?: boolean
   progress?: string
+  loadingMessage?: string
   children: React.ReactNode
   onClick?: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void
   className?: string
@@ -55,6 +55,7 @@ export default function Btn({
   loading = false,
   disabled = false,
   progress,
+  loadingMessage = 'Loading...',
   children,
   onClick,
   className = '',
@@ -63,8 +64,6 @@ export default function Btn({
   ariaExpanded,
   ariaControls
 }: BtnProps) {
-  const t = useTypeSafeTranslations()
-
   const handleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     if (onClick && !disabled && !loading) {
       onClick(e)
@@ -98,7 +97,7 @@ export default function Btn({
 
       {loading && (
         <span className="sr-only" role="status" aria-live="polite">
-          {progress ? progress : t('MessageLoading')}
+          {progress ? progress : loadingMessage}
         </span>
       )}
     </ButtonBase>

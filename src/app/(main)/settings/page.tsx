@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { apiFetch } from '@/shared/lib/api/client'
 import type { GetLibrariesResponse } from '@/types/api'
@@ -5,6 +6,9 @@ import { Settings, Library, Users, SlidersHorizontal, Headphones, DatabaseBackup
 import Link from 'next/link'
 import SettingsContent from './SettingsContent'
 import SettingsFooter from './SettingsFooter'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default async function SettingsPage() {
   const t = await getTypeSafeTranslations()

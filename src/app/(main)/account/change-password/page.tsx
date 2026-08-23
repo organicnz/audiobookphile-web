@@ -1,8 +1,12 @@
+export const dynamic = 'force-dynamic'
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import ChangePasswordClient from './ChangePasswordClient'
 import { changePassword } from './actions'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default async function ChangePasswordPage() {
   const t = await getTypeSafeTranslations()

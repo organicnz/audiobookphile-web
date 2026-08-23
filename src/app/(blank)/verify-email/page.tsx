@@ -1,11 +1,14 @@
+export const dynamic = 'force-dynamic'
 import AuthCard from '@/features/auth/components/AuthCard'
 import Link from 'next/link'
-import { Mail } from 'lucide-react'
+
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export default function VerifyEmailPage() {
   return (
     <div className="-mt-[var(--header-height)] flex min-h-full items-center justify-center">
-      <AuthCard title="Verify your email" icon={Mail}>
+      <AuthCard title="Verify your email" icon="mail">
         <p className="text-foreground-muted mb-6 text-sm">We sent a confirmation link to your email address. Click the link to activate your account.</p>
         <p className="text-foreground-muted text-sm">
           Already verified?{' '}
