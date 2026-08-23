@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic'
 import DailyListeningChart from '@/features/stats/DailyListeningChart'
 import ListeningHeatmap from '@/features/stats/ListeningHeatmap'
 import RecentSessions from '@/features/stats/RecentSessions'
@@ -6,6 +5,8 @@ import { buildDaysListeningMap, buildStatsSummary } from '@/features/stats/stats
 import StatsSummaryRow from '@/features/stats/StatsSummary'
 import { getCurrentUser } from '@/shared/lib/api'
 import { getUserStatsData } from '@/shared/lib/api/stats'
+
+export const dynamic = 'force-dynamic'
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components

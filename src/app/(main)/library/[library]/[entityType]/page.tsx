@@ -1,9 +1,10 @@
-export const dynamic = 'force-dynamic'
 import { EntityType } from '@/types/api'
 import { Suspense } from 'react'
 
 import BookshelfClient from './BookshelfClient'
 import { getLibraryAuthors, getLibraryCollections, getLibraryItems, getLibraryPlaylists, getLibrarySeries } from '@/shared/lib/api'
+
+export const dynamic = 'force-dynamic'
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components

@@ -58,7 +58,7 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
       >
         <div className="flex min-w-0 flex-shrink-0 items-center gap-4">
           {redirectLibraryId ? (
-            <Link href={redirectUrl} aria-label={`audiobookphile - ${t('ButtonHome')}`} className="group flex items-center gap-3">
+            <Link href={redirectUrl} prefetch={true} aria-label={`audiobookphile - ${t('ButtonHome')}`} className="group flex items-center gap-3">
               {LogoContent}
             </Link>
           ) : (

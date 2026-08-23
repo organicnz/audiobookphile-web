@@ -1,8 +1,11 @@
-export const dynamic = 'force-dynamic'
 import { CoverSizeWidgetExamples } from './examples/CoverSizeWidgetExamples'
 import { EditListExamples } from './examples/EditListExamples'
 import { SideBySideControlsExamples } from './examples/SideBySideControlsExamples'
 import { ChevronRight, BookOpen, MousePointer2, Info, Layout, CheckSquare, Bell } from 'lucide-react'
+
+export const dynamic = 'force-dynamic'
+
+// See: https://nextjs.org/docs/app/guides/adopting-partial-prefetching
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components

@@ -223,7 +223,7 @@ export default function GlobalSearchMenu({
           }
 
           return (
-            <Link key={itemKey} {...commonProps} href={result.link || '#'} onClick={onItemClick}>
+            <Link key={itemKey} prefetch={true} {...commonProps} href={result.link || '#'} onClick={onItemClick}>
               {itemContent}
             </Link>
           )

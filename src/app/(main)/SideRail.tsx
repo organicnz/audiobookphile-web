@@ -126,6 +126,7 @@ export default function SideRail({ serverVersion, installSource }: { serverVersi
             >
               <Link
                 href={button.href}
+                prefetch={true}
                 className={mergeClasses(
                   'text-foreground group relative flex h-20 w-full cursor-pointer flex-col items-center justify-center transition-all duration-300',
                   'hover:bg-white/5 active:scale-95',

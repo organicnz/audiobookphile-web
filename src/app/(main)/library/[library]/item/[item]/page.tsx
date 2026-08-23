@@ -1,7 +1,10 @@
-export const dynamic = 'force-dynamic'
 import { getLibraryItem } from '@/shared/lib/api'
 import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
 import LibraryItemClient from './LibraryItemClient'
+
+export const dynamic = 'force-dynamic'
+
+// See: https://nextjs.org/docs/app/guides/adopting-partial-prefetching
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components

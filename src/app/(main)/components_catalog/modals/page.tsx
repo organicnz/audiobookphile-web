@@ -1,7 +1,8 @@
-export const dynamic = 'force-dynamic'
 import { AdvancedModalExamples } from '../examples/AdvancedModalExamples'
 import { ConfirmDialogExamples } from '../examples/ConfirmDialogExamples'
 import { ModalExamples } from '../examples/ModalExamples'
+
+export const dynamic = 'force-dynamic'
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components

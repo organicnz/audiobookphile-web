@@ -1,7 +1,8 @@
-export const dynamic = 'force-dynamic'
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { ExternalLink, Database, Terminal } from 'lucide-react'
 import SettingsContent from '../SettingsContent'
+
+export const dynamic = 'force-dynamic'
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components

@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic'
 import ForgotPasswordForm from './ForgotPasswordForm'
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.

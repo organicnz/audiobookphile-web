@@ -1,7 +1,8 @@
-export const dynamic = 'force-dynamic'
 import { AlertExamples } from '../examples/AlertExamples'
 import { ToastNotificationExamples } from '../examples/ToastNotificationExamples'
 import { TooltipExamples } from '../examples/TooltipExamples'
+
+export const dynamic = 'force-dynamic'
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components

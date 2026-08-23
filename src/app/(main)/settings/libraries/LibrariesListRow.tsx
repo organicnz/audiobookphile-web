@@ -78,7 +78,7 @@ export default function LibrariesListRow({ item, handleDeleteLibrary, handleEdit
   return (
     <div className="text-foreground/50 hover:text-foreground flex items-center gap-4 border-b border-white/5 px-4 py-2 transition-all duration-200 hover:bg-white/5">
       {isLibraryTaskRunning ? <LoadingSpinner size="la-sm" /> : <LibraryIcon icon={item.icon} className="opacity-80" />}
-      <Link className="text-foreground hover:text-primary py-2 text-[13px] font-bold transition-colors" href={`/library/${item.id}`}>
+      <Link prefetch={true} className="text-foreground hover:text-primary py-2 text-[13px] font-bold transition-colors" href={`/library/${item.id}`}>
         {escapeHtml(item.name)}
       </Link>
       <div className="grow" />

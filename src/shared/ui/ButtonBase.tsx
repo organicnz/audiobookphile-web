@@ -9,6 +9,7 @@ const MotionLink = motion.create(Link)
 interface ButtonBaseProps {
   id?: string
   to?: string
+  prefetch?: boolean
   children: React.ReactNode
   disabled?: boolean
   borderless?: boolean
@@ -29,6 +30,7 @@ interface ButtonBaseProps {
 const ButtonBase = ({
   id,
   to,
+  prefetch = true,
   children,
   disabled = false,
   borderless = false,
@@ -89,6 +91,7 @@ const ButtonBase = ({
     return (
       <MotionLink
         href={to}
+        prefetch={prefetch}
         className={buttonClass}
         onClick={handleClick}
         onMouseDown={onMouseDown}

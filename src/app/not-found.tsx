@@ -3,8 +3,6 @@
 import Link from 'next/link'
 import Btn from '@/shared/ui/Btn'
 
-export const dynamic = 'force-dynamic'
-
 export default function NotFound() {
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-6 text-center">

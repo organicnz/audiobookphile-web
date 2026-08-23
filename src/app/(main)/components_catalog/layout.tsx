@@ -1,9 +1,10 @@
-export const dynamic = 'force-dynamic'
 import { getLibraries } from '@/shared/lib/api'
 import type { Metadata } from 'next'
 import '../../../assets/globals.css'
 import { ComponentsCatalogProvider } from '../../../shared/contexts/ComponentsCatalogContext'
 import AppBar from '../AppBar'
+
+export const dynamic = 'force-dynamic'
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components

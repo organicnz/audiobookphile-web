@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic'
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
