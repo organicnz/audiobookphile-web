@@ -115,6 +115,11 @@
   "ButtonUserEdit": "Edytuj użytkownika {0}",
   "ButtonViewAll": "Zobacz wszystko",
   "ButtonYes": "Tak",
+  "ErrorBoundary": {
+    "title": "Coś poszło nie tak",
+    "retry": "Spróbuj ponownie",
+    "goHome": "Idź na stronę główną"
+  },
   "ErrorUploadFetchMetadataAPI": "Błąd podczas pobierania metadanych",
   "ErrorUploadFetchMetadataNoResults": "Nie można pobrać metadanych — spróbuj zaktualizować tytuł i/lub autora",
   "ErrorUploadLacksTitle": "Musi mieć tytuł",

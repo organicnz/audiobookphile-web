@@ -7,6 +7,7 @@ import { Providers } from '@/shared/Providers'
 import { CardSizeProvider } from '../features/library/contexts/CardSizeContext'
 import { ToastProvider } from '../shared/contexts/ToastContext'
 import { getTheme } from '../shared/lib/theme'
+import ErrorBoundary from '@/shared/components/ErrorBoundary'
 
 export const viewport = {
   width: 'device-width',
@@ -39,14 +40,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const theme = await getTheme()
 
   return (
-    <html lang={locale} className={`theme-${theme}`}>
+    <html lang={locale} className={`theme-${theme}`} data-scroll-behavior="smooth">
       <body className="overflow-hidden" suppressHydrationWarning>
         <div key="providers">
           <PostHogProvider>
             <NextIntlClientProvider>
               <ToastProvider>
                 <CardSizeProvider>
-                  <Providers>{children}</Providers>
+                  <ErrorBoundary title="Audiobookphile Error">
+                    <Providers>{children}</Providers>
+                  </ErrorBoundary>
                 </CardSizeProvider>
               </ToastProvider>
             </NextIntlClientProvider>

@@ -97,7 +97,8 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
           protocol: 'https',
           hostname: '*.supabase.co'
         }
-      ]
+      ],
+      minimumCacheTTL: 14400
     },
     logging: {
       fetches: {

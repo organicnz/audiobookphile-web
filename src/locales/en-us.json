@@ -129,6 +129,11 @@
   "ButtonUserEdit": "Edit user {0}",
   "ButtonViewAll": "View All",
   "ButtonYes": "Yes",
+  "ErrorBoundary": {
+    "title": "Something went wrong",
+    "retry": "Try again",
+    "goHome": "Go home"
+  },
   "ErrorInternalServerError": "Internal server error",
   "ErrorItemDirectoryMissing": "Item directory is missing!",
   "ErrorItemNoAudioTracksOrEbook": "Item has no audio tracks & ebook",
