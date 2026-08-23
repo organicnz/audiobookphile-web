@@ -10,8 +10,6 @@ import LogoutBtn from './LogoutBtn'
 import ThemeSelector from './ThemeSelector'
 import UserLanguageSelector from './UserLanguageSelector'
 
-export const dynamic = 'force-dynamic'
-
 export default async function AccountPage() {
   let currentUser
   try {

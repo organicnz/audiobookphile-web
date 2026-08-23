@@ -8,8 +8,6 @@ import CommandPalette from '@/shared/modals/CommandPalette'
 import { InstallPrompt } from '@/shared/ui/InstallPrompt'
 import { getCurrentUser } from '@/shared/lib/api'
 
-export const dynamic = 'force-dynamic'
-
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   let userPayload
   try {

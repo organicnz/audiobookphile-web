@@ -7,7 +7,6 @@ import LibraryClient from './LibraryClient'
 // Continue Listening and personalized shelves are per-user and per-session —
 // never serve a cached version. Force dynamic rendering so every page load
 // hits the edge function with fresh progress data.
-export const dynamic = 'force-dynamic'
 
 export default async function LibraryPage({ params }: { params: Promise<{ library: string }> }) {
   const { library: paramValue } = await params

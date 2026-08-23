@@ -3,8 +3,6 @@ import { getLibraries, getLibraryFilterData } from '@/shared/lib/api'
 import SettingsContent from '../../SettingsContent'
 import TagsClient from './TagsClient'
 
-export const dynamic = 'force-dynamic'
-
 export default async function ItemMetadataUtilsTagsPage() {
   const t = await getTypeSafeTranslations()
 

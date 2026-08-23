@@ -1,8 +1,6 @@
 import { LibraryStatsDashboard } from '@/features/library/components/LibraryStatsDashboard'
 import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
-
 export default async function StatsPage({ params }: { params: Promise<{ library: string }> }) {
   const { library: libraryId } = await params
   return (

@@ -2,8 +2,6 @@ import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { ExternalLink, Database, Terminal } from 'lucide-react'
 import SettingsContent from '../SettingsContent'
 
-export const dynamic = 'force-dynamic'
-
 export default async function BackupsPage() {
   const t = await getTypeSafeTranslations()
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''

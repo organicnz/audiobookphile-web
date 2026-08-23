@@ -6,8 +6,6 @@ import Link from 'next/link'
 import SettingsContent from './SettingsContent'
 import SettingsFooter from './SettingsFooter'
 
-export const dynamic = 'force-dynamic'
-
 export default async function SettingsPage() {
   const t = await getTypeSafeTranslations()
   const librariesResult = await apiFetch<GetLibrariesResponse>('/api/libraries', {})

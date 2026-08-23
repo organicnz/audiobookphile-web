@@ -4,8 +4,6 @@ import SettingsContent from '../SettingsContent'
 import TwoFactorSettingsPanel from '@/features/auth/components/TwoFactorSettingsPanel'
 import { createClient } from '@/shared/utils/supabase/server'
 
-export const dynamic = 'force-dynamic'
-
 export default async function AuthenticationPage() {
   const t = await getTypeSafeTranslations()
   const supabase = await createClient()

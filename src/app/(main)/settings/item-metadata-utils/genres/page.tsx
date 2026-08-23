@@ -3,8 +3,6 @@ import { getLibraries, getLibraryFilterData } from '@/shared/lib/api'
 import SettingsContent from '../../SettingsContent'
 import GenresClient from './GenresClient'
 
-export const dynamic = 'force-dynamic'
-
 export default async function ItemMetadataUtilsGenresPage() {
   const t = await getTypeSafeTranslations()
 

@@ -6,8 +6,6 @@ import StatsSummaryRow from '@/features/stats/StatsSummary'
 import { getCurrentUser } from '@/shared/lib/api'
 import { getUserStatsData } from '@/shared/lib/api/stats'
 
-export const dynamic = 'force-dynamic'
-
 export default async function AccountStatsPage() {
   let currentUser
   try {

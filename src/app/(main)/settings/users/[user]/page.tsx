@@ -4,8 +4,6 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import UserClient from './UserClient'
 
-export const dynamic = 'force-dynamic'
-
 export default async function UserPage({ params }: { params: Promise<{ user: string }> }) {
   const t = await getTypeSafeTranslations()
   const { user: userId } = await params

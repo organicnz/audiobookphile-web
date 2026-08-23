@@ -2,8 +2,6 @@ import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/shared/lib/api/users'
 import AdminAnalyticsWidget from '@/features/admin/components/AdminAnalyticsWidget'
 
-export const dynamic = 'force-dynamic'
-
 export default async function AnalyticsPage() {
   const currentUser = await getCurrentUser()
 

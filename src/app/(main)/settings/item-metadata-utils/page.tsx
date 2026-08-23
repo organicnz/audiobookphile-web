@@ -2,8 +2,6 @@ import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import Link from 'next/link'
 import SettingsContent from '../SettingsContent'
 
-export const dynamic = 'force-dynamic'
-
 export default async function ItemMetadataUtilsPage() {
   const t = await getTypeSafeTranslations()
   const items = [

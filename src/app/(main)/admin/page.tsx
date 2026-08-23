@@ -5,8 +5,6 @@ import { getCurrentUser } from '@/shared/lib/api'
 import AdminAnalyticsWidget from '@/features/admin/components/AdminAnalyticsWidget'
 import { AdminInvitePanel } from '@/features/admin/components/AdminInvitePanel'
 
-export const dynamic = 'force-dynamic'
-
 export default async function AdminDashboardPage() {
   const currentUser = await getCurrentUser()
 

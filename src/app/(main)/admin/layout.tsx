@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   description: 'audiobookphile server administration and telemetry'
 }
 
-export const dynamic = 'force-dynamic'
-
 export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const currentUser = await getCurrentUser()
 

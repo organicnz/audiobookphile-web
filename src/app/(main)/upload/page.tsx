@@ -1,8 +1,6 @@
 import { getLibraries } from '@/shared/lib/api'
 import UploadClient from './UploadClient'
 
-export const dynamic = 'force-dynamic'
-
 export default async function UploadPage() {
   let libraries: import('@/types/api').Library[] = []
   try {
