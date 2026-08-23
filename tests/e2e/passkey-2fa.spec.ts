@@ -41,7 +41,7 @@ function persistTestUserSecret(secret: string): void {
   fs.appendFileSync(ENV_FILE, `SECRET=${secret}\n`)
 }
 
-function base32Decode(input: string): Uint8Array {
+function base32Decode(input: string): Uint8Array<ArrayBuffer> {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
   const clean = input.toUpperCase().replace(/=+$/, '').replace(/\s/g, '')
   let bits = 0
@@ -57,12 +57,18 @@ function base32Decode(input: string): Uint8Array {
       bits -= 8
     }
   }
-  return new Uint8Array(out)
+  const buffer = new ArrayBuffer(out.length)
+  const view = new Uint8Array(buffer)
+  for (let i = 0; i < out.length; i++) {
+    view[i] = out[i]
+  }
+  return view
 }
 
 async function totpCodes(secret: string): Promise<string[]> {
   const timeStep = 30
-  const key = await crypto.subtle.importKey('raw', base32Decode(secret), { name: 'HMAC', hash: 'SHA-1' }, false, ['sign'])
+  const keyData = base32Decode(secret)
+  const key = await crypto.subtle.importKey('raw', keyData.buffer, { name: 'HMAC', hash: 'SHA-1' }, false, ['sign'])
   const counter = BigInt(Math.floor(Date.now() / 1000 / timeStep))
   const codes: string[] = []
   for (let offset = -1; offset <= 1; offset++) {

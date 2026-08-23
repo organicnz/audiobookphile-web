@@ -88,7 +88,13 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
       }
     },
     images: {
-      localPatterns: [{ pathname: '/api/**' }, { pathname: '/images/**' }]
+      localPatterns: [{ pathname: '/api/**' }, { pathname: '/images/**' }],
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: '*.supabase.co'
+        }
+      ]
     },
     logging: {
       fetches: {
