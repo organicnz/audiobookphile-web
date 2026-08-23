@@ -22,6 +22,7 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
 
   const baseConfig: NextConfig = {
     ...defaultConfig,
+    reactCompiler: true,
     redirects: async () => [
       {
         source: '/',
@@ -85,7 +86,9 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
     experimental: {
       serverActions: {
         bodySizeLimit: '1gb'
-      }
+      },
+      turbopackRustReactCompiler: true,
+      useOffline: true
     },
     images: {
       localPatterns: [{ pathname: '/api/**' }, { pathname: '/images/**' }],
