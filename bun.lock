@@ -69,7 +69,7 @@
         "supabase": "^2.98.2",
         "tailwindcss": "^4",
         "ts-morph": "^28.0.0",
-        "typescript": "^7.1.0-dev.20260822.1",
+        "typescript": "~5.9.3",
       },
     },
   },
@@ -957,20 +957,6 @@
     "@typescript-eslint/utils": ["@typescript-eslint/utils@8.44.1", "", { "dependencies": { "@eslint-community/eslint-utils": "4.9.0", "@typescript-eslint/scope-manager": "8.44.1", "@typescript-eslint/types": "8.44.1", "@typescript-eslint/typescript-estree": "8.44.1" }, "peerDependencies": { "eslint": "9.36.0", "typescript": "5.8.3" } }, "sha512-DpX5Fp6edTlocMCwA+mHY8Mra+pPjRZ0TfHkXI8QFelIKcbADQz1LUPNtzOFUriBB2UYqw4Pi9+xV4w9ZczHFg=="],
 
     "@typescript-eslint/visitor-keys": ["@typescript-eslint/visitor-keys@8.44.1", "", { "dependencies": { "@typescript-eslint/types": "8.44.1", "eslint-visitor-keys": "4.2.1" } }, "sha512-576+u0QD+Jp3tZzvfRfxon0EA2lzcDt3lhUbsC6Lgzy9x2VR4E+JUiNyGHi5T8vk0TV+fpJ5GLG1JsJuWCaKhw=="],
-
-    "@typescript/typescript-darwin-arm64": ["@typescript/typescript-darwin-arm64@7.1.0-dev.20260822.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-25HlgGN3tCiHTTVy+ULbhnraxIxezKq00EjGIFFVDLrxf+65VXel3vr4JZZ7nUH1Xh5uwZQfu37kR+U/26LQlg=="],
-
-    "@typescript/typescript-darwin-x64": ["@typescript/typescript-darwin-x64@7.1.0-dev.20260822.1", "", { "os": "darwin", "cpu": "x64" }, "sha512-t8Bmgn8t7QhUz/SJElGLDf5OIv0XHiVw+s5Ttg64SKvGSKRtNoAeFbNLu/HvNhyBNpqAiu++VILqUgTopNUvMw=="],
-
-    "@typescript/typescript-linux-arm": ["@typescript/typescript-linux-arm@7.1.0-dev.20260822.1", "", { "os": "linux", "cpu": "arm" }, "sha512-+eF4lmoGkEnd+RJSwUfqNqfcIovgKusk14iafYyxolYpHNycHVx8ILlHEqAF0LqNZ0eovgDNYYsRXR7fNAZBSQ=="],
-
-    "@typescript/typescript-linux-arm64": ["@typescript/typescript-linux-arm64@7.1.0-dev.20260822.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-ssRJDOV9Xk1Rd2TI+qY81OsRa4UN6uoh9A0uk+z55Uwq9QqHX4wj5ym5LwEZV+9G+MBf6oS3QZXDj43Jf7gVQQ=="],
-
-    "@typescript/typescript-linux-x64": ["@typescript/typescript-linux-x64@7.1.0-dev.20260822.1", "", { "os": "linux", "cpu": "x64" }, "sha512-Pu80IArog3ucL649Dc/TDzY4ZDVidqGrT+7Ej8Xnj0HdwtfwwD7KZee2usDGHNtNS+NRBujhYgCHn5Biq+4QYQ=="],
-
-    "@typescript/typescript-win32-arm64": ["@typescript/typescript-win32-arm64@7.1.0-dev.20260822.1", "", { "os": "win32", "cpu": "arm64" }, "sha512-gZhYQoFQpyCRCWF4tghqrS9fmF+1AD0MUfCi3X+HRGMKnoCEh2ABCY/VEICR0qjveXf6rRzansTlxuh/CYd40w=="],
-
-    "@typescript/typescript-win32-x64": ["@typescript/typescript-win32-x64@7.1.0-dev.20260822.1", "", { "os": "win32", "cpu": "x64" }, "sha512-jZrWayN/vNcIFlFxwpZrRyqAzWaJxL1wOWTIdDm2h+VUvtv8C1ibvkVKzVwllfv5NGfhMlIX1BYRibuOrGKbKQ=="],
 
     "@unrs/resolver-binding-android-arm-eabi": ["@unrs/resolver-binding-android-arm-eabi@1.11.1", "", { "os": "android", "cpu": "arm" }, "sha512-ppLRUgHVaGRWUx0R0Ut06Mjo9gBaBkg3v/8AxusGLhsIotbBLuRk51rAzqLC8gq6NyyAojEXglNjzf6R948DNw=="],
 
@@ -2276,7 +2262,7 @@
 
     "typedarray-to-buffer": ["typedarray-to-buffer@3.1.5", "", { "dependencies": { "is-typedarray": "^1.0.0" } }, "sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q=="],
 
-    "typescript": ["typescript@7.1.0-dev.20260822.1", "", { "optionalDependencies": { "@typescript/typescript-darwin-arm64": "7.1.0-dev.20260822.1", "@typescript/typescript-darwin-x64": "7.1.0-dev.20260822.1", "@typescript/typescript-linux-arm": "7.1.0-dev.20260822.1", "@typescript/typescript-linux-arm64": "7.1.0-dev.20260822.1", "@typescript/typescript-linux-x64": "7.1.0-dev.20260822.1", "@typescript/typescript-win32-arm64": "7.1.0-dev.20260822.1", "@typescript/typescript-win32-x64": "7.1.0-dev.20260822.1" }, "bin": { "tsc": "bin/tsc" } }, "sha512-SbI3P4RT3jq+Lw391NLlAo+bQFNEifaEV/c/0oPyzPXLVJJN/iH39Rx0AnSafoj3rtetzI6cyHXloMvbwt6HyA=="],
+    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
 
     "typescript-eslint": ["typescript-eslint@8.59.1", "", { "dependencies": { "@typescript-eslint/eslint-plugin": "8.59.1", "@typescript-eslint/parser": "8.59.1", "@typescript-eslint/typescript-estree": "8.59.1", "@typescript-eslint/utils": "8.59.1" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0", "typescript": ">=4.8.4 <6.1.0" } }, "sha512-xqDcFVBmlrltH64lklOVp1wYxgJr6LVdg3NamBgH2OOQDLFdTKfIZXF5PfghrnXQKXZGTQs8tr1vL7fJvq8CTQ=="],
 
