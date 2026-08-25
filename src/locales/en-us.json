@@ -1209,6 +1209,7 @@
   "ToastNotificationTestTriggerFailed": "Failed to trigger test notification",
   "ToastNotificationTestTriggerSuccess": "Triggered test notification",
   "ToastNotificationUpdateSuccess": "Notification updated",
+  "ToastPlaybackFailed": "Playback failed. Please try again.",
   "ToastPlaylistCreateFailed": "Failed to create playlist",
   "ToastPlaylistCreateSuccess": "Playlist created",
   "ToastPlaylistRemoveSuccess": "Playlist removed",

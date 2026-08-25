@@ -2,6 +2,8 @@ import { usePlaybackSession } from '@/features/player/hooks/usePlaybackSession'
 import { usePlayerSettings, type PlayerSettings, type UsePlayerSettingsReturn } from '@/features/player/hooks/usePlayerSettings'
 import { AudioTrack } from '@/features/player/lib/AudioTrack'
 import { LocalAudioPlayer } from '@/features/player/lib/LocalAudioPlayer'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import type { Chapter, LibraryItem, PlaybackSession, PlayMethod } from '@/types/api'
 import { PlayerState } from '@/types/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -94,6 +96,13 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
   // Player settings (persisted in local storage)
   const playerSettings = usePlayerSettings()
   const { settings } = playerSettings
+  const { showToast } = useGlobalToast()
+  const t = useTypeSafeTranslations()
+
+  // Late-bound control refs: setupPlayerListeners is defined before the
+  // controls below, and its dependency array would hit their TDZ if
+  // referenced directly.
+  const closePlayerRef = useRef<() => Promise<void>>(async () => {})
 
   // Player state
   const [playerState, setPlayerState] = useState<PlayerState>(PlayerState.IDLE)
@@ -215,12 +224,18 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
 
       player.on('error', (error) => {
         console.error('[usePlayerHandler] Player error:', error)
+        // Fatal after LocalAudioPlayer's retry budget. Previously swallowed —
+        // the UI had no ERROR rendering, leaving a silently dead player.
+        showToast(t('ToastPlaybackFailed'), { type: 'error', duration: 6000 })
+        void closePlayerRef.current()
         // TODO: Try switching to HLS transcode on error
       })
 
       player.on('finished', () => {
-        // TODO: Handle media finished - move to next queue item or close
         console.log('[usePlayerHandler] Playback finished')
+        // Close the server session on final-track end; previously a TODO left
+        // sessions lingering open until the next playback started.
+        void closePlayerRef.current()
       })
     },
     [startSyncInterval, stopSyncInterval]
@@ -450,6 +465,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
     audioTracksRef.current = []
     libraryItemRef.current = null
   }, [closeSession, stopSyncInterval])
+  closePlayerRef.current = closePlayer
 
   const startSleepTimer = useCallback((duration: number) => {
     setSleepTimerRemaining(duration)

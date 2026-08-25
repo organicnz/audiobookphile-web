@@ -318,7 +318,6 @@
   "LabelDevice": "Urządzenie",
   "LabelDeviceInfo": "Informacja o urządzeniu",
   "LabelDeviceIsAvailableTo": "Urządzenie jest dostępne do...",
-
   "LabelDiscFromFilename": "Oznaczenie dysku z nazwy pliku",
   "LabelDiscFromMetadata": "Oznaczenie dysku z metadanych",
   "LabelDiscover": "Odkrywaj",
@@ -1022,6 +1021,7 @@
   "ToastNoNewEpisodesFound": "Nie znaleziono nowych odcinków",
   "ToastNoRSSFeed": "Podcast nie posiada RSS Feed",
   "ToastNotificationFailedMaximum": "Maks. ilość nieudanych prób musi być >= 0",
+  "ToastPlaybackFailed": "Odtwarzanie nie powiodło się. Spróbuj ponownie.",
   "ToastPlaylistCreateFailed": "Nie udało się utworzyć playlisty",
   "ToastPlaylistCreateSuccess": "Playlista utworzona",
   "ToastPlaylistRemoveSuccess": "Playlista usunięta",
