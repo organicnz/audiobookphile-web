@@ -193,10 +193,10 @@ jobs:
             echo "VERCEL_TOKEN is unset; relying on native Vercel Git Integration deployment."
             exit 0
           fi
-          # The npm/bun package is broken upstream (@deno/eszip tarball 404);
-          # use the official standalone installer instead.
-          curl -fsSL https://vercel.com/install.sh | bash
-          export PATH="$HOME/.local/bin:$PATH"
+          # The npm package is broken upstream (@deno/eszip tarball 404) and
+          # vercel.com/install.sh serves an HTML challenge to scripts. Use
+          # the Homebrew formula instead.
+          brew install vercel-cli
           vercel --version
           vercel pull --yes --environment=production --token=$VERCEL_TOKEN
           vercel build --prod --token=$VERCEL_TOKEN
