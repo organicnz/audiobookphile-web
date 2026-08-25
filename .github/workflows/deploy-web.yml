@@ -245,6 +245,41 @@ jobs:
             "checkout=${{ steps.checkout.outcome }};bun=${{ steps.bun.outcome }};deps=${{ steps.deps.outcome }}"
           bunx playwright install --with-deps chromium webkit
 
+      - name: Pull Vercel Environment (.env.local)
+        id: envpull
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          vercel env pull .env.local --yes --environment=preview --token=$VERCEL_TOKEN
+          # Suite reads SUPABASE_SERVICE_KEY as the service-role alias
+          if ! grep -q "^SUPABASE_SERVICE_KEY=" .env.local; then
+            VAL=$(grep -E "^SUPABASE_SERVICE_ROLE_KEY=" .env.local | head -1 | cut -d= -f2- | tr -d '"' )
+            echo "SUPABASE_SERVICE_KEY=\"$VAL\"" >> .env.local
+          fi
+
+      - name: Seed Passkey/2FA Test User
+        id: seeduser
+        run: |
+          URL=$(grep -E "^NEXT_PUBLIC_SUPABASE_URL=" .env.local | head -1 | cut -d= -f2- | tr -d '"')
+          SK=$(grep -E "^SUPABASE_SERVICE_KEY=" .env.local | head -1 | cut -d= -f2- | tr -d '"')
+          EMAIL="e2e-passkey@audiobookphile.test"
+          CREATE=$(curl -s -X POST "$URL/auth/v1/admin/users" \
+            -H "apikey: $SK" -H "Authorization: Bearer $SK" \
+            -H "Content-Type: application/json" \
+            -d "{\"email\":\"$EMAIL\",\"password\":\"TestPass123!\",\"email_confirm\":true}")
+          UID_=$(echo "$CREATE" | python3 -c "import json,sys;print(json.load(sys.stdin).get('id',''))")
+          if [ -z "$UID_" ]; then
+            ENC=$(python3 -c "import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))" "$EMAIL")
+            UID_=$(curl -s "$URL/auth/v1/admin/users?email=$ENC" \
+              -H "apikey: $SK" -H "Authorization: Bearer $SK" \
+              | python3 -c "import json,sys;u=(json.load(sys.stdin).get('users') or []);print(u[0]['id'] if u else '')")
+          fi
+          echo "USER_ID=$UID_" > /tmp/passkey_e2e_user.env
+          echo "EMAIL=$EMAIL" >> /tmp/passkey_e2e_user.env
+          echo "seeded user: ${UID_:0:8}…"
+
       - name: Run E2E Smoke Against Preview
         id: e2e
         run: |
