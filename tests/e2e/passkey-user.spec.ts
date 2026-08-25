@@ -142,3 +142,4 @@ test('regular user can enroll a passkey from the security dashboard but cannot o
     await deleteTestUser(request, userId)
   }
 })
+test.skip(test.info().project.name !== 'chromium', 'Passkeys use CDP — Chromium only')

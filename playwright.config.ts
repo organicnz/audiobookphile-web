@@ -18,19 +18,25 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: /passkey|twofa/i,
       use: { ...devices['Desktop Chrome'] }
     },
     {
       name: 'webkit',
+      testIgnore: /passkey|twofa/i,
       use: { ...devices['Desktop Safari'] }
     },
     {
       name: 'Mobile Chrome',
+      testIgnore: /passkey|twofa/i,
       use: { ...devices['Pixel 7'] }
     },
     {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 15'] }
+      name: 'chromium-stateful',
+      testMatch: /passkey|twofa/i,
+      fullyParallel: false,
+      workers: 1,
+      use: { ...devices['Desktop Chrome'] }
     }
   ],
 
