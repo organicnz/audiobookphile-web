@@ -1,13 +1,8 @@
 name: 'CodeQL Security Scan'
 
 on:
-  push:
-    branches: ['main']
-  pull_request:
-    branches: ['main']
-  schedule:
-    - cron: '30 1 * * 0'
-
+  # Parked: run manually from the Actions tab when needed.
+  workflow_dispatch: {}
 jobs:
   analyze:
     name: Analyze

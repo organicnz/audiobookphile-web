@@ -1,9 +1,8 @@
 name: PR Auto-Fixer
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-
+  # Parked: run manually from the Actions tab when needed.
+  workflow_dispatch: {}
 jobs:
   auto-fix:
     runs-on: [self-hosted, macOS]

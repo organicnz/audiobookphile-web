@@ -1,12 +1,8 @@
 name: Deploy Next.js Web App (Vercel Production)
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
-
+  # Parked: run manually from the Actions tab when needed.
+  workflow_dispatch: {}
 concurrency:
   group: deploy-web-${{ github.ref }}
   cancel-in-progress: false

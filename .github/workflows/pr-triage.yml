@@ -1,9 +1,8 @@
 name: PR Triage
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-
+  # Parked: run manually from the Actions tab when needed.
+  workflow_dispatch: {}
 jobs:
   triage:
     runs-on: [self-hosted, macOS]
