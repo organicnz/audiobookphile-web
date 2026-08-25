@@ -14,7 +14,7 @@ concurrency:
 jobs:
   verify:
     name: Verify Web Build & Linting
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS]
     steps:
       - name: Checkout Repository
         id: checkout
@@ -67,7 +67,7 @@ jobs:
 
   lighthouse:
     name: Lighthouse Performance Audit
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS]
     steps:
       - name: Checkout Repository
         id: checkout
@@ -116,7 +116,7 @@ jobs:
   size-limit:
     name: Bundle Size Limit
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS]
     steps:
       - name: Checkout Repository
         id: checkout
@@ -165,7 +165,7 @@ jobs:
     name: Deploy to Vercel (Preview Build)
     needs: verify
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS]
     concurrency:
       group: deploy-web-prod-${{ github.ref }}
       cancel-in-progress: false
@@ -207,7 +207,7 @@ jobs:
     name: E2E Smoke (Playwright)
     needs: deploy
     if: needs.deploy.outputs.deployment_url != ''
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS]
     steps:
       - name: Checkout Repository
         id: checkout
@@ -257,7 +257,7 @@ jobs:
     name: Promote Preview to Production
     needs: e2e
     if: needs.deploy.outputs.deployment_url != ''
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS]
     steps:
       - name: Setup Bun
         id: bun
@@ -280,7 +280,7 @@ jobs:
     name: E2E Smoke (Playwright Local)
     needs: verify
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS]
     steps:
       - name: Checkout Repository
         id: checkout
