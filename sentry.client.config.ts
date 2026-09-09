@@ -9,5 +9,22 @@ Sentry.init({
   release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || undefined,
   replaysOnErrorSampleRate: 1.0,
   replaysSessionSampleRate: 0,
-  integrations: [Sentry.replayIntegration()]
+  integrations: [
+    Sentry.replayIntegration(),
+    Sentry.browserTracingIntegration(),
+    Sentry.extraErrorDataIntegration(),
+    Sentry.reportingObserverIntegration(),
+    Sentry.httpClientIntegration()
+  ],
+  // Enable GitHub integration for issue creation
+  attachStacktrace: true,
+  maxValueLength: 8192,
+  normalizeDepth: 10,
+  // Send default PII for better issue context (can be disabled per-user preference)
+  sendDefaultPii: false,
+  // Tag all events with release information
+  _experiments: {
+    // Enable metrics for performance monitoring
+    metricsAggregator: true
+  }
 })
