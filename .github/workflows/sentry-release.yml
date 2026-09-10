@@ -1,0 +1,34 @@
+name: Sentry Release (Web)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  create-release:
+    name: Create Sentry Release
+    runs-on: [self-hosted, macOS]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Create Sentry Release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG || 'organicnz' }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT || 'audiobookphile' }}
+        with:
+          environment: ${{ github.ref_name }}
+          # Matches the `release` field in sentry.{client,server,edge}.config.ts
+          # (VERCEL_GIT_COMMIT_SHA). set_commits: auto powers suspect-commits,
+          # so a Sentry issue links the likely PR/author.
+          release: ${{ github.sha }}
+          version: ${{ github.sha }}
+          set_commits: auto
+          ignore_missing: true
+          ignore_empty: true

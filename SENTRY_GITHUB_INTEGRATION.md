@@ -56,11 +56,7 @@ SENTRY_PROJECT=audiobookphile
 
 ### 5. GitHub Actions Integration
 
-The `.github/workflows` are configured to:
-
-- Create Sentry releases on deployment
-- Associate commits with releases
-- Send deploy notifications to Sentry
+`.github/workflows/sentry-release.yml` creates a Sentry release for every push to `main` (SHA release with `set_commits: auto` for suspect-commits → PR/author linking). Source maps are uploaded during `next build` by `withSentryConfig` when `SENTRY_AUTH_TOKEN` is set; the `deploy-web.yml` build steps pass through `NEXT_PUBLIC_SENTRY_DSN` / `SENTRY_DSN` / `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN` from secrets (empty fallback = Sentry stays disabled, build unaffected). Required secrets: `SENTRY_AUTH_TOKEN` (scopes: project:read, project:write, project:releases, org:read), `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN`.
 
 ## How It Works
 
