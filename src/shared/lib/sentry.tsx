@@ -10,6 +10,8 @@
 
 import * as Sentry from '@sentry/nextjs'
 
+import { ErrorBoundary } from '../ErrorBoundary'
+
 /**
  * Set the current user context in Sentry.
  * Call this after authentication.
@@ -129,8 +131,6 @@ export async function measurePerformance<T>(name: string, operation: () => Promi
  * Higher-order component for automatic error tracking.
  */
 export function withSentryTracking<P extends object>(Component: React.ComponentType<P>, componentName: string): React.FC<P> {
-  const { ErrorBoundary } = require('../ErrorBoundary')
-
   const TrackedComponent = (props: P) => {
     return (
       <ErrorBoundary componentName={componentName} context={{ componentName }}>

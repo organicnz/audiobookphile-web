@@ -7,6 +7,7 @@ import { CardSizeProvider } from '../features/library/contexts/CardSizeContext'
 import { ToastProvider } from '../shared/contexts/ToastContext'
 import { getTheme } from '../shared/lib/theme'
 import ErrorBoundary from '@/shared/components/ErrorBoundary'
+import { ErrorBoundary as SentryErrorBoundary } from '@/shared/ErrorBoundary'
 import { LocaleThemeProvider } from '@/shared/components/LocaleThemeProvider'
 
 export const viewport = {
@@ -48,16 +49,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="overflow-hidden" suppressHydrationWarning>
         <div key="providers">
           <PostHogProvider>
-            <LocaleThemeProvider
-              initialLocale={locale}
-              initialTheme={theme}
-              initialMessages={messages}
-            >
+            <LocaleThemeProvider initialLocale={locale} initialTheme={theme} initialMessages={messages}>
               <ToastProvider>
                 <CardSizeProvider>
-                  <ErrorBoundary title="Audiobookphile Error">
-                    <Providers>{children}</Providers>
-                  </ErrorBoundary>
+                  <SentryErrorBoundary componentName="RootLayout">
+                    <ErrorBoundary title="Audiobookphile Error">
+                      <Providers>{children}</Providers>
+                    </ErrorBoundary>
+                  </SentryErrorBoundary>
                 </CardSizeProvider>
               </ToastProvider>
             </LocaleThemeProvider>
