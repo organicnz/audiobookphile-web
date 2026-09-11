@@ -1,0 +1,32 @@
+name: Sentry bug report
+description: File a bug surfaced by Sentry error tracking
+title: '[sentry] '
+labels: ['bug', 'sentry']
+body:
+  - type: input
+    id: sentry-issue
+    attributes:
+      label: Sentry issue URL
+      description: Link to the Sentry issue (e.g. https://organicnz.sentry.io/issues/...)
+      placeholder: https://organicnz.sentry.io/issues/...
+    validations:
+      required: true
+  - type: input
+    id: release
+    attributes:
+      label: Release
+      description: Release/commit SHA from the Sentry event
+      placeholder: abc1234...
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: What were you doing when the error occurred?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true

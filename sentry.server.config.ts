@@ -10,5 +10,23 @@ Sentry.init({
   debug: false,
   environment: process.env.NODE_ENV || 'development',
   tracePropagationTargets: ['localhost', /^https:\/\/iambzzclljayqdxkeepy\.supabase\.co/],
-  release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || undefined
+  release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || undefined,
+  integrations: [
+    Sentry.httpIntegration(),
+    Sentry.nodeContextIntegration(),
+    Sentry.modulesIntegration(),
+    Sentry.onUncaughtExceptionIntegration(),
+    Sentry.onUnhandledRejectionIntegration(),
+    Sentry.extraErrorDataIntegration()
+  ],
+  // Enable GitHub integration for issue creation and PR tracking
+  attachStacktrace: true,
+  maxValueLength: 8192,
+  normalizeDepth: 10,
+  // Send default PII for server-side context
+  sendDefaultPii: false,
+  // Server-side performance monitoring
+  _experiments: {
+    metricsAggregator: true
+  }
 })
