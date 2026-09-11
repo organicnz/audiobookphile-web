@@ -17,16 +17,15 @@ Sentry.init({
     Sentry.modulesIntegration(),
     Sentry.onUncaughtExceptionIntegration(),
     Sentry.onUnhandledRejectionIntegration(),
-    Sentry.extraErrorDataIntegration()
+    Sentry.extraErrorDataIntegration(),
+    // Spotlight for local development debugging
+    ...(process.env.NODE_ENV === 'development' ? [Sentry.spotlightIntegration()] : [])
   ],
   // Enable GitHub integration for issue creation and PR tracking
   attachStacktrace: true,
   maxValueLength: 8192,
   normalizeDepth: 10,
-  // Send default PII for server-side context
   sendDefaultPii: false,
-  // Server-side performance monitoring
-  _experiments: {
-    metricsAggregator: true
-  }
+  // Spotlight for local development — top-level option (replaces deprecated _experiments.spotlight)
+  spotlight: process.env.NODE_ENV === 'development'
 })

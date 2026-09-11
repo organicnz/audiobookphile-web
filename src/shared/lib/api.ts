@@ -1,6 +1,8 @@
 export * from './api/client'
+export { getServerBaseUrl, getClientBaseUrlFromRequest, parseApiResponseBody, fetchAsResult, type ApiResult } from './api/base'
 export * from './api/auth'
 export * from './api/libraries'
 export * from './api/users'
 export * from './api/items'
 export * from './api/misc'
+export * from './api/stats'

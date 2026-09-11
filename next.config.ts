@@ -114,5 +114,13 @@ import { withSentryConfig } from '@sentry/nextjs'
 export default withSentryConfig(nextConfig, {
   silent: true,
   org: 'organicnz',
-  project: 'audiobookphile'
+  project: 'audiobookphile',
+  // Widen source map upload scope for better stack traces on errors
+  widenClientFileUpload: true,
+  // Delete source maps after uploading to Sentry to prevent public access
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true
+  },
+  // Tree-shake Sentry logger statements in production for smaller bundles
+  disableLogger: true
 })
