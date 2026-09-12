@@ -37,7 +37,8 @@ module.exports = [
       'eslint.config.js',
       '.vercel/',
       '.trunk/',
-      'supabase/functions/'
+      'supabase/functions/',
+      '.github/'
     ]
   },
   ...nextConfig,

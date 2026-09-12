@@ -1,310 +1,27 @@
-import { sanitizeFileName, SupportedFileTypes } from '@/shared/lib/fileUtils'
+import { sanitizeFileName } from '@/shared/lib/fileUtils'
 import type { Library } from '@/types/api'
-import path from 'path'
 import { ItemToUpload } from './useUploader'
+import {
+  FileWithMetadata,
+  CleanedItem,
+  ProcessedItems,
+  UploadProgressInfo,
+  getMimeType,
+  checkFileType,
+  cleanBook,
+  cleanPodcast,
+  cleanItem,
+  getItemsFromFilelist
+} from './uploadTypes'
+import { uploadMultipart, uploadSinglePart, uploadBackupArchive } from './uploadChunk'
 
-export interface FileWithMetadata extends File {
-  filetype?: string | false
-  filepath?: string
-  mime_type?: string
-}
-
-function getMimeType(filename: string): string {
-  const ext = filename.split('.').pop()?.toLowerCase()
-  switch (ext) {
-    // Audio & Audio Containers
-    case 'm4b':
-    case 'm4a':
-    case 'mp4':
-    case 'm4v':
-      return 'audio/mp4'
-    case 'mp3':
-    case 'mpeg':
-    case 'mpg':
-      return 'audio/mpeg'
-    case 'flac':
-      return 'audio/flac'
-    case 'ogg':
-    case 'oga':
-    case 'ogv':
-      return 'audio/ogg'
-    case 'opus':
-      return 'audio/opus'
-    case 'wav':
-      return 'audio/wav'
-    case 'webm':
-    case 'webma':
-      return 'audio/webm'
-    case 'aac':
-      return 'audio/aac'
-    case 'wma':
-    case 'wmv':
-    case 'asf':
-      return 'audio/x-ms-wma'
-    case 'aiff':
-    case 'aif':
-      return 'audio/aiff'
-    case 'caf':
-      return 'audio/x-caf'
-    case 'awb':
-    case '3gp':
-      return 'audio/amr-wb'
-    case 'mkv':
-    case 'mka':
-      return 'audio/x-matroska'
-    case 'avi':
-      return 'video/x-msvideo'
-    case 'mov':
-      return 'video/quicktime'
-    case 'flv':
-      return 'video/x-flv'
-
-    // E-Books & Documents
-    case 'epub':
-      return 'application/epub+zip'
-    case 'pdf':
-      return 'application/pdf'
-    case 'mobi':
-    case 'prc':
-      return 'application/x-mobipocket-ebook'
-    case 'azw':
-    case 'azw3':
-      return 'application/vnd.amazon.ebook'
-    case 'cbr':
-      return 'application/vnd.comicbook-rar'
-    case 'cbz':
-      return 'application/vnd.comicbook+zip'
-    case 'fb2':
-      return 'application/x-fb2'
-    case 'djvu':
-      return 'image/vnd.djvu'
-
-    // Images
-    case 'jpg':
-    case 'jpeg':
-      return 'image/jpeg'
-    case 'png':
-      return 'image/png'
-    case 'webp':
-      return 'image/webp'
-    case 'avif':
-      return 'image/avif'
-    case 'gif':
-      return 'image/gif'
-    case 'svg':
-      return 'image/svg+xml'
-
-    // Metadata & Lyrics / Chapters
-    case 'cue':
-      return 'application/x-cue'
-    case 'lrc':
-      return 'text/plain'
-    case 'opf':
-    case 'xml':
-      return 'application/xml'
-    case 'abs':
-    case 'json':
-      return 'application/json'
-    case 'txt':
-    case 'nfo':
-      return 'text/plain'
-
-    default:
-      return 'application/octet-stream'
-  }
-}
-
-interface UploadItemData {
-  itemFiles: FileWithMetadata[]
-  otherFiles: FileWithMetadata[]
-  ignoredFiles: FileWithMetadata[]
-}
-
-export interface CleanedItem extends UploadItemData {
-  index: number
-  title: string
-  author?: string
-  series?: string
-}
-
-export interface ProcessedItems {
-  items: CleanedItem[]
-  ignoredFiles: FileWithMetadata[]
-  error?: string
-}
-
-export interface UploadProgressInfo {
-  percent: number
-  loaded: number
-  total: number
-}
+export type { FileWithMetadata, CleanedItem, ProcessedItems, UploadProgressInfo }
+export { getMimeType, checkFileType, cleanBook, cleanPodcast, cleanItem, getItemsFromFilelist, uploadBackupArchive }
 
 /**
- * Check file type based on extension
- */
-function checkFileType(filename: string): string | false {
-  if (filename.startsWith('.')) return false
-
-  let ext = path.extname(filename)
-  if (!ext) return false
-  if (ext.startsWith('.')) ext = ext.slice(1)
-  ext = ext.toLowerCase()
-
-  for (const filetype in SupportedFileTypes) {
-    if (SupportedFileTypes[filetype as keyof typeof SupportedFileTypes].includes(ext)) {
-      return filetype
-    }
-  }
-  return false
-}
-
-/**
- * Clean book data - extract title, author, series from file path
- */
-function cleanBook(book: UploadItemData, index: number): CleanedItem {
-  const audiobook: CleanedItem = {
-    index,
-    title: '',
-    author: '',
-    series: '',
-    ...book
-  }
-
-  const firstBookFile = book.itemFiles[0]
-  if (!firstBookFile?.filepath) {
-    return audiobook
-  }
-
-  const firstBookPath = path.dirname(firstBookFile.filepath)
-  const dirs = firstBookPath.split('/').filter((d) => !!d && d !== '.')
-
-  if (dirs.length) {
-    audiobook.title = dirs.pop() || ''
-    if (dirs.length > 1) {
-      audiobook.series = dirs.pop()
-    }
-    if (dirs.length) {
-      audiobook.author = dirs.pop()
-    }
-  } else {
-    audiobook.title = path.basename(firstBookFile.name, path.extname(firstBookFile.name))
-  }
-
-  return audiobook
-}
-
-/**
- * Clean podcast data - extract title from file path
- */
-function cleanPodcast(item: UploadItemData, index: number): CleanedItem {
-  const podcast: CleanedItem = {
-    index,
-    title: '',
-    ...item
-  }
-
-  const firstAudioFile = item.itemFiles[0]
-  if (!firstAudioFile?.filepath) return podcast
-
-  const firstPath = path.dirname(firstAudioFile.filepath)
-  const dirs = firstPath.split('/').filter((d) => !!d && d !== '.')
-
-  if (dirs.length) {
-    podcast.title = dirs.length > 1 ? dirs[1] : dirs[0]
-  } else {
-    podcast.title = path.basename(firstAudioFile.name, path.extname(firstAudioFile.name))
-  }
-
-  return podcast
-}
-
-/**
- * Clean item based on media type
- */
-function cleanItem(item: UploadItemData, mediaType: string, index: number): CleanedItem {
-  if (mediaType === 'podcast') return cleanPodcast(item, index)
-  return cleanBook(item, index)
-}
-
-/**
- * Process items from FileList (file picker)
- */
-export function getItemsFromFilelist(filelist: FileList, mediaType: Library['mediaType']): ProcessedItems {
-  const ignoredFiles: FileWithMetadata[] = []
-  const otherFiles: FileWithMetadata[] = []
-  interface ItemMapEntry extends UploadItemData {
-    path: string
-  }
-  const itemMap: Record<string, ItemMapEntry> = {}
-
-  Array.from(filelist).forEach((file) => {
-    const fileWithMeta = file as FileWithMetadata
-    const filetype = checkFileType(file.name)
-
-    if (!filetype) {
-      ignoredFiles.push(fileWithMeta)
-    } else {
-      fileWithMeta.filetype = filetype
-      fileWithMeta.filepath = (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name
-      fileWithMeta.mime_type = getMimeType(file.name)
-
-      if (filetype === 'audio' || (filetype === 'ebook' && mediaType === 'book')) {
-        let dir = fileWithMeta.filepath ? path.dirname(fileWithMeta.filepath) : ''
-        if (dir === '.') dir = ''
-
-        if (!itemMap[dir]) {
-          itemMap[dir] = {
-            path: dir,
-            ignoredFiles: [],
-            itemFiles: [],
-            otherFiles: []
-          }
-        }
-        itemMap[dir].itemFiles.push(fileWithMeta)
-      } else {
-        otherFiles.push(fileWithMeta)
-      }
-    }
-  })
-
-  otherFiles.forEach((file) => {
-    const dir = path.dirname(file.filepath || '')
-    const findItem = Object.values(itemMap).find((b) => dir.startsWith(b.path))
-    if (findItem) {
-      findItem.otherFiles.push(file)
-    } else {
-      ignoredFiles.push(file)
-    }
-  })
-
-  let items: CleanedItem[] = []
-  let index = 1
-
-  if (itemMap[''] && !otherFiles.length && mediaType === 'book' && !itemMap[''].itemFiles.some((f) => f.filetype !== 'audio')) {
-    items = itemMap[''].itemFiles.map((audioFile) => {
-      return cleanItem({ itemFiles: [audioFile], otherFiles: [], ignoredFiles: [] }, mediaType, index++)
-    })
-  } else {
-    items = Object.values(itemMap).map((i) => {
-      i.itemFiles.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }))
-      return cleanItem(i, mediaType, index++)
-    })
-  }
-
-  return { items, ignoredFiles }
-}
-
-/**
- * Uploads files directly to Supabase Storage from the browser (bypasses
- * the Next.js API route body limit), then calls /api/upload with just the
- * metadata to create the DB records.
- *
- * @param item
- * @param libraryId
- * @param folderId
- * @param mediaType
- * @param cookie  - Supabase session access_token for /api/upload auth
- * @param onProgress
+ * Uploads files directly to Supabase Storage or Backblaze B2 from the browser
+ * (bypasses the Next.js API route body limit), then calls /api/upload/finalize
+ * with just the metadata to create the DB records.
  */
 export async function upload(
   item: ItemToUpload,
@@ -318,25 +35,12 @@ export async function upload(
   const totalSize = item.itemFiles.reduce((sum, f) => sum + f.size, 0)
   let uploadedBytes = 0
 
-  // Use the direct storage hostname to bypass the Kong API gateway size limits
-  // Ref: https://supabase.com/docs/guides/storage/uploads/resumable-uploads
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  let tusEndpoint = `${supabaseUrl}/storage/v1/upload/resumable`
-
-  // If using Supabase Cloud, bypass Kong to avoid the 50MB body size limit.
-  // If self-hosting, fallback to the standard URL path.
-  if (supabaseUrl.includes('.supabase.co')) {
-    const projectId = new URL(supabaseUrl).hostname.split('.')[0]
-    tusEndpoint = `https://${projectId}.storage.supabase.co/storage/v1/upload/resumable`
-  }
-
-  // 1. Upload each file via TUS resumable protocol (required for files > 6MB)
+  // 1. Upload each file (single-part or multipart based on presign response)
   const uploadedPaths: string[] = []
 
   for (const file of item.itemFiles) {
     const storagePath = `${bookId}/${sanitizeFileName(file.name)}`
 
-    // Attempt to get a presigned URL for B2 or Supabase (based on size)
     let uploadUrl = ''
     let providerPrefix = ''
     let multipartData: {
@@ -344,6 +48,7 @@ export async function upload(
       partUrls: string[]
       partSize: number
     } | null = null
+
     try {
       const presignUrl = '/api/upload/presign'
       const headers: Record<string, string> = {
@@ -388,159 +93,43 @@ export async function upload(
       }
     }
 
-    await new Promise<void>((resolve, reject) => {
-      ;(async () => {
-        if (!uploadUrl) {
-          return reject(new Error(`Failed to obtain a valid presigned upload URL for ${file.name}`))
-        }
+    if (!uploadUrl) {
+      throw new Error(`Failed to obtain a valid presigned upload URL for ${file.name}`)
+    }
 
-        // --- Multipart upload path (B2 files > 50 MB) ---
-        if (uploadUrl === '__multipart__' && multipartData) {
-          const { uploadId, partUrls, partSize } = multipartData
-          const parts: { PartNumber: number; ETag: string }[] = []
-          let partUploadedBytes = 0
-          try {
-            for (let i = 0; i < partUrls.length; i++) {
-              const partNumber = i + 1
-              const start = i * partSize
-              const end = Math.min(start + partSize, file.size)
-              const chunk = (file as File).slice(start, end)
-              await new Promise<void>((res, rej) => {
-                const xhr = new XMLHttpRequest()
-                xhr.open('PUT', partUrls[i], true)
-                xhr.upload.onprogress = (event) => {
-                  if (event.lengthComputable && onProgress) {
-                    const loaded = uploadedBytes + partUploadedBytes + event.loaded
-                    onProgress({
-                      percent: Math.round((loaded / totalSize) * 100),
-                      loaded,
-                      total: totalSize
-                    })
-                  }
-                }
-                xhr.onload = () => {
-                  if (xhr.status >= 200 && xhr.status < 300) {
-                    const etag = xhr.getResponseHeader('ETag') || `"${partNumber}"`
-                    parts.push({ PartNumber: partNumber, ETag: etag })
-                    partUploadedBytes += chunk.size
-                    res()
-                  } else {
-                    rej(new Error(`Part ${partNumber} failed: HTTP ${xhr.status}`))
-                  }
-                }
-                xhr.onerror = () => rej(new Error(`Part ${partNumber} network error`))
-                xhr.timeout = 3600000
-                xhr.send(chunk)
-              })
-            }
-            // Complete the multipart upload server-side
-            const presignUrl = '/api/upload/presign'
-            const completeHeaders: Record<string, string> = {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${cookie}`
-            }
-            if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-              completeHeaders['apikey'] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-            }
-
-            const completeRes = await fetch(presignUrl, {
-              method: 'POST',
-              headers: completeHeaders,
-              body: JSON.stringify({
-                action: 'complete-multipart',
-                filename: storagePath,
-                uploadId,
-                parts
-              })
-            })
-            if (!completeRes.ok) {
-              const err = (await completeRes.json().catch(() => ({}))) as {
-                error?: string
-              }
-              return reject(new Error(`Complete multipart failed: ${err.error ?? completeRes.status}`))
-            }
-            uploadedBytes += file.size
-            uploadedPaths.push(providerPrefix + storagePath)
-            return resolve()
-          } catch (err: any) {
-            return reject(err instanceof Error ? err : new Error(String(err)))
-          }
-        }
-
-        // --- Single-part upload path ---
-        const MAX_RETRIES = 3
-        let attempt = 0
-
-        const attemptUpload = () => {
-          attempt++
-          const xhr = new XMLHttpRequest()
-          xhr.open('PUT', uploadUrl, true)
-
-          const contentType = file.type || file.mime_type || getMimeType(file.name) || 'application/octet-stream'
-
-          // For B2 presigned URLs, Content-Type is embedded in the URL params but NOT
-          // included in X-Amz-SignedHeaders. Sending it as a request header causes B2 to
-          // return a 403 (signature mismatch) which has no CORS headers, making the browser
-          // report it as a CORS error. Only set Content-Type for Supabase uploads.
-          if (providerPrefix === 'supabase://') {
-            xhr.setRequestHeader('Content-Type', contentType)
-            xhr.setRequestHeader('x-upsert', 'true')
-          }
-
-          xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable && onProgress) {
-              const chunkLoaded = uploadedBytes + event.loaded
-              onProgress({
-                percent: Math.round((chunkLoaded / totalSize) * 100),
-                loaded: chunkLoaded,
-                total: totalSize
-              })
-            }
-          }
-
-          xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              uploadedBytes += file.size
-              uploadedPaths.push(providerPrefix + storagePath)
-              resolve()
-            } else {
-              if (attempt < MAX_RETRIES && (xhr.status >= 500 || xhr.status === 429)) {
-                console.warn(`Upload failed with ${xhr.status}, retrying (${attempt}/${MAX_RETRIES})...`)
-                setTimeout(attemptUpload, 2000 * attempt)
-              } else {
-                reject(new Error(`Failed to upload ${file.name}: HTTP ${xhr.status} ${xhr.responseText}`))
-              }
-            }
-          }
-
-          xhr.onerror = () => {
-            if (attempt < MAX_RETRIES) {
-              console.warn(`Network error, retrying (${attempt}/${MAX_RETRIES})...`)
-              setTimeout(attemptUpload, 2000 * attempt)
-            } else {
-              reject(new Error(`Network error uploading ${file.name}`))
-            }
-          }
-
-          xhr.ontimeout = () => {
-            if (attempt < MAX_RETRIES) {
-              console.warn(`Upload timed out, retrying (${attempt}/${MAX_RETRIES})...`)
-              setTimeout(attemptUpload, 2000 * attempt)
-            } else {
-              reject(new Error(`Upload timed out for ${file.name}`))
-            }
-          }
-
-          xhr.timeout = 3600000
-          xhr.send(file)
-        }
-
-        attemptUpload()
-      })().catch(reject)
-    })
+    // Multipart upload path (B2 files > 50 MB)
+    if (uploadUrl === '__multipart__' && multipartData) {
+      const result = await uploadMultipart({
+        file,
+        uploadId: multipartData.uploadId,
+        partUrls: multipartData.partUrls,
+        partSize: multipartData.partSize,
+        storagePath,
+        cookie,
+        providerPrefix,
+        uploadedBytes,
+        totalSize,
+        onProgress
+      })
+      uploadedBytes += result.uploadedBytes
+      uploadedPaths.push(result.path)
+    } else {
+      // Single-part upload path
+      const result = await uploadSinglePart({
+        file,
+        uploadUrl,
+        storagePath,
+        providerPrefix,
+        uploadedBytes,
+        totalSize,
+        onProgress
+      })
+      uploadedBytes += result.uploadedBytes
+      uploadedPaths.push(result.path)
+    }
   }
 
-  // 2. Call /api/upload with metadata only (no files — tiny payload)
+  // 2. Call /api/upload/finalize with metadata only (no files — tiny payload)
   const body = JSON.stringify({
     bookId,
     title: item.title,
@@ -584,51 +173,4 @@ export async function upload(
   if (onProgress) {
     onProgress({ percent: 100, loaded: totalSize, total: totalSize })
   }
-}
-
-/**
- * Stream a backup archive to server /api/backups/upload
- * Uses the same strategy as file upload to support large files
- */
-export async function uploadBackupArchive(file: File, accessToken: string, onProgress?: (progress: UploadProgressInfo) => void): Promise<void> {
-  const form = new FormData()
-  form.set('file', file)
-
-  await new Promise<void>((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.open('POST', '/api/backups/upload', true)
-    xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`)
-
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable && onProgress) {
-        onProgress({
-          percent: Math.round((event.loaded / event.total) * 100),
-          loaded: event.loaded,
-          total: event.total
-        })
-      }
-    }
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        if (onProgress && file.size > 0) {
-          onProgress({
-            percent: 100,
-            loaded: file.size,
-            total: file.size
-          })
-        }
-        resolve()
-      } else {
-        const msg = xhr.responseText?.trim() || `Upload failed with status ${xhr.status}`
-        reject(new Error(msg))
-      }
-    }
-
-    xhr.onerror = () => {
-      reject(new Error('Upload failed due to network error'))
-    }
-
-    xhr.send(form)
-  })
 }

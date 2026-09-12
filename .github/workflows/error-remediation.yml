@@ -1,0 +1,53 @@
+name: Error Remediation (Sentry + LLM)
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # Daily at 3:00 AM UTC
+  workflow_dispatch: # Manual trigger
+
+concurrency:
+  group: error-remediation-web
+  cancel-in-progress: false
+
+permissions:
+  contents: write # Push fix branches + the sentry-checkpoint branch
+  pull-requests: write # Open draft PRs
+  issues: write # Open and label issues
+
+jobs:
+  remediate:
+    name: Sentry Error Remediation & PR Generator
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 30
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG || 'organicnz' }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT || 'audiobookphile' }}
+      ZAI_API_KEY: ${{ secrets.ZAI_API_KEY }}
+      GITHUB_TOKEN: ${{ github.token }}
+      MAX_PRS: '2'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run Web Sentry Remediation
+        run: |
+          if [ -z "${{ secrets.SENTRY_AUTH_TOKEN }}" ]; then
+            echo "Warning: SENTRY_AUTH_TOKEN secret is missing — remediation will skip."
+          fi
+          deno run -A .github/scripts/remediate-errors.ts

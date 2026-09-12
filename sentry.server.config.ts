@@ -9,8 +9,13 @@ Sentry.init({
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   debug: false,
   environment: process.env.NODE_ENV || 'development',
-  tracePropagationTargets: ['localhost', /^https:\/\/iambzzclljayqdxkeepy\.supabase\.co/],
-  release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || undefined,
+  release:
+    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ||
+    process.env.VERCEL_GIT_COMMIT_SHA ||
+    process.env.NEXT_PUBLIC_COMMIT_SHA ||
+    process.env.NEXT_PUBLIC_SENTRY_RELEASE ||
+    process.env.SENTRY_RELEASE ||
+    undefined,
   integrations: [
     Sentry.httpIntegration(),
     Sentry.nodeContextIntegration(),
