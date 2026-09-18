@@ -6,7 +6,7 @@ Sentry.init({
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   debug: false,
   environment: process.env.NODE_ENV || 'development',
-  tracePropagationTargets: ['localhost', /^https:\/\/iambzzclljayqdxkeepy\.supabase\.co/],
+  tracePropagationTargets: ['localhost', /^https:\/\/[a-z0-9]+\.supabase\.co/],
   release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || undefined,
   integrations: [Sentry.extraErrorDataIntegration()],
   attachStacktrace: true,

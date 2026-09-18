@@ -11,13 +11,20 @@ const withPWA = withPWAInit({
 })
 
 const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: NextConfig }) => {
+  // Fail soft in lint/typecheck/test so `tsc --noEmit` and `oxlint` work
+  // without a full env; hard-fail only for real builds/serves.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    throw new Error(
+    const isBuildPhase = phase === 'phase-production-build' || phase === 'phase-production-server' || phase === 'phase-development-server'
+    const message =
       '[next.config.ts] Missing required environment variable: NEXT_PUBLIC_SUPABASE_URL\n' +
-        'All /api/* proxy rewrites will point to "undefined/functions/v1/..." without it.\n' +
-        'Add it to your .env.local (development) or Vercel environment variables (Production/Preview/Development).\n' +
-        'See .env.example for the full list of required variables.'
-    )
+      'All /api/* proxy rewrites will point to "undefined/functions/v1/..." without it.\n' +
+      'Add it to your .env.local (development) or Vercel environment variables (Production/Preview/Development).\n' +
+      'See .env.example for the full list of required variables.'
+    if (isBuildPhase) {
+      throw new Error(message)
+    }
+    console.warn(message)
+    process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'https://placeholder.supabase.co'
   }
 
   const baseConfig: NextConfig = {
@@ -78,7 +85,7 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
           {
             key: 'Content-Security-Policy',
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https: wss:;"
+              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https: wss:; object-src 'none'; base-uri 'self'; form-action 'self';"
           }
         ]
       }

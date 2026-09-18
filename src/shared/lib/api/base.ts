@@ -71,6 +71,30 @@ export type ApiErrorDetail = {
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; error: ApiErrorDetail }
 
 /**
+ * Extract a human-readable message from the edge error envelope without
+ * breaking callers that assert on the raw text. Handles:
+ *   - `{ error: { code, message } }` (standard envelope)
+ *   - `{ error: "string" }` (legacy plain errors)
+ *   - plain text / HTML error pages
+ */
+export function extractErrorMessage(text: string): string {
+  if (!text) return ''
+  try {
+    const parsed = JSON.parse(text) as unknown
+    if (typeof parsed === 'object' && parsed !== null && 'error' in parsed) {
+      const err = (parsed as { error: unknown }).error
+      if (typeof err === 'string') return err
+      if (typeof err === 'object' && err !== null && 'message' in err && typeof (err as { message: unknown }).message === 'string') {
+        return (err as { message: string }).message
+      }
+    }
+  } catch {
+    // Not JSON — fall through to raw text.
+  }
+  return text
+}
+
+/**
  * Single non-throwing fetch core (P2.2): never throws for HTTP errors, never
  * logs them either — the incident class was a 500 being both thrown and
  * console.error'd from a telemetry fetch. HTTP errors are returned as
@@ -100,7 +124,7 @@ export async function fetchAsResult<T = unknown>(input: RequestInfo | URL, init?
           type: 'http',
           status: response.status,
           statusText: response.statusText,
-          message: text || `HTTP ${response.status}: ${response.statusText}`
+          message: extractErrorMessage(text) || `HTTP ${response.status}: ${response.statusText}`
         }
       }
     }

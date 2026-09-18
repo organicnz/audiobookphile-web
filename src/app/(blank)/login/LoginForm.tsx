@@ -265,19 +265,19 @@ export default function LoginForm() {
     }
   }, [passkey2FAEnabled, activeTab])
 
+  const hasEnrolledMethods = Boolean(enrolledMethods.totp || enrolledMethods.pin || enrolledMethods.biometric)
   const methodTabs = [
     ...(passkey2FAEnabled ? [{ key: 'biometric' as const, label: 'Biometric', icon: Fingerprint, enrolled: enrolledMethods.biometric === true }] : []),
     { key: 'pin' as const, label: 'PIN Code', icon: Lock, enrolled: enrolledMethods.pin === true },
     { key: 'totp' as const, label: 'TOTP', icon: Smartphone, enrolled: enrolledMethods.totp === true }
-  ].filter((m) => m.enrolled)
-  const hasEnrolledMethods = methodTabs.length > 0
+  ]
 
   if (requires2FA) {
     return (
       <AuthCard title="Two-Factor Authentication" onSubmit={handle2FASubmit}>
         {methodTabs.length > 1 && (
           <div className="border-border bg-bg-dark/50 mb-6 flex rounded-xl border p-1">
-            {methodTabs.map(({ key, label, icon: TabIcon }) => (
+            {methodTabs.map(({ key, label, icon: TabIcon, enrolled }) => (
               <button
                 key={key}
                 type="button"
@@ -291,6 +291,7 @@ export default function LoginForm() {
               >
                 <TabIcon className="h-3.5 w-3.5" />
                 {label}
+                {!enrolled && <span className="ml-0.5 text-[10px] font-normal opacity-75">Set up</span>}
               </button>
             ))}
           </div>
@@ -316,10 +317,25 @@ export default function LoginForm() {
             </div>
           )}
 
+          {activeTab === 'biometric' && !enrolledMethods.biometric && (
+            <div className="flex flex-col items-center gap-4 py-4 text-center">
+              <p className="text-foreground-muted text-sm">Biometric 2FA is not set up yet.</p>
+              <Btn type="button" onClick={() => router.push('/settings/security')} className="w-full">
+                Enable Biometric in Settings
+              </Btn>
+            </div>
+          )}
+
           {activeTab === 'pin' && enrolledMethods.pin && (
             <div>
               <p className="text-foreground-muted mb-4 text-center text-sm">Enter your 4-8 digit security PIN code to sign in.</p>
               <TextInput label="PIN Code" value={pinCode} type="password" placeholder="••••••••" onChange={setPinCode} />
+            </div>
+          )}
+
+          {activeTab === 'pin' && !enrolledMethods.pin && (
+            <div className="flex flex-col items-center gap-3 py-4 text-center">
+              <p className="text-foreground-muted text-sm">A PIN code is not set up yet.</p>
             </div>
           )}
 

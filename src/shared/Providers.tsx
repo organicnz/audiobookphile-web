@@ -11,8 +11,26 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
+            // 60s fresh — shelf/library reads are cheap to revalidate but
+            // shouldn't refetch on every focus bounce between player/library.
             staleTime: 60 * 1000,
-            refetchOnWindowFocus: false
+            // Keep unused data 5min so back-navigation is instant.
+            gcTime: 5 * 60 * 1000,
+            // One retry with backoff for flaky mobile networks; 4xx never retries.
+            retry: (failureCount, error) => {
+              if (failureCount >= 1) return false
+              const status = (error as { status?: number })?.status
+              if (status === 401 || status === 403 || status === 404) return false
+              return true
+            },
+            refetchOnWindowFocus: false,
+            refetchOnReconnect: true,
+            // v5: route errors through ErrorBoundary instead of hanging suspense.
+            throwOnError: false
+          },
+          mutations: {
+            // No silent retries on writes — uploads/purchases must not double-fire.
+            retry: false
           }
         }
       })
@@ -37,7 +55,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           }
         }}
       />
-      <ReactQueryDevtools initialIsOpen={false} />
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   )
 }

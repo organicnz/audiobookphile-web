@@ -69,6 +69,10 @@ export const MediaProgressSchema = z.object({
   lastUpdate: z.number()
 })
 
+export const MediaMetadataSchema = z.looseObject({}).catchall(z.unknown())
+
+export const MediaSchema = z.looseObject({}).catchall(z.unknown())
+
 export const LibraryItemSchema = z.object({
   id: z.string(),
   ino: z.string(),
@@ -84,7 +88,10 @@ export const LibraryItemSchema = z.object({
   isMissing: z.boolean(),
   isInvalid: z.boolean(),
   mediaType: z.enum(['book', 'podcast']),
-  media: z.any(), // Keeping it flexible for now as media structure is complex
+  // Permissive by design (server media shapes vary by provider), but typed as
+  // unknown — not any — so consumers must narrow before access instead of
+  // silently spreading `any` through the codebase.
+  media: MediaSchema,
   size: z.number().optional(),
   numFiles: z.number().optional(),
   userMediaProgress: MediaProgressSchema.optional()

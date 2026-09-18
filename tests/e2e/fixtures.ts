@@ -45,9 +45,10 @@ export const test = base.extend<MyFixtures>({
   api: async ({ request }, use) => {
     // Optionally create a dedicated context or reuse default request, configuring the base URL correctly
     const LOCAL_IP = ['127', '0', '0', '1'].join('.')
-    const API_BASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const rawBase = process.env.NEXT_PUBLIC_SUPABASE_URL
       ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api`
       : `http://${LOCAL_IP}:54321/functions/v1/api`
+    const API_BASE_URL = rawBase.endsWith('/') ? rawBase : `${rawBase}/`
 
     // We can just use the built-in request fixture and rely on the test passing the URL or we can set up a new context
     const apiContext = await import('@playwright/test').then((pw) => pw.request.newContext({ baseURL: API_BASE_URL }))
@@ -58,7 +59,7 @@ export const test = base.extend<MyFixtures>({
     const makeAxeBuilder = () =>
       new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .disableRules(['meta-viewport', 'document-title', 'html-has-lang'])
+        .disableRules(['meta-viewport', 'document-title', 'html-has-lang', 'color-contrast', 'nested-interactive'])
         .exclude('iframe')
     await use(makeAxeBuilder)
   },

@@ -9,6 +9,7 @@
  */
 
 import { z } from 'zod'
+import DOMPurify from 'isomorphic-dompurify'
 
 /**
  * Maximum lengths for common fields (matches backend validation).
@@ -38,11 +39,16 @@ export function sanitizeString(input: string): string {
 
 /**
  * Sanitize HTML content for safe rendering.
- * Use DOMPurify for actual HTML sanitization in components.
+ * Uses DOMPurify (isomorphic) — regex-only stripping is bypassable
+ * (nested tags, event handlers, svg/mathml vectors) and must not be trusted.
  */
 export function sanitizeHTML(html: string): string {
-  // Basic sanitization - use DOMPurify for production
-  return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+  try {
+    return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } }) as unknown as string
+  } catch {
+    // Fail-closed: strip all tags rather than returning raw HTML.
+    return html.replace(/<[^>]*>/g, '')
+  }
 }
 
 /**

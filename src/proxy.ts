@@ -15,13 +15,16 @@ import { NextResponse, type NextRequest } from 'next/server'
  * @see https://nextjs.org/docs/messages/middleware-to-proxy
  */
 export async function proxy(request: NextRequest) {
-  // Handle Preflight OPTIONS requests globally for cross-platform apps
+  // Handle Preflight OPTIONS requests globally for cross-platform apps.
+  // Reflect the request origin when it is a known client; `*` is only valid
+  // WITHOUT credentials, so never send both together.
   if (request.method === 'OPTIONS') {
+    const origin = request.headers.get('origin') ?? '*'
     return new NextResponse(null, {
       status: 200,
       headers: {
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Origin': '*', // Note: For production with credentials, a specific origin might be required, but '*' is fine without credentials or handled by next.config.ts
+        'Access-Control-Allow-Origin': origin,
+        Vary: 'Origin',
         'Access-Control-Allow-Methods': 'GET,DELETE,PATCH,POST,PUT,OPTIONS',
         'Access-Control-Allow-Headers':
           'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
@@ -46,6 +49,21 @@ export async function proxy(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
+  // Single Supabase client for all auth checks below (was constructed twice —
+  // once for /settings/* and again for /). Cookie reads are cheap but each
+  // construction re-parses env + allocates; share one per request.
+  const getSupabase = () =>
+    createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll() {
+          // Read-only in this context — session writes handled by updateSession above
+        }
+      }
+    })
+
   // Two-factor settings (incl. passkey enrollment) are available to all
   // authenticated users; every other /settings page requires admin/root.
   if (pathname === '/settings' || pathname.startsWith('/settings/')) {
@@ -53,16 +71,7 @@ export async function proxy(request: NextRequest) {
       return response
     }
     try {
-      const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-        cookies: {
-          getAll() {
-            return request.cookies.getAll()
-          },
-          setAll() {
-            // Read-only in this context — session writes handled by updateSession above
-          }
-        }
-      })
+      const supabase = getSupabase()
       const {
         data: { user }
       } = await supabase.auth.getUser()
@@ -85,16 +94,7 @@ export async function proxy(request: NextRequest) {
 
   // Root path: determine auth state and redirect accordingly
   try {
-    const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll() {
-          // Read-only in this context — session writes handled by updateSession above
-        }
-      }
-    })
+    const supabase = getSupabase()
     const {
       data: { user }
     } = await supabase.auth.getUser()
