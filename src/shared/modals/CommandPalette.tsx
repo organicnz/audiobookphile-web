@@ -184,7 +184,7 @@ export default function CommandPalette() {
           </div>
 
           {/* Results Area */}
-          <div ref={listRef} className="scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent max-h-[60vh] overflow-y-auto p-2">
+          <div ref={listRef} className="max-h-[60vh] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent overflow-y-auto p-2">
             {items.length === 0 && searchQuery.length > 0 && !isSearching && (
               <div className="text-foreground-muted py-14 text-center text-sm">{t('MessageNoItems')}</div>
             )}

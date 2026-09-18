@@ -1,0 +1,72 @@
+name: CI Web Verification (Next.js & Bun)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'bun.lockb'
+      - 'tsconfig.json'
+      - 'biome.json'
+      - '.oxlintrc.json'
+      - '.github/workflows/ci-web.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'bun.lockb'
+      - 'tsconfig.json'
+      - 'biome.json'
+      - '.oxlintrc.json'
+  workflow_dispatch:
+
+concurrency:
+  group: ci-web-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  verify:
+    name: Verify Web Build & Quality
+    runs-on: [self-hosted, macOS]
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Security & Package Audit
+        run: ./scripts/security-audit.sh
+
+      - name: Biome Format & Lint Check
+        run: bunx biome check src/
+
+      - name: Oxlint High-Performance Linter
+        run: bunx oxlint src/
+
+      - name: TypeScript Strict Typecheck
+        run: bun run typecheck
+
+      - name: Bun Unit Tests
+        run: bun test src/__tests__
+
+      - name: Build Next.js Production Bundle
+        run: bun run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN || '' }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN || '' }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG || 'organicnz' }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT || 'audiobookphile' }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN || '' }}
