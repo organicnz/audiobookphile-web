@@ -201,10 +201,17 @@ export default function LoginForm() {
   )
 
   const handleGoogleSignIn = async () => {
+    setError('')
     setGoogleLoading(true)
     try {
-      await signInWithGoogle()
-    } catch {
+      const res = await signInWithGoogle()
+      if (res?.error) {
+        setError(res.error)
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      setError(message || 'Failed to sign in with Google.')
+    } finally {
       setGoogleLoading(false)
     }
   }
@@ -451,7 +458,9 @@ export default function LoginForm() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div
+          className={process.env.NEXT_PUBLIC_ENABLE_GOOGLE_AUTH === 'true' ? 'grid grid-cols-2 gap-3' : 'flex flex-col'}
+        >
           <Btn
             type="button"
             color="bg-bg-light"
@@ -476,21 +485,23 @@ export default function LoginForm() {
             Magic Link
           </Btn>
 
-          <Btn
-            type="button"
-            color="bg-bg-light"
-            className="border-border flex w-full items-center justify-center gap-2 border"
-            loading={googleLoading}
-            onClick={handleGoogleSignIn}
-          >
-            <svg className="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-              <path
-                fill="currentColor"
-                d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
-              />
-            </svg>
-            Google
-          </Btn>
+          {process.env.NEXT_PUBLIC_ENABLE_GOOGLE_AUTH === 'true' && (
+            <Btn
+              type="button"
+              color="bg-bg-light"
+              className="border-border flex w-full items-center justify-center gap-2 border"
+              loading={googleLoading}
+              onClick={handleGoogleSignIn}
+            >
+              <svg className="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                <path
+                  fill="currentColor"
+                  d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
+                />
+              </svg>
+              Google
+            </Btn>
+          )}
         </div>
 
         <p className="text-foreground-muted text-center text-xs">

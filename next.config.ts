@@ -7,14 +7,15 @@ const withNextIntl = createNextIntlPlugin('./src/shared/lib/i18n.ts')
 const withPWA = withPWAInit({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
-  register: true
+  register: true,
 })
 
 const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: NextConfig }) => {
   // Fail soft in lint/typecheck/test so `tsc --noEmit` and `oxlint` work
   // without a full env; hard-fail only for real builds/serves.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    const isBuildPhase = phase === 'phase-production-build' || phase === 'phase-production-server' || phase === 'phase-development-server'
+    const isBuildPhase =
+      phase === 'phase-production-build' || phase === 'phase-production-server' || phase === 'phase-development-server'
     const message =
       '[next.config.ts] Missing required environment variable: NEXT_PUBLIC_SUPABASE_URL\n' +
       'All /api/* proxy rewrites will point to "undefined/functions/v1/..." without it.\n' +
@@ -34,53 +35,38 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
       {
         source: '/',
         destination: '/login',
-        permanent: false
-      }
+        permanent: false,
+      },
     ],
     rewrites: async () => [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api/:path*`
-      }
+        destination: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/api/:path*`,
+      },
     ],
     headers: async () => [
-      {
-        source: '/api/:path*',
-        headers: [
-          { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          {
-            key: 'Access-Control-Allow-Methods',
-            value: 'GET,DELETE,PATCH,POST,PUT,OPTIONS'
-          },
-          {
-            key: 'Access-Control-Allow-Headers',
-            value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
-          }
-        ]
-      },
       {
         source: '/(.*)',
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            value: 'strict-origin-when-cross-origin',
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()'
+            value: 'camera=(), microphone=(), geolocation=()',
           },
           {
             key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload'
+            value: 'max-age=63072000; includeSubDomains; preload',
           },
           {
             key: 'Content-Security-Policy',
@@ -97,34 +83,34 @@ const nextConfig = async (phase: string, { defaultConfig }: { defaultConfig: Nex
               "frame-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",
-              "form-action 'self'"
-            ].join('; ')
-          }
-        ]
-      }
+              "form-action 'self'",
+            ].join('; '),
+          },
+        ],
+      },
     ],
     experimental: {
       serverActions: {
-        bodySizeLimit: '1gb'
+        bodySizeLimit: '1gb',
       },
       turbopackRustReactCompiler: true,
-      useOffline: true
+      useOffline: true,
     },
     images: {
       localPatterns: [{ pathname: '/api/**' }, { pathname: '/images/**' }],
       remotePatterns: [
         {
           protocol: 'https',
-          hostname: '*.supabase.co'
-        }
+          hostname: '*.supabase.co',
+        },
       ],
-      minimumCacheTTL: 14400
+      minimumCacheTTL: 14400,
     },
     logging: {
       fetches: {
-        fullUrl: true
-      }
-    }
+        fullUrl: true,
+      },
+    },
   }
   return withPWA(withNextIntl(baseConfig))
 }
@@ -139,8 +125,8 @@ export default withSentryConfig(nextConfig, {
   widenClientFileUpload: true,
   // Delete source maps after uploading to Sentry to prevent public access
   sourcemaps: {
-    deleteSourcemapsAfterUpload: true
+    deleteSourcemapsAfterUpload: true,
   },
   // Tree-shake Sentry logger statements in production for smaller bundles
-  disableLogger: true
+  disableLogger: true,
 })

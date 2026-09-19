@@ -14,16 +14,50 @@ import { updateSession } from '@/shared/utils/supabase/middleware'
  *
  * @see https://nextjs.org/docs/messages/middleware-to-proxy
  */
+export const ALLOWED_ORIGINS = new Set([
+  'https://audiobookphile.app',
+  'https://www.audiobookphile.app',
+  'https://app.audiobookphile.app',
+  'https://api.audiobookphile.app',
+  'https://audiobookphile.vercel.app',
+  'https://audiobookphile.foodshare.club',
+])
+
+export const ALLOWED_ORIGIN_PATTERNS = [
+  /^https:\/\/[a-z0-9-]+\.audiobookphile\.app$/i,
+  /^https:\/\/audiobookphile-[a-z0-9-]+\.vercel\.app$/i,
+  /^https:\/\/audiobookphile-[a-z0-9-]+\.foodshare\.club$/i,
+  /^http:\/\/localhost:\d+$/i,
+  /^http:\/\/127\.0\.0\.1:\d+$/i,
+]
+
+export function isOriginAllowed(origin: string | null): boolean {
+  if (!origin) return false
+  if (ALLOWED_ORIGINS.has(origin)) return true
+  return ALLOWED_ORIGIN_PATTERNS.some((pattern) => pattern.test(origin))
+}
+
 export async function proxy(request: NextRequest) {
   // Handle Preflight OPTIONS requests globally for cross-platform apps.
-  // Reflect the request origin when it is a known client; `*` is only valid
-  // WITHOUT credentials, so never send both together.
+  // Validate request origin against allowed list so untrusted origins are
+  // rejected, and set Access-Control-Allow-Credentials only for trusted origins.
   if (request.method === 'OPTIONS') {
-    const origin = request.headers.get('origin') ?? '*'
+    const origin = request.headers.get('origin')
+    const allowed = isOriginAllowed(origin)
+
+    if (origin && !allowed) {
+      return new NextResponse(null, { status: 403 })
+    }
+
     return new NextResponse(null, {
       status: 200,
       headers: {
-        'Access-Control-Allow-Origin': origin,
+        ...(origin && allowed
+          ? {
+              'Access-Control-Allow-Origin': origin,
+              'Access-Control-Allow-Credentials': 'true',
+            }
+          : {}),
         Vary: 'Origin',
         'Access-Control-Allow-Methods': 'GET,DELETE,PATCH,POST,PUT,OPTIONS',
         'Access-Control-Allow-Headers':
