@@ -1,4 +1,20 @@
-import { ArrowLeft, BarChart3, Bell, Database, FileText, Headphones, Key, Library, Mail, Rss, Settings, Shield, ShieldCheck, Users, Wrench } from 'lucide-react'
+import {
+  ArrowLeft,
+  BarChart3,
+  Bell,
+  Database,
+  FileText,
+  Headphones,
+  Key,
+  Library,
+  Mail,
+  Rss,
+  Settings,
+  Shield,
+  ShieldCheck,
+  Users,
+  Wrench,
+} from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useUser } from '@/shared/contexts/UserContext'
@@ -33,24 +49,24 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
       title: 'Overview',
       items: [
         { label: 'General Settings', href: '/settings', icon: <Settings className="h-4 w-4" /> },
-        { label: 'Analytics', href: '/settings/analytics', icon: <BarChart3 className="h-4 w-4" /> }
-      ]
+        { label: 'Analytics', href: '/settings/analytics', icon: <BarChart3 className="h-4 w-4" /> },
+      ],
     },
     {
       title: 'Catalog & Libraries',
       items: [
         { label: 'Libraries', href: '/settings/libraries', icon: <Library className="h-4 w-4" /> },
         { label: 'Item Metadata Utils', href: '/settings/item-metadata-utils', icon: <Wrench className="h-4 w-4" /> },
-        { label: 'RSS Feeds', href: '/settings/rss-feeds', icon: <Rss className="h-4 w-4" /> }
-      ]
+        { label: 'RSS Feeds', href: '/settings/rss-feeds', icon: <Rss className="h-4 w-4" /> },
+      ],
     },
     {
       title: 'Users & Security',
       items: [
         { label: 'Users', href: '/settings/users', icon: <Users className="h-4 w-4" /> },
         { label: 'Authentication & 2FA', href: '/settings/authentication', icon: <ShieldCheck className="h-4 w-4" /> },
-        { label: 'API Keys', href: '/settings/api-keys', icon: <Key className="h-4 w-4" /> }
-      ]
+        { label: 'API Keys', href: '/settings/api-keys', icon: <Key className="h-4 w-4" /> },
+      ],
     },
     {
       title: 'System & Logs',
@@ -59,9 +75,9 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
         { label: 'Backups', href: '/settings/backups', icon: <Database className="h-4 w-4" /> },
         { label: 'Logs', href: '/settings/logs', icon: <FileText className="h-4 w-4" /> },
         { label: 'Notifications', href: '/settings/notifications', icon: <Bell className="h-4 w-4" /> },
-        { label: 'Email', href: '/settings/email', icon: <Mail className="h-4 w-4" /> }
-      ]
-    }
+        { label: 'Email', href: '/settings/email', icon: <Mail className="h-4 w-4" /> },
+      ],
+    },
   ]
 
   const visibleGroups = isAdminOrRoot
@@ -69,7 +85,7 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
     : groups
         .map((group) => ({
           ...group,
-          items: group.items.filter((item) => userAccessibleHrefs.has(item.href))
+          items: group.items.filter((item) => userAccessibleHrefs.has(item.href)),
         }))
         .filter((group) => group.items.length > 0)
 
@@ -87,7 +103,9 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
               <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
               <span>Return to Library</span>
             </span>
-            <span className="text-xxs rounded-md bg-white/10 px-1.5 py-0.5 font-semibold tracking-wider text-white/70 uppercase">Back</span>
+            <span className="text-xxs rounded-md bg-white/10 px-1.5 py-0.5 font-semibold tracking-wider text-white/70 uppercase">
+              Back
+            </span>
           </Link>
 
           {isAdminOrRoot && (
@@ -100,7 +118,9 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
                 <Shield className="h-4 w-4 text-amber-400" />
                 <span>Admin Dashboard</span>
               </span>
-              <span className="text-xxs rounded-md bg-amber-500/20 px-1.5 py-0.5 font-semibold tracking-wider text-amber-300 uppercase">Admin</span>
+              <span className="text-xxs rounded-md bg-amber-500/20 px-1.5 py-0.5 font-semibold tracking-wider text-amber-300 uppercase">
+                Admin
+              </span>
             </Link>
           )}
         </div>
@@ -120,13 +140,17 @@ export default function SideNavContent({ handleItemClick, serverVersion, install
                       onClick={handleItemClick ?? undefined}
                       className={mergeClasses(
                         'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
-                        isSelected ? 'bg-white/15 text-white shadow-sm ring-1 ring-white/20' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                        isSelected
+                          ? 'bg-white/15 text-white shadow-sm ring-1 ring-white/20'
+                          : 'text-white/70 hover:bg-white/5 hover:text-white'
                       )}
                     >
                       <span
                         className={mergeClasses(
                           'flex h-6 w-6 items-center justify-center rounded-lg transition-colors',
-                          isSelected ? 'bg-white/20 text-white' : 'bg-white/5 text-white/60 group-hover:bg-white/10 group-hover:text-white'
+                          isSelected
+                            ? 'bg-white/20 text-white'
+                            : 'bg-white/5 text-white/60 group-hover:bg-white/10 group-hover:text-white'
                         )}
                       >
                         {item.icon}

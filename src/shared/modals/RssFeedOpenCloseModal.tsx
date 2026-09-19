@@ -35,7 +35,13 @@ interface RssFeedOpenCloseModalProps {
   onFeedChange?: (feed: RssFeed | null) => void
 }
 
-export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMode = false, onFeedChange }: RssFeedOpenCloseModalProps) {
+export default function RssFeedOpenCloseModal({
+  isOpen,
+  onClose,
+  entity,
+  viewMode = false,
+  onFeedChange,
+}: RssFeedOpenCloseModalProps) {
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
   const { userIsAdminOrUp } = useUser()
@@ -43,7 +49,7 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
   const [metadataDetails, setMetadataDetails] = useState({
     preventIndexing: true,
     ownerName: '',
-    ownerEmail: ''
+    ownerEmail: '',
   })
   const [processing, setProcessing] = useState(false)
   const [currentFeed, setCurrentFeed] = useState<RssFeed | null>(null)
@@ -82,8 +88,8 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
         metadataDetails: {
           preventIndexing: metadataDetails.preventIndexing,
           ownerName: metadataDetails.ownerName || '',
-          ownerEmail: metadataDetails.ownerEmail || ''
-        }
+          ownerEmail: metadataDetails.ownerEmail || '',
+        },
       })
       if (res) {
         setCurrentFeed((res as any).feed)
@@ -91,7 +97,8 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
       }
     } catch (error: unknown) {
       console.error('Failed to open RSS feed', error)
-      const msg = error && typeof error === 'object' && 'message' in error ? String((error as { message: string }).message) : null
+      const msg =
+        error && typeof error === 'object' && 'message' in error ? String((error as { message: string }).message) : null
       showToast(msg || 'Failed to open RSS feed', { type: 'error' })
     } finally {
       setProcessing(false)
@@ -125,7 +132,8 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
     </div>
   )
 
-  const fullFeedUrl = typeof window !== 'undefined' && currentFeed ? `${window.location.origin}${currentFeed.feedUrl}` : ''
+  const fullFeedUrl =
+    typeof window !== 'undefined' && currentFeed ? `${window.location.origin}${currentFeed.feedUrl}` : ''
   const meta = currentFeed?.meta
   const hasOwnerName = meta && meta.ownerName != null && String(meta.ownerName).trim() !== ''
   const hasOwnerEmail = meta && meta.ownerEmail != null && String(meta.ownerEmail).trim() !== ''
@@ -140,18 +148,24 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
             {meta && (
               <div className="mt-4 space-y-2">
                 <div className="flex items-center">
-                  <span className="text-foreground-subdued w-48 shrink-0 text-xs uppercase">{t('LabelPreventIndexingShort')}</span>
+                  <span className="text-foreground-subdued w-48 shrink-0 text-xs uppercase">
+                    {t('LabelPreventIndexingShort')}
+                  </span>
                   <span className="text-foreground">{meta.preventIndexing ? 'Yes' : 'No'}</span>
                 </div>
                 {hasOwnerName && (
                   <div className="flex items-center">
-                    <span className="text-foreground-subdued w-48 shrink-0 text-xs uppercase">{t('LabelRSSFeedCustomOwnerName')}</span>
+                    <span className="text-foreground-subdued w-48 shrink-0 text-xs uppercase">
+                      {t('LabelRSSFeedCustomOwnerName')}
+                    </span>
                     <span className="text-foreground">{meta.ownerName}</span>
                   </div>
                 )}
                 {hasOwnerEmail && (
                   <div className="flex items-center">
-                    <span className="text-foreground-subdued w-48 shrink-0 text-xs uppercase">{t('LabelRSSFeedCustomOwnerEmail')}</span>
+                    <span className="text-foreground-subdued w-48 shrink-0 text-xs uppercase">
+                      {t('LabelRSSFeedCustomOwnerEmail')}
+                    </span>
                     <span className="text-foreground">{meta.ownerEmail}</span>
                   </div>
                 )}
@@ -164,12 +178,17 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
                     <table className="w-full border-collapse text-sm">
                       <thead className="bg-table-header-bg sticky top-0">
                         <tr className="border-border border-b">
-                          <th className="text-foreground-muted px-2 py-2 text-start text-xs font-semibold">{t('LabelEpisodeTitle')}</th>
+                          <th className="text-foreground-muted px-2 py-2 text-start text-xs font-semibold">
+                            {t('LabelEpisodeTitle')}
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         {currentFeed.episodes.map((episode, index) => (
-                          <tr key={episode.id} className={`border-border border-b last:border-b-0 ${index % 2 === 1 ? 'bg-table-row-bg-even' : ''}`}>
+                          <tr
+                            key={episode.id}
+                            className={`border-border border-b last:border-b-0 ${index % 2 === 1 ? 'bg-table-row-bg-even' : ''}`}
+                          >
                             <td className="text-foreground px-2 py-2 text-sm">{episode.title}</td>
                           </tr>
                         ))}
@@ -204,7 +223,9 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
                 label={t('LabelPreventIndexing')}
               />
               <div>
-                <label className="text-foreground-subdued mb-1 block text-xs uppercase">{t('LabelRSSFeedCustomOwnerName')}</label>
+                <label className="text-foreground-subdued mb-1 block text-xs uppercase">
+                  {t('LabelRSSFeedCustomOwnerName')}
+                </label>
                 <TextInput
                   value={metadataDetails.ownerName}
                   onChange={(value) => setMetadataDetails((prev) => ({ ...prev, ownerName: value }))}
@@ -212,7 +233,9 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
                 />
               </div>
               <div>
-                <label className="text-foreground-subdued mb-1 block text-xs uppercase">{t('LabelRSSFeedCustomOwnerEmail')}</label>
+                <label className="text-foreground-subdued mb-1 block text-xs uppercase">
+                  {t('LabelRSSFeedCustomOwnerEmail')}
+                </label>
                 <TextInput
                   value={metadataDetails.ownerEmail}
                   onChange={(value) => setMetadataDetails((prev) => ({ ...prev, ownerEmail: value }))}
@@ -221,7 +244,9 @@ export default function RssFeedOpenCloseModal({ isOpen, onClose, entity, viewMod
               </div>
             </div>
             {isHttp && <p className="text-warning pt-2 text-xs">{t('NoteRSSFeedPodcastAppsHttps')}</p>}
-            {hasEpisodesWithoutPubDate && <p className="text-warning pt-2 text-xs">{t('NoteRSSFeedPodcastAppsPubDate')}</p>}
+            {hasEpisodesWithoutPubDate && (
+              <p className="text-warning pt-2 text-xs">{t('NoteRSSFeedPodcastAppsPubDate')}</p>
+            )}
             {userIsAdminOrUp && (
               <div className="flex justify-end pt-6">
                 <Btn color="bg-success" size="small" onClick={handleOpenFeed} disabled={processing}>

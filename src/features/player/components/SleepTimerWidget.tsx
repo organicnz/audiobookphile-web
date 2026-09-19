@@ -34,13 +34,21 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
   }, [])
 
   // Floating UI positioning
-  const middleware = useMemo(() => [offset(8), shift({ padding: 8 }), flip({ fallbackAxisSideDirection: 'start' }), arrowMw({ element: arrowRef })], [])
+  const middleware = useMemo(
+    () => [
+      offset(8),
+      shift({ padding: 8 }),
+      flip({ fallbackAxisSideDirection: 'start' }),
+      arrowMw({ element: arrowRef }),
+    ],
+    []
+  )
 
   const {
     refs,
     floatingStyles,
     placement: resolvedPlacement,
-    middlewareData
+    middlewareData,
   } = useFloating({
     open: isOpen,
     placement: 'top',
@@ -48,8 +56,8 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
     middleware,
     whileElementsMounted: autoUpdate,
     elements: {
-      reference: triggerRef.current
-    }
+      reference: triggerRef.current,
+    },
   })
 
   // Sync popover ref with Floating UI
@@ -111,12 +119,12 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
       top: 'bottom',
       bottom: 'top',
       left: 'right',
-      right: 'left'
+      right: 'left',
     }
     return {
       left: x != null ? `${x}px` : '',
       top: y != null ? `${y}px` : '',
-      [staticSide[resolvedPlacement.split('-')[0]]]: '-4px'
+      [staticSide[resolvedPlacement.split('-')[0]]]: '-4px',
     } as React.CSSProperties
   }, [middlewareData.arrow, resolvedPlacement])
 
@@ -134,7 +142,9 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
       style={floatingStyles}
       className="bg-background/90 z-70 flex flex-col gap-2 rounded-2xl border border-white/15 p-3.5 shadow-2xl backdrop-blur-xl"
     >
-      <div className="text-foreground mb-1 text-center text-xs font-bold tracking-wider uppercase opacity-70">Sleep Timer</div>
+      <div className="text-foreground mb-1 text-center text-xs font-bold tracking-wider uppercase opacity-70">
+        Sleep Timer
+      </div>
       <div className="grid grid-cols-5 gap-1.5">
         {PRESET_DURATIONS.map((minutes) => (
           <button
@@ -156,7 +166,11 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
           Cancel Timer
         </button>
       )}
-      <div ref={arrowRef} style={arrowStyles} className="bg-background/90 absolute h-2 w-2 rotate-45 border-r border-b border-white/15" />
+      <div
+        ref={arrowRef}
+        style={arrowStyles}
+        className="bg-background/90 absolute h-2 w-2 rotate-45 border-r border-b border-white/15"
+      />
     </div>
   ) : null
 
@@ -177,7 +191,9 @@ export default function SleepTimerWidget({ playerHandler }: SleepTimerWidgetProp
         )}
       >
         <Moon size={15} />
-        {sleepTimerRemaining !== null && <span className="tabular-nums">{formatRemainingTime(sleepTimerRemaining)}</span>}
+        {sleepTimerRemaining !== null && (
+          <span className="tabular-nums">{formatRemainingTime(sleepTimerRemaining)}</span>
+        )}
       </button>
 
       {mounted && typeof document !== 'undefined' && createPortal(popoverContent, document.body)}

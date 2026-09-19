@@ -26,7 +26,14 @@ export default function PodcastEpisodeCard(props: PodcastEpisodeCardProps) {
   }, [recentEpisode])
 
   const renderBadges = useMemo(() => {
-    const EpisodeBadges = ({ isHovering, isSelectionMode }: { isHovering: boolean; isSelectionMode: boolean; processing: boolean }) => {
+    const EpisodeBadges = ({
+      isHovering,
+      isSelectionMode,
+    }: {
+      isHovering: boolean
+      isSelectionMode: boolean
+      processing: boolean
+    }) => {
       // Episode number badge
       if (recentEpisodeNumber !== null && !isHovering && !isSelectionMode) {
         return (

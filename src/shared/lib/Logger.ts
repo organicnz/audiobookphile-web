@@ -60,7 +60,7 @@ class Logger {
     WARN: 'warn' as const,
     ERROR: 'error' as const,
     FATAL: 'error' as const,
-    NOTE: 'log' as const
+    NOTE: 'log' as const,
   }
 
   /**

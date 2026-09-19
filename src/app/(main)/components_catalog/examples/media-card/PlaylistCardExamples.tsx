@@ -26,7 +26,7 @@ export function PlaylistCardExamples({ playlistData }: PlaylistCardExamplesProps
       { ref: standardCardRef, setDims: setStandardCardDims },
       { ref: standardSkeletonRef, setDims: setStandardSkeletonDims },
       { ref: detailCardRef, setDims: setDetailCardDims },
-      { ref: detailSkeletonRef, setDims: setDetailSkeletonDims }
+      { ref: detailSkeletonRef, setDims: setDetailSkeletonDims },
     ],
     [playlistData]
   )
@@ -38,7 +38,8 @@ export function PlaylistCardExamples({ playlistData }: PlaylistCardExamplesProps
         description="Card component for displaying playlists with a 2x2 cover grid, edit button, and more-menu actions."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import PlaylistCard from &apos;@/shared/widgets/media-card/PlaylistCard&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import PlaylistCard from &apos;@/shared/widgets/media-card/PlaylistCard&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>
@@ -103,11 +104,17 @@ export function PlaylistCardExamples({ playlistData }: PlaylistCardExamplesProps
           <div className="flex flex-wrap gap-4">
             <div className="mb-6">
               <p className="mb-2 text-sm text-gray-400">Standard View</p>
-              <PlaylistCard playlist={{ ...playlistData, items: [] } as Playlist} bookshelfView={BookshelfView.STANDARD} />
+              <PlaylistCard
+                playlist={{ ...playlistData, items: [] } as Playlist}
+                bookshelfView={BookshelfView.STANDARD}
+              />
             </div>
             <div className="mb-6">
               <p className="mb-2 text-sm text-gray-400">Detail View</p>
-              <PlaylistCard playlist={{ ...playlistData, items: [] } as Playlist} bookshelfView={BookshelfView.DETAIL} />
+              <PlaylistCard
+                playlist={{ ...playlistData, items: [] } as Playlist}
+                bookshelfView={BookshelfView.DETAIL}
+              />
             </div>
           </div>
         </Example>
@@ -116,11 +123,17 @@ export function PlaylistCardExamples({ playlistData }: PlaylistCardExamplesProps
           <div className="flex flex-wrap gap-4">
             <div className="mb-6">
               <p className="mb-2 text-sm text-gray-400">Standard View</p>
-              <PlaylistCard playlist={{ ...playlistData, items: playlistData.items?.slice(0, 1) } as Playlist} bookshelfView={BookshelfView.STANDARD} />
+              <PlaylistCard
+                playlist={{ ...playlistData, items: playlistData.items?.slice(0, 1) } as Playlist}
+                bookshelfView={BookshelfView.STANDARD}
+              />
             </div>
             <div className="mb-6">
               <p className="mb-2 text-sm text-gray-400">Detail View</p>
-              <PlaylistCard playlist={{ ...playlistData, items: playlistData.items?.slice(0, 1) } as Playlist} bookshelfView={BookshelfView.DETAIL} />
+              <PlaylistCard
+                playlist={{ ...playlistData, items: playlistData.items?.slice(0, 1) } as Playlist}
+                bookshelfView={BookshelfView.DETAIL}
+              />
             </div>
           </div>
         </Example>
@@ -131,11 +144,17 @@ export function PlaylistCardExamples({ playlistData }: PlaylistCardExamplesProps
           <div className="flex flex-wrap gap-4">
             <div className="mb-6">
               <p className="mb-2 text-sm text-gray-400">Standard View</p>
-              <PlaylistCard playlist={{ ...playlistData, items: playlistData.items?.slice(0, 2) } as Playlist} bookshelfView={BookshelfView.STANDARD} />
+              <PlaylistCard
+                playlist={{ ...playlistData, items: playlistData.items?.slice(0, 2) } as Playlist}
+                bookshelfView={BookshelfView.STANDARD}
+              />
             </div>
             <div className="mb-6">
               <p className="mb-2 text-sm text-gray-400">Detail View</p>
-              <PlaylistCard playlist={{ ...playlistData, items: playlistData.items?.slice(0, 2) } as Playlist} bookshelfView={BookshelfView.DETAIL} />
+              <PlaylistCard
+                playlist={{ ...playlistData, items: playlistData.items?.slice(0, 2) } as Playlist}
+                bookshelfView={BookshelfView.DETAIL}
+              />
             </div>
           </div>
         </Example>
@@ -144,11 +163,17 @@ export function PlaylistCardExamples({ playlistData }: PlaylistCardExamplesProps
           <div className="flex flex-wrap gap-4">
             <div className="mb-6">
               <p className="mb-2 text-sm text-gray-400">Standard View</p>
-              <PlaylistCard playlist={{ ...playlistData, items: playlistData.items?.slice(0, 3) } as Playlist} bookshelfView={BookshelfView.STANDARD} />
+              <PlaylistCard
+                playlist={{ ...playlistData, items: playlistData.items?.slice(0, 3) } as Playlist}
+                bookshelfView={BookshelfView.STANDARD}
+              />
             </div>
             <div className="mb-6">
               <p className="mb-2 text-sm text-gray-400">Detail View</p>
-              <PlaylistCard playlist={{ ...playlistData, items: playlistData.items?.slice(0, 3) } as Playlist} bookshelfView={BookshelfView.DETAIL} />
+              <PlaylistCard
+                playlist={{ ...playlistData, items: playlistData.items?.slice(0, 3) } as Playlist}
+                bookshelfView={BookshelfView.DETAIL}
+              />
             </div>
           </div>
         </Example>

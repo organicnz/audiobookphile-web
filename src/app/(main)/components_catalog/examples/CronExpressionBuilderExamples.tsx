@@ -11,7 +11,7 @@ export function CronExpressionBuilderExamples() {
     language: 'en-us',
     dateFormat: 'EEEE, MM/dd/yyyy',
     timeFormat: 'HH:mm',
-    timeZone: 'America/New_York'
+    timeZone: 'America/New_York',
   }
 
   // Example with different languages for testing
@@ -19,14 +19,14 @@ export function CronExpressionBuilderExamples() {
     language: 'es',
     dateFormat: 'EEEE, dd/MM/yyyy',
     timeFormat: 'HH:mm',
-    timeZone: 'America/New_York'
+    timeZone: 'America/New_York',
   }
 
   const frenchSettings = {
     language: 'fr',
     dateFormat: 'EEEE dd/MM/yyyy',
     timeFormat: 'HH:mm',
-    timeZone: 'America/New_York'
+    timeZone: 'America/New_York',
   }
 
   const [cronValue1, setCronValue1] = useState<string>('0 0 * * *')
@@ -77,7 +77,8 @@ export function CronExpressionBuilderExamples() {
         description="A comprehensive cron expression builder with visual schedule builder and advanced cron expression input option"
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import CronExpressionBuilder from &apos;@/shared/widgets/CronExpressionBuilder&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import CronExpressionBuilder from &apos;@/shared/widgets/CronExpressionBuilder&apos;</Code>
         </p>
         <div className="mb-2">
           <span className="font-bold">Props:</span>
@@ -97,9 +98,13 @@ export function CronExpressionBuilderExamples() {
         </div>
       </ComponentInfo>
 
-      <ComponentInfo component="CronExpressionPreview" description="A preview of the cron expression with a verbal description of the schedule, next run date">
+      <ComponentInfo
+        component="CronExpressionPreview"
+        description="A preview of the cron expression with a verbal description of the schedule, next run date"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import CronExpressionPreview from &apos;@/shared/widgets/CronExpressionPreview&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import CronExpressionPreview from &apos;@/shared/widgets/CronExpressionPreview&apos;</Code>
         </p>
         <div className="mb-2">
           <span className="font-bold">Props:</span>
@@ -107,7 +112,9 @@ export function CronExpressionBuilderExamples() {
             <Code className="px-1">cronExpression</Code>
             <span>a cron expression</span>
             <Code className="px-1">isValid?</Code>
-            <span>the validity of the cron expression. Will validate the cron expression internally if not provided</span>
+            <span>
+              the validity of the cron expression. Will validate the cron expression internally if not provided
+            </span>
             <Code className="px-1">options?</Code>
             <span>
               <Code>
@@ -124,22 +131,38 @@ export function CronExpressionBuilderExamples() {
       <ExamplesBlock className="lg:grid-cols-2">
         <Example title="Daily">
           <CronExpressionBuilder value={cronValue1} onChange={handleCronChange1} options={exampleServerSettings} />
-          <CronExpressionPreview cronExpression={cronValue1} isValid={cronValue1IsValid} options={exampleServerSettings} />
+          <CronExpressionPreview
+            cronExpression={cronValue1}
+            isValid={cronValue1IsValid}
+            options={exampleServerSettings}
+          />
         </Example>
 
         <Example title="Weekly">
           <CronExpressionBuilder value={cronValue2} onChange={handleCronChange2} options={exampleServerSettings} />
-          <CronExpressionPreview cronExpression={cronValue2} isValid={cronValue2IsValid} options={exampleServerSettings} />
+          <CronExpressionPreview
+            cronExpression={cronValue2}
+            isValid={cronValue2IsValid}
+            options={exampleServerSettings}
+          />
         </Example>
 
         <Example title="Every 15 Minutes">
           <CronExpressionBuilder value={cronValue3} onChange={handleCronChange3} options={exampleServerSettings} />
-          <CronExpressionPreview cronExpression={cronValue3} isValid={cronValue3IsValid} options={exampleServerSettings} />
+          <CronExpressionPreview
+            cronExpression={cronValue3}
+            isValid={cronValue3IsValid}
+            options={exampleServerSettings}
+          />
         </Example>
 
         <Example title="Custom Cron Expression">
           <CronExpressionBuilder value={cronValue4} onChange={handleCronChange4} options={exampleServerSettings} />
-          <CronExpressionPreview cronExpression={cronValue4} isValid={cronValue4IsValid} options={exampleServerSettings} />
+          <CronExpressionPreview
+            cronExpression={cronValue4}
+            isValid={cronValue4IsValid}
+            options={exampleServerSettings}
+          />
         </Example>
 
         <Example title="i18n">

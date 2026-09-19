@@ -15,14 +15,14 @@ const panelVariants: Variants = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 100, damping: 15, delay: 0.3 }
-  }
+    transition: { type: 'spring', stiffness: 100, damping: 15, delay: 0.3 },
+  },
 }
 
 const feedbackVariants: Variants = {
   hidden: { opacity: 0, y: -8, scale: 0.95 },
   visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 200, damping: 20 } },
-  exit: { opacity: 0, y: -8, scale: 0.95, transition: { duration: 0.15 } }
+  exit: { opacity: 0, y: -8, scale: 0.95, transition: { duration: 0.15 } },
 }
 
 export function AdminInvitePanel() {
@@ -85,7 +85,10 @@ export function AdminInvitePanel() {
         <div className="space-y-4">
           {/* Email */}
           <div className="space-y-1.5">
-            <label htmlFor="invite-email" className="text-foreground-muted block text-xs font-medium tracking-wide uppercase">
+            <label
+              htmlFor="invite-email"
+              className="text-foreground-muted block text-xs font-medium tracking-wide uppercase"
+            >
               Email Address
             </label>
             <div className="relative">
@@ -105,7 +108,10 @@ export function AdminInvitePanel() {
 
           {/* Username (optional) */}
           <div className="space-y-1.5">
-            <label htmlFor="invite-username" className="text-foreground-muted block text-xs font-medium tracking-wide uppercase">
+            <label
+              htmlFor="invite-username"
+              className="text-foreground-muted block text-xs font-medium tracking-wide uppercase"
+            >
               Username <span className="text-foreground-subdued">(optional)</span>
             </label>
             <input
@@ -121,7 +127,10 @@ export function AdminInvitePanel() {
 
           {/* User Type */}
           <div className="space-y-1.5">
-            <label htmlFor="invite-user-type" className="text-foreground-muted block text-xs font-medium tracking-wide uppercase">
+            <label
+              htmlFor="invite-user-type"
+              className="text-foreground-muted block text-xs font-medium tracking-wide uppercase"
+            >
               Role
             </label>
             <div className="relative">
@@ -164,7 +173,11 @@ export function AdminInvitePanel() {
                   : 'border border-red-500/20 bg-red-500/10 text-red-400'
               }`}
             >
-              {feedback.status === 'success' ? <CheckCircle className="h-4 w-4 shrink-0" /> : <AlertCircle className="h-4 w-4 shrink-0" />}
+              {feedback.status === 'success' ? (
+                <CheckCircle className="h-4 w-4 shrink-0" />
+              ) : (
+                <AlertCircle className="h-4 w-4 shrink-0" />
+              )}
               {feedback.message}
             </motion.div>
           )}

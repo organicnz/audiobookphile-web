@@ -12,17 +12,22 @@ export function RangeInputExamples() {
 
   return (
     <ComponentExamples title="Range Inputs">
-      <ComponentInfo component="RangeInput" description="Accessible range input component with customizable min/max/step values, labels, and disabled state">
+      <ComponentInfo
+        component="RangeInput"
+        description="Accessible range input component with customizable min/max/step values, labels, and disabled state"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import RangeInput from &apos;@/shared/ui/RangeInput&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import RangeInput from &apos;@/shared/ui/RangeInput&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>, <Code>min</Code>, <Code>max</Code>,{' '}
-          <Code>step</Code>, <Code>disabled</Code>, <Code>className</Code>, <Code>aria-describedby</Code>
+          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>,{' '}
+          <Code>min</Code>, <Code>max</Code>, <Code>step</Code>, <Code>disabled</Code>, <Code>className</Code>,{' '}
+          <Code>aria-describedby</Code>
         </p>
         <p className="mb-2 text-sm text-gray-400">
-          Features: accessible with proper ARIA attributes, keyboard navigation, screen reader support, customizable styling, flexible layout (with/without
-          label)
+          Features: accessible with proper ARIA attributes, keyboard navigation, screen reader support, customizable
+          styling, flexible layout (with/without label)
         </p>
       </ComponentInfo>
 
@@ -36,7 +41,14 @@ export function RangeInputExamples() {
         </Example>
 
         <Example title="Custom Range (0-200)">
-          <RangeInput value={rangeValue3} onChange={setRangeValue3} min={0} max={200} step={10} label="Custom Range With Step" />
+          <RangeInput
+            value={rangeValue3}
+            onChange={setRangeValue3}
+            min={0}
+            max={200}
+            step={10}
+            label="Custom Range With Step"
+          />
         </Example>
 
         <Example title="Disabled RangeInput">

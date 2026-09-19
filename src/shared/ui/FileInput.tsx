@@ -13,7 +13,13 @@ interface FileInputProps {
   ariaLabel?: string
 }
 
-export default function FileInput({ accept = '.png, .jpg, .jpeg, .webp', children, onChange, className = '', ariaLabel }: FileInputProps) {
+export default function FileInput({
+  accept = '.png, .jpg, .jpeg, .webp',
+  children,
+  onChange,
+  className = '',
+  ariaLabel,
+}: FileInputProps) {
   const t = useTypeSafeTranslations()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFileName, setSelectedFileName] = useState<string>('')
@@ -43,7 +49,16 @@ export default function FileInput({ accept = '.png, .jpg, .jpeg, .webp', childre
 
   return (
     <div className={className}>
-      <input ref={fileInputRef} type="file" accept={accept} className="hidden" onChange={inputChanged} id={inputId} aria-label={label} tabIndex={-1} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={accept}
+        className="hidden"
+        onChange={inputChanged}
+        id={inputId}
+        aria-label={label}
+        tabIndex={-1}
+      />
       <Btn onClick={clickUpload} color="bg-primary" className="hidden w-full md:block" ariaLabel={label}>
         {children}
       </Btn>

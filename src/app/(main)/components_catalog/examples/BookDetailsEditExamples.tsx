@@ -12,24 +12,24 @@ interface BookDetailsEditExamplesProps {
 
 const mockAuthors = [
   { value: 'author-1', content: 'J.R.R. Tolkien' },
-  { value: 'author-2', content: 'George R.R. Martin' }
+  { value: 'author-2', content: 'George R.R. Martin' },
 ]
 const mockNarrators = [
   { value: 'Rob Inglis', content: 'Rob Inglis' },
-  { value: 'Roy Dotrice', content: 'Roy Dotrice' }
+  { value: 'Roy Dotrice', content: 'Roy Dotrice' },
 ]
 const mockGenres = [
   { value: 'Fantasy', content: 'Fantasy' },
   { value: 'Adventure', content: 'Adventure' },
-  { value: 'Sci-Fi', content: 'Sci-Fi' }
+  { value: 'Sci-Fi', content: 'Sci-Fi' },
 ]
 const mockTags = [
   { value: 'Classic', content: 'Classic' },
-  { value: 'Epic', content: 'Epic' }
+  { value: 'Epic', content: 'Epic' },
 ]
 const mockSeries = [
   { value: 'series-1', content: 'The Lord of the Rings' },
-  { value: 'series-2', content: 'A Song of Ice and Fire' }
+  { value: 'series-2', content: 'A Song of Ice and Fire' },
 ]
 
 export function BookDetailsEditExamples({ selectedBook }: BookDetailsEditExamplesProps) {
@@ -58,10 +58,10 @@ export function BookDetailsEditExamples({ selectedBook }: BookDetailsEditExample
             ...prev.media,
             metadata: {
               ...prev.media.metadata,
-              ...details.updatePayload.metadata
+              ...details.updatePayload.metadata,
             },
-            tags: details.updatePayload.tags ?? prev.media.tags
-          }
+            tags: details.updatePayload.tags ?? prev.media.tags,
+          },
         }
       })
       setHasChanges(false)
@@ -80,7 +80,8 @@ export function BookDetailsEditExamples({ selectedBook }: BookDetailsEditExample
         description="A form for editing the metadata of a book library item. It includes fields for title, author, series, and more."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import BookDetailsEdit from &apos;@/shared/widgets/BookDetailsEdit&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import BookDetailsEdit from &apos;@/shared/widgets/BookDetailsEdit&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

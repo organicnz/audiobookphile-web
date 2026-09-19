@@ -47,7 +47,12 @@ interface LibraryFilesTableProps {
   expanded?: boolean
 }
 
-export default function LibraryFilesTable({ libraryItem, keepOpen = false, inModal = false, expanded: expandedProp = false }: LibraryFilesTableProps) {
+export default function LibraryFilesTable({
+  libraryItem,
+  keepOpen = false,
+  inModal = false,
+  expanded: expandedProp = false,
+}: LibraryFilesTableProps) {
   const t = useTypeSafeTranslations()
   const { userCanDelete, userCanDownload, userIsAdminOrUp } = useUser()
   const { showToast } = useGlobalToast()
@@ -62,7 +67,11 @@ export default function LibraryFilesTable({ libraryItem, keepOpen = false, inMod
 
   const audioFiles = useMemo<AudioFile[]>(() => {
     if (libraryItem.mediaType === 'podcast') {
-      return ((libraryItem as PodcastLibraryItem).media?.episodes?.map((ep) => ep.audioFile).filter((af) => af) as AudioFile[]) || []
+      return (
+        ((libraryItem as PodcastLibraryItem).media?.episodes
+          ?.map((ep) => ep.audioFile)
+          .filter((af) => af) as AudioFile[]) || []
+      )
     }
     return (libraryItem as BookLibraryItem).media?.audioFiles || []
   }, [libraryItem])
@@ -122,16 +131,18 @@ export default function LibraryFilesTable({ libraryItem, keepOpen = false, inMod
     () => [
       {
         label: t('LabelPath'),
-        accessor: (row: LibraryFileWithAudio) => <span className="break-all">{showFullPath ? row.metadata.path : row.metadata.relPath}</span>,
+        accessor: (row: LibraryFileWithAudio) => (
+          <span className="break-all">{showFullPath ? row.metadata.path : row.metadata.relPath}</span>
+        ),
         headerClassName: 'text-start px-2 md:px-4 min-w-[300px]',
-        cellClassName: 'text-start px-2 md:px-4 py-1 align-middle'
+        cellClassName: 'text-start px-2 md:px-4 py-1 align-middle',
       },
       {
         label: t('LabelSize'),
         accessor: (row: LibraryFileWithAudio) => bytesPretty(row.metadata.size),
         headerClassName: 'text-start w-22 min-w-20 px-2',
         cellClassName: 'text-start py-1 text-xs md:text-sm whitespace-nowrap px-2 align-middle',
-        minTableWidth: SIZE_MIN_TABLE_WIDTH
+        minTableWidth: SIZE_MIN_TABLE_WIDTH,
       },
       {
         label: t('LabelType'),
@@ -142,7 +153,7 @@ export default function LibraryFilesTable({ libraryItem, keepOpen = false, inMod
         ),
         headerClassName: 'text-start w-22 min-w-18 px-2',
         cellClassName: 'text-start text-xs py-1 whitespace-nowrap px-2 align-middle',
-        minTableWidth: TYPE_MIN_TABLE_WIDTH
+        minTableWidth: TYPE_MIN_TABLE_WIDTH,
       },
       {
         label: '',
@@ -171,10 +182,20 @@ export default function LibraryFilesTable({ libraryItem, keepOpen = false, inMod
           )
         },
         headerClassName: 'w-12 min-w-11',
-        cellClassName: 'text-center py-1 align-middle'
-      }
+        cellClassName: 'text-center py-1 align-middle',
+      },
     ],
-    [t, showFullPath, userCanDownload, userCanDelete, userIsAdminOrUp, inModal, handleDeleteFile, downloadFile, showMoreInfo]
+    [
+      t,
+      showFullPath,
+      userCanDownload,
+      userCanDelete,
+      userIsAdminOrUp,
+      inModal,
+      handleDeleteFile,
+      downloadFile,
+      showMoreInfo,
+    ]
   )
 
   const headerActions = useMemo(
@@ -209,10 +230,20 @@ export default function LibraryFilesTable({ libraryItem, keepOpen = false, inMod
       </CollapsibleSection>
 
       {/* Single confirmation dialog for the table */}
-      <ConfirmDialog isOpen={!!fileToDelete} message={t('MessageConfirmDeleteFile')} onClose={() => setFileToDelete(null)} onConfirm={handleConfirmDelete} />
+      <ConfirmDialog
+        isOpen={!!fileToDelete}
+        message={t('MessageConfirmDeleteFile')}
+        onClose={() => setFileToDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
 
       {/* Single audio file data modal for the table */}
-      <AudioFileDataModal isOpen={!!audioFileToShow} audioFile={audioFileToShow} libraryItemId={libraryItem.id} onClose={closeMoreInfo} />
+      <AudioFileDataModal
+        isOpen={!!audioFileToShow}
+        audioFile={audioFileToShow}
+        libraryItemId={libraryItem.id}
+        onClose={closeMoreInfo}
+      />
     </>
   )
 }

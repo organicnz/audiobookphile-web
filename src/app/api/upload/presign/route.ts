@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const cookieHeader = req.headers.get('cookie') || ''
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     }
     if (authHeader) headers['Authorization'] = authHeader
     if (cookieHeader) headers['Cookie'] = cookieHeader
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const res = await fetch(edgeUrl, {
       method: 'POST',
       headers,
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     })
 
     const text = await res.text()
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     } catch {
       data = {
         error: `Edge Function returned status ${res.status}`,
-        detail: text.slice(0, 500)
+        detail: text.slice(0, 500),
       }
     }
     return NextResponse.json(data, { status: res.status })

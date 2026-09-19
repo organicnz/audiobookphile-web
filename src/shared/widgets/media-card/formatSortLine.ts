@@ -41,17 +41,17 @@ export function formatSortLine(orderBy: string, context: SortLineContext): strin
   }
   if (orderBy === 'progress' && lastUpdated) {
     return t('LabelLastProgressDate', {
-      0: formatJsDate(new Date(lastUpdated), `${dateFormat} ${timeFormat}`)
+      0: formatJsDate(new Date(lastUpdated), `${dateFormat} ${timeFormat}`),
     })
   }
   if (orderBy === 'progress.createdAt' && startedAt) {
     return t('LabelStartedDate', {
-      0: formatJsDate(new Date(startedAt), `${dateFormat} ${timeFormat}`)
+      0: formatJsDate(new Date(startedAt), `${dateFormat} ${timeFormat}`),
     })
   }
   if (orderBy === 'progress.finishedAt' && finishedAt) {
     return t('LabelFinishedDate', {
-      0: formatJsDate(new Date(finishedAt), `${dateFormat} ${timeFormat}`)
+      0: formatJsDate(new Date(finishedAt), `${dateFormat} ${timeFormat}`),
     })
   }
   if (orderBy === 'media.metadata.publishedYear') {

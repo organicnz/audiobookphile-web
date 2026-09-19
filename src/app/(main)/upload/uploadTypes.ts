@@ -163,7 +163,7 @@ export function cleanBook(book: UploadItemData, index: number): CleanedItem {
     title: '',
     author: '',
     series: '',
-    ...book
+    ...book,
   }
 
   const firstBookFile = book.itemFiles[0]
@@ -196,7 +196,7 @@ export function cleanPodcast(item: UploadItemData, index: number): CleanedItem {
   const podcast: CleanedItem = {
     index,
     title: '',
-    ...item
+    ...item,
   }
 
   const firstAudioFile = item.itemFiles[0]
@@ -253,7 +253,7 @@ export function getItemsFromFilelist(filelist: FileList, mediaType: Library['med
             path: dir,
             ignoredFiles: [],
             itemFiles: [],
-            otherFiles: []
+            otherFiles: [],
           }
         }
         itemMap[dir].itemFiles.push(fileWithMeta)
@@ -276,7 +276,12 @@ export function getItemsFromFilelist(filelist: FileList, mediaType: Library['med
   let items: CleanedItem[] = []
   let index = 1
 
-  if (itemMap[''] && !otherFiles.length && mediaType === 'book' && !itemMap[''].itemFiles.some((f) => f.filetype !== 'audio')) {
+  if (
+    itemMap[''] &&
+    !otherFiles.length &&
+    mediaType === 'book' &&
+    !itemMap[''].itemFiles.some((f) => f.filetype !== 'audio')
+  ) {
     items = itemMap[''].itemFiles.map((audioFile) => {
       return cleanItem({ itemFiles: [audioFile], otherFiles: [], ignoredFiles: [] }, mediaType, index++)
     })

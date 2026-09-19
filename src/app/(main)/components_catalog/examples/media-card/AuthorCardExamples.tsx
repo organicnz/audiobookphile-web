@@ -20,7 +20,7 @@ export function AuthorCardExamples({ authorData }: AuthorCardExamplesProps) {
   useDimensionMeasurement(
     [
       { ref: authorCardRef, setDims: setAuthorCardDims },
-      { ref: authorSkeletonRef, setDims: setAuthorSkeletonDims }
+      { ref: authorSkeletonRef, setDims: setAuthorSkeletonDims },
     ],
     [authorData]
   )
@@ -33,7 +33,8 @@ export function AuthorCardExamples({ authorData }: AuthorCardExamplesProps) {
           description="Card component for displaying authors with image, book count, and hover actions."
         >
           <p className="mb-2">
-            <span className="font-bold">Import:</span> <Code overflow>import AuthorCard from &apos;@/shared/widgets/media-card/AuthorCard&apos;</Code>
+            <span className="font-bold">Import:</span>{' '}
+            <Code overflow>import AuthorCard from &apos;@/shared/widgets/media-card/AuthorCard&apos;</Code>
           </p>
           <div>
             <span className="font-bold">Props:</span>
@@ -86,11 +87,21 @@ export function AuthorCardExamples({ authorData }: AuthorCardExamplesProps) {
             <div className="flex flex-wrap gap-4">
               <div className="mb-6">
                 <p className="mb-2 text-sm text-gray-400">Selection Mode (Unselected)</p>
-                <AuthorCard author={authorData} isSelectionMode={true} selected={false} onSelect={(e) => console.log('Toggle selection', e)} />
+                <AuthorCard
+                  author={authorData}
+                  isSelectionMode={true}
+                  selected={false}
+                  onSelect={(e) => console.log('Toggle selection', e)}
+                />
               </div>
               <div className="mb-6">
                 <p className="mb-2 text-sm text-gray-400">Selection Mode (Selected)</p>
-                <AuthorCard author={authorData} isSelectionMode={true} selected={true} onSelect={(e) => console.log('Toggle selection', e)} />
+                <AuthorCard
+                  author={authorData}
+                  isSelectionMode={true}
+                  selected={true}
+                  onSelect={(e) => console.log('Toggle selection', e)}
+                />
               </div>
             </div>
           </Example>

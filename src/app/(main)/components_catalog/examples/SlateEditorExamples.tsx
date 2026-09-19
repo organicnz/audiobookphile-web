@@ -41,11 +41,12 @@ export function SlateEditorExamples() {
     <ComponentExamples title="Rich Text Editor">
       <ComponentInfo component="SlateEditor" description="A rich text editor built with Slate.js">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import SlateEditor from &apos;@/shared/ui/SlateEditor&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import SlateEditor from &apos;@/shared/ui/SlateEditor&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>srcContent</Code>, <Code>onUpdate</Code>, <Code>placeholder</Code>, <Code>disabledEditor</Code>,{' '}
-          <Code>autofocus</Code>
+          <span className="font-bold">Props:</span> <Code>srcContent</Code>, <Code>onUpdate</Code>,{' '}
+          <Code>placeholder</Code>, <Code>disabledEditor</Code>, <Code>autofocus</Code>
         </p>
       </ComponentInfo>
 
@@ -76,7 +77,13 @@ export function SlateEditorExamples() {
               <SlateEditor srcContent={editorValue} onUpdate={handleUpdate} label="Read-only Editor" readOnly />
             </div>
             <div className="min-w-[250px] flex-1">
-              <TextareaInput value={textAreaValue} onChange={handleUpdateTextarea} rows={4} label="Read-only Textarea" readOnly />
+              <TextareaInput
+                value={textAreaValue}
+                onChange={handleUpdateTextarea}
+                rows={4}
+                label="Read-only Textarea"
+                readOnly
+              />
             </div>
           </div>
           <div className="flex flex-wrap gap-4">
@@ -84,14 +91,25 @@ export function SlateEditorExamples() {
               <SlateEditor srcContent={editorValue} onUpdate={handleUpdate} label="Disabled Editor" disabled />
             </div>
             <div className="min-w-[250px] flex-1">
-              <TextareaInput value={textAreaValue} onChange={handleUpdateTextarea} rows={4} label="Disabled Textarea" disabled />
+              <TextareaInput
+                value={textAreaValue}
+                onChange={handleUpdateTextarea}
+                rows={4}
+                label="Disabled Textarea"
+                disabled
+              />
             </div>
           </div>
         </Example>
         <Example title="Editor vs. Output" className="col-span-1 md:col-span-2 lg:col-span-3">
           <div className="flex flex-wrap gap-4">
             <div className="min-w-[250px] flex-1">
-              <SlateEditor srcContent={initialContent} onUpdate={setEditorOutput} label="Editor" className="[&_[data-slate-editor]]:h-83" />
+              <SlateEditor
+                srcContent={initialContent}
+                onUpdate={setEditorOutput}
+                label="Editor"
+                className="[&_[data-slate-editor]]:h-83"
+              />
             </div>
             <div className="min-w-[250px] flex-1">
               <Label className="mt-9.5">Output:</Label>

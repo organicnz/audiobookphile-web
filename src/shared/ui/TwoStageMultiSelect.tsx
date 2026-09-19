@@ -40,7 +40,7 @@ export default function TwoStageMultiSelect({
   onValidate,
   onValidationError,
   onDuplicateError,
-  disabled
+  disabled,
 }: TwoStageMultiSelectProps) {
   const [editingPillIndex, setEditingPillIndex] = useState<number | null>(null)
   const [isEditingNewItem, setIsEditingNewItem] = useState(false)

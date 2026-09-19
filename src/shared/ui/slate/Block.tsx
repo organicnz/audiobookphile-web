@@ -24,7 +24,7 @@ export const isBlockActive = (editor: Editor, format: CustomElement['type']) => 
     }
     const [match] = Editor.nodes(editor, {
       at: Editor.unhangRange(editor, selection),
-      match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === format
+      match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === format,
     })
     return !!match
   } catch (error) {
@@ -44,11 +44,11 @@ export const toggleBlock = (editor: Editor, format: CustomElement['type']) => {
 
     Transforms.unwrapNodes(editor, {
       match: (n) => !Editor.isEditor(n) && Element.isElement(n) && ['bulleted-list', 'numbered-list'].includes(n.type),
-      split: true
+      split: true,
     })
 
     Transforms.setNodes<Element>(editor, {
-      type: isActive ? 'paragraph' : isList ? 'list-item' : format
+      type: isActive ? 'paragraph' : isList ? 'list-item' : format,
     })
 
     if (!isActive && isList) {
@@ -63,7 +63,17 @@ export const toggleBlock = (editor: Editor, format: CustomElement['type']) => {
 // --- BlockButton Component ---
 
 export const BlockButton = memo(
-  ({ children, buttonId, tabIndex, onFocus }: { children: React.ReactNode; buttonId: string; tabIndex: number; onFocus: () => void }) => {
+  ({
+    children,
+    buttonId,
+    tabIndex,
+    onFocus,
+  }: {
+    children: React.ReactNode
+    buttonId: string
+    tabIndex: number
+    onFocus: () => void
+  }) => {
     const editor = useSlate()
 
     // Derive format from buttonId
@@ -88,7 +98,10 @@ export const BlockButton = memo(
     )
 
     const isActive = isBlockActive(editor, format)
-    const buttonClass = useMemo(() => mergeClasses(buttonClassBase, isActive ? 'bg-gray-300 text-black' : ''), [isActive])
+    const buttonClass = useMemo(
+      () => mergeClasses(buttonClassBase, isActive ? 'bg-gray-300 text-black' : ''),
+      [isActive]
+    )
 
     return (
       <IconBtn

@@ -31,7 +31,7 @@ export default function BaseMatchView<TUsage extends { [key: string]: boolean },
   buildMatchUpdatePayload,
   selectedMatch,
   onDone,
-  children
+  children,
 }: BaseMatchViewProps<TUsage, TMatch>) {
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
@@ -145,14 +145,20 @@ export default function BaseMatchView<TUsage extends { [key: string]: boolean },
       </div>
 
       <div ref={scrollContainerRef} className="flex-1 overflow-x-hidden overflow-y-auto px-4 py-2">
-        <Checkbox value={selectAll} onChange={handleSelectAllToggle} label={t('LabelSelectAll')} checkboxBgClass="bg-bg" className="w-fit" />
+        <Checkbox
+          value={selectAll}
+          onChange={handleSelectAllToggle}
+          label={t('LabelSelectAll')}
+          checkboxBgClass="bg-bg"
+          className="w-fit"
+        />
 
         <form onSubmit={handleSubmitMatchUpdate}>
           {children({
             selectedMatchUsage,
             setSelectedMatchUsage,
             createFieldUsageHandler,
-            handleSubmitMatchUpdate
+            handleSubmitMatchUpdate,
           })}
         </form>
       </div>

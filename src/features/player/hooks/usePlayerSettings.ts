@@ -46,7 +46,7 @@ const DEFAULT_SETTINGS: PlayerSettings = {
   jumpBackwardAmount: 10,
   playbackRate: 1.0,
   playbackRateIncrementDecrement: 0.1,
-  volume: 0.5
+  volume: 0.5,
 }
 
 // Playback rate bounds
@@ -78,7 +78,7 @@ function loadSettingsFromStorage(): PlayerSettings {
       playbackRateIncrementDecrement:
         parsed.playbackRateIncrementDecrement === 0.05 || parsed.playbackRateIncrementDecrement === 0.1
           ? parsed.playbackRateIncrementDecrement
-          : DEFAULT_SETTINGS.playbackRateIncrementDecrement
+          : DEFAULT_SETTINGS.playbackRateIncrementDecrement,
     }
   } catch (error) {
     console.error('[usePlayerSettings] Failed to load settings from localStorage:', error)
@@ -139,7 +139,7 @@ export function usePlayerSettings(): UsePlayerSettingsReturn {
   const updateSettings = useCallback((updates: Partial<PlayerSettings>) => {
     setSettings((prev) => ({
       ...prev,
-      ...updates
+      ...updates,
     }))
   }, [])
 
@@ -213,6 +213,6 @@ export function usePlayerSettings(): UsePlayerSettingsReturn {
     incrementPlaybackRate,
     decrementPlaybackRate,
     setVolume,
-    toggleMute
+    toggleMute,
   }
 }

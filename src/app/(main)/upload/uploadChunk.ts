@@ -14,7 +14,18 @@ export interface MultipartUploadParams {
 }
 
 export async function uploadMultipart(params: MultipartUploadParams): Promise<{ uploadedBytes: number; path: string }> {
-  const { file, uploadId, partUrls, partSize, storagePath, cookie, providerPrefix, uploadedBytes, totalSize, onProgress } = params
+  const {
+    file,
+    uploadId,
+    partUrls,
+    partSize,
+    storagePath,
+    cookie,
+    providerPrefix,
+    uploadedBytes,
+    totalSize,
+    onProgress,
+  } = params
   const parts: { PartNumber: number; ETag: string }[] = []
   let partUploadedBytes = 0
 
@@ -32,7 +43,7 @@ export async function uploadMultipart(params: MultipartUploadParams): Promise<{ 
           onProgress({
             percent: Math.round((loaded / totalSize) * 100),
             loaded,
-            total: totalSize
+            total: totalSize,
           })
         }
       }
@@ -56,7 +67,7 @@ export async function uploadMultipart(params: MultipartUploadParams): Promise<{ 
   const presignUrl = '/api/upload/presign'
   const completeHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${cookie}`
+    Authorization: `Bearer ${cookie}`,
   }
   if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     completeHeaders['apikey'] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -69,8 +80,8 @@ export async function uploadMultipart(params: MultipartUploadParams): Promise<{ 
       action: 'complete-multipart',
       filename: storagePath,
       uploadId,
-      parts
-    })
+      parts,
+    }),
   })
 
   if (!completeRes.ok) {
@@ -82,7 +93,7 @@ export async function uploadMultipart(params: MultipartUploadParams): Promise<{ 
 
   return {
     uploadedBytes: file.size,
-    path: providerPrefix + storagePath
+    path: providerPrefix + storagePath,
   }
 }
 
@@ -96,7 +107,9 @@ export interface SinglePartUploadParams {
   onProgress?: (progress: UploadProgressInfo) => void
 }
 
-export async function uploadSinglePart(params: SinglePartUploadParams): Promise<{ uploadedBytes: number; path: string }> {
+export async function uploadSinglePart(
+  params: SinglePartUploadParams
+): Promise<{ uploadedBytes: number; path: string }> {
   const { file, uploadUrl, storagePath, providerPrefix, uploadedBytes, totalSize, onProgress } = params
   const MAX_RETRIES = 3
   let attempt = 0
@@ -120,7 +133,7 @@ export async function uploadSinglePart(params: SinglePartUploadParams): Promise<
           onProgress({
             percent: Math.round((chunkLoaded / totalSize) * 100),
             loaded: chunkLoaded,
-            total: totalSize
+            total: totalSize,
           })
         }
       }
@@ -129,7 +142,7 @@ export async function uploadSinglePart(params: SinglePartUploadParams): Promise<
         if (xhr.status >= 200 && xhr.status < 300) {
           resolve({
             uploadedBytes: file.size,
-            path: providerPrefix + storagePath
+            path: providerPrefix + storagePath,
           })
         } else {
           if (attempt < MAX_RETRIES && (xhr.status >= 500 || xhr.status === 429)) {
@@ -170,7 +183,11 @@ export async function uploadSinglePart(params: SinglePartUploadParams): Promise<
 /**
  * Stream a backup archive to server /api/backups/upload
  */
-export async function uploadBackupArchive(file: File, accessToken: string, onProgress?: (progress: UploadProgressInfo) => void): Promise<void> {
+export async function uploadBackupArchive(
+  file: File,
+  accessToken: string,
+  onProgress?: (progress: UploadProgressInfo) => void
+): Promise<void> {
   const form = new FormData()
   form.set('file', file)
 
@@ -184,7 +201,7 @@ export async function uploadBackupArchive(file: File, accessToken: string, onPro
         onProgress({
           percent: Math.round((event.loaded / event.total) * 100),
           loaded: event.loaded,
-          total: event.total
+          total: event.total,
         })
       }
     }
@@ -195,7 +212,7 @@ export async function uploadBackupArchive(file: File, accessToken: string, onPro
           onProgress({
             percent: 100,
             loaded: file.size,
-            total: file.size
+            total: file.size,
           })
         }
         resolve()

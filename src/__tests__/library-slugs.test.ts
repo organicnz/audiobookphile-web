@@ -6,7 +6,7 @@ describe('library-slugs', () => {
     { id: '207ad239-f42e-40dd-b9b2-d71054cb36f0', name: 'Audiobooks' },
     { id: '891cd421-1234-4567-8901-abcdef123456', name: 'Podcasts' },
     { id: '11111111-2222-3333-4444-555555555555', name: 'Sci-Fi & Fantasy' },
-    { id: '22222222-3333-4444-5555-666666666666', name: 'Audiobooks' } // duplicate name for collision test
+    { id: '22222222-3333-4444-5555-666666666666', name: 'Audiobooks' }, // duplicate name for collision test
   ]
 
   describe('slugifyLibraryName', () => {

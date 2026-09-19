@@ -28,7 +28,8 @@ export function getServerBaseUrl() {
 export function getClientBaseUrlFromRequest(request: Request): string {
   const headers = new Headers(request.headers)
   const host = headers.get('x-forwarded-host') || headers.get('host') || 'localhost'
-  const protocol = headers.get('x-forwarded-proto') || (host.includes('localhost') || host.includes('127.0.0.1') ? 'http' : 'https') // dev-only fallback
+  const protocol =
+    headers.get('x-forwarded-proto') || (host.includes('localhost') || host.includes('127.0.0.1') ? 'http' : 'https') // dev-only fallback
   return `${protocol}://${host}`
 }
 
@@ -84,7 +85,12 @@ export function extractErrorMessage(text: string): string {
     if (typeof parsed === 'object' && parsed !== null && 'error' in parsed) {
       const err = (parsed as { error: unknown }).error
       if (typeof err === 'string') return err
-      if (typeof err === 'object' && err !== null && 'message' in err && typeof (err as { message: unknown }).message === 'string') {
+      if (
+        typeof err === 'object' &&
+        err !== null &&
+        'message' in err &&
+        typeof (err as { message: unknown }).message === 'string'
+      ) {
         return (err as { message: string }).message
       }
     }
@@ -111,8 +117,8 @@ export async function fetchAsResult<T = unknown>(input: RequestInfo | URL, init?
           type: 'unauthorized',
           status: 401,
           statusText: response.statusText,
-          message: 'Unauthorized'
-        }
+          message: 'Unauthorized',
+        },
       }
     }
 
@@ -124,8 +130,8 @@ export async function fetchAsResult<T = unknown>(input: RequestInfo | URL, init?
           type: 'http',
           status: response.status,
           statusText: response.statusText,
-          message: extractErrorMessage(text) || `HTTP ${response.status}: ${response.statusText}`
-        }
+          message: extractErrorMessage(text) || `HTTP ${response.status}: ${response.statusText}`,
+        },
       }
     }
 
@@ -139,8 +145,8 @@ export async function fetchAsResult<T = unknown>(input: RequestInfo | URL, init?
         status: 0,
         statusText: 'Network error',
         message: 'Network error',
-        cause
-      }
+        cause,
+      },
     }
   }
 }

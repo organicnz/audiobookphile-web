@@ -27,8 +27,8 @@ export async function proxy(request: NextRequest) {
         Vary: 'Origin',
         'Access-Control-Allow-Methods': 'GET,DELETE,PATCH,POST,PUT,OPTIONS',
         'Access-Control-Allow-Headers':
-          'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
-      }
+          'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
+      },
     })
   }
 
@@ -60,8 +60,8 @@ export async function proxy(request: NextRequest) {
         },
         setAll() {
           // Read-only in this context — session writes handled by updateSession above
-        }
-      }
+        },
+      },
     })
 
   // Two-factor settings (incl. passkey enrollment) are available to all
@@ -73,7 +73,7 @@ export async function proxy(request: NextRequest) {
     try {
       const supabase = getSupabase()
       const {
-        data: { user }
+        data: { user },
       } = await supabase.auth.getUser()
       if (!user) {
         return NextResponse.redirect(new URL('/login', request.nextUrl.origin))
@@ -96,7 +96,7 @@ export async function proxy(request: NextRequest) {
   try {
     const supabase = getSupabase()
     const {
-      data: { user }
+      data: { user },
     } = await supabase.auth.getUser()
     const dest = user ? '/library' : '/login'
     return NextResponse.redirect(new URL(dest, request.nextUrl.origin))
@@ -114,8 +114,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'
-  ]
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }
 
 export { proxy as middleware }

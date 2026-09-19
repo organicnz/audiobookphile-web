@@ -26,7 +26,10 @@ export default function ViewEpisodeModal({ isOpen, onClose, episode, libraryItem
   const podcastAuthor = libraryItem?.media.metadata.author || ''
 
   const audioFileFilename = episode?.audioFile?.metadata?.filename || ''
-  const audioFileSize = useMemo(() => bytesPretty(episode?.audioFile?.metadata?.size || 0), [episode?.audioFile?.metadata?.size])
+  const audioFileSize = useMemo(
+    () => bytesPretty(episode?.audioFile?.metadata?.size || 0),
+    [episode?.audioFile?.metadata?.size]
+  )
   const audioFileDuration = useMemo(
     () => formatDuration(episode?.audioFile?.duration || episode?.audioTrack?.duration || 0, t),
     [episode?.audioFile?.duration, episode?.audioTrack?.duration, t]
@@ -71,7 +74,7 @@ export default function ViewEpisodeModal({ isOpen, onClose, episode, libraryItem
               libraryItem,
               episodeId: episode.id,
               startTime: time,
-              queueItems: []
+              queueItems: [],
             })
             onClose()
           }

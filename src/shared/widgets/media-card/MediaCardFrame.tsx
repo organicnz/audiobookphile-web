@@ -31,7 +31,7 @@ export default function MediaCardFrame({
   footer,
   aspectRatio,
   className,
-  'cy-id': cyId = 'mediaCard'
+  'cy-id': cyId = 'mediaCard',
 }: MediaCardFrameProps) {
   return (
     <div
@@ -52,7 +52,7 @@ export default function MediaCardFrame({
       style={{
         minWidth: typeof width === 'number' ? `${width}px` : width,
         maxWidth: typeof width === 'number' ? `${width}px` : width,
-        contentVisibility: 'auto'
+        contentVisibility: 'auto',
       }}
     >
       <div
@@ -60,7 +60,7 @@ export default function MediaCardFrame({
         style={{
           height: typeof height === 'number' ? `${height}px` : height,
           aspectRatio: aspectRatio ? `${aspectRatio}` : undefined,
-          willChange: 'transform'
+          willChange: 'transform',
         }}
       >
         <div className="absolute start-0 top-0 z-10 h-full w-full overflow-hidden">

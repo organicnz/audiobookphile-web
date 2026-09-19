@@ -32,7 +32,7 @@ function TwoStageMultiSelectMatchFieldEditor({
   disabled,
   label,
   currentValue,
-  onReplaceAll
+  onReplaceAll,
 }: TwoStageMultiSelectMatchFieldEditorProps) {
   const t = useTypeSafeTranslations()
 
@@ -45,7 +45,7 @@ function TwoStageMultiSelectMatchFieldEditor({
         currentValue.forEach((series) => {
           onItemAdded({
             value: series.id || `new-${crypto.randomUUID()}`,
-            content: { value: series.name, modifier: series.sequence || '' }
+            content: { value: series.name, modifier: series.sequence || '' },
           })
         })
       }
@@ -54,19 +54,30 @@ function TwoStageMultiSelectMatchFieldEditor({
 
   const hasCurrentValue = currentValue !== undefined && currentValue.length > 0
 
-  const formattedValue = currentValue ? currentValue.map((s) => (s.sequence ? `${s.name} #${s.sequence}` : s.name)).join(', ') : ''
+  const formattedValue = currentValue
+    ? currentValue.map((s) => (s.sequence ? `${s.name} #${s.sequence}` : s.name)).join(', ')
+    : ''
 
   const currentValueDisplay = hasCurrentValue ? (
     <>
       {t('LabelCurrently')}{' '}
-      <a title={t('LabelClickToUseCurrentValue')} className="cursor-pointer hover:underline" onClick={handleUseCurrentValue}>
+      <a
+        title={t('LabelClickToUseCurrentValue')}
+        className="cursor-pointer hover:underline"
+        onClick={handleUseCurrentValue}
+      >
         {formattedValue}
       </a>
     </>
   ) : null
 
   return (
-    <BaseMatchFieldEditor usageChecked={usageChecked} onUsageChange={onUsageChange} currentValueDisplay={currentValueDisplay} hasCurrentValue={hasCurrentValue}>
+    <BaseMatchFieldEditor
+      usageChecked={usageChecked}
+      onUsageChange={onUsageChange}
+      currentValueDisplay={currentValueDisplay}
+      hasCurrentValue={hasCurrentValue}
+    >
       <TwoStageMultiSelect
         selectedItems={selectedItems}
         items={items}

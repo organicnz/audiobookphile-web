@@ -23,7 +23,7 @@ export default function LibraryScheduleTab({ settings, onSettingsChange }: Libra
   const emitChange = (expression: string | null) => {
     onSettingsChange((prev) => ({
       ...prev,
-      autoScanCronExpression: expression
+      autoScanCronExpression: expression,
     }))
   }
 

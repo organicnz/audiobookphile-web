@@ -22,7 +22,7 @@ export default function AppBarNav({ userCanUpload, isAdmin, username }: AppBarNa
   const handleLogout = useCallback(async () => {
     try {
       const res = await fetch('/internal-api/logout', {
-        method: 'POST'
+        method: 'POST',
       })
       if (!res.ok) {
         console.error('Logout error:', res.status, res.statusText)
@@ -41,21 +41,21 @@ export default function AppBarNav({ userCanUpload, isAdmin, username }: AppBarNa
         text: username,
         icon: User,
         onClick: () => router.push('/account'),
-        className: 'font-bold text-primary'
+        className: 'font-bold text-primary',
       },
       { id: 'divider-1', type: 'divider' },
       {
         id: 'stats',
         text: t('ButtonStats'),
         icon: BarChart2,
-        onClick: () => router.push('/account/stats')
+        onClick: () => router.push('/account/stats'),
       },
       {
         id: 'catalog',
         text: t('ButtonComponentsCatalog'),
         icon: LayoutGrid,
-        onClick: () => router.push('/components_catalog')
-      }
+        onClick: () => router.push('/components_catalog'),
+      },
     ]
 
     if (isAdmin) {
@@ -67,13 +67,13 @@ export default function AppBarNav({ userCanUpload, isAdmin, username }: AppBarNa
           text: t('HeaderSettings'),
           icon: Settings,
           onClick: () => router.push('/settings'),
-          className: 'md:hidden'
+          className: 'md:hidden',
         },
         {
           id: 'admin',
           text: 'Admin Dashboard',
           icon: Activity,
-          onClick: () => router.push('/admin')
+          onClick: () => router.push('/admin'),
         }
       )
     }
@@ -85,7 +85,7 @@ export default function AppBarNav({ userCanUpload, isAdmin, username }: AppBarNa
         text: t('ButtonLogout'),
         icon: LogOut,
         onClick: handleLogout,
-        className: 'text-error hover:bg-error/10'
+        className: 'text-error hover:bg-error/10',
       }
     )
 

@@ -6,7 +6,7 @@ export const maxDuration = 60
 const CHECKS = [
   { name: 'apex', url: 'https://audiobookphile.app/', expect: [200, 301, 302, 307, 308] },
   { name: 'www', url: 'https://www.audiobookphile.app/', expect: [200, 301, 302, 307, 308] },
-  { name: 'app', url: 'https://app.audiobookphile.app/', expect: [200, 301, 302, 307, 308] }
+  { name: 'app', url: 'https://app.audiobookphile.app/', expect: [200, 301, 302, 307, 308] },
 ]
 
 async function checkSite(url: string, expect: number[], timeoutMs = 10000) {
@@ -33,7 +33,7 @@ async function checkEdgeHealth(timeoutMs = 10000) {
   try {
     const res = await fetch(`${supabaseUrl}/functions/v1/api/health`, {
       headers: anonKey ? { apikey: anonKey } : {},
-      signal: ctrl.signal
+      signal: ctrl.signal,
     })
     const ok = res.status === 200
     return { ok, status: res.status, ms: Date.now() - started }

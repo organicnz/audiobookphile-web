@@ -28,13 +28,15 @@ export function MediaCardExamples({
   selectedSeries,
   selectedCollection,
   selectedPlaylist,
-  selectedAuthor
+  selectedAuthor,
 }: MediaCardExamplesProps) {
   // Get libraryId from real series data or fall back to selectedBook
   const seriesLibraryId = (selectedSeries?.books?.[0] as LibraryItem)?.libraryId ?? selectedBook?.libraryId ?? ''
 
   // Series data - only from real selection
-  const seriesData: Series | null = selectedSeries ? ({ ...selectedSeries.series, books: selectedSeries.books } as Series) : null
+  const seriesData: Series | null = selectedSeries
+    ? ({ ...selectedSeries.series, books: selectedSeries.books } as Series)
+    : null
 
   return (
     <MediaProvider>

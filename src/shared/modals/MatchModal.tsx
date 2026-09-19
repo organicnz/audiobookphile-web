@@ -1,7 +1,10 @@
 'use client'
 
 import Match from '@/features/metadata/components/Match'
-import LibraryItemModal, { type LibraryItemModalItemSource, useLibraryItemModal } from '@/shared/modals/LibraryItemModal'
+import LibraryItemModal, {
+  type LibraryItemModalItemSource,
+  useLibraryItemModal,
+} from '@/shared/modals/LibraryItemModal'
 import LoadingIndicator from '@/shared/ui/LoadingIndicator'
 
 export type MatchModalProps = {

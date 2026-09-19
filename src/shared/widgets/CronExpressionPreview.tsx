@@ -19,7 +19,12 @@ interface CronExpressionPreviewProps {
   }
 }
 
-export default function CronExpressionPreview({ cronExpression, className, isValid: isValidProp, options }: CronExpressionPreviewProps) {
+export default function CronExpressionPreview({
+  cronExpression,
+  className,
+  isValid: isValidProp,
+  options,
+}: CronExpressionPreviewProps) {
   const t = useTypeSafeTranslations()
   const [clientTimeZone, setClientTimeZone] = useState<string | null>(null)
 
@@ -30,7 +35,9 @@ export default function CronExpressionPreview({ cronExpression, className, isVal
   const { isValid, verbalDescription, nextRunDate } = useMemo(() => {
     const isValid = isValidProp !== undefined ? isValidProp : validateCron(cronExpression).isValid
     const verbalDescription = isValid ? getHumanReadableCronExpression(cronExpression, options?.language || 'en') : ''
-    const nextRunDate = isValid ? capitalizeFirstLetter(calculateNextRunDate(cronExpression, options, clientTimeZone)) : ''
+    const nextRunDate = isValid
+      ? capitalizeFirstLetter(calculateNextRunDate(cronExpression, options, clientTimeZone))
+      : ''
 
     return { isValid, verbalDescription, nextRunDate }
   }, [cronExpression, isValidProp, options, clientTimeZone])
@@ -40,7 +47,12 @@ export default function CronExpressionPreview({ cronExpression, className, isVal
   }
 
   return (
-    <div className={mergeClasses('rounded-2xl border border-white/10 bg-white/5 p-4 shadow-xl backdrop-blur-md', className)}>
+    <div
+      className={mergeClasses(
+        'rounded-2xl border border-white/10 bg-white/5 p-4 shadow-xl backdrop-blur-md',
+        className
+      )}
+    >
       <div className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-[auto_1fr]">
         <div className="flex items-center gap-2">
           <div className="bg-primary/20 border-primary/20 rounded-lg border p-1.5">

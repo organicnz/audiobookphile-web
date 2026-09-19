@@ -90,7 +90,7 @@ export const useLinkModal = (editor: Editor) => {
             // Check if there's at least one text node and it can be resolved to DOM
             const textNodeEntry = Editor.nodes(editor, {
               at: [],
-              match: (n) => Text.isText(n)
+              match: (n) => Text.isText(n),
             }).next().value
 
             if (textNodeEntry) {
@@ -212,6 +212,6 @@ export const useLinkModal = (editor: Editor) => {
 
     // Computed values
     isLinkActive: linkActive,
-    isValidUrl
+    isValidUrl,
   }
 }

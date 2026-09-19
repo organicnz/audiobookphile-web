@@ -21,7 +21,15 @@ export default function BookMediaCard(props: BookMediaCardProps) {
   const ebookFormat = useMemo(() => media.ebookFormat, [media])
 
   const renderBadges = useMemo(() => {
-    const BookBadges = ({ isHovering, isSelectionMode, processing }: { isHovering: boolean; isSelectionMode: boolean; processing: boolean }) => {
+    const BookBadges = ({
+      isHovering,
+      isSelectionMode,
+      processing,
+    }: {
+      isHovering: boolean
+      isSelectionMode: boolean
+      processing: boolean
+    }) => {
       // Series sequence badge (regular, when not hovering/selecting)
       if (seriesSequence && !isHovering && !isSelectionMode && !processing) {
         return (

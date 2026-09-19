@@ -19,7 +19,7 @@ export default function EpisodesFilterSelect({ value, onChange, disabled, classN
       { text: t('LabelShowAll'), value: 'all' },
       { text: t('LabelIncomplete'), value: 'incomplete' },
       { text: t('LabelComplete'), value: 'complete' },
-      { text: t('LabelInProgress'), value: 'in_progress' }
+      { text: t('LabelInProgress'), value: 'in_progress' },
     ],
     [t]
   )

@@ -33,19 +33,29 @@ export function InputDropdownExamples() {
 
   return (
     <ComponentExamples title="Input Dropdowns">
-      <ComponentInfo component="InputDropdown" description="Input dropdown component that allows typing and filtering with optional new item creation">
+      <ComponentInfo
+        component="InputDropdown"
+        description="Input dropdown component that allows typing and filtering with optional new item creation"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import InputDropdown from &apos;@/shared/ui/InputDropdown&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import InputDropdown from &apos;@/shared/ui/InputDropdown&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>items</Code> (string[] or number[]), <Code>label</Code>,{' '}
-          <Code>disabled</Code>, <Code>editable</Code>, <Code>showAllWhenEmpty</Code>, <Code>onNewItem</Code>, <Code>className</Code>
+          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>items</Code>{' '}
+          (string[] or number[]), <Code>label</Code>, <Code>disabled</Code>, <Code>editable</Code>,{' '}
+          <Code>showAllWhenEmpty</Code>, <Code>onNewItem</Code>, <Code>className</Code>
         </p>
       </ComponentInfo>
 
       <ExamplesBlock>
         <Example title="Default Input Dropdown">
-          <InputDropdown value={inputDropdownValue} onChange={handleInputDropdownChange} items={inputDropdownItems} label="Select Fruit" />
+          <InputDropdown
+            value={inputDropdownValue}
+            onChange={handleInputDropdownChange}
+            items={inputDropdownItems}
+            label="Select Fruit"
+          />
         </Example>
 
         <Example title="Input Dropdown with New Item Creation">

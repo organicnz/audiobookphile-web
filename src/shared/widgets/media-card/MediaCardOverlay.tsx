@@ -30,12 +30,12 @@ const ICON_SIZE = {
   SMALL: 1.5,
   ERROR_BADGE_HEIGHT: 1.5,
   ERROR_BADGE_WIDTH: 2.5,
-  ERROR_ICON: 0.875
+  ERROR_ICON: 0.875,
 } as const
 
 const SPACING = {
   CORNER: 0.375,
-  RSS_SHARE_GAP: 2.125
+  RSS_SHARE_GAP: 2.125,
 } as const
 
 interface MediaCardOverlayProps {
@@ -93,7 +93,7 @@ export default function MediaCardOverlay({
   onEdit,
   onMoreAction,
   onMoreMenuOpenChange,
-  onSelect
+  onSelect,
 }: MediaCardOverlayProps) {
   const { userCanUpdate } = useUser()
   const showOverlay = (isHovering || isSelectionMode || isMoreMenuOpen) && !processing
@@ -159,7 +159,10 @@ export default function MediaCardOverlay({
             transition={{ duration: 0.25, ease: 'easeInOut' }}
             style={{ willChange: 'opacity' }}
             cy-id="overlay"
-            className={mergeClasses('absolute start-0 top-0 z-10 h-full w-full overflow-hidden rounded-lg md:block', overlayWrapperClasslist)}
+            className={mergeClasses(
+              'absolute start-0 top-0 z-10 h-full w-full overflow-hidden rounded-lg md:block',
+              overlayWrapperClasslist
+            )}
           >
             {/* Play/Read center interaction */}
             {(showPlayButton || showReadButton) && (
@@ -214,7 +217,13 @@ export default function MediaCardOverlay({
 
             {/* Edit button */}
             {showEditButton && userCanUpdate && !isSelectionMode && (
-              <MediaOverlayIconBtn cyId="editButton" position="top-end" icon={Edit2} onClick={handleEditClick} ariaLabel={t('ButtonEdit')} />
+              <MediaOverlayIconBtn
+                cyId="editButton"
+                position="top-end"
+                icon={Edit2}
+                onClick={handleEditClick}
+                ariaLabel={t('ButtonEdit')}
+              />
             )}
 
             {/* More menu icon */}
@@ -226,7 +235,12 @@ export default function MediaCardOverlay({
                 whileHover={{ scale: 1.1 }}
                 className="absolute end-[0.5em] bottom-[0.5em] cursor-pointer md:block"
               >
-                <MediaCardMoreMenu items={moreMenuItems} processing={isProcessingOrPending} onAction={onMoreAction} onOpenChange={onMoreMenuOpenChange} />
+                <MediaCardMoreMenu
+                  items={moreMenuItems}
+                  processing={isProcessingOrPending}
+                  onAction={onMoreAction}
+                  onOpenChange={onMoreMenuOpenChange}
+                />
               </motion.div>
             )}
 
@@ -253,9 +267,18 @@ export default function MediaCardOverlay({
 
       {/* Error tooltip */}
       {showError && (
-        <Tooltip text={errorText} position="right" usePortal className="absolute start-0 bottom-4 z-10" tooltipClassName="whitespace-nowrap">
+        <Tooltip
+          text={errorText}
+          position="right"
+          usePortal
+          className="absolute start-0 bottom-4 z-10"
+          tooltipClassName="whitespace-nowrap"
+        >
           <div
-            className={mergeClasses('bg-error/90 flex items-center justify-end rounded-r-full shadow-lg backdrop-blur-md', 'border-y border-r border-white/20')}
+            className={mergeClasses(
+              'bg-error/90 flex items-center justify-end rounded-r-full shadow-lg backdrop-blur-md',
+              'border-y border-r border-white/20'
+            )}
             style={{ height: `${ICON_SIZE.ERROR_BADGE_HEIGHT}em`, width: `${ICON_SIZE.ERROR_BADGE_WIDTH}em` }}
           >
             <AlertCircle size={14} className="pr-1 text-white" />
@@ -286,7 +309,7 @@ export default function MediaCardOverlay({
           style={{
             width: `${ICON_SIZE.SMALL}em`,
             height: `${ICON_SIZE.SMALL}em`,
-            top: rssFeed ? `${SPACING.RSS_SHARE_GAP}em` : `${SPACING.CORNER}em`
+            top: rssFeed ? `${SPACING.RSS_SHARE_GAP}em` : `${SPACING.CORNER}em`,
           }}
         >
           <Globe size={14} className="text-success" aria-hidden="true" />
@@ -294,7 +317,10 @@ export default function MediaCardOverlay({
       )}
 
       {/* Type-specific badges (books/podcasts) */}
-      {safeRender(() => renderBadges?.({ isHovering, isSelectionMode, processing: isProcessingOrPending }), 'Error rendering badges:')}
+      {safeRender(
+        () => renderBadges?.({ isHovering, isSelectionMode, processing: isProcessingOrPending }),
+        'Error rendering badges:'
+      )}
 
       {/* Series name overlay */}
       {safeRender(() => renderSeriesNameOverlay?.(isHovering), 'Error rendering series name overlay:')}

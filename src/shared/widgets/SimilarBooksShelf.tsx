@@ -79,7 +79,7 @@ export default function SimilarBooksShelf({ libraryItem }: SimilarBooksShelfProp
             userPermissions: user.permissions || {},
             ereaderDevices: ereaderDevices || [],
             showSubtitles: false,
-            entityIndex: index
+            entityIndex: index,
           }
 
           if (item.mediaType === 'book') {

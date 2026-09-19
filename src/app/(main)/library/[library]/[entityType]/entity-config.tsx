@@ -15,7 +15,19 @@ import PlaylistCardSkeleton from '@/shared/widgets/media-card/PlaylistCardSkelet
 import PodcastMediaCard from '@/shared/widgets/media-card/PodcastMediaCard'
 import SeriesCard from '@/shared/widgets/media-card/SeriesCard'
 import SeriesCardSkeleton from '@/shared/widgets/media-card/SeriesCardSkeleton'
-import { Author, BookshelfEntity, BookshelfView, Collection, EntityType, Library, LibraryItem, MediaProgress, Playlist, Series, User } from '@/types/api'
+import {
+  Author,
+  BookshelfEntity,
+  BookshelfView,
+  Collection,
+  EntityType,
+  Library,
+  LibraryItem,
+  MediaProgress,
+  Playlist,
+  Series,
+  User,
+} from '@/types/api'
 import { TranslationKey } from '@/types/translations'
 
 /** Selection is unused on the bookshelf; stable identity so memo(MediaCard) can skip unchanged cards. */
@@ -73,13 +85,13 @@ export const ENTITY_CONFIGS: Record<EntityType, EntityConfig> = {
       const menuItems: { textKey: TranslationKey; action: string }[] = [
         {
           textKey: settings.showSubtitles ? 'LabelHideSubtitles' : 'LabelShowSubtitles',
-          action: settings.showSubtitles ? 'hide-subtitles' : 'show-subtitles'
-        }
+          action: settings.showSubtitles ? 'hide-subtitles' : 'show-subtitles',
+        },
       ]
       if (library.mediaType === 'book') {
         menuItems.push({
           textKey: settings.collapseSeries ? 'LabelExpandSeries' : 'LabelCollapseSeries',
-          action: settings.collapseSeries ? 'expand-series' : 'collapse-series'
+          action: settings.collapseSeries ? 'expand-series' : 'collapse-series',
         })
       }
       return menuItems
@@ -105,11 +117,25 @@ export const ENTITY_CONFIGS: Record<EntityType, EntityConfig> = {
     SkeletonComponent: ({ bookshelfView, showSubtitles, orderBy }) => (
       <MediaCardSkeleton bookshelfView={bookshelfView} showSubtitles={showSubtitles} orderBy={orderBy} />
     ),
-    CardComponent: ({ entity, bookshelfView, width, isPodcastLibrary, showSubtitles, orderBy, mediaItemProgressMap, shelfEntities, entityIndex }) => {
+    CardComponent: ({
+      entity,
+      bookshelfView,
+      width,
+      isPodcastLibrary,
+      showSubtitles,
+      orderBy,
+      mediaItemProgressMap,
+      shelfEntities,
+      entityIndex,
+    }) => {
       const { user, serverSettings, ereaderDevices } = useUser()
       const item = entity as LibraryItem
       const isCollapsedSeries = !!item.collapsedSeries
-      const entityProgress = isPodcastLibrary ? null : item.media?.id ? mediaItemProgressMap.get(item.media.id) : undefined
+      const entityProgress = isPodcastLibrary
+        ? null
+        : item.media?.id
+          ? mediaItemProgressMap.get(item.media.id)
+          : undefined
       const EntityMediaCard = isPodcastLibrary ? PodcastMediaCard : BookMediaCard
 
       if (isCollapsedSeries) {
@@ -151,7 +177,7 @@ export const ENTITY_CONFIGS: Record<EntityType, EntityConfig> = {
           />
         </div>
       )
-    }
+    },
   },
   series: {
     getToolbarExtras: (user) => (
@@ -163,7 +189,9 @@ export const ENTITY_CONFIGS: Record<EntityType, EntityConfig> = {
     getContextMenuItems: () => [],
     handleContextMenuAction: () => {},
     getEmptyMessageKey: (filterBy) => (filterBy === 'all' ? 'MessageBookshelfNoSeries' : 'MessageNoSeriesFound'),
-    SkeletonComponent: ({ bookshelfView, seriesSortBy }) => <SeriesCardSkeleton bookshelfView={bookshelfView} orderBy={seriesSortBy} />,
+    SkeletonComponent: ({ bookshelfView, seriesSortBy }) => (
+      <SeriesCardSkeleton bookshelfView={bookshelfView} orderBy={seriesSortBy} />
+    ),
     CardComponent: ({ entity, bookshelfView, width, libraryId, seriesSortBy, mediaItemProgressMap }) => {
       const { serverSettings } = useUser()
       const series = entity as Series
@@ -179,7 +207,7 @@ export const ENTITY_CONFIGS: Record<EntityType, EntityConfig> = {
           />
         </div>
       )
-    }
+    },
   },
   authors: {
     getToolbarExtras: (user, library) => (
@@ -209,13 +237,14 @@ export const ENTITY_CONFIGS: Record<EntityType, EntityConfig> = {
           <AuthorCard author={author} />
         </div>
       )
-    }
+    },
   },
   collections: {
     getToolbarExtras: () => null,
     getContextMenuItems: () => [],
     handleContextMenuAction: () => {},
-    getEmptyMessageKey: (filterBy) => (filterBy === 'all' ? 'MessageBookshelfNoCollections' : 'MessageNoCollectionsFound'),
+    getEmptyMessageKey: (filterBy) =>
+      filterBy === 'all' ? 'MessageBookshelfNoCollections' : 'MessageNoCollectionsFound',
     SkeletonComponent: ({ bookshelfView }) => <CollectionCardSkeleton bookshelfView={bookshelfView} />,
     CardComponent: ({ entity, bookshelfView, width }) => {
       const collection = entity as Collection
@@ -224,7 +253,7 @@ export const ENTITY_CONFIGS: Record<EntityType, EntityConfig> = {
           <CollectionCard collection={collection} bookshelfView={bookshelfView} />
         </div>
       )
-    }
+    },
   },
   playlists: {
     getToolbarExtras: () => null,
@@ -239,6 +268,6 @@ export const ENTITY_CONFIGS: Record<EntityType, EntityConfig> = {
           <PlaylistCard playlist={playlist} bookshelfView={bookshelfView} />
         </div>
       )
-    }
-  }
+    },
+  },
 }

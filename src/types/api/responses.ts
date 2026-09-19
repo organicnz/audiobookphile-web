@@ -15,7 +15,7 @@ import {
   RssFeed,
   RssPodcast,
   ServerSettings,
-  Task
+  Task,
 } from './models'
 
 export interface GetFilesystemPathsResponse {

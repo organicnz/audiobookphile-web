@@ -18,15 +18,15 @@ mock.module('posthog-js', () => ({
     },
     reset: () => {
       throw new Error('posthog should not be called when disabled')
-    }
+    },
   },
-  __esModule: true
+  __esModule: true,
 }))
 
 mock.module('posthog-js/react', () => ({
   usePostHog: () => null,
   PostHogProvider: ({ children }: { children: unknown }) => children,
-  __esModule: true
+  __esModule: true,
 }))
 
 describe('analytics with PostHog disabled', () => {

@@ -68,7 +68,7 @@ export function useApiCall<T, Args extends any[] = any[]>(
     error: null,
     isLoading: false,
     isError: false,
-    isSuccess: false
+    isSuccess: false,
   })
 
   // Track mounted state to prevent state updates after unmount
@@ -106,7 +106,7 @@ export function useApiCall<T, Args extends any[] = any[]>(
             error: null,
             isLoading: false,
             isError: false,
-            isSuccess: true
+            isSuccess: true,
           })
 
           onSuccess?.(result)
@@ -131,7 +131,7 @@ export function useApiCall<T, Args extends any[] = any[]>(
         error,
         isLoading: false,
         isError: true,
-        isSuccess: false
+        isSuccess: false,
       })
 
       // Report to Sentry
@@ -158,7 +158,7 @@ export function useApiCall<T, Args extends any[] = any[]>(
       error: null,
       isLoading: false,
       isError: false,
-      isSuccess: false
+      isSuccess: false,
     })
   }, [])
 
@@ -169,6 +169,6 @@ export function useApiCall<T, Args extends any[] = any[]>(
     error: state.error,
     isLoading: state.isLoading,
     isError: state.isError,
-    isSuccess: state.isSuccess
+    isSuccess: state.isSuccess,
   }
 }

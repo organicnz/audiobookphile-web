@@ -36,7 +36,12 @@ interface TrackWithAudioFile extends AudioTrack {
   audioFile?: AudioFile
 }
 
-export default function AudioTracksTable({ libraryItem, keepOpen = false, expanded: expandedProp = false, className }: AudioTracksTableProps) {
+export default function AudioTracksTable({
+  libraryItem,
+  keepOpen = false,
+  expanded: expandedProp = false,
+  className,
+}: AudioTracksTableProps) {
   const t = useTypeSafeTranslations()
   const { userCanUpdate, userCanDelete, userCanDownload, userIsAdminOrUp } = useUser()
   const [expanded, setExpanded] = useState(expandedProp)
@@ -74,7 +79,7 @@ export default function AudioTracksTable({ libraryItem, keepOpen = false, expand
 
     return tracks.map((track) => ({
       ...track,
-      audioFile: audioFiles.find((af) => af.metadata?.path === track.metadata?.path)
+      audioFile: audioFiles.find((af) => af.metadata?.path === track.metadata?.path),
     }))
   }, [libraryItem.media?.tracks, libraryItem.media?.audioFiles])
 
@@ -84,41 +89,45 @@ export default function AudioTracksTable({ libraryItem, keepOpen = false, expand
         label: '#',
         accessor: 'index' as const,
         headerClassName: 'text-center w-10 px-2 min-w-10',
-        cellClassName: 'text-center px-2 py-1 align-middle'
+        cellClassName: 'text-center px-2 py-1 align-middle',
       },
       {
         label: t('LabelFilename'),
-        accessor: (row: TrackWithAudioFile) => <span className="font-sans text-sm break-all">{showFullPath ? row.metadata.path : row.metadata.filename}</span>,
+        accessor: (row: TrackWithAudioFile) => (
+          <span className="font-sans text-sm break-all">
+            {showFullPath ? row.metadata.path : row.metadata.filename}
+          </span>
+        ),
         headerClassName: 'text-start px-2 min-w-[300px]',
-        cellClassName: 'text-start px-2 py-1 align-middle'
+        cellClassName: 'text-start px-2 py-1 align-middle',
       },
       {
         label: t('LabelCodec'),
         accessor: (row: TrackWithAudioFile) => row.audioFile?.codec || '',
         headerClassName: 'text-start w-20 px-2 min-w-20',
         cellClassName: 'text-start px-2 py-1 text-sm align-middle',
-        minTableWidth: CODEC_MIN_TABLE_WIDTH
+        minTableWidth: CODEC_MIN_TABLE_WIDTH,
       },
       {
         label: t('LabelBitrate'),
         accessor: (row: TrackWithAudioFile) => (row.audioFile?.bitRate ? bytesPretty(row.audioFile.bitRate, 0) : ''),
         headerClassName: 'text-start w-22 px-2 min-w-20',
         cellClassName: 'text-start px-2 py-1 text-sm align-middle',
-        minTableWidth: BITRATE_MIN_TABLE_WIDTH
+        minTableWidth: BITRATE_MIN_TABLE_WIDTH,
       },
       {
         label: t('LabelSize'),
         accessor: (row: TrackWithAudioFile) => bytesPretty(row.metadata.size),
         headerClassName: 'text-start w-22 px-2 min-w-20',
         cellClassName: 'text-start px-2 py-1 text-sm align-middle',
-        minTableWidth: SIZE_MIN_TABLE_WIDTH
+        minTableWidth: SIZE_MIN_TABLE_WIDTH,
       },
       {
         label: t('LabelDuration'),
         accessor: (row: TrackWithAudioFile) => secondsToTimestamp(row.duration),
         headerClassName: 'text-start w-22 px-2 min-w-20',
         cellClassName: 'text-start px-2 py-1 text-sm align-middle',
-        minTableWidth: DURATION_MIN_TABLE_WIDTH
+        minTableWidth: DURATION_MIN_TABLE_WIDTH,
       },
       {
         label: '',
@@ -153,8 +162,8 @@ export default function AudioTracksTable({ libraryItem, keepOpen = false, expand
           )
         },
         headerClassName: 'w-12 min-w-11',
-        cellClassName: 'text-center py-1 align-middle'
-      }
+        cellClassName: 'text-center py-1 align-middle',
+      },
     ],
     [t, showFullPath, userCanDownload, userCanDelete, userIsAdminOrUp, libraryItem.id, handleShowMore]
   )

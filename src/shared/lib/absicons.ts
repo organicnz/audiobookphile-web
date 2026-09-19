@@ -17,7 +17,7 @@ import {
   Rocket,
   Rss,
   Star,
-  Video
+  Video,
 } from 'lucide-react'
 
 /**
@@ -44,7 +44,7 @@ export const ABS_TO_LUCIDE_MAP = {
   power: Power,
   star: Star,
   heart: Heart,
-  rss: Rss
+  rss: Rss,
 } as const
 
 export const AVAILABLE_ICONS = Object.keys(ABS_TO_LUCIDE_MAP) as (keyof typeof ABS_TO_LUCIDE_MAP)[]

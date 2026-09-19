@@ -15,7 +15,13 @@ import type { MobileBookInput, MobileLibraryInput, MobileProgressInput } from '.
 import { mapBookForMobile, mapLibraryForMobile } from '../shared/utils/mobileMappers'
 import { isBookMedia, isPodcastMedia } from '../types/api/functions'
 import type { BookMedia, PodcastMedia } from '../types/api/models'
-import { AudioFileSchema, BookMetadataSchema, LibraryFileSchema, MobileBookSchema, MobileLibrarySchema } from '../types/schemas'
+import {
+  AudioFileSchema,
+  BookMetadataSchema,
+  LibraryFileSchema,
+  MobileBookSchema,
+  MobileLibrarySchema,
+} from '../types/schemas'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -29,9 +35,9 @@ function makeBookMedia(overrides?: Partial<BookMedia>): BookMedia {
       narrators: [],
       series: [],
       genres: [],
-      explicit: false
+      explicit: false,
     },
-    ...overrides
+    ...overrides,
   }
 }
 
@@ -40,7 +46,7 @@ function makePodcastMedia(overrides?: Partial<PodcastMedia>): PodcastMedia {
     mediaType: 'podcast',
     tags: [],
     metadata: { title: 'Test Podcast', genres: [], explicit: false },
-    ...overrides
+    ...overrides,
   }
 }
 
@@ -48,7 +54,11 @@ function makePodcastMedia(overrides?: Partial<PodcastMedia>): PodcastMedia {
 
 describe('discriminant invariant (Property 7)', () => {
   it('BookMedia always has mediaType === "book"', () => {
-    const samples: BookMedia[] = [makeBookMedia(), makeBookMedia({ duration: 3600 }), makeBookMedia({ coverPath: '/cover.jpg' })]
+    const samples: BookMedia[] = [
+      makeBookMedia(),
+      makeBookMedia({ duration: 3600 }),
+      makeBookMedia({ coverPath: '/cover.jpg' }),
+    ]
     for (const m of samples) expect(m.mediaType).toBe('book')
   })
 
@@ -94,7 +104,7 @@ describe('AudioFileSchema round-trip (Property 9)', () => {
       index: 0,
       ino: 'ino1',
       metadata: { filename: 'track1.mp3' },
-      mimeType: 'audio/mpeg'
+      mimeType: 'audio/mpeg',
     },
     {
       id: 'f2',
@@ -103,7 +113,7 @@ describe('AudioFileSchema round-trip (Property 9)', () => {
       metadata: {},
       mimeType: 'audio/mp4',
       addedAt: 1700000000,
-      updatedAt: 1700000001
+      updatedAt: 1700000001,
     },
     {
       id: 'f3',
@@ -111,8 +121,8 @@ describe('AudioFileSchema round-trip (Property 9)', () => {
       ino: 'ino3',
       metadata: { size: 1024, duration: 3600 },
       mimeType: 'audio/flac',
-      duration: 3600
-    }
+      duration: 3600,
+    },
   ]
 
   it('parses all valid AudioFile shapes successfully', () => {
@@ -146,13 +156,13 @@ describe('LibraryFileSchema round-trip (Property 10)', () => {
       id: 'lf1',
       fileType: 'audio',
       addedAt: 1700000000,
-      updatedAt: 1700000001
+      updatedAt: 1700000001,
     },
     {
       ino: 'ino3',
       metadata: { filename: 'book.mp3', size: 2048 },
-      isSupplementary: false
-    }
+      isSupplementary: false,
+    },
   ]
 
   it('parses all valid LibraryFile shapes successfully', () => {
@@ -186,7 +196,7 @@ describe('BookMetadataFlat parse round-trip (Property 6)', () => {
       genres: ['Science Fiction'],
       explicit: false,
       authorName: 'Isaac Asimov',
-      publishedYear: '1951'
+      publishedYear: '1951',
     },
     {
       title: '1984',
@@ -194,8 +204,8 @@ describe('BookMetadataFlat parse round-trip (Property 6)', () => {
       explicit: true,
       abridged: false,
       isbn: '978-0451524935',
-      language: 'en'
-    }
+      language: 'en',
+    },
   ]
 
   it('round-trips all valid metadata objects through BookMetadataSchema', () => {
@@ -221,7 +231,7 @@ describe('mapLibrary row mapping invariant (Property 1)', () => {
   const minimalRow = {
     id: 'lib1',
     name: 'My Library',
-    created_at: '2024-01-01T00:00:00Z'
+    created_at: '2024-01-01T00:00:00Z',
   } as any
   const fullRow = {
     id: 'lib2',
@@ -237,9 +247,9 @@ describe('mapLibrary row mapping invariant (Property 1)', () => {
         id: 'f1',
         library_id: 'lib2',
         path: '/books',
-        updated_at: '2024-01-01T00:00:00Z'
-      }
-    ]
+        updated_at: '2024-01-01T00:00:00Z',
+      },
+    ],
   } as any
 
   it('always returns id, name, mediaType, createdAt, updatedAt', () => {
@@ -282,7 +292,7 @@ describe('mapLibraryItem row mapping invariant (Property 2)', () => {
     last_scan: null,
     audio_files: [],
     book_authors: [],
-    book_series: []
+    book_series: [],
   } as any
 
   it('always returns all required LibraryItem fields with correct types', () => {
@@ -310,8 +320,8 @@ describe('mapLibrarySettings null-safety invariant (Property 3)', () => {
     {
       coverAspectRatio: 1,
       disableWatcher: false,
-      auto_scan_cron_expression: '0 * * * *'
-    }
+      auto_scan_cron_expression: '0 * * * *',
+    },
   ]
 
   it('always defines coverAspectRatio and disableWatcher regardless of input', () => {
@@ -341,10 +351,10 @@ describe('MobileLibraryInput → MobileLibraryModel (Property 4)', () => {
           id: 'f1',
           library_id: 'lib2',
           path: '/podcasts',
-          created_at: '2024-01-01T00:00:00Z'
-        }
-      ]
-    }
+          created_at: '2024-01-01T00:00:00Z',
+        },
+      ],
+    },
   ]
 
   it('output always parses through MobileLibrarySchema', () => {
@@ -372,8 +382,8 @@ describe('MobileBookInput → MobileBookModel (Property 5)', () => {
       explicit: false,
       duration: 3600,
       audio_files: [],
-      chapters: []
-    }
+      chapters: [],
+    },
   })
 
   const makeProgress = (): MobileProgressInput => ({
@@ -382,13 +392,13 @@ describe('MobileBookInput → MobileBookModel (Property 5)', () => {
     progress: 0.5,
     current_time_pos: 1800,
     is_finished: false,
-    last_update: '2024-06-01T00:00:00Z'
+    last_update: '2024-06-01T00:00:00Z',
   })
 
   const cases: Array<[MobileBookInput, MobileProgressInput | null]> = [
     [makeBook('Dune'), null],
     [makeBook('Foundation'), makeProgress()],
-    [makeBook('1984'), null]
+    [makeBook('1984'), null],
   ]
 
   it('output always parses through MobileBookSchema', () => {

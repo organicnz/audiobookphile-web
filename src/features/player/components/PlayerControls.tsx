@@ -20,13 +20,17 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
   const [isChaptersModalOpen, setIsChaptersModalOpen] = useState(false)
   const { jumpBackward, jumpForward, playPause, seek } = playerHandler.controls
-  const { nextChapter, previousChapter, currentChapter, playerState, currentTime, settings, chapters } = playerHandler.state
+  const { nextChapter, previousChapter, currentChapter, playerState, currentTime, settings, chapters } =
+    playerHandler.state
 
   const isPlaying = playerState === PlayerState.PLAYING
   const isLoading = playerState === PlayerState.LOADING
 
   const getJumpTooltipText = (prefix: string, jumpTime: number) => {
-    const timeText = jumpTime <= 60 ? t('LabelTimeDurationXSeconds', { 0: jumpTime }) : t('LabelTimeDurationXMinutes', { 0: jumpTime / 60 })
+    const timeText =
+      jumpTime <= 60
+        ? t('LabelTimeDurationXSeconds', { 0: jumpTime })
+        : t('LabelTimeDurationXMinutes', { 0: jumpTime / 60 })
     return `${prefix} - ${timeText}`
   }
 
@@ -188,7 +192,11 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
         onClose={() => setIsSettingsModalOpen(false)}
         onUpdateSettings={playerHandler.controls.updateSettings}
       />
-      <ChaptersModal isOpen={isChaptersModalOpen} playerHandler={playerHandler} onClose={() => setIsChaptersModalOpen(false)} />
+      <ChaptersModal
+        isOpen={isChaptersModalOpen}
+        playerHandler={playerHandler}
+        onClose={() => setIsChaptersModalOpen(false)}
+      />
     </>
   )
 }

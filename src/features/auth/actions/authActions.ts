@@ -40,7 +40,7 @@ function getSiteUrl(): string {
  */
 function createEmailLinkClient() {
   return createSupabaseJsClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    auth: { persistSession: false, autoRefreshToken: false }
+    auth: { persistSession: false, autoRefreshToken: false },
   })
 }
 
@@ -50,8 +50,8 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${siteUrl}/auth/callback?next=/library`
-    }
+      redirectTo: `${siteUrl}/auth/callback?next=/library`,
+    },
   })
 
   if (error) {
@@ -70,7 +70,7 @@ export async function signInWithGoogle() {
  */
 export async function signUp(_email: string, _password: string) {
   return {
-    error: 'Public registration is disabled. Please contact an administrator for an invitation.'
+    error: 'Public registration is disabled. Please contact an administrator for an invitation.',
   }
 }
 
@@ -78,7 +78,7 @@ export async function forgotPassword(email: string) {
   const siteUrl = getSiteUrl()
   const supabase = createEmailLinkClient()
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl}/auth/confirm?next=/reset-password`
+    redirectTo: `${siteUrl}/auth/confirm?next=/reset-password`,
   })
 
   if (error) {
@@ -91,12 +91,12 @@ export async function forgotPassword(email: string) {
 export async function resetPassword(password: string) {
   const supabase = await createClient()
   const {
-    data: { session }
+    data: { session },
   } = await supabase.auth.getSession()
 
   if (!session?.access_token) {
     return {
-      error: 'Your password reset session has expired or is invalid. Please request a new reset link.'
+      error: 'Your password reset session has expired or is invalid. Please request a new reset link.',
     }
   }
 
@@ -111,9 +111,9 @@ export async function resetPassword(password: string) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.access_token}`
+      Authorization: `Bearer ${session.access_token}`,
     },
-    body: JSON.stringify({ password, accessToken: session.access_token })
+    body: JSON.stringify({ password, accessToken: session.access_token }),
   })
 
   if (!res.ok) {
@@ -133,8 +133,8 @@ export async function signInWithMagicLink(email: string) {
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `${siteUrl}/auth/confirm?next=/library`
-      }
+        emailRedirectTo: `${siteUrl}/auth/confirm?next=/library`,
+      },
     })
 
     if (error) {
@@ -145,7 +145,7 @@ export async function signInWithMagicLink(email: string) {
   } catch (err) {
     console.error('[signInWithMagicLink] Error:', err)
     return {
-      error: 'Unable to connect. Please check your connection and try again.'
+      error: 'Unable to connect. Please check your connection and try again.',
     }
   }
 }
@@ -153,7 +153,7 @@ export async function signInWithMagicLink(email: string) {
 export async function inviteUserByEmail(email: string, username?: string, userType?: string) {
   const supabase = await createClient()
   const {
-    data: { session }
+    data: { session },
   } = await supabase.auth.getSession()
 
   if (!session?.access_token) {
@@ -165,9 +165,9 @@ export async function inviteUserByEmail(email: string, username?: string, userTy
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.access_token}`
+      Authorization: `Bearer ${session.access_token}`,
     },
-    body: JSON.stringify({ email, username, userType: userType || 'user' })
+    body: JSON.stringify({ email, username, userType: userType || 'user' }),
   })
 
   if (!res.ok) {
@@ -182,7 +182,7 @@ export async function inviteUserByEmail(email: string, username?: string, userTy
 export async function signOut() {
   const supabase = await createClient()
   const {
-    data: { session }
+    data: { session },
   } = await supabase.auth.getSession()
 
   if (session?.access_token) {
@@ -191,8 +191,8 @@ export async function signOut() {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${session.access_token}`,
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     }).catch(console.error)
   }
 

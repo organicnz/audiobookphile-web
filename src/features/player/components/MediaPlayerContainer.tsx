@@ -45,7 +45,8 @@ export default function MediaPlayerContainer() {
   if (!streamLibraryItem) return null
 
   const bookDuration = (streamLibraryItem.media as BookMedia).duration
-  const bookAuthors = 'authors' in streamLibraryItem.media.metadata ? streamLibraryItem.media.metadata.authors || [] : []
+  const bookAuthors =
+    'authors' in streamLibraryItem.media.metadata ? streamLibraryItem.media.metadata.authors || [] : []
   const displayTitle = playerHandler.state.displayTitle || streamLibraryItem.media.metadata.title
 
   return (
@@ -58,13 +59,21 @@ export default function MediaPlayerContainer() {
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         style={{
           willChange: 'transform, opacity',
-          background: dominantColor ? `linear-gradient(to top, var(--background) 40%, ${dominantColor}22 100%)` : undefined
+          background: dominantColor
+            ? `linear-gradient(to top, var(--background) 40%, ${dominantColor}22 100%)`
+            : undefined,
         }}
         className="glassmorphism border-primary/20 fixed right-0 bottom-0 left-0 z-50 h-48 w-full border-t px-2 pt-2 pb-1 shadow-[0_-8px_30px_rgb(0,0,0,0.3)] transition-colors duration-1000 lg:h-40 lg:px-4 lg:pb-4"
       >
         <div className="absolute top-4 left-4 flex gap-4 lg:left-6">
           <div className="overflow-hidden rounded-md shadow-lg ring-1 ring-white/10 transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-            <PreviewCover src={coverUrl || ''} bookCoverAspectRatio={coverAspectRatio} showResolution={false} width={72} priority={true} />
+            <PreviewCover
+              src={coverUrl || ''}
+              bookCoverAspectRatio={coverAspectRatio}
+              showResolution={false}
+              width={72}
+              priority={true}
+            />
           </div>
           <div className="flex max-w-[200px] flex-col gap-0.5 sm:max-w-[400px]">
             <Link
@@ -77,7 +86,10 @@ export default function MediaPlayerContainer() {
               <div className="text-foreground-muted truncate text-sm">
                 {bookAuthors.map((author, index) => (
                   <Fragment key={author.id}>
-                    <Link href={`/library/${streamLibraryItem.libraryId}/authors/${author.id}`} className="hover:text-foreground transition-colors">
+                    <Link
+                      href={`/library/${streamLibraryItem.libraryId}/authors/${author.id}`}
+                      className="hover:text-foreground transition-colors"
+                    >
                       {author.name}
                     </Link>
                     {index < bookAuthors.length - 1 && <span>, </span>}
@@ -94,7 +106,8 @@ export default function MediaPlayerContainer() {
             {/* Queue indicator */}
             {playerQueueItems.length > 1 && (
               <p className={mergeClasses('mt-1 text-[10px]', 'text-foreground-muted/50')}>
-                {playerQueueItems.findIndex((q) => q.libraryItemId === streamLibraryItem.id) + 1} / {playerQueueItems.length} in queue
+                {playerQueueItems.findIndex((q) => q.libraryItemId === streamLibraryItem.id) + 1} /{' '}
+                {playerQueueItems.length} in queue
               </p>
             )}
           </div>

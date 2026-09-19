@@ -27,7 +27,7 @@ import {
   PersonalizedShelf,
   PersonalizedShelfType,
   RssFeed,
-  Series
+  Series,
 } from '@/types/api'
 import { requestScanLibrary } from '../../settings/libraries/actions'
 import LibraryEmptyState from './LibraryEmptyState'
@@ -57,7 +57,10 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
    * @param updater - Called for each entity; must return the same reference if unchanged.
    */
   const updateShelfEntities = useCallback(
-    (shelfTypes: PersonalizedShelfType[], updater: (entity: LibraryItem | Series | Author) => LibraryItem | Series | Author) => {
+    (
+      shelfTypes: PersonalizedShelfType[],
+      updater: (entity: LibraryItem | Series | Author) => LibraryItem | Series | Author
+    ) => {
       setShelves((prev) => {
         let shelvesChanged = false
         const nextShelves = prev.map((shelf) => {
@@ -112,7 +115,8 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
     (rssFeed: RssFeed) => {
       if (library.mediaType !== 'book') return
 
-      const shelfTypes: PersonalizedShelfType[] = rssFeed.entityType === 'libraryItem' ? ['book'] : rssFeed.entityType === 'series' ? ['series'] : []
+      const shelfTypes: PersonalizedShelfType[] =
+        rssFeed.entityType === 'libraryItem' ? ['book'] : rssFeed.entityType === 'series' ? ['series'] : []
 
       updateShelfEntities(shelfTypes, (entity) => {
         if (entity.id !== rssFeed.entityId) return entity
@@ -126,7 +130,8 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
     (rssFeed: RssFeed) => {
       if (library.mediaType !== 'book') return
 
-      const shelfTypes: PersonalizedShelfType[] = rssFeed.entityType === 'libraryItem' ? ['book'] : rssFeed.entityType === 'series' ? ['series'] : []
+      const shelfTypes: PersonalizedShelfType[] =
+        rssFeed.entityType === 'libraryItem' ? ['book'] : rssFeed.entityType === 'series' ? ['series'] : []
 
       updateShelfEntities(shelfTypes, (entity) => {
         if (entity.id !== rssFeed.entityId) return entity
@@ -147,7 +152,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
     if (userIsAdminOrUp) {
       items.push({
         text: t('ButtonScanLibrary'),
-        action: 'scan'
+        action: 'scan',
       })
     }
 
@@ -208,7 +213,12 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
 
       {/* bookshelf rows */}
       {shelves.map((shelf) => {
-        const Wrapper = localViewMode === 'grid' ? BookShelfGrid : homeBookshelfView === BookshelfView.STANDARD ? BookShelfRow : ItemSlider
+        const Wrapper =
+          localViewMode === 'grid'
+            ? BookShelfGrid
+            : homeBookshelfView === BookshelfView.STANDARD
+              ? BookShelfRow
+              : ItemSlider
 
         return (
           <Wrapper key={shelf.id} title={shelf.label}>
@@ -216,7 +226,9 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
               if (shelf.type === 'book' || shelf.type === 'podcast') {
                 const EntityMediaCard = shelf.type === 'book' ? BookMediaCard : PodcastMediaCard
                 const libraryItem = entity as LibraryItem
-                const mediaProgress = libraryItem.userMediaProgress ?? (libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined)
+                const mediaProgress =
+                  libraryItem.userMediaProgress ??
+                  (libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined)
 
                 return (
                   <div key={entity.id + '-' + shelf.id} className="mx-2e shrink-0">

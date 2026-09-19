@@ -62,7 +62,7 @@ export default function Btn({
   ariaLabel,
   ariaDescription,
   ariaExpanded,
-  ariaControls
+  ariaControls,
 }: BtnProps) {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     if (onClick && !disabled && !loading) {

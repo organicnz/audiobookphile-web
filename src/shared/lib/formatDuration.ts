@@ -6,21 +6,21 @@ const COMPACT_KEYS: Record<Unit, TranslationKey> = {
   days: 'LabelDurationCompactDays',
   hours: 'LabelDurationCompactHours',
   minutes: 'LabelDurationCompactMinutes',
-  seconds: 'LabelDurationCompactSeconds'
+  seconds: 'LabelDurationCompactSeconds',
 }
 
 const LONG_KEYS: Record<Unit, TranslationKey> = {
   days: 'LabelDaysPlural',
   hours: 'LabelHoursPlural',
   minutes: 'LabelMinutesPlural',
-  seconds: 'LabelSecondsPlural'
+  seconds: 'LabelSecondsPlural',
 }
 
 type Style = 'compact' | 'long'
 
 const KEYS: Record<Style, Record<Unit, TranslationKey>> = {
   compact: COMPACT_KEYS,
-  long: LONG_KEYS
+  long: LONG_KEYS,
 }
 
 function appendSegment(parts: string[], count: number, unit: Unit, style: Style, t: TypeSafeTranslations) {
@@ -43,7 +43,7 @@ const DEFAULT_OPTIONS: FormatDurationOptions = {
   style: 'compact' as const,
   largestUnitOnly: false,
   showDays: false,
-  showSeconds: false
+  showSeconds: false,
 }
 
 /** Locale-aware duration formatter. */

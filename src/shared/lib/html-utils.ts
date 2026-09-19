@@ -6,7 +6,12 @@
 export const escapeHtml = (text: string): string => {
   if (typeof document === 'undefined') {
     // Fallback for server-side rendering or environments without document
-    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
   }
 
   const div = document.createElement('div')

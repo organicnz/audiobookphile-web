@@ -30,7 +30,7 @@ export function buildStatsSummary(progress: MediaProgressRow[]): StatsSummary {
   return {
     booksFinished,
     daysListened: daySet.size,
-    totalHours: Math.round(totalSeconds / 3600)
+    totalHours: Math.round(totalSeconds / 3600),
   }
 }
 
@@ -70,7 +70,10 @@ const CHART_PLOT_HEIGHT = CHART_HEIGHT - CHART_X_LABEL_BAND
  * Build minutes-per-day from sessions for the last 7 days.
  * Uses playback_sessions.session_date when available, otherwise last_update.
  */
-export function buildDaysListeningMap(progress: MediaProgressRow[], sessions: PlaybackSessionRow[]): Record<string, number> {
+export function buildDaysListeningMap(
+  progress: MediaProgressRow[],
+  sessions: PlaybackSessionRow[]
+): Record<string, number> {
   const map: Record<string, number> = {}
 
   // Use sessions if available (time_listening in seconds)
@@ -105,7 +108,7 @@ export function buildDailyChartModel(daysListening: Record<string, number>, now:
     series.push({
       dateKey,
       weekdayAbbr: format(d, 'EEE'),
-      minutes: daysListening[dateKey] ?? 0
+      minutes: daysListening[dateKey] ?? 0,
     })
   }
 
@@ -133,7 +136,7 @@ export function buildDailyChartModel(daysListening: Record<string, number>, now:
   const xStep = CHART_WIDTH / 7
   const pointCentersSvg = series.map((d, i) => ({
     x: CHART_MARGIN_LEFT + xStep * i + xStep / 2,
-    y: yMax > 0 ? CHART_PLOT_HEIGHT - (d.minutes / yMax) * CHART_PLOT_HEIGHT : CHART_PLOT_HEIGHT
+    y: yMax > 0 ? CHART_PLOT_HEIGHT - (d.minutes / yMax) * CHART_PLOT_HEIGHT : CHART_PLOT_HEIGHT,
   }))
 
   const polylinePointsSvg = pointCentersSvg.map((p) => `${p.x},${p.y}`).join(' ')
@@ -147,7 +150,7 @@ export function buildDailyChartModel(daysListening: Record<string, number>, now:
     lineSpacing,
     yTickValues,
     pointCentersSvg,
-    polylinePointsSvg
+    polylinePointsSvg,
   }
 }
 
@@ -199,7 +202,11 @@ function intensityForMinutes(minutes: number, p75: number): HeatmapIntensity {
   return 4
 }
 
-export function buildListeningHeatmapModel(daysListening: Record<string, number>, weeksToShow: number, now: Date = new Date()): ListeningHeatmapModel {
+export function buildListeningHeatmapModel(
+  daysListening: Record<string, number>,
+  weeksToShow: number,
+  now: Date = new Date()
+): ListeningHeatmapModel {
   const today = startOfDay(now)
   const todayDow = today.getDay() // 0=Sun
   // Start of grid: Sunday before (weeksToShow * 7) days ago
@@ -231,7 +238,7 @@ export function buildListeningHeatmapModel(daysListening: Record<string, number>
       value,
       intensity: intensityForMinutes(value, p75),
       col,
-      row
+      row,
     })
   }
 
@@ -245,7 +252,7 @@ export function buildListeningHeatmapModel(daysListening: Record<string, number>
       monthLabels.push({
         id: monthKey,
         label: format(new Date(cell.dateString + 'T00:00:00'), 'MMM'),
-        col: cell.col
+        col: cell.col,
       })
     }
   }
@@ -255,6 +262,6 @@ export function buildListeningHeatmapModel(daysListening: Record<string, number>
     monthLabels,
     daysListenedInTheLastYear,
     weeksToShow,
-    innerWidthPx: computeInnerWidthPx(weeksToShow)
+    innerWidthPx: computeInnerWidthPx(weeksToShow),
   }
 }

@@ -43,8 +43,8 @@ export async function apiFetch<T = unknown>(endpoint: string, options: RequestIn
         type: 'unauthorized',
         status: 401,
         statusText: 'Unauthorized',
-        message: 'No authentication token found'
-      }
+        message: 'No authentication token found',
+      },
     }
   }
 

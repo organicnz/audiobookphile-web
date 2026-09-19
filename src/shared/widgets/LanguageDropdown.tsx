@@ -12,5 +12,13 @@ export default function LanguageDropdown(props: LanguageDropdownProps) {
   const { value, onChange, label = 'Language', disabled } = props
   const languageOptions = getLanguageCodeOptions()
 
-  return <Dropdown value={value} items={languageOptions} label={label} disabled={disabled} onChange={(value: string | number) => onChange(value as string)} />
+  return (
+    <Dropdown
+      value={value}
+      items={languageOptions}
+      label={label}
+      disabled={disabled}
+      onChange={(value: string | number) => onChange(value as string)}
+    />
+  )
 }

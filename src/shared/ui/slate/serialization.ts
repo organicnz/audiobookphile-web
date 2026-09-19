@@ -148,7 +148,7 @@ export const deserialize = (el: DOMNode): Descendant[] | CustomText | null => {
           ...cleanChild,
           ...(isBold && { bold: true }),
           ...(isItalic && { italic: true }),
-          ...(isStrike && { strike: true })
+          ...(isStrike && { strike: true }),
         }
       }
       return child

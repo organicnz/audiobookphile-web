@@ -2,7 +2,10 @@
 
 import { useRouter } from 'next/navigation'
 import { type ReactNode, useCallback, useMemo, useState, useTransition } from 'react'
-import { createPlaylistFromCollectionAction, deleteCollectionAction } from '@/features/library/actions/collectionActions'
+import {
+  createPlaylistFromCollectionAction,
+  deleteCollectionAction,
+} from '@/features/library/actions/collectionActions'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
@@ -26,7 +29,12 @@ interface UseCollectionCardActionsProps {
   onCollectionDeleted?: () => void
 }
 
-export function useCollectionCardActions({ collection, rssFeed, onOpenRssFeedModal, onCollectionDeleted }: UseCollectionCardActionsProps) {
+export function useCollectionCardActions({
+  collection,
+  rssFeed,
+  onOpenRssFeedModal,
+  onCollectionDeleted,
+}: UseCollectionCardActionsProps) {
   const t = useTypeSafeTranslations()
   const { userCanUpdate, userCanDelete, userIsAdminOrUp } = useUser()
   const router = useRouter()
@@ -76,7 +84,7 @@ export function useCollectionCardActions({ collection, rssFeed, onOpenRssFeedMod
                 setProcessing(false)
               }
             })
-          }
+          },
         })
       }
     },
@@ -90,7 +98,7 @@ export function useCollectionCardActions({ collection, rssFeed, onOpenRssFeedMod
     if (userCanUpdate) {
       items.push({
         text: t('MessagePlaylistCreateFromCollection'),
-        func: 'createPlaylist'
+        func: 'createPlaylist',
       })
     }
 
@@ -98,7 +106,7 @@ export function useCollectionCardActions({ collection, rssFeed, onOpenRssFeedMod
     if (userIsAdminOrUp || rssFeed) {
       items.push({
         text: t('LabelOpenRSSFeed'),
-        func: 'openRssFeed'
+        func: 'openRssFeed',
       })
     }
 
@@ -106,7 +114,7 @@ export function useCollectionCardActions({ collection, rssFeed, onOpenRssFeedMod
     if (userCanDelete) {
       items.push({
         text: t('ButtonDelete'),
-        func: 'delete'
+        func: 'delete',
       })
     }
 
@@ -123,6 +131,6 @@ export function useCollectionCardActions({ collection, rssFeed, onOpenRssFeedMod
     confirmState,
     closeConfirm,
     handleMoreAction,
-    moreMenuItems
+    moreMenuItems,
   }
 }

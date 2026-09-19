@@ -83,7 +83,7 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
     () => [
       { text: t('LabelMinutes'), value: 'minutes' },
       { text: t('LabelHours'), value: 'hours' },
-      { text: t('LabelDays'), value: 'days' }
+      { text: t('LabelDays'), value: 'days' },
     ],
     [t]
   )
@@ -154,7 +154,7 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
         mediaItemType: 'book',
         mediaItemId,
         expiresAt: expireDurationSeconds ? Date.now() + expireDurationSeconds * 1000 : 0,
-        isDownloadable
+        isDownloadable,
       })
       setCurrentShare(share)
       onShareChange?.(share)
@@ -173,7 +173,13 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
   )
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} outerContent={outerContent} processing={processing} className="sm:max-w-[520px] md:max-w-[560px] lg:max-w-[560px]">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      outerContent={outerContent}
+      processing={processing}
+      className="sm:max-w-[520px] md:max-w-[560px] lg:max-w-[560px]"
+    >
       <div className="max-h-[80vh] overflow-x-hidden overflow-y-auto px-4 py-6 text-sm sm:px-6">
         <div className="absolute end-0 top-0 p-6">
           <Tooltip text={t('LabelClickForMoreInfo')} className="inline-flex">
@@ -196,7 +202,11 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
             </div>
             <div className="w-full space-y-1 px-1 py-2">
               {currentShare.isDownloadable && <p className="text-sm">{t('LabelDownloadable')}</p>}
-              {currentShare.expiresAt ? <p>{t('MessageShareExpiresIn', { 0: currentShareTimeRemaining })}</p> : <p>{t('LabelPermanent')}</p>}
+              {currentShare.expiresAt ? (
+                <p>{t('MessageShareExpiresIn', { 0: currentShareTimeRemaining })}</p>
+              ) : (
+                <p>{t('LabelPermanent')}</p>
+              )}
             </div>
           </>
         ) : (
@@ -219,14 +229,20 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
                     customInputClass="text-center"
                   />
                   <div className="w-28">
-                    <Dropdown value={shareDurationUnit} items={durationUnits} onChange={(value) => setShareDurationUnit(value as ShareDurationUnit)} />
+                    <Dropdown
+                      value={shareDurationUnit}
+                      items={durationUnits}
+                      onChange={(value) => setShareDurationUnit(value as ShareDurationUnit)}
+                    />
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="mb-4 flex w-full items-center gap-3 md:w-1/2">
-              <p className="px-1 py-1 text-sm font-medium tracking-wider text-white/40 uppercase">{t('LabelDownloadable')}</p>
+              <p className="px-1 py-1 text-sm font-medium tracking-wider text-white/40 uppercase">
+                {t('LabelDownloadable')}
+              </p>
               <ToggleSwitch size="medium" value={isDownloadable} onChange={setIsDownloadable} />
               <Tooltip text={t('LabelShareDownloadableHelp')} position="right" maxWidth={160} openOnClick addTabIndex>
                 <span className="hover:text-primary cursor-pointer text-white/20 transition-colors">
@@ -238,13 +254,13 @@ export default function ShareModal({ isOpen, onClose, mediaItemId, mediaItemShar
             <p className="text-foreground-muted px-1 py-1 text-sm">
               {t.rich('MessageShareURLWillBe', {
                 0: demoShareUrl,
-                strong: (chunks) => <strong>{chunks}</strong>
+                strong: (chunks) => <strong>{chunks}</strong>,
               })}
             </p>
             <p className="text-foreground-muted px-1 py-1 text-sm">
               {t.rich('MessageShareExpirationWillBe', {
                 0: expirationDateString,
-                strong: (chunks) => <strong>{chunks}</strong>
+                strong: (chunks) => <strong>{chunks}</strong>,
               })}
             </p>
           </>

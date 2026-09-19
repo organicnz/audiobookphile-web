@@ -27,11 +27,22 @@ export default function SettingsContent(props: {
 
   return (
     <div className="mx-auto w-full max-w-5xl p-4 md:p-10">
-      <IconBtn className="mb-4 border-white/10 bg-white/5 md:hidden" ariaLabel={t('ButtonMenu')} size="large" borderless onClick={toggle} icon={Menu} />
+      <IconBtn
+        className="mb-4 border-white/10 bg-white/5 md:hidden"
+        ariaLabel={t('ButtonMenu')}
+        size="large"
+        borderless
+        onClick={toggle}
+        icon={Menu}
+      />
       <div className="bg-primary/95 mb-8 rounded-2xl border border-white/10 p-4 shadow-2xl backdrop-blur-xl sm:p-8">
         <div className="mb-6 flex items-center gap-4">
           {props.backLink && (
-            <Link aria-label={t('ButtonBack')} href={props.backLink} className="hover:text-primary text-white/40 transition-colors">
+            <Link
+              aria-label={t('ButtonBack')}
+              href={props.backLink}
+              className="hover:text-primary text-white/40 transition-colors"
+            >
               <ArrowLeft size={22} strokeWidth={2.5} />
             </Link>
           )}
@@ -54,7 +65,9 @@ export default function SettingsContent(props: {
             </Btn>
           )}
         </div>
-        {props.description && <p className="mb-8 max-w-2xl text-[13px] leading-relaxed font-medium text-white/40">{props.description}</p>}
+        {props.description && (
+          <p className="mb-8 max-w-2xl text-[13px] leading-relaxed font-medium text-white/40">{props.description}</p>
+        )}
         <div className="relative z-10">{props.children}</div>
       </div>
     </div>

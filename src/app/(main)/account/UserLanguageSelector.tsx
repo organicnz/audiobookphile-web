@@ -21,9 +21,9 @@ export default function UserLanguageSelector({ value, label }: UserLanguageSelec
       const res = await fetch('/internal-api/set-language', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ language: newLanguage, scope: 'user' })
+        body: JSON.stringify({ language: newLanguage, scope: 'user' }),
       })
 
       if (!res.ok) {

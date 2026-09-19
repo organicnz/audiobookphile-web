@@ -15,7 +15,10 @@ export async function createApiKey(_payload: CreateApiKeyPayload): Promise<Creat
   return {} as CreateUpdateApiKeyResponse
 }
 
-export async function updateApiKey(_apiKeyId: string, _payload: CreateApiKeyPayload): Promise<CreateUpdateApiKeyResponse> {
+export async function updateApiKey(
+  _apiKeyId: string,
+  _payload: CreateApiKeyPayload
+): Promise<CreateUpdateApiKeyResponse> {
   console.warn('[api-keys/actions] updateApiKey is not available in the Supabase-backed version')
   return {} as CreateUpdateApiKeyResponse
 }

@@ -12,7 +12,11 @@ import { fetchBookCover } from '@/shared/lib/coverFetch'
  *
  * @returns The storage path if a cover was saved, null otherwise.
  */
-export async function autoFetchCoverAction(libraryItemId: string, title: string, author?: string): Promise<string | null> {
+export async function autoFetchCoverAction(
+  libraryItemId: string,
+  title: string,
+  author?: string
+): Promise<string | null> {
   try {
     const fetched = await fetchBookCover(title, author)
     if (!fetched) return null

@@ -20,11 +20,14 @@ export default async function BackupsPage() {
   return (
     <SettingsContent title={t('HeaderBackups')}>
       <div className="space-y-4 p-6">
-        <p className="text-foreground-muted text-sm">Database backups are managed by Supabase. You can download a backup or restore from your dashboard.</p>
+        <p className="text-foreground-muted text-sm">
+          Database backups are managed by Supabase. You can download a backup or restore from your dashboard.
+        </p>
         <div className="bg-bg-light border-border space-y-3 rounded-lg border p-4">
           <h3 className="text-foreground font-medium">Supabase Managed Backups</h3>
           <p className="text-foreground-muted text-sm">
-            Supabase automatically backs up your database daily on paid plans. Point-in-time recovery is available on Pro and above.
+            Supabase automatically backs up your database daily on paid plans. Point-in-time recovery is available on
+            Pro and above.
           </p>
           <a
             href={dashboardHref}
@@ -54,7 +57,8 @@ export default async function BackupsPage() {
               <h3 className="text-[11px] font-black tracking-widest text-white/40 uppercase">Self-Hosted</h3>
             </div>
             <p className="text-sm text-white/60">
-              You are running a self-hosted instance. Use standard Postgres dump tools (pg_dump) against your database URL.
+              You are running a self-hosted instance. Use standard Postgres dump tools (pg_dump) against your database
+              URL.
             </p>
           </div>
         )}

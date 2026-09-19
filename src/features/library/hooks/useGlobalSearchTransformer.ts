@@ -4,7 +4,18 @@ import { getLibraryItemCoverSrc, getPlaceholderCoverUrl } from '@/shared/lib/cov
 import { filterEncode } from '@/shared/lib/filterUtils'
 import { SearchLibraryResponse } from '@/types/api'
 
-export type SearchResultType = 'book' | 'podcast' | 'episode' | 'author' | 'series' | 'tag' | 'genre' | 'narrator' | 'collection' | 'playlist' | 'header'
+export type SearchResultType =
+  | 'book'
+  | 'podcast'
+  | 'episode'
+  | 'author'
+  | 'series'
+  | 'tag'
+  | 'genre'
+  | 'narrator'
+  | 'collection'
+  | 'playlist'
+  | 'header'
 
 export interface FlatResultItem {
   type: SearchResultType
@@ -35,7 +46,7 @@ export function useGlobalSearchTransformer({
   isSearching,
   isTyping,
   searchError,
-  selectedLibraryId
+  selectedLibraryId,
 }: UseGlobalSearchTransformerProps) {
   const t = useTypeSafeTranslations()
 
@@ -45,7 +56,12 @@ export function useGlobalSearchTransformer({
 
     const results: FlatResultItem[] = []
 
-    const addGroup = <T>(items: T[] | undefined, headerId: string, headerTitle: string, mapItem: (item: T) => FlatResultItem | null) => {
+    const addGroup = <T>(
+      items: T[] | undefined,
+      headerId: string,
+      headerTitle: string,
+      mapItem: (item: T) => FlatResultItem | null
+    ) => {
       if (items?.length) {
         results.push({ type: 'header', id: headerId, title: headerTitle })
         items.slice(0, 3).forEach((item) => {
@@ -76,7 +92,7 @@ export function useGlobalSearchTransformer({
         id: 'thinking',
         title: '',
         isPlaceholder: true,
-        placeholderText: t('MessageThinking')
+        placeholderText: t('MessageThinking'),
       })
     }
 
@@ -94,7 +110,7 @@ export function useGlobalSearchTransformer({
         id: 'no-results',
         title: '',
         isPlaceholder: true,
-        placeholderText: t('MessageNoResults')
+        placeholderText: t('MessageNoResults'),
       })
       return results
     }
@@ -110,7 +126,7 @@ export function useGlobalSearchTransformer({
       author: item.libraryItem.media?.metadata?.authorName,
       link: `/library/${item.libraryItem.libraryId}/item/${item.libraryItem.id}`,
       imageSrc: getLibraryItemCoverSrc(item.libraryItem, getPlaceholderCoverUrl()),
-      originalItem: item.libraryItem
+      originalItem: item.libraryItem,
     }))
 
     // Podcasts
@@ -121,7 +137,7 @@ export function useGlobalSearchTransformer({
       subtitle: item.libraryItem.media?.metadata?.author,
       link: `/library/${item.libraryItem.libraryId}/item/${item.libraryItem.id}`,
       imageSrc: getLibraryItemCoverSrc(item.libraryItem, getPlaceholderCoverUrl()),
-      originalItem: item.libraryItem
+      originalItem: item.libraryItem,
     }))
 
     // Episodes
@@ -136,7 +152,7 @@ export function useGlobalSearchTransformer({
         subtitle: libItem.media?.metadata?.title, // Podcast Title as subtitle
         link: `/library/${libItem.libraryId}/item/${libItem.id}`,
         imageSrc: getLibraryItemCoverSrc(libItem, getPlaceholderCoverUrl()),
-        originalItem: episode
+        originalItem: episode,
       }
     })
 
@@ -147,7 +163,7 @@ export function useGlobalSearchTransformer({
       title: author.name,
       subtitle: author.numBooks ? `${author.numBooks} books` : undefined,
       link: `/library/${author.libraryId}/authors/${author.id}`,
-      originalItem: author
+      originalItem: author,
     }))
 
     // Series
@@ -167,7 +183,7 @@ export function useGlobalSearchTransformer({
         subtitle: item.books?.length ? `${item.books.length} books` : undefined,
         link: `/library/${selectedLibraryId}/series/${item.series.id}`,
         imageSrc,
-        originalItem: { ...item.series, books: item.books }
+        originalItem: { ...item.series, books: item.books },
       }
     })
 
@@ -177,7 +193,7 @@ export function useGlobalSearchTransformer({
       id: `tag-${tag.name}`,
       title: tag.name,
       subtitle: `${tag.numItems} items`,
-      link: `/library/${selectedLibraryId}/items?filter=tags.${filterEncode(tag.name)}`
+      link: `/library/${selectedLibraryId}/items?filter=tags.${filterEncode(tag.name)}`,
     }))
 
     // Genres
@@ -186,7 +202,7 @@ export function useGlobalSearchTransformer({
       id: `genre-${genre.name}`,
       title: genre.name,
       subtitle: `${genre.numItems} items`,
-      link: `/library/${selectedLibraryId}/items?filter=genres.${filterEncode(genre.name)}`
+      link: `/library/${selectedLibraryId}/items?filter=genres.${filterEncode(genre.name)}`,
     }))
 
     // Narrators
@@ -195,7 +211,7 @@ export function useGlobalSearchTransformer({
       id: `narrator-${narrator.name}`,
       title: narrator.name,
       subtitle: `${narrator.numBooks} books`,
-      link: `/library/${selectedLibraryId}/items?filter=narrators.${filterEncode(narrator.name)}`
+      link: `/library/${selectedLibraryId}/items?filter=narrators.${filterEncode(narrator.name)}`,
     }))
 
     // Collections
@@ -205,7 +221,7 @@ export function useGlobalSearchTransformer({
       title: collection.name,
       subtitle: collection.books?.length ? `${collection.books.length} books` : undefined,
       link: `/library/${selectedLibraryId}/collection/${collection.id}`,
-      originalItem: collection
+      originalItem: collection,
     }))
 
     // Playlists
@@ -215,7 +231,7 @@ export function useGlobalSearchTransformer({
       title: playlist.name,
       subtitle: playlist.items?.length ? `${playlist.items.length} items` : undefined,
       link: `/library/${selectedLibraryId}/playlist/${playlist.id}`,
-      originalItem: playlist
+      originalItem: playlist,
     }))
 
     return results

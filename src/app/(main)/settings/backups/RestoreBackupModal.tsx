@@ -13,7 +13,14 @@ interface RestoreBackupModalProps {
   onConfirmRestore: () => void
 }
 
-export default function RestoreBackupModal({ isOpen, backup, dateFormat, timeFormat, onClose, onConfirmRestore }: RestoreBackupModalProps) {
+export default function RestoreBackupModal({
+  isOpen,
+  backup,
+  dateFormat,
+  timeFormat,
+  onClose,
+  onConfirmRestore,
+}: RestoreBackupModalProps) {
   const t = useTypeSafeTranslations()
 
   if (!backup) {
@@ -24,7 +31,9 @@ export default function RestoreBackupModal({ isOpen, backup, dateFormat, timeFor
     <Modal isOpen={isOpen} onClose={onClose} className="w-full max-w-[675px] md:max-w-[675px]">
       <div className="max-h-[90vh] overflow-y-auto px-4 py-6 sm:px-6">
         <p className="text-error text-lg font-semibold">{t('MessageImportantNotice')}</p>
-        <div className="text-foreground py-1 text-base">{t.rich('MessageRestoreBackupWarning', { br: () => <br /> })}</div>
+        <div className="text-foreground py-1 text-base">
+          {t.rich('MessageRestoreBackupWarning', { br: () => <br /> })}
+        </div>
         <p className="text-foreground my-8 text-center text-lg">
           {t('MessageRestoreBackupConfirm')} {formatJsDatetime(new Date(backup.createdAt), dateFormat, timeFormat)}?
         </p>

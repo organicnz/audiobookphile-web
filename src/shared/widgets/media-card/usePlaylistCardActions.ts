@@ -51,7 +51,7 @@ export function usePlaylistCardActions({ playlist }: UsePlaylistCardActionsProps
                 setProcessing(false)
               }
             })
-          }
+          },
         })
       }
     },
@@ -65,7 +65,7 @@ export function usePlaylistCardActions({ playlist }: UsePlaylistCardActionsProps
     if (userCanDelete || userCanUpdate) {
       items.push({
         text: t('ButtonDelete'),
-        func: 'delete'
+        func: 'delete',
       })
     }
 
@@ -82,6 +82,6 @@ export function usePlaylistCardActions({ playlist }: UsePlaylistCardActionsProps
     confirmState,
     closeConfirm,
     handleMoreAction,
-    moreMenuItems
+    moreMenuItems,
   }
 }

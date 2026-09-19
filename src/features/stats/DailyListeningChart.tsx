@@ -77,7 +77,11 @@ export default function DailyListeningChart({ daysListening }: DailyListeningCha
         {/* Y-axis labels */}
         <div className="flex w-8 shrink-0 flex-col pr-1">
           {yTickValues.map((tick) => (
-            <div key={tick} style={{ height: `${lineSpacing}px` }} className="text-foreground-muted flex items-center justify-end text-xs font-semibold">
+            <div
+              key={tick}
+              style={{ height: `${lineSpacing}px` }}
+              className="text-foreground-muted flex items-center justify-end text-xs font-semibold"
+            >
               {tick}
             </div>
           ))}
@@ -182,7 +186,7 @@ export default function DailyListeningChart({ daysListening }: DailyListeningCha
             style={{
               left: tooltipPos?.left ?? -9999,
               top: tooltipPos?.top ?? 0,
-              visibility: tooltipPos ? 'visible' : 'hidden'
+              visibility: tooltipPos ? 'visible' : 'hidden',
             }}
           >
             {tooltipText}

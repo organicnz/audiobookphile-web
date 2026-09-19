@@ -58,7 +58,12 @@ export default function BackupLocation({ backupLocation, backupPathEnvSet }: Bac
       {isEditing ? (
         <div>
           <div className="flex items-center gap-2">
-            <TextInput value={editedBackupLocation} disabled={backupPathEnvSet} className="text-sm" onChange={(value) => setEditedBackupLocation(value)} />
+            <TextInput
+              value={editedBackupLocation}
+              disabled={backupPathEnvSet}
+              className="text-sm"
+              onChange={(value) => setEditedBackupLocation(value)}
+            />
             {!backupPathEnvSet && (
               <Btn size="small" color="bg-success" onClick={handleSave}>
                 {t('ButtonSave')}
@@ -69,7 +74,9 @@ export default function BackupLocation({ backupLocation, backupPathEnvSet }: Bac
               {t('ButtonCancel')}
             </Btn>
           </div>
-          <p className="text-foreground-subdued text-sm">{backupPathEnvSet ? t('MessageBackupsLocationNoEditNote') : t('MessageBackupsLocationEditNote')}</p>
+          <p className="text-foreground-subdued text-sm">
+            {backupPathEnvSet ? t('MessageBackupsLocationNoEditNote') : t('MessageBackupsLocationEditNote')}
+          </p>
         </div>
       ) : (
         <div className="flex items-center gap-2">

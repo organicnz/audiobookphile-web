@@ -6,7 +6,7 @@ import {
   closeListeningSession as apiCloseListeningSession,
   deleteListeningSession as apiDeleteListeningSession,
   getListeningSessions as apiGetListeningSessions,
-  getOpenListeningSessions as apiGetOpenListeningSessions
+  getOpenListeningSessions as apiGetOpenListeningSessions,
 } from '@/shared/lib/api'
 import { GetListeningSessionsResponse, GetOpenListeningSessionsResponse } from '@/types/api'
 
@@ -18,7 +18,9 @@ export interface ListeningSessionsQueryParams {
   user?: string
 }
 
-export async function getListeningSessionsData(params: ListeningSessionsQueryParams): Promise<GetListeningSessionsResponse> {
+export async function getListeningSessionsData(
+  params: ListeningSessionsQueryParams
+): Promise<GetListeningSessionsResponse> {
   const queryParams = new URLSearchParams()
   queryParams.set('page', params.page.toString())
   queryParams.set('itemsPerPage', params.itemsPerPage.toString())

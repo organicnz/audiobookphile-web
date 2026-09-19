@@ -14,7 +14,11 @@ interface AddCustomMetadataProviderModalProps {
   onSubmit: (payload: CreateCustomMetadataProviderPayload) => Promise<void>
 }
 
-export default function AddCustomMetadataProviderModal({ isOpen, onClose, onSubmit }: AddCustomMetadataProviderModalProps) {
+export default function AddCustomMetadataProviderModal({
+  isOpen,
+  onClose,
+  onSubmit,
+}: AddCustomMetadataProviderModalProps) {
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
 
@@ -51,7 +55,7 @@ export default function AddCustomMetadataProviderModal({ isOpen, onClose, onSubm
         name: trimmedName,
         url: trimmedUrl,
         mediaType: 'book',
-        authHeaderValue: authHeaderValue.trim() || undefined
+        authHeaderValue: authHeaderValue.trim() || undefined,
       })
       showToast(t('ToastProviderCreatedSuccess'), { type: 'success' })
       handleClose()
@@ -70,7 +74,13 @@ export default function AddCustomMetadataProviderModal({ isOpen, onClose, onSubm
   )
 
   return (
-    <Modal isOpen={isOpen} processing={processing} onClose={handleClose} outerContent={outerContentTitle} className="w-[700px]">
+    <Modal
+      isOpen={isOpen}
+      processing={processing}
+      onClose={handleClose}
+      outerContent={outerContentTitle}
+      className="w-[700px]"
+    >
       <div className="flex max-h-[90vh] flex-col">
         <div className="overflow-y-auto px-4 py-6 sm:px-6">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6">

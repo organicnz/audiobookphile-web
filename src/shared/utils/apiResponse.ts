@@ -12,9 +12,9 @@ export function apiError(message: string, code: string, status: number = 400) {
   const payload: ApiErrorPayload = {
     error: {
       message,
-      code
+      code,
     },
-    success: false
+    success: false,
   }
   return NextResponse.json(payload, { status })
 }

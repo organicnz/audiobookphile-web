@@ -109,7 +109,7 @@ export function UserProvider({ children, initialUser }: { children: ReactNode; i
 
   useEffect(() => {
     const {
-      data: { subscription }
+      data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         // MainLayout will redirect
@@ -127,7 +127,7 @@ export function UserProvider({ children, initialUser }: { children: ReactNode; i
     if (initialUser.profile?.id) {
       identifyUser(initialUser.id, {
         username: initialUser.profile.username ?? undefined,
-        user_type: initialUser.profile.user_type ?? undefined
+        user_type: initialUser.profile.user_type ?? undefined,
       })
     }
   }, [initialUser])
@@ -154,7 +154,7 @@ export function UserProvider({ children, initialUser }: { children: ReactNode; i
       accessAllLibraries: true,
       accessAllTags: true,
       accessExplicitContent: true,
-      selectedTagsNotAccessible: false
+      selectedTagsNotAccessible: false,
     },
     mediaProgress: [],
     bookmarks: [],
@@ -166,7 +166,7 @@ export function UserProvider({ children, initialUser }: { children: ReactNode; i
     itemTagsAccessible: [],
     hasOpenIDLink: false,
     token: '',
-    createdAt: 0
+    createdAt: 0,
   }
 
   const contextValue: UserContextType = {
@@ -184,12 +184,12 @@ export function UserProvider({ children, initialUser }: { children: ReactNode; i
       version: 'supabase',
       buildNumber: '1',
       homeBookshelfView: 1,
-      bookshelfView: 1
+      bookshelfView: 1,
     },
     userDefaultLibraryId: profile.default_library_id ?? undefined,
     ereaderDevices: [],
     Source: 'supabase',
-    getMediaItemProgress: () => undefined
+    getMediaItemProgress: () => undefined,
   }
 
   return <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>

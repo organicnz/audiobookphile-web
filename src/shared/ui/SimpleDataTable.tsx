@@ -1,6 +1,11 @@
 'use client'
 
-import DataTable, { type DataTableColumn, type DataTablePaginationProps, type DataTableProps, type TailwindBreakpoint } from './DataTable'
+import DataTable, {
+  type DataTableColumn,
+  type DataTablePaginationProps,
+  type DataTableProps,
+  type TailwindBreakpoint,
+} from './DataTable'
 
 export type { DataTableColumn, DataTablePaginationProps, TailwindBreakpoint }
 

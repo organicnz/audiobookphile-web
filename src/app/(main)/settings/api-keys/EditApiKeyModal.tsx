@@ -22,7 +22,7 @@ const getInitialFormData = (apiKey: ApiKey | null): ApiKeyFormData => {
       name: apiKey.name,
       expiresIn: undefined,
       isActive: apiKey.isActive,
-      userId: apiKey.userId
+      userId: apiKey.userId,
     }
   }
 
@@ -30,7 +30,7 @@ const getInitialFormData = (apiKey: ApiKey | null): ApiKeyFormData => {
     name: '',
     expiresIn: undefined,
     isActive: true,
-    userId: ''
+    userId: '',
   }
 }
 
@@ -91,7 +91,7 @@ export default function EditApiKeyModal({ isOpen, apiKey, users, onClose, onSubm
     return users.map((user) => ({
       text: user.username,
       subtext: user.type,
-      value: user.id
+      value: user.id,
     }))
   }, [users])
 

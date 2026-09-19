@@ -83,7 +83,7 @@ const ButtonBase = ({
     ? {
         whileHover: whileHover ?? { scale: 1.03, y: -1 },
         whileTap: whileTap ?? { scale: 0.96 },
-        transition: transition ?? { type: 'spring', stiffness: 450, damping: 22 }
+        transition: transition ?? { type: 'spring', stiffness: 450, damping: 22 },
       }
     : {}
 

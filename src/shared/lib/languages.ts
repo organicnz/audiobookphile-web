@@ -26,14 +26,14 @@ export const languageCodeMap: Record<string, { label: string; dateFnsLocale: str
   uk: { label: 'Українська', dateFnsLocale: 'uk' },
   'vi-vn': { label: 'Tiếng Việt', dateFnsLocale: 'vi' },
   'zh-cn': { label: '简体中文 (Simplified Chinese)', dateFnsLocale: 'zhCN' },
-  'zh-tw': { label: '正體中文 (Traditional Chinese)', dateFnsLocale: 'zhTW' }
+  'zh-tw': { label: '正體中文 (Traditional Chinese)', dateFnsLocale: 'zhTW' },
 }
 
 export function getLanguageCodeOptions() {
   return Object.keys(languageCodeMap).map((code) => {
     return {
       text: languageCodeMap[code].label,
-      value: code
+      value: code,
     }
   })
 }

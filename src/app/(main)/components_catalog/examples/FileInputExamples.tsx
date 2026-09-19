@@ -9,25 +9,36 @@ export function FileInputExamples() {
 
   return (
     <ComponentExamples title="File Inputs">
-      <ComponentInfo component="FileInput" description="File input component with customizable accept types and responsive design">
+      <ComponentInfo
+        component="FileInput"
+        description="File input component with customizable accept types and responsive design"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import FileInput from &apos;@/shared/ui/FileInput&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import FileInput from &apos;@/shared/ui/FileInput&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>accept</Code> (file types to accept), <Code>onChange</Code> (callback with selected file),{' '}
-          <Code>children</Code> (ReactNode for button content), <Code>className</Code> (custom CSS classes)
+          <span className="font-bold">Props:</span> <Code>accept</Code> (file types to accept), <Code>onChange</Code>{' '}
+          (callback with selected file), <Code>children</Code> (ReactNode for button content), <Code>className</Code>{' '}
+          (custom CSS classes)
         </p>
       </ComponentInfo>
 
       <ExamplesBlock>
         <Example title="Default File Input">
-          <FileInput onChange={(file) => showToast(`Selected file: ${file.name}`, { type: 'success', title: 'File Selected' })}>Choose File</FileInput>
+          <FileInput
+            onChange={(file) => showToast(`Selected file: ${file.name}`, { type: 'success', title: 'File Selected' })}
+          >
+            Choose File
+          </FileInput>
         </Example>
 
         <Example title="Document File Input">
           <FileInput
             accept=".pdf, .doc, .docx, .txt"
-            onChange={(file) => showToast(`Selected document: ${file.name}`, { type: 'success', title: 'Document Selected' })}
+            onChange={(file) =>
+              showToast(`Selected document: ${file.name}`, { type: 'success', title: 'Document Selected' })
+            }
             ariaLabel="Upload Document"
           >
             Upload Document

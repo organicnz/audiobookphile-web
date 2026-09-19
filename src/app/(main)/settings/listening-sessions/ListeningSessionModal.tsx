@@ -20,7 +20,13 @@ interface ListeningSessionModalProps {
   onClosedSession: () => void
 }
 
-export default function ListeningSessionModal({ isOpen, session, onClose, onSessionDeleted, onClosedSession }: ListeningSessionModalProps) {
+export default function ListeningSessionModal({
+  isOpen,
+  session,
+  onClose,
+  onSessionDeleted,
+  onClosedSession,
+}: ListeningSessionModalProps) {
   const t = useTypeSafeTranslations()
   const { serverSettings } = useUser()
   const { showToast } = useGlobalToast()
@@ -117,44 +123,86 @@ export default function ListeningSessionModal({ isOpen, session, onClose, onSess
           <div className="bg-bg w-full overflow-x-hidden overflow-y-auto rounded-lg p-6" style={{ maxHeight: '80vh' }}>
             <div className="flex items-center">
               <p className="text-foreground text-base">{currentSession.displayTitle}</p>
-              {currentSession.displayAuthor && <p className="text-foreground-muted px-4 text-xs">{t('LabelByAuthor', { 0: currentSession.displayAuthor })}</p>}
+              {currentSession.displayAuthor && (
+                <p className="text-foreground-muted px-4 text-xs">
+                  {t('LabelByAuthor', { 0: currentSession.displayAuthor })}
+                </p>
+              )}
             </div>
 
             <div className="bg-border my-4 h-px w-full" />
 
             <div className="mb-4 flex flex-wrap">
               <div className="w-full md:w-2/3">
-                <p className="text-foreground-muted mb-2 text-xs font-semibold tracking-wide uppercase">{t('HeaderDetails')}</p>
+                <p className="text-foreground-muted mb-2 text-xs font-semibold tracking-wide uppercase">
+                  {t('HeaderDetails')}
+                </p>
 
-                <DetailsRow label={t('LabelStartedAt')} value={formatJsDatetime(new Date(currentSession.startedAt), dateFormat, timeFormat)} />
-                <DetailsRow label={t('LabelUpdatedAt')} value={formatJsDatetime(new Date(currentSession.updatedAt), dateFormat, timeFormat)} />
-                <DetailsRow label={t('LabelTimeListened')} value={formatDuration(currentSession.timeListening, t, { showSeconds: true })} />
+                <DetailsRow
+                  label={t('LabelStartedAt')}
+                  value={formatJsDatetime(new Date(currentSession.startedAt), dateFormat, timeFormat)}
+                />
+                <DetailsRow
+                  label={t('LabelUpdatedAt')}
+                  value={formatJsDatetime(new Date(currentSession.updatedAt), dateFormat, timeFormat)}
+                />
+                <DetailsRow
+                  label={t('LabelTimeListened')}
+                  value={formatDuration(currentSession.timeListening, t, { showSeconds: true })}
+                />
                 <DetailsRow label={t('LabelStartTime')} value={secondsToTimestamp(currentSession.startTime)} />
                 <DetailsRow label={t('LabelLastTime')} value={secondsToTimestamp(currentSession.currentTime)} />
 
-                <p className="text-foreground-muted mt-6 mb-2 text-xs font-semibold tracking-wide uppercase">{t('LabelItem')}</p>
-                {currentSession.libraryId && <DetailsRow label={`${t('LabelLibrary')} Id`} value={currentSession.libraryId} valueClassName="text-xs" />}
-                <DetailsRow label={`${t('LabelLibraryItem')} Id`} value={currentSession.libraryItemId} valueClassName="text-xs" />
-                {currentSession.episodeId && <DetailsRow label={`${t('LabelEpisode')} Id`} value={currentSession.episodeId} valueClassName="text-xs" />}
+                <p className="text-foreground-muted mt-6 mb-2 text-xs font-semibold tracking-wide uppercase">
+                  {t('LabelItem')}
+                </p>
+                {currentSession.libraryId && (
+                  <DetailsRow
+                    label={`${t('LabelLibrary')} Id`}
+                    value={currentSession.libraryId}
+                    valueClassName="text-xs"
+                  />
+                )}
+                <DetailsRow
+                  label={`${t('LabelLibraryItem')} Id`}
+                  value={currentSession.libraryItemId}
+                  valueClassName="text-xs"
+                />
+                {currentSession.episodeId && (
+                  <DetailsRow
+                    label={`${t('LabelEpisode')} Id`}
+                    value={currentSession.episodeId}
+                    valueClassName="text-xs"
+                  />
+                )}
                 <DetailsRow label={t('LabelMediaType')} value={currentSession.mediaType} />
-                <DetailsRow label={t('LabelDuration')} value={formatDuration(currentSession.duration, t, { showSeconds: true })} />
+                <DetailsRow
+                  label={t('LabelDuration')}
+                  value={formatDuration(currentSession.duration, t, { showSeconds: true })}
+                />
               </div>
 
               <div className="w-full md:w-1/3">
                 {!isMediaItemShareSession && (
                   <>
-                    <p className="text-foreground-muted mt-6 mb-2 text-xs font-semibold tracking-wide uppercase md:mt-0">{t('LabelUser')}</p>
+                    <p className="text-foreground-muted mt-6 mb-2 text-xs font-semibold tracking-wide uppercase md:mt-0">
+                      {t('LabelUser')}
+                    </p>
                     <p className="mb-1 text-xs">{currentSession.user?.username || currentSession.userId || ''}</p>
                   </>
                 )}
 
-                <p className="text-foreground-muted mt-6 mb-2 text-xs font-semibold tracking-wide uppercase">{t('LabelMediaPlayer')}</p>
+                <p className="text-foreground-muted mt-6 mb-2 text-xs font-semibold tracking-wide uppercase">
+                  {t('LabelMediaPlayer')}
+                </p>
                 <p className="mb-1">{playMethodName}</p>
                 <p className="mb-1">{currentSession.mediaPlayer}</p>
 
                 {deviceInfo && (
                   <>
-                    <p className="text-foreground-muted mt-6 mb-2 text-xs font-semibold tracking-wide uppercase">{t('LabelDevice')}</p>
+                    <p className="text-foreground-muted mt-6 mb-2 text-xs font-semibold tracking-wide uppercase">
+                      {t('LabelDevice')}
+                    </p>
                     {clientDisplayName && <p className="mb-1">{clientDisplayName}</p>}
                     {deviceInfo.ipAddress && <p className="mb-1">{deviceInfo.ipAddress}</p>}
                     {osDisplayName && <p className="mb-1">{osDisplayName}</p>}

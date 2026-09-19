@@ -11,7 +11,11 @@ export type DeleteNarratorApiResponse = {
   updated: number
 }
 
-export async function saveNarrator(libraryId: string, narratorId: string, newName: string): Promise<SaveNarratorApiResponse> {
+export async function saveNarrator(
+  libraryId: string,
+  narratorId: string,
+  newName: string
+): Promise<SaveNarratorApiResponse> {
   try {
     await apiUpdateNarrator(narratorId, { name: newName })
     revalidatePath(`/library/${libraryId}/narrators`)

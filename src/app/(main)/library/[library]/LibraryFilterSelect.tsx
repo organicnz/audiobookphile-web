@@ -40,7 +40,7 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
             finished: t('LabelFinished'),
             'in-progress': t('LabelInProgress'),
             'not-started': t('LabelNotStarted'),
-            'not-finished': t('LabelNotFinished')
+            'not-finished': t('LabelNotFinished'),
           }
           return progressLabels[decodedValue] || currentFilter
         } catch {
@@ -66,7 +66,7 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
             publisher: t('LabelPublisher'),
             series: t('LabelSeries'),
             subtitle: t('LabelSubtitle'),
-            tags: t('LabelTags')
+            tags: t('LabelTags'),
           }
           const label = missingLabels[decodedValue] || decodedValue
           return `${t('LabelMissing')}: ${label}`
@@ -82,7 +82,7 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           const trackLabels: Record<string, string> = {
             none: t('LabelTracksNone'),
             single: t('LabelTracksSingleTrack'),
-            multi: t('LabelTracksMultiTrack')
+            multi: t('LabelTracksMultiTrack'),
           }
           return trackLabels[decodedValue] || currentFilter
         } catch {
@@ -98,7 +98,7 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
             ebook: t('LabelHasEbook'),
             'no-supplementary': t('LabelMissingSupplementaryEbook'),
             supplementary: t('LabelHasSupplementaryEbook'),
-            'no-ebook': t('LabelMissingEbook')
+            'no-ebook': t('LabelMissingEbook'),
           }
           return ebookLabels[decodedValue] || currentFilter
         } catch {
@@ -151,7 +151,7 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
       issues: t('ButtonIssues'),
       'feed-open': t('LabelRSSFeedOpen'),
       explicit: t('LabelExplicit'),
-      'share-open': t('LabelShareOpen')
+      'share-open': t('LabelShareOpen'),
     }
     return simpleLabels[currentFilter] || currentFilter
   }, [currentFilter, t, filterData])
@@ -180,8 +180,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'genres',
           subitems: filterData.genres.map((genre) => ({
             text: genre,
-            value: `genres.${filterEncode(genre)}`
-          }))
+            value: `genres.${filterEncode(genre)}`,
+          })),
         })
       }
 
@@ -192,8 +192,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'tags',
           subitems: filterData.tags.map((tag) => ({
             text: tag,
-            value: `tags.${filterEncode(tag)}`
-          }))
+            value: `tags.${filterEncode(tag)}`,
+          })),
         })
       }
 
@@ -204,8 +204,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'authors',
           subitems: filterData.authors.map((author) => ({
             text: author.name,
-            value: `authors.${filterEncode(author.id)}`
-          }))
+            value: `authors.${filterEncode(author.id)}`,
+          })),
         })
       }
 
@@ -216,8 +216,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'narrators',
           subitems: filterData.narrators.map((narrator) => ({
             text: narrator,
-            value: `narrators.${filterEncode(narrator)}`
-          }))
+            value: `narrators.${filterEncode(narrator)}`,
+          })),
         })
       }
 
@@ -228,8 +228,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'publishers',
           subitems: filterData.publishers.map((publisher) => ({
             text: publisher,
-            value: `publishers.${filterEncode(publisher)}`
-          }))
+            value: `publishers.${filterEncode(publisher)}`,
+          })),
         })
       }
 
@@ -240,8 +240,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'languages',
           subitems: filterData.languages.map((language) => ({
             text: language,
-            value: `languages.${filterEncode(language)}`
-          }))
+            value: `languages.${filterEncode(language)}`,
+          })),
         })
       }
 
@@ -253,8 +253,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           { text: t('LabelFinished'), value: `progress.${filterEncode('finished')}` },
           { text: t('LabelInProgress'), value: `progress.${filterEncode('in-progress')}` },
           { text: t('LabelNotStarted'), value: `progress.${filterEncode('not-started')}` },
-          { text: t('LabelNotFinished'), value: `progress.${filterEncode('not-finished')}` }
-        ]
+          { text: t('LabelNotFinished'), value: `progress.${filterEncode('not-finished')}` },
+        ],
       })
 
       return items
@@ -268,8 +268,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
         value: 'genres',
         subitems: filterData.genres.map((genre) => ({
           text: genre,
-          value: `genres.${filterEncode(genre)}`
-        }))
+          value: `genres.${filterEncode(genre)}`,
+        })),
       })
     }
 
@@ -280,8 +280,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
         value: 'tags',
         subitems: filterData.tags.map((tag) => ({
           text: tag,
-          value: `tags.${filterEncode(tag)}`
-        }))
+          value: `tags.${filterEncode(tag)}`,
+        })),
       })
     }
 
@@ -291,8 +291,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
         { text: t('MessageNoSeries'), value: `series.${filterEncode('no-series')}` },
         ...(filterData?.series?.map((s) => ({
           text: s.name,
-          value: `series.${filterEncode(s.id)}`
-        })) || [])
+          value: `series.${filterEncode(s.id)}`,
+        })) || []),
       ]
       items.push({ text: t('LabelSeries'), value: 'series', subitems: seriesSubitems })
 
@@ -303,8 +303,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'authors',
           subitems: filterData.authors.map((author) => ({
             text: author.name,
-            value: `authors.${filterEncode(author.id)}`
-          }))
+            value: `authors.${filterEncode(author.id)}`,
+          })),
         })
       }
 
@@ -315,8 +315,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'narrators',
           subitems: filterData.narrators.map((narrator) => ({
             text: narrator,
-            value: `narrators.${filterEncode(narrator)}`
-          }))
+            value: `narrators.${filterEncode(narrator)}`,
+          })),
         })
       }
 
@@ -327,8 +327,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'publishers',
           subitems: filterData.publishers.map((publisher) => ({
             text: publisher,
-            value: `publishers.${filterEncode(publisher)}`
-          }))
+            value: `publishers.${filterEncode(publisher)}`,
+          })),
         })
       }
 
@@ -339,8 +339,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           value: 'publishedDecades',
           subitems: filterData.publishedDecades.map((decade) => ({
             text: `${decade}s`,
-            value: `publishedDecades.${filterEncode(decade)}`
-          }))
+            value: `publishedDecades.${filterEncode(decade)}`,
+          })),
         })
       }
     }
@@ -352,8 +352,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
         value: 'languages',
         subitems: filterData.languages.map((language) => ({
           text: language,
-          value: `languages.${filterEncode(language)}`
-        }))
+          value: `languages.${filterEncode(language)}`,
+        })),
       })
     }
 
@@ -366,8 +366,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           { text: t('LabelFinished'), value: `progress.${filterEncode('finished')}` },
           { text: t('LabelInProgress'), value: `progress.${filterEncode('in-progress')}` },
           { text: t('LabelNotStarted'), value: `progress.${filterEncode('not-started')}` },
-          { text: t('LabelNotFinished'), value: `progress.${filterEncode('not-finished')}` }
-        ]
+          { text: t('LabelNotFinished'), value: `progress.${filterEncode('not-finished')}` },
+        ],
       })
     }
 
@@ -390,8 +390,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           { text: t('LabelPublisher'), value: `missing.${filterEncode('publisher')}` },
           { text: t('LabelSeries'), value: `missing.${filterEncode('series')}` },
           { text: t('LabelSubtitle'), value: `missing.${filterEncode('subtitle')}` },
-          { text: t('LabelTags'), value: `missing.${filterEncode('tags')}` }
-        ]
+          { text: t('LabelTags'), value: `missing.${filterEncode('tags')}` },
+        ],
       })
 
       // Tracks submenu
@@ -401,8 +401,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
         subitems: [
           { text: t('LabelTracksNone'), value: `tracks.${filterEncode('none')}` },
           { text: t('LabelTracksSingleTrack'), value: `tracks.${filterEncode('single')}` },
-          { text: t('LabelTracksMultiTrack'), value: `tracks.${filterEncode('multi')}` }
-        ]
+          { text: t('LabelTracksMultiTrack'), value: `tracks.${filterEncode('multi')}` },
+        ],
       })
 
       // Ebooks submenu
@@ -413,8 +413,8 @@ export default function LibraryFilterSelect({ entityType = 'items', user }: Libr
           { text: t('LabelHasEbook'), value: `ebooks.${filterEncode('ebook')}` },
           { text: t('LabelMissingEbook'), value: `ebooks.${filterEncode('no-ebook')}` },
           { text: t('LabelHasSupplementaryEbook'), value: `ebooks.${filterEncode('supplementary')}` },
-          { text: t('LabelMissingSupplementaryEbook'), value: `ebooks.${filterEncode('no-supplementary')}` }
-        ]
+          { text: t('LabelMissingSupplementaryEbook'), value: `ebooks.${filterEncode('no-supplementary')}` },
+        ],
       })
 
       // Abridged (simple filter)

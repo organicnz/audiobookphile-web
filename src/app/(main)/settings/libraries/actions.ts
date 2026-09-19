@@ -2,7 +2,11 @@
 
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
-import { createLibrary as apiCreateLibrary, deleteLibrary as apiDeleteLibrary, updateLibrary as apiUpdateLibrary } from '@/shared/lib/api'
+import {
+  createLibrary as apiCreateLibrary,
+  deleteLibrary as apiDeleteLibrary,
+  updateLibrary as apiUpdateLibrary,
+} from '@/shared/lib/api'
 import { matchAll as apiMatchAll } from '@/shared/lib/api/items'
 import type { GetFilesystemPathsResponse, Library, SaveLibraryOrderApiResponse } from '@/types/api'
 
@@ -13,7 +17,7 @@ const LibraryPayloadSchema = z
     icon: z.string().optional(),
     mediaType: z.string().optional(),
     provider: z.string().optional(),
-    displayOrder: z.number().optional()
+    displayOrder: z.number().optional(),
   })
   .passthrough()
 
@@ -39,7 +43,9 @@ export async function editLibrary(libraryId: string, updatedLibrary: Library): P
   }
 }
 
-export async function saveLibraryOrder(reorderObjects: { id: string; newOrder: number }[]): Promise<SaveLibraryOrderApiResponse> {
+export async function saveLibraryOrder(
+  reorderObjects: { id: string; newOrder: number }[]
+): Promise<SaveLibraryOrderApiResponse> {
   try {
     for (const item of reorderObjects) {
       await apiUpdateLibrary(item.id, { displayOrder: item.newOrder } as any as Library)

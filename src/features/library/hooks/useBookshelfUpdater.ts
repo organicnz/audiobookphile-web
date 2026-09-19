@@ -1,9 +1,19 @@
 // Imported only from client modules — omitting "use client" avoids Next TS 71007 on hook option types (not suppressible via eslint-disable).
 
 import { type RefObject, useCallback, useLayoutEffect, useRef } from 'react'
-import { getVisibleBookshelfPageRange, type VisibleBookshelfPageRangeInput } from '@/features/library/hooks/useBookshelfVirtualizer'
+import {
+  getVisibleBookshelfPageRange,
+  type VisibleBookshelfPageRangeInput,
+} from '@/features/library/hooks/useBookshelfVirtualizer'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
-import { Author, AuthorRemovedPayload, BookshelfEntity, EntityType, LibraryItem, LibraryItemRemovedPayload } from '@/types/api'
+import {
+  Author,
+  AuthorRemovedPayload,
+  BookshelfEntity,
+  EntityType,
+  LibraryItem,
+  LibraryItemRemovedPayload,
+} from '@/types/api'
 
 /** Like refs from `useRef` with a writable `current` (avoids deprecated `MutableRefObject` in newer `@types/react`). */
 type RefBox<T> = { current: T }
@@ -37,7 +47,10 @@ type BookshelfUpdaterRuntime = {
   reconcilePagesAfterUpdate: (pageIndices: number[], changedIds?: Set<string>) => Promise<{ total: number } | null>
   containerRef: RefObject<HTMLDivElement | null>
   layoutForReconcileRef: RefBox<BookshelfReconcileLayout>
-  runScrollClampAfterReconcile: (reconcileResult: { total: number } | null, layoutWhenStarted: BookshelfReconcileLayout) => void
+  runScrollClampAfterReconcile: (
+    reconcileResult: { total: number } | null,
+    layoutWhenStarted: BookshelfReconcileLayout
+  ) => void
 }
 
 function reconcileThenClamp(rt: BookshelfUpdaterRuntime, pageIndices: number[], changedIds?: Set<string>) {
@@ -125,7 +138,7 @@ export function useBookshelfUpdater({
   containerHeight,
   reconcilePagesAfterUpdate,
   handleScroll,
-  isRandomSort
+  isRandomSort,
 }: UseBookshelfUpdaterParams): void {
   const layoutForReconcileRef = useRef<BookshelfReconcileLayout>({
     visibleShelfStart: 0,
@@ -135,7 +148,7 @@ export function useBookshelfUpdater({
     totalEntities: 0,
     items: [],
     shelfHeight: 0,
-    containerHeight: 0
+    containerHeight: 0,
   })
 
   // Layout before socket listeners (useEffect) so the ref is never stale on the first event tick.
@@ -148,7 +161,7 @@ export function useBookshelfUpdater({
       totalEntities: fetchedTotal,
       items,
       shelfHeight,
-      containerHeight
+      containerHeight,
     }
   }, [visibleShelfStart, visibleShelfEnd, columns, itemsPerPage, fetchedTotal, items, shelfHeight, containerHeight])
 
@@ -158,7 +171,10 @@ export function useBookshelfUpdater({
       const scrollEl = containerRef.current
       if (!scrollEl || layoutWhenStarted.columns <= 0 || layoutWhenStarted.shelfHeight <= 0) return
       const totalShelvesAfter = Math.ceil(reconcileResult.total / layoutWhenStarted.columns)
-      const maxScrollTop = Math.max(0, totalShelvesAfter * layoutWhenStarted.shelfHeight - layoutWhenStarted.containerHeight)
+      const maxScrollTop = Math.max(
+        0,
+        totalShelvesAfter * layoutWhenStarted.shelfHeight - layoutWhenStarted.containerHeight
+      )
       if (scrollEl.scrollTop > maxScrollTop) {
         scrollEl.scrollTop = maxScrollTop
         handleScroll(maxScrollTop)
@@ -176,7 +192,7 @@ export function useBookshelfUpdater({
     reconcilePagesAfterUpdate,
     containerRef,
     layoutForReconcileRef,
-    runScrollClampAfterReconcile
+    runScrollClampAfterReconcile,
   }
 
   const onLibraryItemUpdated = useCallback((libraryItem: LibraryItem) => {

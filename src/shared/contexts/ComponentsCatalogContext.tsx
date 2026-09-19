@@ -21,7 +21,7 @@ export function ComponentsCatalogProvider({ children, libraries }: ComponentsCat
 
   const value: ComponentsCatalogContextType = {
     user,
-    libraries
+    libraries,
   }
 
   return <ComponentsCatalogContext.Provider value={value}>{children}</ComponentsCatalogContext.Provider>

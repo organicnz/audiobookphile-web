@@ -37,7 +37,7 @@ export default function Tools({ libraryItem, className }: ToolsProps) {
       m4bHeader: `${baseId}-m4b-tool-header`,
       m4bDescription: `${baseId}-m4b-tool-description`,
       embedHeader: `${baseId}-embed-tool-header`,
-      embedDescription: `${baseId}-embed-tool-description`
+      embedDescription: `${baseId}-embed-tool-description`,
     }
   }, [baseId])
 

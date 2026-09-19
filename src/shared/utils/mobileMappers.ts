@@ -142,12 +142,17 @@ function _mapLibraryForMobile(lib: MobileLibraryInput): any {
       coverAspectRatio: lib.settings?.coverAspectRatio ?? lib.settings?.cover_aspect_ratio ?? 1,
       disable_watcher: lib.settings?.disableWatcher ?? lib.settings?.disable_watcher ?? false,
       disableWatcher: lib.settings?.disableWatcher ?? lib.settings?.disable_watcher ?? false,
-      skip_matching_media_with_asin: lib.settings?.skipMatchingMediaWithAsin ?? lib.settings?.skip_matching_media_with_asin ?? false,
-      skipMatchingMediaWithAsin: lib.settings?.skipMatchingMediaWithAsin ?? lib.settings?.skip_matching_media_with_asin ?? false,
-      skip_matching_media_with_isbn: lib.settings?.skipMatchingMediaWithIsbn ?? lib.settings?.skip_matching_media_with_isbn ?? false,
-      skipMatchingMediaWithIsbn: lib.settings?.skipMatchingMediaWithIsbn ?? lib.settings?.skip_matching_media_with_isbn ?? false,
-      auto_scan_cron_expression: lib.settings?.autoScanCronExpression ?? lib.settings?.auto_scan_cron_expression ?? null,
-      autoScanCronExpression: lib.settings?.autoScanCronExpression ?? lib.settings?.auto_scan_cron_expression ?? null
+      skip_matching_media_with_asin:
+        lib.settings?.skipMatchingMediaWithAsin ?? lib.settings?.skip_matching_media_with_asin ?? false,
+      skipMatchingMediaWithAsin:
+        lib.settings?.skipMatchingMediaWithAsin ?? lib.settings?.skip_matching_media_with_asin ?? false,
+      skip_matching_media_with_isbn:
+        lib.settings?.skipMatchingMediaWithIsbn ?? lib.settings?.skip_matching_media_with_isbn ?? false,
+      skipMatchingMediaWithIsbn:
+        lib.settings?.skipMatchingMediaWithIsbn ?? lib.settings?.skip_matching_media_with_isbn ?? false,
+      auto_scan_cron_expression:
+        lib.settings?.autoScanCronExpression ?? lib.settings?.auto_scan_cron_expression ?? null,
+      autoScanCronExpression: lib.settings?.autoScanCronExpression ?? lib.settings?.auto_scan_cron_expression ?? null,
     },
     folders:
       lib.library_folders?.map((f: any) => ({
@@ -157,12 +162,12 @@ function _mapLibraryForMobile(lib: MobileLibraryInput): any {
         library_id: f.library_id,
         libraryId: f.library_id,
         added_at: toMs(f.created_at || f.added_at),
-        addedAt: toMs(f.created_at || f.added_at)
+        addedAt: toMs(f.created_at || f.added_at),
       })) || [],
     created_at: toMs(lib.created_at),
     createdAt: toMs(lib.created_at),
     last_update: toMs(lib.updated_at ?? lib.last_update ?? lib.created_at),
-    lastUpdate: toMs(lib.updated_at ?? lib.last_update ?? lib.created_at)
+    lastUpdate: toMs(lib.updated_at ?? lib.last_update ?? lib.created_at),
   }
 }
 
@@ -186,7 +191,9 @@ export function mapBookForMobile(item: MobileBookInput, progressRecord: MobilePr
 function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgressInput | null): any {
   // 1. Authors & Title
   const authors =
-    item.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || item.books?.book_authors?.map((ba: any) => ba.authors).filter(Boolean) || []
+    item.book_authors?.map((ba: any) => ba.authors).filter(Boolean) ||
+    item.books?.book_authors?.map((ba: any) => ba.authors).filter(Boolean) ||
+    []
   const authorNames = authors.map((a: any) => a.name)
   const rawAuthorFallback = (item as any).author_names_first_last || (item as any).author || ''
 
@@ -253,8 +260,8 @@ function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgress
             ctime_ms: Number(meta.ctimeMs || meta.ctime_ms) || new Date().getTime(),
             ctimeMs: Number(meta.ctimeMs || meta.ctime_ms) || new Date().getTime(),
             birthtime_ms: Number(meta.birthtimeMs || meta.birthtime_ms) || new Date().getTime(),
-            birthtimeMs: Number(meta.birthtimeMs || meta.birthtime_ms) || new Date().getTime()
-          }
+            birthtimeMs: Number(meta.birthtimeMs || meta.birthtime_ms) || new Date().getTime(),
+          },
         }
       })
       .sort((a: any, b: any) => a.index - b.index) || []
@@ -267,7 +274,7 @@ function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgress
         id: ch.chapter_index !== undefined ? ch.chapter_index : ch.id,
         title: ch.title,
         start: Number(ch.start_time !== undefined ? ch.start_time : ch.start) || 0,
-        end: Number(ch.end_time !== undefined ? ch.end_time : ch.end) || 0
+        end: Number(ch.end_time !== undefined ? ch.end_time : ch.end) || 0,
       }))
       .sort((a: any, b: any) => a.id - b.id) || []
 
@@ -292,7 +299,7 @@ function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgress
         started_at: toMs(progressRecord.started_at ?? progressRecord.created_at ?? progressRecord.last_update),
         startedAt: toMs(progressRecord.started_at ?? progressRecord.created_at ?? progressRecord.last_update),
         finished_at: progressRecord.is_finished ? toMs(progressRecord.finished_at ?? progressRecord.last_update) : null,
-        finishedAt: progressRecord.is_finished ? toMs(progressRecord.finished_at ?? progressRecord.last_update) : null
+        finishedAt: progressRecord.is_finished ? toMs(progressRecord.finished_at ?? progressRecord.last_update) : null,
       }
     : null
 
@@ -332,7 +339,7 @@ function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgress
         is_supplementary: false,
         isSupplementary: false,
         file_type: 'audio',
-        fileType: 'audio'
+        fileType: 'audio',
       })),
       chapters: chapters,
       duration: Number(item.books?.duration || item.duration) || 0,
@@ -366,10 +373,10 @@ function _mapBookForMobile(item: MobileBookInput, progressRecord: MobileProgress
         asin: item.books?.asin || null,
         language: item.books?.language || null,
         explicit: item.books?.explicit || false,
-        abridged: item.books?.abridged || false
-      }
+        abridged: item.books?.abridged || false,
+      },
     },
     user_media_progress: userMediaProgress,
-    userMediaProgress: userMediaProgress
+    userMediaProgress: userMediaProgress,
   }
 }

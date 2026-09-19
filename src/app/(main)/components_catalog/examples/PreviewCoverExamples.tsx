@@ -45,7 +45,8 @@ export function PreviewCoverExamples({ selectedBook, selectedPodcast }: PreviewC
         description="A cover image preview component with aspect ratio handling, error states, and optional 'open in new tab' functionality."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import PreviewCover from &apos;@/features/metadata/components/PreviewCover&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import PreviewCover from &apos;@/features/metadata/components/PreviewCover&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>
@@ -57,7 +58,8 @@ export function PreviewCoverExamples({ selectedBook, selectedPodcast }: PreviewC
               <Code>width</Code>: Width in pixels (default: 120)
             </li>
             <li>
-              <Code>bookCoverAspectRatio</Code>: Optional override; defaults from <Code>LibraryProvider</Code> via <Code>useBookCoverAspectRatio</Code>
+              <Code>bookCoverAspectRatio</Code>: Optional override; defaults from <Code>LibraryProvider</Code> via{' '}
+              <Code>useBookCoverAspectRatio</Code>
             </li>
             <li>
               <Code>auto</Code>: Enable auto-sizing based on container constraints (default: false)
@@ -86,28 +88,43 @@ export function PreviewCoverExamples({ selectedBook, selectedPodcast }: PreviewC
 
         <Example title="Small square Cover">
           <div className="flex flex-col items-center gap-4">
-            <PreviewCover src={getLibraryItemCoverUrl(exampleItem!.id, exampleItem!.updatedAt)} width={80} bookCoverAspectRatio={1.0} />
+            <PreviewCover
+              src={getLibraryItemCoverUrl(exampleItem!.id, exampleItem!.updatedAt)}
+              width={80}
+              bookCoverAspectRatio={1.0}
+            />
             <p className="text-xs text-gray-400">80px width</p>
           </div>
         </Example>
 
         <Example title="Standard Square Cover">
           <div className="flex flex-col items-center gap-4">
-            <PreviewCover src={getLibraryItemCoverUrl(exampleItem!.id, exampleItem!.updatedAt)} bookCoverAspectRatio={1.0} />
+            <PreviewCover
+              src={getLibraryItemCoverUrl(exampleItem!.id, exampleItem!.updatedAt)}
+              bookCoverAspectRatio={1.0}
+            />
             <p className="text-xs text-gray-400">1:1 aspect ratio</p>
           </div>
         </Example>
 
         <Example title="Square Cover with non-square image">
           <div className="flex flex-col items-center gap-4">
-            <PreviewCover src={getLibraryItemCoverUrl(exampleItem!.id, exampleItem!.updatedAt)} width={120} bookCoverAspectRatio={1.0} />
+            <PreviewCover
+              src={getLibraryItemCoverUrl(exampleItem!.id, exampleItem!.updatedAt)}
+              width={120}
+              bookCoverAspectRatio={1.0}
+            />
             <p className="text-xs text-gray-400">1.6 aspect ratio </p>
           </div>
         </Example>
 
         <Example title="Square Cover without resolution">
           <div className="flex flex-col items-center gap-4">
-            <PreviewCover src={getLibraryItemCoverUrl(exampleItem!.id, exampleItem!.updatedAt)} bookCoverAspectRatio={1.0} showResolution={false} />
+            <PreviewCover
+              src={getLibraryItemCoverUrl(exampleItem!.id, exampleItem!.updatedAt)}
+              bookCoverAspectRatio={1.0}
+              showResolution={false}
+            />
             <p className="text-xs text-gray-400">1:1 aspect ratio, no resolution</p>
           </div>
         </Example>
@@ -143,7 +160,12 @@ export function PreviewCoverExamples({ selectedBook, selectedPodcast }: PreviewC
       </ExamplesBlock>
 
       {/* Cover Preview Modal */}
-      <CoverPreviewModal isOpen={isCoverModalOpen} selectedCover={modalCoverSrc} onClose={handleCancel} onApply={handleApply} />
+      <CoverPreviewModal
+        isOpen={isCoverModalOpen}
+        selectedCover={modalCoverSrc}
+        onClose={handleCancel}
+        onApply={handleApply}
+      />
     </ComponentExamples>
   )
 }

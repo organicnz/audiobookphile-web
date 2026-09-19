@@ -14,7 +14,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#f97316'
+  themeColor: '#f97316',
 }
 
 export const metadata: Metadata = {
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Audiobookphile'
+    title: 'Audiobookphile',
   },
   openGraph: {
     title: 'Audiobookphile',
     description: 'A self-hosted audiobook and podcast server',
-    type: 'website'
-  }
+    type: 'website',
+  },
 }
 
 import { PostHogProvider } from '@/shared/PostHogProvider'

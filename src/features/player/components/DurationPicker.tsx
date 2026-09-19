@@ -37,7 +37,7 @@ export default function DurationPicker({
   borderless = false,
   size = 'medium',
   className,
-  onChange
+  onChange,
 }: DurationPickerProps) {
   const t = useTypeSafeTranslations()
   const id = useId()
@@ -86,7 +86,8 @@ export default function DurationPicker({
   }, [hText, mText, sText])
 
   const sanitize = (text: string, maxLength: number) => text.replace(/\D/g, '').slice(0, maxLength)
-  const normalize = (input: string, maxValue: number, maxLength: number) => padZeros(clamp(parseInt(input || '0') || 0, 0, maxValue), maxLength)
+  const normalize = (input: string, maxValue: number, maxLength: number) =>
+    padZeros(clamp(parseInt(input || '0') || 0, 0, maxValue), maxLength)
 
   // change handlers (just keep digits; pad on blur)
   const handleHoursChange = (input: string) => setText((p) => ({ ...p, hText: sanitize(input, hoursW) }))
@@ -236,7 +237,11 @@ export default function DurationPicker({
   }
 
   const sizeText = size === 'small' ? 'text-sm' : size === 'large' ? 'text-lg' : 'text-base'
-  const sepClass = mergeClasses('select-none px-1', sizeText, disabled ? 'text-disabled' : readOnly ? 'text-read-only' : 'text-foreground-muted')
+  const sepClass = mergeClasses(
+    'select-none px-1',
+    sizeText,
+    disabled ? 'text-disabled' : readOnly ? 'text-read-only' : 'text-foreground-muted'
+  )
 
   const hoursId = `${id}-h`
   const minutesId = `${id}-m`
@@ -249,7 +254,10 @@ export default function DurationPicker({
     return formatDuration(fromHMS(h, m, s), t, { style: 'long' })
   }, [hText, mText, sText, hoursMax, t])
 
-  const wrapperClass = mergeClasses('flex items-center gap-0 h-full px-1', disabled ? 'cursor-not-allowed' : 'cursor-text')
+  const wrapperClass = mergeClasses(
+    'flex items-center gap-0 h-full px-1',
+    disabled ? 'cursor-not-allowed' : 'cursor-text'
+  )
   const inputClass = mergeClasses(
     sizeText,
     'bg-transparent outline-none text-center caret-current tabular-nums box-content',

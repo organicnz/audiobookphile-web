@@ -38,7 +38,7 @@ export default function MediaCardCover({
   userProgressPercent,
   itemIsFinished,
   onImageLoad,
-  isHovering = false
+  isHovering = false,
 }: MediaCardCoverProps) {
   const [imageReady, setImageReady] = useState(false)
   const [showCoverBg, setShowCoverBg] = useState(false)
@@ -116,7 +116,11 @@ export default function MediaCardCover({
   return (
     <>
       {/* Cover background when image does not fill */}
-      <div cy-id="coverBg" className="absolute start-0 top-0 h-full w-full overflow-hidden bg-black/40" style={{ display: showCoverBg ? 'block' : 'none' }}>
+      <div
+        cy-id="coverBg"
+        className="absolute start-0 top-0 h-full w-full overflow-hidden bg-black/40"
+        style={{ display: showCoverBg ? 'block' : 'none' }}
+      >
         {showCoverBg && (
           <motion.div
             animate={{ scale: isHovering ? 1.15 : 1.1, opacity: 0.3 }}
@@ -125,7 +129,7 @@ export default function MediaCardCover({
             style={{
               backgroundImage: `url("${bookCoverSrc}")`,
               backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              backgroundPosition: 'center',
             }}
           />
         )}
@@ -156,11 +160,11 @@ export default function MediaCardCover({
           onError={handleImageError}
           animate={{
             opacity: imageReady ? 1 : 0,
-            scale: isHovering ? 1.08 : 1
+            scale: isHovering ? 1.08 : 1,
           }}
           transition={{
             opacity: { duration: 0.4 },
-            scale: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+            scale: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
           }}
           className={mergeClasses(
             'absolute inset-0 h-full w-full transition-shadow duration-500',
@@ -211,7 +215,9 @@ export default function MediaCardCover({
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className={mergeClasses(
                 'h-full rounded-full transition-all duration-500',
-                itemIsFinished ? 'bg-success shadow-[0_0_10px_rgba(76,175,80,0.5)]' : 'bg-accent shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                itemIsFinished
+                  ? 'bg-success shadow-[0_0_10px_rgba(76,175,80,0.5)]'
+                  : 'bg-accent shadow-[0_0_10px_rgba(245,158,11,0.5)]'
               )}
             />
           </div>

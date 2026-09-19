@@ -24,7 +24,7 @@ export default function LibraryIcon({
   size = 5,
   className = '',
   ariaLabel,
-  decorative = true
+  decorative = true,
 }: LibraryIconProps) {
   const sizeClasses = size === 6 ? 'h-6 w-6 min-w-6' : 'h-5 w-5 min-w-5'
   const classList = mergeClasses('flex items-center justify-center', sizeClasses, fontSize, className)

@@ -74,7 +74,14 @@ export default function LibrariesList(props: LibrariesListProps) {
         disabled={isPending}
         onSortEnd={handleSortChange}
         renderItem={(item: Library) => {
-          return <LibrariesListRow item={item} key={item.id} handleDeleteLibrary={handleDeleteLibrary} handleEditLibrary={handleEditLibrary} />
+          return (
+            <LibrariesListRow
+              item={item}
+              key={item.id}
+              handleDeleteLibrary={handleDeleteLibrary}
+              handleEditLibrary={handleEditLibrary}
+            />
+          )
         }}
         dragHandle=".drag-handle"
       />

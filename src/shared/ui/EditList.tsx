@@ -22,7 +22,13 @@ interface EditListProps {
   libraryId?: string
 }
 
-export default function EditList({ items, onItemEditSaveClick, onItemDeleteClick, listType, libraryId }: EditListProps) {
+export default function EditList({
+  items,
+  onItemEditSaveClick,
+  onItemDeleteClick,
+  listType,
+  libraryId,
+}: EditListProps) {
   const t = useTypeSafeTranslations()
   const [editedItem, setEditedItem] = useState<EditListItem>({ id: '', name: '' })
   const [newName, setNewName] = useState('')
@@ -115,10 +121,18 @@ export default function EditList({ items, onItemEditSaveClick, onItemDeleteClick
   }
 
   const listTypeEditString: TranslationKey =
-    listType === 'Tag' ? 'MessageConfirmRenameTag' : listType === 'Genre' ? 'MessageConfirmRenameGenre' : 'MessageConfirmRenameNarrator'
+    listType === 'Tag'
+      ? 'MessageConfirmRenameTag'
+      : listType === 'Genre'
+        ? 'MessageConfirmRenameGenre'
+        : 'MessageConfirmRenameNarrator'
 
   const listTypeDeleteString: TranslationKey =
-    listType === 'Tag' ? 'MessageConfirmRemoveTag' : listType === 'Genre' ? 'MessageConfirmRemoveGenre' : 'MessageConfirmRemoveNarrator'
+    listType === 'Tag'
+      ? 'MessageConfirmRemoveTag'
+      : listType === 'Genre'
+        ? 'MessageConfirmRemoveGenre'
+        : 'MessageConfirmRemoveNarrator'
 
   const listTypeMergeString: TranslationKey =
     listType === 'Tag'
@@ -128,10 +142,18 @@ export default function EditList({ items, onItemEditSaveClick, onItemDeleteClick
         : 'MessageConfirmRenameNarratorMergeNote'
 
   const listTypeWarningString: TranslationKey =
-    listType === 'Tag' ? 'MessageConfirmRenameTagWarning' : listType === 'Genre' ? 'MessageConfirmRenameGenreWarning' : 'MessageConfirmRenameNarratorWarning'
+    listType === 'Tag'
+      ? 'MessageConfirmRenameTagWarning'
+      : listType === 'Genre'
+        ? 'MessageConfirmRenameGenreWarning'
+        : 'MessageConfirmRenameNarratorWarning'
 
   const listTypeEmptyString: TranslationKey =
-    listType === 'Tag' ? 'MessageListEmptyTag' : listType === 'Genre' ? 'MessageListEmptyGenre' : 'MessageListEmptyNarrator'
+    listType === 'Tag'
+      ? 'MessageListEmptyTag'
+      : listType === 'Genre'
+        ? 'MessageListEmptyGenre'
+        : 'MessageListEmptyNarrator'
 
   // Empty state message
   if (!items.length) {
@@ -176,7 +198,10 @@ export default function EditList({ items, onItemEditSaveClick, onItemDeleteClick
                   {showNumBooks && (
                     <td className="hidden w-1/6 md:table-cell">
                       <div className="flex justify-center">
-                        <a className="text-foreground text-sm hover:underline md:text-base" href={`/library/${libraryId}/items?filter=narrators.${item.id}`}>
+                        <a
+                          className="text-foreground text-sm hover:underline md:text-base"
+                          href={`/library/${libraryId}/items?filter=narrators.${item.id}`}
+                        >
                           {item.numBooks}
                         </a>
                       </div>
@@ -209,7 +234,13 @@ export default function EditList({ items, onItemEditSaveClick, onItemDeleteClick
               {item === editedItem && (
                 <tr key={item.id} className="group even:bg-primary/20 p-2">
                   <td className="p-0.5">
-                    <TextInput value={newName} onChange={setNewName} onKeyDown={handleInputKeyDown} ref={editInputRef} className="m-1 pe-5"></TextInput>
+                    <TextInput
+                      value={newName}
+                      onChange={setNewName}
+                      onKeyDown={handleInputKeyDown}
+                      ref={editInputRef}
+                      className="m-1 pe-5"
+                    ></TextInput>
                   </td>
                   {showNumBooks && (
                     <td className="hidden w-1/6 md:table-cell">
@@ -241,7 +272,12 @@ export default function EditList({ items, onItemEditSaveClick, onItemDeleteClick
           ))}
         </tbody>
       </table>
-      <Modal isOpen={isProcessingModalOpen} onClose={() => setIsProcessingModalOpen(false)} processing={isProcessing} className="w-[500px]">
+      <Modal
+        isOpen={isProcessingModalOpen}
+        onClose={() => setIsProcessingModalOpen(false)}
+        processing={isProcessing}
+        className="w-[500px]"
+      >
         <div className="flex h-full flex-col p-6">
           {isDeleting ? (
             <p className="text-foreground mb-6 flex-1">{t(listTypeDeleteString, { 0: delRef.current?.name || '' })}</p>
@@ -250,11 +286,19 @@ export default function EditList({ items, onItemEditSaveClick, onItemDeleteClick
               <p className="text-foreground mb-6 flex-1">{t(listTypeEditString, { 0: editedItem.name, 1: newName })}</p>
               {/* Show warning if the new value already exists or has a different casing*/}
               {hasSameName && <p className="mb-6 flex-1 text-yellow-500">{t(listTypeMergeString)}</p>}
-              {sameNameWithDifferentCase !== '' && <p className="mb-6 flex-1 text-yellow-500">{t(listTypeWarningString, { 0: sameNameWithDifferentCase })}</p>}
+              {sameNameWithDifferentCase !== '' && (
+                <p className="mb-6 flex-1 text-yellow-500">
+                  {t(listTypeWarningString, { 0: sameNameWithDifferentCase })}
+                </p>
+              )}
             </>
           )}
           <div className="flex justify-end gap-3">
-            <Btn onClick={isDeleting ? handleDeleteModalClick : handleSaveModalClick} color="bg-success" disabled={isProcessing}>
+            <Btn
+              onClick={isDeleting ? handleDeleteModalClick : handleSaveModalClick}
+              color="bg-success"
+              disabled={isProcessing}
+            >
               {t('ButtonYes')}
             </Btn>
             <Btn onClick={handleCancelEditClick} disabled={isProcessing}>

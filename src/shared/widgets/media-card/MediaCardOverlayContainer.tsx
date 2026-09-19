@@ -14,7 +14,13 @@ interface MediaCardOverlayContainerProps {
   cyId?: string
 }
 
-function MediaCardOverlayContainer({ children, isSelectionMode = false, selected = false, className, cyId = 'overlay' }: MediaCardOverlayContainerProps) {
+function MediaCardOverlayContainer({
+  children,
+  isSelectionMode = false,
+  selected = false,
+  className,
+  cyId = 'overlay',
+}: MediaCardOverlayContainerProps) {
   return (
     <div
       cy-id={cyId}

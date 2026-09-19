@@ -93,8 +93,9 @@ export default function ItemDetailsExamplesPage() {
         <div className="mb-8">
           <h1 className="mb-4 text-3xl font-bold">Item Details & Cover Examples</h1>
           <p className="mb-6 text-gray-300">
-            This page showcases the item details editing components and cover management components for library items. Use the search box below to find and
-            select books or podcasts to see the relevant components in action with real data.
+            This page showcases the item details editing components and cover management components for library items.
+            Use the search box below to find and select books or podcasts to see the relevant components in action with
+            real data.
           </p>
           <a href="/components_catalog" className="text-blue-400 transition-colors hover:text-blue-300">
             ← Back to Components Catalog
@@ -105,7 +106,9 @@ export default function ItemDetailsExamplesPage() {
         <section className="mb-12">
           <div className="bg-bg/50 border-primary/10 mb-6 rounded-lg border p-4">
             <h3 className="mb-4 text-lg font-semibold">Search Library Items</h3>
-            <p className="mb-4 text-sm text-gray-400">Use the search input to find items. Click on a result to select it for viewing below.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              Use the search input to find items. Click on a result to select it for viewing below.
+            </p>
             <div className="flex items-center gap-3">
               <Dropdown
                 items={libraries.map((lib) => ({ text: lib.name, value: lib.id }))}
@@ -116,12 +119,22 @@ export default function ItemDetailsExamplesPage() {
                 usePortal
               />
               <div className="flex-1">
-                <GlobalSearchInput onItemSelect={handleItemSelect} onClear={handleClear} libraryId={selectedLibraryId} usePortal />
+                <GlobalSearchInput
+                  onItemSelect={handleItemSelect}
+                  onClear={handleClear}
+                  libraryId={selectedLibraryId}
+                  usePortal
+                />
               </div>
             </div>
 
             {/* Show current selection */}
-            {(selectedBook || selectedPodcast || selectedCollection || selectedPlaylist || selectedSeries || selectedAuthor) && (
+            {(selectedBook ||
+              selectedPodcast ||
+              selectedCollection ||
+              selectedPlaylist ||
+              selectedSeries ||
+              selectedAuthor) && (
               <div className="mt-4 text-sm text-gray-400">
                 Selected:{' '}
                 <strong className="text-foreground">
@@ -138,7 +151,12 @@ export default function ItemDetailsExamplesPage() {
         </section>
 
         {/* Table of Contents - Only show when there's a selected item */}
-        {(selectedBook || selectedPodcast || selectedSeries || selectedCollection || selectedPlaylist || selectedAuthor) && (
+        {(selectedBook ||
+          selectedPodcast ||
+          selectedSeries ||
+          selectedCollection ||
+          selectedPlaylist ||
+          selectedAuthor) && (
           <section className="mb-12">
             <h2 className="mb-6 text-2xl font-semibold text-gray-400">Table of Contents</h2>
             <div className="rounded-lg bg-gray-800 p-6">
@@ -305,7 +323,12 @@ export default function ItemDetailsExamplesPage() {
           </div>
         )}
 
-        {(selectedBook || selectedPodcast || selectedSeries || selectedCollection || selectedPlaylist || selectedAuthor) && (
+        {(selectedBook ||
+          selectedPodcast ||
+          selectedSeries ||
+          selectedCollection ||
+          selectedPlaylist ||
+          selectedAuthor) && (
           <div id="media-card-examples">
             <MediaCardExamples
               selectedBook={selectedBook}

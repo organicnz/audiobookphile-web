@@ -13,7 +13,11 @@ export default async function ChangePasswordPage() {
   return (
     <div className="mx-auto w-full max-w-xl p-8">
       <div className="mb-6 flex items-center gap-4">
-        <Link aria-label={t('ButtonBack')} href="/account" className="group text-white/40 transition-colors hover:text-white">
+        <Link
+          aria-label={t('ButtonBack')}
+          href="/account"
+          className="group text-white/40 transition-colors hover:text-white"
+        >
           <div className="rounded-xl bg-white/5 p-2 transition-colors group-hover:bg-white/10">
             <ArrowLeft size={20} />
           </div>

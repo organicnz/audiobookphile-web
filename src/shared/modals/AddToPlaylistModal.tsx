@@ -4,7 +4,11 @@ import { HelpCircle, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { fetchPlaylistsAction } from '@/features/library/actions/libraryActions'
-import { batchAddToPlaylistAction, batchRemoveFromPlaylistAction, createPlaylistAction } from '@/features/library/actions/playlistActions'
+import {
+  batchAddToPlaylistAction,
+  batchRemoveFromPlaylistAction,
+  createPlaylistAction,
+} from '@/features/library/actions/playlistActions'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { ApiError } from '@/shared/lib/apiErrors'
@@ -36,7 +40,14 @@ function playlistHasItem(playlist: Playlist, libraryItemId: string, episodeId: s
   return items.some((i) => i.libraryItemId === libraryItemId && !i.episodeId)
 }
 
-export default function AddToPlaylistModal({ isOpen, onClose, libraryId, libraryItemId, episodeId = null, itemTitle }: AddToPlaylistModalProps) {
+export default function AddToPlaylistModal({
+  isOpen,
+  onClose,
+  libraryId,
+  libraryItemId,
+  episodeId = null,
+  itemTitle,
+}: AddToPlaylistModalProps) {
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
   const [loadingInitial, setLoadingInitial] = useState(true)
@@ -48,14 +59,17 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
   const coverWidth = 64
   const coverHeight = 64
 
-  const itemPayload = useMemo(() => [{ libraryItemId, episodeId: episodeId ?? null }] as const, [libraryItemId, episodeId])
+  const itemPayload = useMemo(
+    () => [{ libraryItemId, episodeId: episodeId ?? null }] as const,
+    [libraryItemId, episodeId]
+  )
 
   const sortedPlaylists = useMemo((): PlaylistRow[] => {
     return [...playlists]
       .map(
         (p): PlaylistRow => ({
           ...p,
-          isItemIncluded: playlistHasItem(p, libraryItemId, episodeId)
+          isItemIncluded: playlistHasItem(p, libraryItemId, episodeId),
         })
       )
       .sort((a, b) => {
@@ -142,7 +156,7 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
           const created = await createPlaylistAction({
             libraryId,
             name,
-            items: [...itemPayload]
+            items: [...itemPayload],
           })
           setPlaylists((prev) => {
             if (prev.some((p) => p.id === created.id)) {
@@ -194,7 +208,10 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
                   const included = playlist.isItemIncluded
                   const playlistItems = playlist.items ?? []
                   return (
-                    <div key={playlist.id} className="relative flex items-center justify-start px-4 py-2 transition-colors hover:bg-white/10">
+                    <div
+                      key={playlist.id}
+                      className="relative flex items-center justify-start px-4 py-2 transition-colors hover:bg-white/10"
+                    >
                       {included && <div className="bg-success absolute start-0 top-0 z-10 h-full w-1" aria-hidden />}
                       <div className="w-20 max-w-20 shrink-0 text-center">
                         <PlaylistGroupCover items={playlistItems} width={coverWidth} height={coverHeight} />
@@ -273,7 +290,13 @@ export default function AddToPlaylistModal({ isOpen, onClose, libraryId, library
                     className="w-full"
                   />
                 </div>
-                <Btn type="submit" color="bg-success" size="small" className="h-10 shrink-0" disabled={controlsDisabled || !newPlaylistName.trim()}>
+                <Btn
+                  type="submit"
+                  color="bg-success"
+                  size="small"
+                  className="h-10 shrink-0"
+                  disabled={controlsDisabled || !newPlaylistName.trim()}
+                >
                   {t('ButtonCreate')}
                 </Btn>
               </div>

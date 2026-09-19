@@ -10,7 +10,7 @@ export const LibrarySchema = z.object({
   lastScan: z.number().optional(),
   lastScanVersion: z.string().optional(),
   createdAt: z.number(),
-  updatedAt: z.number()
+  updatedAt: z.number(),
 })
 
 export const AuthorSchema = z.object({
@@ -22,7 +22,7 @@ export const AuthorSchema = z.object({
   libraryId: z.string().optional(),
   addedAt: z.number().optional(),
   updatedAt: z.number().optional(),
-  numBooks: z.number().optional()
+  numBooks: z.number().optional(),
 })
 
 export const SeriesSchema = z.object({
@@ -34,7 +34,7 @@ export const SeriesSchema = z.object({
   coverPath: z.string().optional(),
   libraryId: z.string().optional(),
   addedAt: z.number().optional(),
-  updatedAt: z.number().optional()
+  updatedAt: z.number().optional(),
 })
 
 export const CollectionSchema = z.object({
@@ -43,7 +43,7 @@ export const CollectionSchema = z.object({
   description: z.string().optional(),
   libraryId: z.string(),
   createdAt: z.number().optional(),
-  updatedAt: z.number().optional()
+  updatedAt: z.number().optional(),
 })
 
 export const PlaylistSchema = z.object({
@@ -53,7 +53,7 @@ export const PlaylistSchema = z.object({
   libraryId: z.string(),
   userId: z.string(),
   lastUpdate: z.number().optional(),
-  createdAt: z.number().optional()
+  createdAt: z.number().optional(),
 })
 
 export const MediaProgressSchema = z.object({
@@ -66,7 +66,7 @@ export const MediaProgressSchema = z.object({
   progress: z.number(),
   currentTime: z.number(),
   isFinished: z.boolean(),
-  lastUpdate: z.number()
+  lastUpdate: z.number(),
 })
 
 export const MediaMetadataSchema = z.looseObject({}).catchall(z.unknown())
@@ -94,5 +94,5 @@ export const LibraryItemSchema = z.object({
   media: MediaSchema,
   size: z.number().optional(),
   numFiles: z.number().optional(),
-  userMediaProgress: MediaProgressSchema.optional()
+  userMediaProgress: MediaProgressSchema.optional(),
 })

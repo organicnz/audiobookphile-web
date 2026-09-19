@@ -10,9 +10,15 @@ export const dynamic = 'force-dynamic'
 export default function AuthCodeErrorPage() {
   return (
     <div className="-mt-[var(--header-height)] flex min-h-full items-center justify-center">
-      <AuthCard title="Link not valid" subtitle="This link is invalid, has expired, or was opened in a different browser or device." icon="alert-triangle">
+      <AuthCard
+        title="Link not valid"
+        subtitle="This link is invalid, has expired, or was opened in a different browser or device."
+        icon="alert-triangle"
+      >
         <div className="mb-6 flex flex-col gap-3">
-          <p className="text-foreground-muted text-sm">Email links are single-use and expire quickly. Please request a new link:</p>
+          <p className="text-foreground-muted text-sm">
+            Email links are single-use and expire quickly. Please request a new link:
+          </p>
           <ul className="text-foreground-muted list-inside list-disc space-y-1 text-left text-sm">
             <li>
               <Link href="/forgot-password" className="text-accent hover:underline">

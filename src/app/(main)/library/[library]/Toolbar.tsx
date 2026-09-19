@@ -10,7 +10,8 @@ const BOOKSHELF_PAGE_PATTERNS = ['/items', '/series', '/collections', '/playlist
 
 export default function Toolbar() {
   const pathname = usePathname()
-  const { library, itemCount, detailToolbarTitle, contextMenuItems, onContextMenuAction, toolbarExtras, filterBy } = useLibrary()
+  const { library, itemCount, detailToolbarTitle, contextMenuItems, onContextMenuAction, toolbarExtras, filterBy } =
+    useLibrary()
   const t = useTypeSafeTranslations()
 
   // Check if we're on any bookshelf-like page
@@ -70,7 +71,14 @@ export default function Toolbar() {
         {showToolbarExtras && <div className="mr-2 flex items-center gap-4">{toolbarExtras}</div>}
 
         {showContextMenu && (
-          <ContextMenuDropdown items={contextMenuItems} borderless usePortal size="small" autoWidth onAction={(args) => handleAction(args.action)} />
+          <ContextMenuDropdown
+            items={contextMenuItems}
+            borderless
+            usePortal
+            size="small"
+            autoWidth
+            onAction={(args) => handleAction(args.action)}
+          />
         )}
       </div>
     </div>

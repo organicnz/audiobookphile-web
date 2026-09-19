@@ -1,4 +1,14 @@
-import { AudioFile, AudioTrack, BookMedia, Chapter, Library, LibraryItem, LibrarySettings, PodcastEpisode, PodcastMedia } from '@/types/api'
+import {
+  AudioFile,
+  AudioTrack,
+  BookMedia,
+  Chapter,
+  Library,
+  LibraryItem,
+  LibrarySettings,
+  PodcastEpisode,
+  PodcastMedia,
+} from '@/types/api'
 import type { Database } from '@/types/supabase'
 import { parseTitleAndAuthor } from './titleAuthorParser'
 
@@ -46,8 +56,8 @@ export function mapLibrary(row: LibraryRow): Library {
       id: f.id,
       libraryId: f.library_id ?? '',
       fullPath: f.path || '',
-      updatedAt: f.updated_at ? new Date(f.updated_at).getTime() : 0
-    }))
+      updatedAt: f.updated_at ? new Date(f.updated_at).getTime() : 0,
+    })),
   }
 }
 
@@ -76,7 +86,8 @@ export function mapLibraryItem(row: LibraryItemRow): LibraryItem {
     lastScan: row.last_scan ? new Date(row.last_scan).getTime() : undefined,
     scanVersion: row.scan_version ?? undefined,
     // Supabase returns a single object (not array) for FK joins via media_id → books.id (now merged)
-    media: row.media_type === 'podcast' && row.podcast_episodes?.length ? mapPodcast(row.podcast_episodes[0]) : mapBook(row)
+    media:
+      row.media_type === 'podcast' && row.podcast_episodes?.length ? mapPodcast(row.podcast_episodes[0]) : mapBook(row),
   }
 }
 
@@ -92,8 +103,8 @@ function createSkeletonBook(row: Pick<LibraryItemRow, 'id' | 'title'>): BookMedi
       series: [],
       genres: [],
       explicit: false,
-      abridged: false
-    }
+      abridged: false,
+    },
   }
 }
 
@@ -118,7 +129,7 @@ const ALL_AUDIO_EXTENSIONS = [
   '.mka',
   '.mkv',
   '.mp4',
-  '.m4v'
+  '.m4v',
 ]
 
 function resolveAudioMimeAndCodec(extRaw: string, currentMime?: string, currentCodec?: string) {
@@ -255,7 +266,7 @@ function mapBook(book: LibraryItemRow): BookMedia {
           size: Number(lf.size) || Number(metadata.size) || 0,
           duration: Number(lf.duration) || Number(metadata.duration) || 0,
           mimeType,
-          codec
+          codec,
         }
       })
     if (extracted.length > 0) {
@@ -286,7 +297,7 @@ function mapBook(book: LibraryItemRow): BookMedia {
           size: 0,
           mtimeMs: 0,
           ctimeMs: 0,
-          birthtimeMs: 0
+          birthtimeMs: 0,
         },
         index: (a.index as number) ?? i,
         startOffset: 0,
@@ -305,7 +316,7 @@ function mapBook(book: LibraryItemRow): BookMedia {
         ino: (a.ino as string) ?? '',
         addedAt: (a.addedAt as number) ?? 0,
         updatedAt: (a.updatedAt as number) ?? 0,
-        bitRate: (a.bitRate as number) ?? 0
+        bitRate: (a.bitRate as number) ?? 0,
       } as AudioTrack
     })
     .filter(Boolean)
@@ -348,9 +359,13 @@ function mapBook(book: LibraryItemRow): BookMedia {
       series: (book.book_series || []).map((bs) => ({
         id: bs.series?.id ?? '',
         name: bs.series?.name || 'Unknown Series',
-        sequence: bs.sequence ?? undefined
+        sequence: bs.sequence ?? undefined,
       })),
-      genres: Array.isArray(book.genres) ? (book.genres as string[]) : typeof book.genres === 'string' ? JSON.parse(book.genres) : [],
+      genres: Array.isArray(book.genres)
+        ? (book.genres as string[])
+        : typeof book.genres === 'string'
+          ? JSON.parse(book.genres)
+          : [],
       publishedYear: typeof book.published_year === 'number' ? book.published_year : undefined,
       publishedDate: book.published_date ?? undefined,
       publisher: book.publisher ?? undefined,
@@ -359,8 +374,8 @@ function mapBook(book: LibraryItemRow): BookMedia {
       asin: book.asin ?? undefined,
       language: book.language ?? undefined,
       explicit: !!book.explicit,
-      abridged: !!book.abridged
-    }
+      abridged: !!book.abridged,
+    },
   }
 }
 
@@ -373,9 +388,9 @@ function mapPodcast(podcast: PodcastEpisodesRow): PodcastMedia {
         author: 'Unknown',
         description: '',
         genres: [],
-        explicit: false
+        explicit: false,
       },
-      tags: []
+      tags: [],
     }
   }
 
@@ -398,7 +413,7 @@ function mapPodcast(podcast: PodcastEpisodesRow): PodcastMedia {
           pubDate: e.published_at ? new Date(e.published_at as string).toISOString() : undefined,
           publishedAt: e.published_at ? new Date(e.published_at as string).getTime() : 0,
           addedAt: e.created_at ? new Date(e.created_at as string).getTime() : 0,
-          updatedAt: e.updated_at ? new Date(e.updated_at as string).getTime() : 0
+          updatedAt: e.updated_at ? new Date(e.updated_at as string).getTime() : 0,
         }
       })
       .filter(Boolean) as PodcastEpisode[],
@@ -407,9 +422,9 @@ function mapPodcast(podcast: PodcastEpisodesRow): PodcastMedia {
       author: p.author as string | undefined,
       description: podcast.description ?? undefined,
       genres: (p.genres as string[]) || [],
-      explicit: !!(p.explicit as boolean | null)
+      explicit: !!(p.explicit as boolean | null),
     },
-    numEpisodes: p.num_episodes as number | undefined
+    numEpisodes: p.num_episodes as number | undefined,
   }
 }
 
@@ -420,7 +435,7 @@ export function mapLibrarySettings(settings: LibrarySettingsJson): LibrarySettin
   if (!settings) {
     return {
       coverAspectRatio: 1,
-      disableWatcher: false
+      disableWatcher: false,
     } as LibrarySettings
   }
 
@@ -439,6 +454,6 @@ export function mapLibrarySettings(settings: LibrarySettingsJson): LibrarySettin
     metadataPrecedence: s.metadata_precedence as string[] | undefined,
     markAsFinishedTimeRemaining: s.mark_as_finished_time_remaining as number | undefined,
     markAsFinishedPercentComplete: s.mark_as_finished_percent_complete as number | undefined,
-    podcastSearchRegion: s.podcast_search_region as string | undefined
+    podcastSearchRegion: s.podcast_search_region as string | undefined,
   }
 }

@@ -15,14 +15,14 @@ export const isLinkActive = (editor: Editor) => {
   if (!selection) return false
   const [match] = Editor.nodes(editor, {
     at: Editor.unhangRange(editor, selection),
-    match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link'
+    match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
   })
   return !!match
 }
 
 export const unwrapLink = (editor: Editor) => {
   Transforms.unwrapNodes(editor, {
-    match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link'
+    match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
   })
 }
 
@@ -34,7 +34,7 @@ export const getSelectedText = (editor: Editor): string => {
     // If cursor is collapsed, check if we're inside a link
     const [match] = Editor.nodes(editor, {
       at: selection,
-      match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link'
+      match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
     })
 
     if (match) {
@@ -56,7 +56,7 @@ export const getLinkUrl = (editor: Editor): string => {
 
   const [match] = Editor.nodes(editor, {
     at: selection,
-    match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link'
+    match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
   })
 
   if (match) {
@@ -72,7 +72,7 @@ export const getActiveLinkEntry = (editor: Editor): NodeEntry<Element> | undefin
   if (!selection || !Range.isCollapsed(selection)) return
   const entry = Editor.above(editor, {
     at: selection,
-    match: (n) => Element.isElement(n) && n.type === 'link'
+    match: (n) => Element.isElement(n) && n.type === 'link',
   }) as NodeEntry<Element> | undefined
   return entry
 }
@@ -94,7 +94,7 @@ export const upsertLink = (editor: Editor, text: string, url: string) => {
   const overlappingLinks = Array.from(
     Editor.nodes(editor, {
       at: selection,
-      match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link'
+      match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
     })
   )
 
@@ -108,7 +108,7 @@ export const upsertLink = (editor: Editor, text: string, url: string) => {
         Transforms.unwrapNodes(editor, {
           at: selection,
           match: (n) => !Editor.isEditor(n) && Element.isElement(n) && n.type === 'link',
-          split: true
+          split: true,
         })
       }
 
@@ -124,7 +124,7 @@ export const upsertLink = (editor: Editor, text: string, url: string) => {
       Editor.withoutNormalizing(editor, () => {
         Transforms.removeNodes(editor, { at: linkPath })
         Transforms.insertNodes(editor, { type: 'link', url, children: [{ text: content }] } as Element, {
-          at: linkPath
+          at: linkPath,
         })
       })
     } else {
@@ -136,7 +136,7 @@ export const upsertLink = (editor: Editor, text: string, url: string) => {
   // Position cursor after the new link
   const inserted = Editor.above(editor, {
     at: editor.selection!,
-    match: (n) => Element.isElement(n) && n.type === 'link'
+    match: (n) => Element.isElement(n) && n.type === 'link',
   }) as NodeEntry<Element> | undefined
 
   if (inserted) {
@@ -157,7 +157,7 @@ export const LinkButton = memo(
     onOpenModal,
     buttonId,
     tabIndex,
-    onFocus
+    onFocus,
   }: LinkButtonProps & {
     buttonId: string
     tabIndex: number
@@ -184,7 +184,10 @@ export const LinkButton = memo(
       [onOpenModal]
     )
 
-    const buttonClass = useMemo(() => mergeClasses(buttonClassBase, isActive ? 'bg-gray-300 text-black' : ''), [isActive])
+    const buttonClass = useMemo(
+      () => mergeClasses(buttonClassBase, isActive ? 'bg-gray-300 text-black' : ''),
+      [isActive]
+    )
 
     return (
       <IconBtn

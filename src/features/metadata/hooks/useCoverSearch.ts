@@ -174,7 +174,7 @@ export function useCoverSearch(onError: (message: string) => void): UseCoverSear
         title: params.title,
         author: params.author,
         provider: params.provider,
-        podcast: params.podcast
+        podcast: params.podcast,
       })
     },
     [isConnected, searchInProgress, currentSearchRequestId, cancelSearch, generateRequestId, emit, onError]
@@ -194,6 +194,6 @@ export function useCoverSearch(onError: (message: string) => void): UseCoverSear
     hasSearched,
     searchCovers,
     cancelSearch,
-    resetSearch
+    resetSearch,
   }
 }

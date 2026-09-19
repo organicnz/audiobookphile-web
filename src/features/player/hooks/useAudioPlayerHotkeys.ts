@@ -6,7 +6,12 @@ import { VOLUME_HOTKEY_STEP } from '@/features/player/lib/constants'
  * Registers keyboard hotkeys for the audio player.
  * Automatically disables when nothing is streaming or when an input element is focused.
  */
-export function useAudioPlayerHotkeys(state: PlayerHandlerState, controls: PlayerHandlerControls, enabled: boolean, onClose: () => void) {
+export function useAudioPlayerHotkeys(
+  state: PlayerHandlerState,
+  controls: PlayerHandlerControls,
+  enabled: boolean,
+  onClose: () => void
+) {
   useEffect(() => {
     if (!enabled) return
 

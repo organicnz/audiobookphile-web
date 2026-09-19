@@ -46,13 +46,13 @@ export default function BookAIModal({ isOpen, onClose, bookId, bookTitle, bookAu
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            ...(anonKey ? { apikey: anonKey, Authorization: `Bearer ${anonKey}` } : {})
+            ...(anonKey ? { apikey: anonKey, Authorization: `Bearer ${anonKey}` } : {}),
           },
           body: JSON.stringify({
             bookId,
             title: bookTitle,
-            author: bookAuthor || null
-          })
+            author: bookAuthor || null,
+          }),
         })
 
         if (!response.ok) {
@@ -147,7 +147,9 @@ export default function BookAIModal({ isOpen, onClose, bookId, bookTitle, bookAu
             {/* Key Takeaways */}
             {insights.keyTakeaways && insights.keyTakeaways.length > 0 && (
               <div className="space-y-3 rounded-xl border border-purple-500/20 bg-neutral-900/60 p-4 backdrop-blur-md">
-                <h4 className="text-sm font-semibold tracking-wider text-purple-400 uppercase">Key Takeaways & Highlights</h4>
+                <h4 className="text-sm font-semibold tracking-wider text-purple-400 uppercase">
+                  Key Takeaways & Highlights
+                </h4>
                 <ul className="space-y-2.5">
                   {insights.keyTakeaways.map((takeaway, idx) => (
                     <li key={idx} className="flex items-start gap-2.5 text-sm text-neutral-300">
@@ -168,7 +170,10 @@ export default function BookAIModal({ isOpen, onClose, bookId, bookTitle, bookAu
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {insights.themes.map((theme, idx) => (
-                    <span key={idx} className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300">
+                    <span
+                      key={idx}
+                      className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300"
+                    >
                       {theme}
                     </span>
                   ))}

@@ -30,7 +30,11 @@ function MaskedAuthValue({ authHeaderValue }: { authHeaderValue: string | null }
   )
 }
 
-export default function CustomMetadataProvidersTable({ providers, processing = false, onDeleteProvider }: CustomMetadataProvidersTableProps) {
+export default function CustomMetadataProvidersTable({
+  providers,
+  processing = false,
+  onDeleteProvider,
+}: CustomMetadataProvidersTableProps) {
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
 
@@ -67,15 +71,15 @@ export default function CustomMetadataProvidersTable({ providers, processing = f
     () => [
       {
         label: t('LabelName'),
-        accessor: 'name'
+        accessor: 'name',
       },
       {
         label: 'URL',
-        accessor: 'url'
+        accessor: 'url',
       },
       {
         label: t('LabelProviderAuthorizationValue'),
-        accessor: (provider) => <MaskedAuthValue authHeaderValue={provider.authHeaderValue} />
+        accessor: (provider) => <MaskedAuthValue authHeaderValue={provider.authHeaderValue} />,
       },
       {
         label: '',
@@ -92,8 +96,8 @@ export default function CustomMetadataProvidersTable({ providers, processing = f
               delete
             </IconBtn>
           </div>
-        )
-      }
+        ),
+      },
     ],
     [deletingProviderId, processing, t]
   )

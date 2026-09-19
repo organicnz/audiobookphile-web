@@ -17,13 +17,17 @@ export function ToggleSwitchExamples() {
 
   return (
     <ComponentExamples title="Toggle Switches">
-      <ComponentInfo component="ToggleSwitch" description="Toggle switch component with various sizes, colors, and states">
+      <ComponentInfo
+        component="ToggleSwitch"
+        description="Toggle switch component with various sizes, colors, and states"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ToggleSwitch from &apos;@/shared/ui/ToggleSwitch&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import ToggleSwitch from &apos;@/shared/ui/ToggleSwitch&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>, <Code>size</Code>, <Code>onColor</Code>,{' '}
-          <Code>offColor</Code>, <Code>disabled</Code>, <Code>ariaLabel</Code>
+          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>,{' '}
+          <Code>size</Code>, <Code>onColor</Code>, <Code>offColor</Code>, <Code>disabled</Code>, <Code>ariaLabel</Code>
         </p>
       </ComponentInfo>
 
@@ -45,9 +49,30 @@ export function ToggleSwitchExamples() {
 
         <Example title="Color Variants">
           <div className="space-y-4">
-            <ToggleSwitch onColor="success" offColor="error" value={toggle5} onChange={setToggle5} label="Success/Error" className="w-fit" />
-            <ToggleSwitch onColor="warning" offColor="primary" value={toggle6} onChange={setToggle6} label="Warning/Primary" className="w-fit" />
-            <ToggleSwitch onColor="primary" offColor="error" value={toggle7} onChange={setToggle7} label="Primary/Error" className="w-fit" />
+            <ToggleSwitch
+              onColor="success"
+              offColor="error"
+              value={toggle5}
+              onChange={setToggle5}
+              label="Success/Error"
+              className="w-fit"
+            />
+            <ToggleSwitch
+              onColor="warning"
+              offColor="primary"
+              value={toggle6}
+              onChange={setToggle6}
+              label="Warning/Primary"
+              className="w-fit"
+            />
+            <ToggleSwitch
+              onColor="primary"
+              offColor="error"
+              value={toggle7}
+              onChange={setToggle7}
+              label="Primary/Error"
+              className="w-fit"
+            />
           </div>
         </Example>
 

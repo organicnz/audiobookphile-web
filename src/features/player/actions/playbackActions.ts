@@ -26,8 +26,8 @@ export async function startPlaybackSession(libraryItemId: string, _payload: Star
     body: JSON.stringify({
       deviceInfo: { clientName: 'Audiobookphile Web' },
       mediaPlayer: 'web',
-      forceDirectPlay: true
-    })
+      forceDirectPlay: true,
+    }),
   })
 }
 
@@ -44,8 +44,8 @@ export async function syncPlaybackSession(sessionId: string, syncData: SessionSy
         progress: syncData.duration && syncData.duration > 0 ? syncData.currentTime / syncData.duration : 0,
         timeListened: syncData.timeListened,
         episodeId: syncData.episodeId || undefined,
-        seekEpoch: syncData.seekEpoch
-      })
+        seekEpoch: syncData.seekEpoch,
+      }),
     })
   } catch (err) {
     console.error('[playbackActions] syncPlaybackSession failed:', err)
@@ -64,8 +64,8 @@ export async function closePlaybackSession(sessionId: string, syncData: SessionS
         currentTime: syncData.currentTime,
         duration: syncData.duration,
         timeListened: syncData.timeListened,
-        episodeId: syncData.episodeId || undefined
-      })
+        episodeId: syncData.episodeId || undefined,
+      }),
     })
   } catch (err) {
     console.error('[playbackActions] closePlaybackSession failed:', err)

@@ -14,12 +14,12 @@ const mockGenres = [
   { value: 'Technology', content: 'Technology' },
   { value: 'Culture', content: 'Culture' },
   { value: 'News', content: 'News' },
-  { value: 'Comedy', content: 'Comedy' }
+  { value: 'Comedy', content: 'Comedy' },
 ]
 const mockTags = [
   { value: 'Tech', content: 'Tech' },
   { value: 'Weekly', content: 'Weekly' },
-  { value: 'Daily', content: 'Daily' }
+  { value: 'Daily', content: 'Daily' },
 ]
 
 export function PodcastDetailsEditExamples({ selectedPodcast }: PodcastDetailsEditExamplesProps) {
@@ -48,10 +48,10 @@ export function PodcastDetailsEditExamples({ selectedPodcast }: PodcastDetailsEd
             ...prev.media,
             metadata: {
               ...prev.media.metadata,
-              ...details.updatePayload.metadata
+              ...details.updatePayload.metadata,
             },
-            tags: details.updatePayload.tags ?? prev.media.tags
-          }
+            tags: details.updatePayload.tags ?? prev.media.tags,
+          },
         }
       })
       setHasChanges(false)
@@ -70,7 +70,8 @@ export function PodcastDetailsEditExamples({ selectedPodcast }: PodcastDetailsEd
         description="A form for editing the metadata of a podcast library item. It includes fields for title, author, RSS feed URL, description, and more."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import PodcastDetailsEdit from &apos;@/shared/widgets/PodcastDetailsEdit&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import PodcastDetailsEdit from &apos;@/shared/widgets/PodcastDetailsEdit&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>

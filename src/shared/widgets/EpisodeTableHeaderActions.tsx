@@ -1,7 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Podcast, Trash2, X } from 'lucide-react'
 import { useState, useTransition } from 'react'
-import { batchUpdateMediaFinishedAction, deleteLibraryItemMediaEpisodeAction } from '@/features/player/actions/mediaActions'
+import {
+  batchUpdateMediaFinishedAction,
+  deleteLibraryItemMediaEpisodeAction,
+} from '@/features/player/actions/mediaActions'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Btn from '@/shared/ui/Btn'
@@ -27,7 +30,7 @@ export default function EpisodeTableHeaderActions({
   libraryItemId,
   onClearSelection,
   onFindEpisodes,
-  isFetchingRSSFeed
+  isFetchingRSSFeed,
 }: EpisodeTableHeaderActionsProps) {
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
@@ -55,13 +58,16 @@ export default function EpisodeTableHeaderActions({
               showToast(t('ToastEpisodeBatchDeleteFailed'), { type: 'error' })
             }
           })
-        }
+        },
       })
     }
 
     return (
       <div className="flex items-center gap-3">
-        <Tooltip position="top" text={allSelectedEpisodesFinished ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')}>
+        <Tooltip
+          position="top"
+          text={allSelectedEpisodesFinished ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')}
+        >
           <ReadIconBtn
             size="small"
             isRead={allSelectedEpisodesFinished}
@@ -73,7 +79,7 @@ export default function EpisodeTableHeaderActions({
                     Array.from(selectedEpisodes).map((episodeId) => ({
                       libraryItemId,
                       episodeId,
-                      isFinished: markState
+                      isFinished: markState,
                     }))
                   )
                 } catch (error) {
@@ -89,7 +95,13 @@ export default function EpisodeTableHeaderActions({
 
         {/* Desktop Actions */}
         <div className="hidden items-center gap-2 sm:flex">
-          <Btn color="bg-error" size="small" disabled={isPending} className="px-4 text-[11px] font-black tracking-widest uppercase" onClick={handleRemoveClick}>
+          <Btn
+            color="bg-error"
+            size="small"
+            disabled={isPending}
+            className="px-4 text-[11px] font-black tracking-widest uppercase"
+            onClick={handleRemoveClick}
+          >
             {t('MessageRemoveEpisodes', { 0: selectedEpisodes.size })}
           </Btn>
           <Btn

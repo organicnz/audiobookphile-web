@@ -11,7 +11,7 @@ import {
   getItemsFromFilelist,
   getMimeType,
   ProcessedItems,
-  UploadProgressInfo
+  UploadProgressInfo,
 } from './uploadTypes'
 import { ItemToUpload } from './useUploader'
 
@@ -53,7 +53,7 @@ export async function upload(
       const presignUrl = '/api/upload/presign'
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${cookie}`
+        Authorization: `Bearer ${cookie}`,
       }
       if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
         headers['apikey'] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -65,8 +65,8 @@ export async function upload(
         body: JSON.stringify({
           filename: storagePath,
           contentType: file.type || file.mime_type || getMimeType(file.name) || 'application/octet-stream',
-          size: file.size
-        })
+          size: file.size,
+        }),
       })
 
       if (presignRes.status === 200) {
@@ -76,7 +76,7 @@ export async function upload(
           multipartData = {
             uploadId: data.uploadId,
             partUrls: data.partUrls,
-            partSize: data.partSize
+            partSize: data.partSize,
           }
           uploadUrl = '__multipart__'
         } else {
@@ -109,7 +109,7 @@ export async function upload(
         providerPrefix,
         uploadedBytes,
         totalSize,
-        onProgress
+        onProgress,
       })
       uploadedBytes += result.uploadedBytes
       uploadedPaths.push(result.path)
@@ -122,7 +122,7 @@ export async function upload(
         providerPrefix,
         uploadedBytes,
         totalSize,
-        onProgress
+        onProgress,
       })
       uploadedBytes += result.uploadedBytes
       uploadedPaths.push(result.path)
@@ -142,15 +142,15 @@ export async function upload(
       name: f.name,
       size: f.size,
       type: f.type || f.mime_type || getMimeType(f.name) || 'audio/mp4',
-      storagePath: uploadedPaths[i]
+      storagePath: uploadedPaths[i],
     })),
-    overwrite: item.overwrite
+    overwrite: item.overwrite,
   })
 
   const baseUrl = '/api/upload/finalize'
   const finalizeHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${cookie}`
+    Authorization: `Bearer ${cookie}`,
   }
   if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     finalizeHeaders['apikey'] = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -159,12 +159,12 @@ export async function upload(
   const response = await fetch(baseUrl, {
     method: 'POST',
     headers: finalizeHeaders,
-    body
+    body,
   })
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({
-      error: `HTTP ${response.status}`
+      error: `HTTP ${response.status}`,
     }))
     const detail = err.detail ? ` — ${err.detail}` : ''
     throw new Error((err.error || `Upload failed with status ${response.status}`) + detail)

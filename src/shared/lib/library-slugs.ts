@@ -49,7 +49,10 @@ export function getLibrarySlug(library: LibraryLike, allLibraries?: LibraryLike[
  * Returns the matched library and whether the parameter was a UUID that should be
  * redirected to its human-readable slug.
  */
-export function resolveLibraryFromParam<T extends LibraryLike>(param: string, allLibraries: T[]): { library: T; isUuidRedirect: boolean } | undefined {
+export function resolveLibraryFromParam<T extends LibraryLike>(
+  param: string,
+  allLibraries: T[]
+): { library: T; isUuidRedirect: boolean } | undefined {
   if (!param || !allLibraries || allLibraries.length === 0) {
     return undefined
   }
@@ -60,7 +63,7 @@ export function resolveLibraryFromParam<T extends LibraryLike>(param: string, al
     const canonicalSlug = getLibrarySlug(byId, allLibraries)
     return {
       library: byId,
-      isUuidRedirect: param !== canonicalSlug
+      isUuidRedirect: param !== canonicalSlug,
     }
   }
 
@@ -69,7 +72,7 @@ export function resolveLibraryFromParam<T extends LibraryLike>(param: string, al
   if (bySlug) {
     return {
       library: bySlug,
-      isUuidRedirect: false
+      isUuidRedirect: false,
     }
   }
 

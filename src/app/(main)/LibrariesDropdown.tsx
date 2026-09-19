@@ -36,7 +36,7 @@ export default function LibrariesDropdown({ libraries, currentLibraryId }: Libra
 
   const libraryItems = libraries.map((library) => ({
     text: library.name,
-    value: library.id
+    value: library.id,
   }))
 
   return (

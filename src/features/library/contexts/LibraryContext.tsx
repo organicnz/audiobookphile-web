@@ -41,18 +41,18 @@ const DEFAULT_PER_LIBRARY_SETTINGS: PerLibrarySettings = {
   seriesSortDesc: false,
   seriesFilterBy: 'all',
   authorSortBy: 'name',
-  authorSortDesc: false
+  authorSortDesc: false,
 }
 
 const DEFAULT_GLOBAL_SETTINGS: GlobalSettings = {
   collapseSeries: false,
   collapseBookSeries: false,
-  showSubtitles: false
+  showSubtitles: false,
 }
 
 const DEFAULT_SETTINGS: LibrarySettings = {
   ...DEFAULT_PER_LIBRARY_SETTINGS,
-  ...DEFAULT_GLOBAL_SETTINGS
+  ...DEFAULT_GLOBAL_SETTINGS,
 }
 
 // Keys that are per-library (stored with library ID prefix)
@@ -64,7 +64,7 @@ const PER_LIBRARY_KEYS: (keyof PerLibrarySettings)[] = [
   'seriesSortDesc',
   'seriesFilterBy',
   'authorSortBy',
-  'authorSortDesc'
+  'authorSortDesc',
 ]
 
 interface LibraryContextType extends LibrarySettings {
@@ -129,7 +129,7 @@ export function LibraryProvider({ children, library }: { children: React.ReactNo
       setSettings({
         ...DEFAULT_SETTINGS,
         ...globalParsed,
-        ...perLibraryParsed
+        ...perLibraryParsed,
       })
     } catch (e) {
       console.error('Failed to load user settings', e)
@@ -188,7 +188,7 @@ export function LibraryProvider({ children, library }: { children: React.ReactNo
       setBoundModal,
       filterData,
       filterDataLoading,
-      isSettingsLoaded
+      isSettingsLoaded,
     }),
     [
       library,
@@ -205,7 +205,7 @@ export function LibraryProvider({ children, library }: { children: React.ReactNo
       boundModal,
       filterData,
       filterDataLoading,
-      isSettingsLoaded
+      isSettingsLoaded,
     ]
   )
 

@@ -6,7 +6,7 @@ import {
   batchUpdateMediaFinishedAction,
   deleteLibraryItemMediaEpisodeAction,
   fetchPodcastFeedAction,
-  toggleFinishedAction
+  toggleFinishedAction,
 } from '@/features/player/actions/mediaActions'
 import { useMediaContext } from '@/features/player/contexts/MediaContext'
 import { useEpisodeFilterAndSort } from '@/features/player/hooks/useEpisodeFilterAndSort'
@@ -35,7 +35,12 @@ interface EpisodeTableProps {
 /**
  * Table for podcast episodes with advanced filtering, sorting, and management controls.
  */
-export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', episodesDownloading = [], episodeDownloadsQueued = [] }: EpisodeTableProps) {
+export default function EpisodeTable({
+  libraryItem,
+  dateFormat = 'MM/dd/yyyy',
+  episodesDownloading = [],
+  episodeDownloadsQueued = [],
+}: EpisodeTableProps) {
   const t = useTypeSafeTranslations()
   const { playItem, isStreaming, isPlaying, playerHandler } = useMediaContext()
   const { showToast } = useGlobalToast()
@@ -47,7 +52,10 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
   const [fetchingRSSFeed, startFetchingRSSTransition] = useTransition()
 
   // Create a dictionary of progress entries for this library item for O(1) lookup (media item id keys)
-  const episodeProgressMap = useMemo(() => buildPodcastEpisodeProgressMap(libraryItem.id, user.mediaProgress), [user.mediaProgress, libraryItem.id])
+  const episodeProgressMap = useMemo(
+    () => buildPodcastEpisodeProgressMap(libraryItem.id, user.mediaProgress),
+    [user.mediaProgress, libraryItem.id]
+  )
 
   const getMediaItemProgress = useCallback(
     (mediaItemId: string) => {
@@ -63,8 +71,19 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
 
   const episodes = useMemo(() => libraryItem.media?.episodes || [], [libraryItem.media?.episodes])
 
-  const { filterKey, setFilterKey, sortKey, setSortKey, sortDesc, setSortDesc, search, setSearch, isSearching, filteredEpisodes, hasMounted } =
-    useEpisodeFilterAndSort({ libraryItemId: libraryItem.id, episodes, getMediaItemProgress })
+  const {
+    filterKey,
+    setFilterKey,
+    sortKey,
+    setSortKey,
+    sortDesc,
+    setSortDesc,
+    search,
+    setSearch,
+    isSearching,
+    filteredEpisodes,
+    hasMounted,
+  } = useEpisodeFilterAndSort({ libraryItemId: libraryItem.id, episodes, getMediaItemProgress })
 
   const handleCloseViewModal = useCallback(() => {
     if (viewedEpisode) {
@@ -80,7 +99,10 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
   const isViewEpisodeModalOpen = viewedEpisode !== null
 
   // Virtualizer — lazy render only visible rows
-  const { visibleStart, visibleEnd, totalHeight, listContainerRef } = useEpisodeTableVirtualizer(filteredEpisodes.length, EPISODE_ROW_HEIGHT_PX)
+  const { visibleStart, visibleEnd, totalHeight, listContainerRef } = useEpisodeTableVirtualizer(
+    filteredEpisodes.length,
+    EPISODE_ROW_HEIGHT_PX
+  )
 
   // Selection mode
   const isSelectionMode = selectedEpisodes.size > 0
@@ -119,7 +141,7 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
       playItem({
         libraryItem,
         episodeId: episode.id,
-        queueItems: []
+        queueItems: [],
       })
     },
     [libraryItem, playItem, isStreaming, playerHandler.controls]
@@ -134,7 +156,7 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
         try {
           await toggleFinishedAction(libraryItem.id, {
             isFinished,
-            episodeId: episode.id
+            episodeId: episode.id,
           })
         } catch (error) {
           console.error('Failed to update media finished state', error)
@@ -221,7 +243,7 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
     }
     items.push({
       text: allEpisodesFinished ? t('MessageMarkAllEpisodesNotFinished') : t('MessageMarkAllEpisodesFinished'),
-      action: 'batch-mark-as-finished'
+      action: 'batch-mark-as-finished',
     })
     return items
   }, [userIsAdminOrUp, allEpisodesFinished, t])
@@ -239,7 +261,7 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
               filteredEpisodes.map((episode) => ({
                 libraryItemId: libraryItem.id,
                 episodeId: episode.id,
-                isFinished: markState
+                isFinished: markState,
               }))
             )
           } catch (error) {
@@ -272,7 +294,16 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
         isFetchingRSSFeed={fetchingRSSFeed}
       />
     ),
-    [isSelectionMode, selectedEpisodes, allSelectedEpisodesFinished, libraryItem.id, handleClearSelection, handleFindEpisodes, fetchingRSSFeed, userIsAdminOrUp]
+    [
+      isSelectionMode,
+      selectedEpisodes,
+      allSelectedEpisodesFinished,
+      libraryItem.id,
+      handleClearSelection,
+      handleFindEpisodes,
+      fetchingRSSFeed,
+      userIsAdminOrUp,
+    ]
   )
 
   const isFiltered = hasMounted && filteredEpisodes.length !== episodes.length
@@ -340,7 +371,10 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
           ref={listContainerRef}
           className="relative block"
           style={{
-            minHeight: filteredEpisodes.length === 0 ? `${EPISODE_ROW_HEIGHT_PX}px` : `${Math.max(totalHeight, EPISODE_ROW_HEIGHT_PX)}px`
+            minHeight:
+              filteredEpisodes.length === 0
+                ? `${EPISODE_ROW_HEIGHT_PX}px`
+                : `${Math.max(totalHeight, EPISODE_ROW_HEIGHT_PX)}px`,
           }}
         >
           {isSearching && (
@@ -387,8 +421,18 @@ export default function EpisodeTable({ libraryItem, dateFormat = 'MM/dd/yyyy', e
         </div>
       </div>
 
-      <ViewEpisodeModal isOpen={isViewEpisodeModalOpen} onClose={handleCloseViewModal} episode={viewedEpisode} libraryItem={libraryItem} />
-      <AudioFileDataModal isOpen={!!audioFileToShow} audioFile={audioFileToShow} libraryItemId={libraryItem.id} onClose={closeMoreInfo} />
+      <ViewEpisodeModal
+        isOpen={isViewEpisodeModalOpen}
+        onClose={handleCloseViewModal}
+        episode={viewedEpisode}
+        libraryItem={libraryItem}
+      />
+      <AudioFileDataModal
+        isOpen={!!audioFileToShow}
+        audioFile={audioFileToShow}
+        libraryItemId={libraryItem.id}
+        onClose={closeMoreInfo}
+      />
       <EpisodeFeedModal
         isOpen={isEpisodeFeedModalOpen}
         onClose={() => setIsEpisodeFeedModalOpen(false)}

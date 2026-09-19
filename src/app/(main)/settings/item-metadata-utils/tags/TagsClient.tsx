@@ -15,7 +15,7 @@ export default function TagsClient({ tags }: { tags: string[] }) {
   const tagsList = useMemo(() => {
     return tags.map((tag) => ({
       id: tag,
-      name: tag
+      name: tag,
     }))
   }, [tags])
 

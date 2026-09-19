@@ -24,7 +24,7 @@ export const useMenuPosition = ({
   isOpen,
   onPositionChange,
   disable = false,
-  portalContainerRef
+  portalContainerRef,
 }: UseMenuPositionOptions): (() => void) => {
   const positionRef = useRef<MenuPosition>({} as MenuPosition)
   const menuHeightRef = useRef<number>(0)
@@ -56,7 +56,10 @@ export const useMenuPosition = ({
       let leftNum = triggerBoundingBox.x
       const estimatedWidth = Math.max(280, triggerBoundingBox.width, menuRef.current?.offsetWidth || 0)
       if (leftNum + estimatedWidth > window.innerWidth - 16) {
-        leftNum = Math.max(16, Math.min(triggerBoundingBox.right - estimatedWidth, window.innerWidth - estimatedWidth - 16))
+        leftNum = Math.max(
+          16,
+          Math.min(triggerBoundingBox.right - estimatedWidth, window.innerWidth - estimatedWidth - 16)
+        )
       }
       left = `${leftNum}px`
       top = `${triggerBoundingBox.bottom + window.scrollY}px`
@@ -66,7 +69,11 @@ export const useMenuPosition = ({
     const position: MenuPosition = { top, left, width }
 
     // Only update if position has changed
-    if (position.top !== positionRef.current.top || position.left !== positionRef.current.left || position.width !== positionRef.current.width) {
+    if (
+      position.top !== positionRef.current.top ||
+      position.left !== positionRef.current.left ||
+      position.width !== positionRef.current.width
+    ) {
       positionRef.current = position
       onPositionChange(position)
     }

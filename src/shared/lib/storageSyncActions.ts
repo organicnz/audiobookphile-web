@@ -10,7 +10,7 @@ export async function buildSyncReport(db: any): Promise<SyncReport> {
   await verifyAdminOrThrow()
   console.log('[storage-sync] Building sync report via Edge API...')
   return await apiRequest<SyncReport>('/api/storage-sync', {
-    method: 'GET'
+    method: 'GET',
   })
 }
 
@@ -21,7 +21,7 @@ export async function buildSyncReport(db: any): Promise<SyncReport> {
 export async function handleImportOrphans(db: any) {
   await verifyAdminOrThrow()
   return await apiRequest<any>('/api/storage-sync?action=import-orphans', {
-    method: 'POST'
+    method: 'POST',
   })
 }
 
@@ -32,7 +32,7 @@ export async function handleImportOrphans(db: any) {
 export async function handleMarkMissing(db: any) {
   await verifyAdminOrThrow()
   return await apiRequest<any>('/api/storage-sync?action=mark-missing', {
-    method: 'POST'
+    method: 'POST',
   })
 }
 
@@ -43,6 +43,6 @@ export async function handleMarkMissing(db: any) {
 export async function handleCleanupOrphans(db: any) {
   await verifyAdminOrThrow()
   return await apiRequest<any>('/api/storage-sync?action=cleanup-orphans', {
-    method: 'POST'
+    method: 'POST',
   })
 }

@@ -10,7 +10,10 @@ export function buildMediaItemProgressMap(mediaProgress: MediaProgress[]): Map<s
 }
 
 /** Progress rows for one podcast library item, keyed by podcast episode id (mediaItemId) */
-export function buildPodcastEpisodeProgressMap(podcastLibraryItemId: string, mediaProgress: MediaProgress[]): Map<string, MediaProgress> {
+export function buildPodcastEpisodeProgressMap(
+  podcastLibraryItemId: string,
+  mediaProgress: MediaProgress[]
+): Map<string, MediaProgress> {
   const map = new Map<string, MediaProgress>()
   for (const p of mediaProgress) {
     if (p.libraryItemId !== podcastLibraryItemId) continue
@@ -42,7 +45,11 @@ export interface ProgressComputationResult {
   finishedAt: number | null
 }
 
-export function computeProgress({ progress, seriesProgressPercent, useSeriesProgress }: ProgressComputationOptions): ProgressComputationResult {
+export function computeProgress({
+  progress,
+  seriesProgressPercent,
+  useSeriesProgress,
+}: ProgressComputationOptions): ProgressComputationResult {
   if (useSeriesProgress && typeof seriesProgressPercent === 'number') {
     const clampedSeries = clamp01(seriesProgressPercent)
     return {
@@ -50,7 +57,7 @@ export function computeProgress({ progress, seriesProgressPercent, useSeriesProg
       isFinished: clampedSeries >= 1,
       lastUpdated: progress?.lastUpdate ?? null,
       startedAt: progress?.startedAt ?? null,
-      finishedAt: progress?.finishedAt ?? null
+      finishedAt: progress?.finishedAt ?? null,
     }
   }
 
@@ -60,7 +67,7 @@ export function computeProgress({ progress, seriesProgressPercent, useSeriesProg
       isFinished: false,
       lastUpdated: null,
       startedAt: null,
-      finishedAt: null
+      finishedAt: null,
     }
   }
 
@@ -73,7 +80,7 @@ export function computeProgress({ progress, seriesProgressPercent, useSeriesProg
     isFinished: !!progress.isFinished,
     lastUpdated: progress.lastUpdate ?? null,
     startedAt: progress.startedAt ?? null,
-    finishedAt: progress.finishedAt ?? null
+    finishedAt: progress.finishedAt ?? null,
   }
 }
 

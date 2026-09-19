@@ -22,5 +22,5 @@ export const AUDIO_MIME_TYPES = [
   'audio/x-caf',
   'audio/amr-wb',
   'audio/x-matroska',
-  'audio/webm'
+  'audio/webm',
 ] as const

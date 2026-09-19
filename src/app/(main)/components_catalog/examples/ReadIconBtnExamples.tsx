@@ -17,23 +17,28 @@ export function ReadIconBtnExamples() {
     setRead(!isRead)
     showToast(!isRead ? 'Marked as finished' : 'Marked as not finished', {
       type: 'success',
-      title: 'Read Status Updated'
+      title: 'Read Status Updated',
     })
   }
 
   return (
     <ComponentExamples title="Read Icon Buttons">
-      <ComponentInfo component="ReadIconBtn" description="Read status toggle button using IconBtn with BeenHere icon and visual state indication">
+      <ComponentInfo
+        component="ReadIconBtn"
+        description="Read status toggle button using IconBtn with BeenHere icon and visual state indication"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ReadIconBtn from &apos;@/shared/ui/ReadIconBtn&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import ReadIconBtn from &apos;@/shared/ui/ReadIconBtn&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>isRead</Code>, <Code>disabled</Code>, <Code>borderless</Code>, <Code>onClick</Code>,{' '}
-          <Code>className</Code>
+          <span className="font-bold">Props:</span> <Code>isRead</Code>, <Code>disabled</Code>, <Code>borderless</Code>,{' '}
+          <Code>onClick</Code>, <Code>className</Code>
         </p>
         <p className="mb-2 text-sm text-gray-400">
-          Features: uses IconBtn with e52d (BeenHere) icon, visual distinction between read/unread states with color coding, proper ARIA labels, event handling
-          with stopPropagation, and all IconBtn features (disabled, borderless, etc.)
+          Features: uses IconBtn with e52d (BeenHere) icon, visual distinction between read/unread states with color
+          coding, proper ARIA labels, event handling with stopPropagation, and all IconBtn features (disabled,
+          borderless, etc.)
         </p>
       </ComponentInfo>
 
@@ -75,7 +80,11 @@ export function ReadIconBtnExamples() {
 
         <Example title="Custom Styled Button (Read)">
           <div className="flex items-center gap-4">
-            <ReadIconBtn isRead={isRead4} onClick={() => handleReadToggle(isRead4, setIsRead4)} className="bg-blue-600 hover:bg-blue-700" />
+            <ReadIconBtn
+              isRead={isRead4}
+              onClick={() => handleReadToggle(isRead4, setIsRead4)}
+              className="bg-blue-600 hover:bg-blue-700"
+            />
             <span className="text-sm text-gray-400">Custom background color</span>
           </div>
         </Example>

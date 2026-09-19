@@ -13,7 +13,12 @@ interface CoverMatchFieldEditorProps {
   currentCoverUrl: string | null
 }
 
-export default function CoverMatchFieldEditor({ usageChecked, onUsageChange, coverUrl, currentCoverUrl }: CoverMatchFieldEditorProps) {
+export default function CoverMatchFieldEditor({
+  usageChecked,
+  onUsageChange,
+  coverUrl,
+  currentCoverUrl,
+}: CoverMatchFieldEditorProps) {
   const t = useTypeSafeTranslations()
 
   const displayCoverUrl = useMemo(() => coverUrl || '', [coverUrl])
@@ -22,7 +27,14 @@ export default function CoverMatchFieldEditor({ usageChecked, onUsageChange, cov
     <div className="flex flex-wrap items-center justify-center md:flex-nowrap">
       <div className="flex grow items-center py-2">
         <Checkbox value={usageChecked} onChange={onUsageChange} checkboxBgClass="bg-bg" />
-        <TextInput value={displayCoverUrl} onChange={() => {}} disabled={!usageChecked} readOnly label={t('LabelCover')} className="mx-4 grow" />
+        <TextInput
+          value={displayCoverUrl}
+          onChange={() => {}}
+          disabled={!usageChecked}
+          readOnly
+          label={t('LabelCover')}
+          className="mx-4 grow"
+        />
       </div>
       <div className="flex gap-2 py-2">
         <div>

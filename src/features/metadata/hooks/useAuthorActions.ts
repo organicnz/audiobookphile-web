@@ -4,7 +4,7 @@ import {
   quickMatchAuthorAction,
   removeAuthorImageAction,
   submitAuthorImageAction,
-  updateAuthorAction
+  updateAuthorAction,
 } from '@/app/(main)/library/[library]/[entityType]/actions'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
@@ -27,7 +27,7 @@ export function useAuthorActions() {
       try {
         // Build quick match payload
         const payload: AuthorQuickMatchPayload = {
-          region: getProviderRegion(libraryProvider || 'audible')
+          region: getProviderRegion(libraryProvider || 'audible'),
         }
         if (editedAuthor?.asin) {
           payload.asin = editedAuthor.asin
@@ -143,6 +143,6 @@ export function useAuthorActions() {
     handleSave,
     handleDelete,
     handleSubmitImage,
-    handleRemoveImage
+    handleRemoveImage,
   }
 }

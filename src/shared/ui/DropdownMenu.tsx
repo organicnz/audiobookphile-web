@@ -43,7 +43,7 @@ function DropdownSubmenu({
   openLeft,
   referenceElement,
   filterText,
-  t
+  t,
 }: {
   subitems: DropdownMenuSubitem[]
   dropdownId: string
@@ -85,20 +85,20 @@ function DropdownSubmenu({
       offset({ mainAxis: scrollbarOffset, crossAxis: -4 }),
       // Only allow horizontal flipping (left/right), keep -start alignment so submenu always opens downward
       flip({
-        fallbackPlacements: openLeft ? ['right-start'] : ['left-start']
+        fallbackPlacements: openLeft ? ['right-start'] : ['left-start'],
       }),
       shift({ padding: 10 }),
       size({
         padding: 10,
         apply({ availableHeight }) {
           setMaxHeight(availableHeight)
-        }
-      })
+        },
+      }),
     ],
     whileElementsMounted: autoUpdate,
     elements: {
-      reference: referenceElement
-    }
+      reference: referenceElement,
+    },
   })
 
   // Sync refs
@@ -121,7 +121,7 @@ function DropdownSubmenu({
     getElement: useCallback(
       (container, index) => container.querySelector(`#${dropdownId}-subitem-${parentIndex}-${index}`) as HTMLElement,
       [dropdownId, parentIndex]
-    )
+    ),
   })
 
   const submenuContent = (
@@ -138,14 +138,17 @@ function DropdownSubmenu({
         width: '200px',
         maxHeight: maxHeight ? `${maxHeight}px` : '300px',
         opacity: isPositioned ? 1 : 0,
-        visibility: isPositioned ? 'visible' : 'hidden'
+        visibility: isPositioned ? 'visible' : 'hidden',
       }}
       onMouseOver={onMouseOver}
       onMouseLeave={onMouseLeave}
       onClick={(e) => e.stopPropagation()}
     >
       {filterText && (
-        <li className="relative mb-1 border-b border-white/5 px-4 py-1.5 text-xs text-white/40 select-none" role="presentation">
+        <li
+          className="relative mb-1 border-b border-white/5 px-4 py-1.5 text-xs text-white/40 select-none"
+          role="presentation"
+        >
           <span className="font-mono tracking-wider uppercase">{filterText}</span>
         </li>
       )}
@@ -234,7 +237,7 @@ export default function DropdownMenu({
   usePortal: usePortalProp = false,
   triggerRef,
   highlightSelected = false,
-  submenuFilterText = ''
+  submenuFilterText = '',
 }: DropdownMenuProps) {
   const t = useTypeSafeTranslations()
   const defaultNoItemsText = noItemsText || t('LabelNoItems')
@@ -245,7 +248,7 @@ export default function DropdownMenu({
   const [menuPosition, setMenuPosition] = useState<{ top: string; left: string; width: string }>({
     top: '0px',
     left: '0px',
-    width: 'auto'
+    width: 'auto',
   })
   const [isMouseOver, setIsMouseOver] = useState(false)
 
@@ -263,14 +266,17 @@ export default function DropdownMenu({
     isOpen: showMenu,
     onPositionChange: setMenuPosition,
     disable: !usePortal,
-    portalContainerRef
+    portalContainerRef,
   })
 
   useScrollToFocused({
     containerRef: menuRef,
     focusedIndex,
     active: showMenu,
-    getElement: useCallback((container, index) => container.querySelector(`#${dropdownId}-item-${index}`) as HTMLElement, [dropdownId])
+    getElement: useCallback(
+      (container, index) => container.querySelector(`#${dropdownId}-item-${index}`) as HTMLElement,
+      [dropdownId]
+    ),
   })
 
   useEffect(() => {
@@ -358,7 +364,9 @@ export default function DropdownMenu({
     () =>
       items.map((item, index) => {
         if (item.type === 'divider') {
-          return <li key={item.id || `divider-${index}`} className="mx-1 my-1 border-b border-white/5" role="presentation" />
+          return (
+            <li key={item.id || `divider-${index}`} className="mx-1 my-1 border-b border-white/5" role="presentation" />
+          )
         }
 
         const hasSubitems = item.subitems && item.subitems.length > 0
@@ -396,9 +404,20 @@ export default function DropdownMenu({
             <div className="flex items-center gap-3">
               {Icon && <Icon size={16} className="opacity-60" />}
               <div className="flex min-w-0 flex-1 items-center">
-                <span className={mergeClasses('block truncate font-sans text-sm font-medium', item.subtext ? 'font-semibold' : '')}>{item.text}</span>
+                <span
+                  className={mergeClasses(
+                    'block truncate font-sans text-sm font-medium',
+                    item.subtext ? 'font-semibold' : ''
+                  )}
+                >
+                  {item.text}
+                </span>
                 {item.subtext && <span className="mx-1 opacity-40">:</span>}
-                {item.subtext && <span className="text-foreground/60 block truncate font-sans text-xs font-normal">{item.subtext}</span>}
+                {item.subtext && (
+                  <span className="text-foreground/60 block truncate font-sans text-xs font-normal">
+                    {item.subtext}
+                  </span>
+                )}
               </div>
             </div>
             {hasSubitems && (
@@ -406,7 +425,11 @@ export default function DropdownMenu({
                 <ChevronRight size={16} className="opacity-40" />
               </div>
             )}
-            {item.rightIcon && !hasSubitems && <div className="pointer-events-none absolute inset-y-0 right-2 flex h-full items-center">{item.rightIcon}</div>}
+            {item.rightIcon && !hasSubitems && (
+              <div className="pointer-events-none absolute inset-y-0 right-2 flex h-full items-center">
+                {item.rightIcon}
+              </div>
+            )}
             {showSelectedIndicator && isItemSelected && isItemSelected(item) && !hasSubitems && (
               <span className="absolute inset-y-0 end-2 flex items-center">
                 <Check size={18} className="text-primary" />
@@ -448,7 +471,7 @@ export default function DropdownMenu({
       handleMouseleaveSubmenu,
       openSubmenuLeft,
       submenuFilterText,
-      t
+      t,
     ]
   )
 
@@ -477,9 +500,9 @@ export default function DropdownMenu({
                   left: menuPosition.left,
                   minWidth: `max(220px, ${menuPosition.width})`,
                   width: 'max-content',
-                  zIndex: 9999
+                  zIndex: 9999,
                 }
-              : {})
+              : {}),
           }}
           aria-multiselectable={multiSelect}
           aria-activedescendant={
@@ -494,7 +517,12 @@ export default function DropdownMenu({
         >
           {menuItems}
           {showNoItemsMessage && !items.length && (
-            <li className="text-foreground relative px-4 py-4 select-none" role="option" aria-selected={false} cy-id="dropdown-menu-no-items">
+            <li
+              className="text-foreground relative px-4 py-4 select-none"
+              role="option"
+              aria-selected={false}
+              cy-id="dropdown-menu-no-items"
+            >
               <div className="flex items-center justify-center">
                 <span className="font-normal opacity-40">{defaultNoItemsText}</span>
               </div>

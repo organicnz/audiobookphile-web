@@ -46,7 +46,8 @@ export function parseTitleAndAuthor(rawTitle: string, rawAuthor?: string): Parse
   }
 
   // Author name pattern: 1-4 words starting with uppercase or initials, optional particles (de, van, von, etc.)
-  const authorNamePattern = /^[\p{Lu}\p{Lt}][\p{L}'\-.]*(?:\s+(?:de|van|der|von|di|da|del|dos|du|[\p{Lu}\p{Lt}][\p{L}'\-.]*)){1,4}$/u
+  const authorNamePattern =
+    /^[\p{Lu}\p{Lt}][\p{L}'\-.]*(?:\s+(?:de|van|der|von|di|da|del|dos|du|[\p{Lu}\p{Lt}][\p{L}'\-.]*)){1,4}$/u
 
   // 3. Handle "Author - Year - Title" or "Author - Title" (e.g. "Alexei Navalny - 2024 - Patriot", "Christopher Hitchens - Hitch-22")
   if (!author || title.includes(' - ') || title.includes(' -- ')) {
@@ -80,7 +81,9 @@ export function parseTitleAndAuthor(rawTitle: string, rawAuthor?: string): Parse
   }
 
   // 4. Handle "Title by Author" (e.g. "Essential CISSP by Phil Martin")
-  const byMatch = title.match(/^(.+?)\s+by\s+([\p{Lu}\p{Lt}][\p{L}'\-.]*(?:\s+(?:de|van|der|von|di|da|del|dos|du|[\p{Lu}\p{Lt}][\p{L}'\-.]*))+)$/iu)
+  const byMatch = title.match(
+    /^(.+?)\s+by\s+([\p{Lu}\p{Lt}][\p{L}'\-.]*(?:\s+(?:de|van|der|von|di|da|del|dos|du|[\p{Lu}\p{Lt}][\p{L}'\-.]*))+)$/iu
+  )
   if (byMatch) {
     title = byMatch[1].trim()
     if (!author) {

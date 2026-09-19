@@ -94,7 +94,10 @@ export default function AuthorClient({ author: authorProp }: AuthorClientProps) 
         <div className="mt-8e -ms-2e">
           <ItemSlider
             title={
-              <Link href={`/library/${library.id}/items?filter=authors.${filterEncode(author.id)}`} className="transition-colors hover:underline">
+              <Link
+                href={`/library/${library.id}/items?filter=authors.${filterEncode(author.id)}`}
+                className="transition-colors hover:underline"
+              >
                 {t('LabelXBooks', { count: libraryItems.length })}
               </Link>
             }
@@ -155,7 +158,14 @@ export default function AuthorClient({ author: authorProp }: AuthorClientProps) 
         )
       })}
 
-      {isEditModalOpen && <AuthorEditModal isOpen={isEditModalOpen} user={user} author={author} onClose={() => setIsEditModalOpen(false)} />}
+      {isEditModalOpen && (
+        <AuthorEditModal
+          isOpen={isEditModalOpen}
+          user={user}
+          author={author}
+          onClose={() => setIsEditModalOpen(false)}
+        />
+      )}
     </div>
   )
 }

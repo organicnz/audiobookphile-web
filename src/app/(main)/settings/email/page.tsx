@@ -28,7 +28,7 @@ export default async function EmailPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {[
             { label: 'Custom SMTP', desc: 'Configure your email provider', path: 'auth/smtp' },
-            { label: 'Email Templates', desc: 'Customize auth emails', path: 'auth/templates' }
+            { label: 'Email Templates', desc: 'Customize auth emails', path: 'auth/templates' },
           ].map((item) => (
             <a
               key={item.path}

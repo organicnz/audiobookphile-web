@@ -39,7 +39,7 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
       { ref: seriesDetailCardRef, setDims: setSeriesDetailCardDims },
       { ref: seriesDetailSkeletonRef, setDims: setSeriesDetailSkeletonDims },
       { ref: seriesDetailOrderByCardRef, setDims: setSeriesDetailOrderByCardDims },
-      { ref: seriesDetailOrderBySkeletonRef, setDims: setSeriesDetailOrderBySkeletonDims }
+      { ref: seriesDetailOrderBySkeletonRef, setDims: setSeriesDetailOrderBySkeletonDims },
     ],
     [seriesData]
   )
@@ -51,7 +51,8 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
         description="Card component for displaying series in a Series bookshelf view. Shows multiple book covers in a stacked mosaic layout, series progress bar, book count badge, and RSS feed indicator. Different from CollapsedSeriesCard which is used for collapsed series within a library items view."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import SeriesCard from &apos;@/shared/widgets/media-card/SeriesCard&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import SeriesCard from &apos;@/shared/widgets/media-card/SeriesCard&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>
@@ -85,7 +86,12 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
             <div className="mb-6">
               <p className="mb-2 text-sm text-gray-400">With Data</p>
               <div ref={seriesStandardCardRef}>
-                <SeriesCard series={seriesData} libraryId={libraryId} bookshelfView={BookshelfView.STANDARD} dateFormat={defaultDateFormat} />
+                <SeriesCard
+                  series={seriesData}
+                  libraryId={libraryId}
+                  bookshelfView={BookshelfView.STANDARD}
+                  dateFormat={defaultDateFormat}
+                />
               </div>
             </div>
             <div className="mb-6">
@@ -95,7 +101,10 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={seriesStandardCardDims} skeletonDimensions={seriesStandardSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={seriesStandardCardDims}
+            skeletonDimensions={seriesStandardSkeletonDims}
+          />
         </Example>
 
         <Example title={`Detail View`}>
@@ -103,7 +112,12 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
             <div>
               <p className="mb-2 text-sm text-gray-400">With Data</p>
               <div ref={seriesDetailCardRef}>
-                <SeriesCard series={seriesData} libraryId={libraryId} bookshelfView={BookshelfView.DETAIL} dateFormat={defaultDateFormat} />
+                <SeriesCard
+                  series={seriesData}
+                  libraryId={libraryId}
+                  bookshelfView={BookshelfView.DETAIL}
+                  dateFormat={defaultDateFormat}
+                />
               </div>
             </div>
             <div>
@@ -138,8 +152,8 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
                           libraryItemId: book.id,
                           mediaItemId,
                           isFinished: false,
-                          progress: 0.5
-                        } as MediaProgress
+                          progress: 0.5,
+                        } as MediaProgress,
                       ] as [string, MediaProgress]
                     }) || []
                   )
@@ -164,8 +178,8 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
                           libraryItemId: book.id,
                           mediaItemId,
                           isFinished: true,
-                          progress: 1
-                        } as MediaProgress
+                          progress: 1,
+                        } as MediaProgress,
                       ] as [string, MediaProgress]
                     }) || []
                   )
@@ -190,8 +204,8 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
                       entityType: 'series',
                       feedUrl: 'https://example.com/series-feed.xml',
                       createdAt: Date.now(),
-                      updatedAt: Date.now()
-                    }
+                      updatedAt: Date.now(),
+                    },
                   } as Series
                 }
                 libraryId={libraryId}
@@ -209,7 +223,13 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
             <div>
               <p className="mb-2 text-sm text-gray-400">With Data</p>
               <div ref={seriesDetailOrderByCardRef}>
-                <SeriesCard series={seriesData} libraryId={libraryId} bookshelfView={BookshelfView.DETAIL} orderBy="addedAt" dateFormat={defaultDateFormat} />
+                <SeriesCard
+                  series={seriesData}
+                  libraryId={libraryId}
+                  bookshelfView={BookshelfView.DETAIL}
+                  orderBy="addedAt"
+                  dateFormat={defaultDateFormat}
+                />
               </div>
             </div>
             <div>
@@ -219,7 +239,10 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={seriesDetailOrderByCardDims} skeletonDimensions={seriesDetailOrderBySkeletonDims} />
+          <DimensionComparison
+            cardDimensions={seriesDetailOrderByCardDims}
+            skeletonDimensions={seriesDetailOrderBySkeletonDims}
+          />
         </Example>
 
         <Example title={`Sort by: totalDuration`}>
@@ -247,8 +270,8 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
                     ...seriesData,
                     books: seriesData.books?.slice(0, 2).map((book) => ({
                       ...book,
-                      media: { ...(book as BookLibraryItem).media, coverPath: undefined }
-                    })) as LibraryItem[]
+                      media: { ...(book as BookLibraryItem).media, coverPath: undefined },
+                    })) as LibraryItem[],
                   } as Series
                 }
                 libraryId={libraryId}
@@ -350,7 +373,12 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
           </div>
           <div className="mb-6" style={{ fontSize: `${1}em` }}>
             <p className="mb-2 text-sm text-gray-400">Size: 1 (effective 5/6 on mobile)</p>
-            <SeriesCard series={seriesData} libraryId={libraryId} bookshelfView={BookshelfView.STANDARD} dateFormat={defaultDateFormat} />
+            <SeriesCard
+              series={seriesData}
+              libraryId={libraryId}
+              bookshelfView={BookshelfView.STANDARD}
+              dateFormat={defaultDateFormat}
+            />
           </div>
           <div className="mb-6 hidden lg:block" style={{ fontSize: `${4 / 3}em` }}>
             <p className="mb-2 text-sm text-gray-400">Size: 4/3</p>
@@ -369,23 +397,52 @@ export function SeriesCardExamples({ seriesData, libraryId }: SeriesCardExamples
         <div className="flex flex-wrap items-start gap-4">
           <div style={{ fontSize: `${1 / 2}em` }} className="mb-6">
             <p className="mb-2 text-sm text-gray-400">Size: 1/2</p>
-            <SeriesCard series={seriesData} libraryId={libraryId} bookshelfView={BookshelfView.DETAIL} sizeMultiplier={1 / 2} dateFormat={defaultDateFormat} />
+            <SeriesCard
+              series={seriesData}
+              libraryId={libraryId}
+              bookshelfView={BookshelfView.DETAIL}
+              sizeMultiplier={1 / 2}
+              dateFormat={defaultDateFormat}
+            />
           </div>
           <div style={{ fontSize: `${3 / 4}em` }} className="mb-6">
             <p className="mb-2 text-sm text-gray-400">Size: 3/4</p>
-            <SeriesCard series={seriesData} libraryId={libraryId} bookshelfView={BookshelfView.DETAIL} sizeMultiplier={3 / 4} dateFormat={defaultDateFormat} />
+            <SeriesCard
+              series={seriesData}
+              libraryId={libraryId}
+              bookshelfView={BookshelfView.DETAIL}
+              sizeMultiplier={3 / 4}
+              dateFormat={defaultDateFormat}
+            />
           </div>
           <div style={{ fontSize: `${5 / 6}em` }} className="mb-6">
             <p className="mb-2 text-sm text-gray-400">Size: 5/6</p>
-            <SeriesCard series={seriesData} libraryId={libraryId} bookshelfView={BookshelfView.DETAIL} sizeMultiplier={5 / 6} dateFormat={defaultDateFormat} />
+            <SeriesCard
+              series={seriesData}
+              libraryId={libraryId}
+              bookshelfView={BookshelfView.DETAIL}
+              sizeMultiplier={5 / 6}
+              dateFormat={defaultDateFormat}
+            />
           </div>
           <div className="mb-6" style={{ fontSize: `${1}em` }}>
             <p className="mb-2 text-sm text-gray-400">Size: 1 (effective 5/6 on mobile)</p>
-            <SeriesCard series={seriesData} libraryId={libraryId} bookshelfView={BookshelfView.DETAIL} dateFormat={defaultDateFormat} />
+            <SeriesCard
+              series={seriesData}
+              libraryId={libraryId}
+              bookshelfView={BookshelfView.DETAIL}
+              dateFormat={defaultDateFormat}
+            />
           </div>
           <div className="mb-6 hidden lg:block" style={{ fontSize: `${4 / 3}em` }}>
             <p className="mb-2 text-sm text-gray-400">Size: 4/3</p>
-            <SeriesCard series={seriesData} libraryId={libraryId} bookshelfView={BookshelfView.DETAIL} sizeMultiplier={4 / 3} dateFormat={defaultDateFormat} />
+            <SeriesCard
+              series={seriesData}
+              libraryId={libraryId}
+              bookshelfView={BookshelfView.DETAIL}
+              sizeMultiplier={4 / 3}
+              dateFormat={defaultDateFormat}
+            />
           </div>
         </div>
       </Example>

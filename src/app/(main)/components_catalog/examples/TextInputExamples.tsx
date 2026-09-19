@@ -28,13 +28,15 @@ export function TextInputExamples() {
         description="Accessible text input with password visibility toggle, copy to clipboard, clear button, and various styling options"
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import TextInput from &apos;@/shared/ui/TextInput&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import TextInput from &apos;@/shared/ui/TextInput&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>, <Code>placeholder</Code>, <Code>type</Code>,{' '}
-          <Code>readOnly</Code>, <Code>disabled</Code>, <Code>clearable</Code>, <Code>showCopy</Code>, <Code>customInputClass</Code>, <Code>step</Code>,{' '}
-          <Code>min</Code>, <Code>onClear</Code>, <Code>onFocus</Code>, <Code>onBlur</Code>, <Code>id</Code>, <Code>name</Code>, <Code>className</Code>,{' '}
-          <Code>ref</Code>
+          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>,{' '}
+          <Code>placeholder</Code>, <Code>type</Code>, <Code>readOnly</Code>, <Code>disabled</Code>,{' '}
+          <Code>clearable</Code>, <Code>showCopy</Code>, <Code>customInputClass</Code>, <Code>step</Code>,{' '}
+          <Code>min</Code>, <Code>onClear</Code>, <Code>onFocus</Code>, <Code>onBlur</Code>, <Code>id</Code>,{' '}
+          <Code>name</Code>, <Code>className</Code>, <Code>ref</Code>
         </p>
       </ComponentInfo>
 
@@ -48,7 +50,13 @@ export function TextInputExamples() {
         </Example>
 
         <Example title="Password Input">
-          <TextInput label="Password" value={textValue3} onChange={setTextValue3} type="password" placeholder="Enter password" />
+          <TextInput
+            label="Password"
+            value={textValue3}
+            onChange={setTextValue3}
+            type="password"
+            placeholder="Enter password"
+          />
         </Example>
 
         <Example title="Date Time Input">
@@ -60,7 +68,15 @@ export function TextInputExamples() {
         </Example>
 
         <Example title="Number Input (No Spinner)">
-          <TextInput label="Age" value={textValue8} onChange={setTextValue8} type="number" min="0" step="1" customInputClass="no-spinner" />
+          <TextInput
+            label="Age"
+            value={textValue8}
+            onChange={setTextValue8}
+            type="number"
+            min="0"
+            step="1"
+            customInputClass="no-spinner"
+          />
         </Example>
 
         <Example title="Copy to Clipboard">

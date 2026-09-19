@@ -5,7 +5,7 @@ import {
   fetchCollectionsAction,
   fetchLibraryItemsAction,
   fetchPlaylistsAction,
-  fetchSeriesAction
+  fetchSeriesAction,
 } from '@/features/library/actions/libraryActions'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
@@ -74,11 +74,15 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
         const data = await queryClient.fetchQuery({
           queryKey: pageQueryKey,
           queryFn: async () => {
-            const response = await fetchEntityData(entityType, libraryId, buildPageQueryParams(entityType, query, page, limit))
+            const response = await fetchEntityData(
+              entityType,
+              libraryId,
+              buildPageQueryParams(entityType, query, page, limit)
+            )
             return response as any
           },
           staleTime: 10 * 60 * 1000, // 10 minutes
-          gcTime: 60 * 60 * 1000 // 1 hour memory retention
+          gcTime: 60 * 60 * 1000, // 1 hour memory retention
         })
 
         const results = (data.results || data.authors || []) as BookshelfEntity[]
@@ -110,11 +114,15 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
           queryClient.prefetchQuery({
             queryKey: nextPageQueryKey,
             queryFn: async () => {
-              const response = await fetchEntityData(entityType, libraryId, buildPageQueryParams(entityType, query, nextPage, limit))
+              const response = await fetchEntityData(
+                entityType,
+                libraryId,
+                buildPageQueryParams(entityType, query, nextPage, limit)
+              )
               return response as any
             },
             staleTime: 10 * 60 * 1000,
-            gcTime: 60 * 60 * 1000
+            gcTime: 60 * 60 * 1000,
           })
         }
       } catch (err) {
@@ -187,6 +195,6 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
     isLoading: !isInitialized,
     error,
     loadPage,
-    reconcilePagesAfterUpdate: async () => null // Placeholder for now
+    reconcilePagesAfterUpdate: async () => null, // Placeholder for now
   }
 }

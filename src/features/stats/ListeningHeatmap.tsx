@@ -3,7 +3,13 @@
 import { format } from 'date-fns'
 import { type ReactNode, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { buildListeningHeatmapModel, computeWeeksToShow, HEATMAP_BLOCK_PX, HEATMAP_INTENSITY_LEVELS, type HeatmapCellModel } from './statsModel'
+import {
+  buildListeningHeatmapModel,
+  computeWeeksToShow,
+  HEATMAP_BLOCK_PX,
+  HEATMAP_INTENSITY_LEVELS,
+  type HeatmapCellModel,
+} from './statsModel'
 
 const HEATMAP_ROWS = 7 // Sun–Sat
 const HEATMAP_INNER_HEIGHT = HEATMAP_ROWS * HEATMAP_BLOCK_PX
@@ -49,7 +55,7 @@ export default function ListeningHeatmap({ daysListening }: ListeningHeatmapProp
     () => [
       { label: format(new Date(2023, 0, 2), 'EEE'), row: 1 }, // Mon
       { label: format(new Date(2023, 0, 4), 'EEE'), row: 3 }, // Wed
-      { label: format(new Date(2023, 0, 6), 'EEE'), row: 5 } // Fri
+      { label: format(new Date(2023, 0, 6), 'EEE'), row: 5 }, // Fri
     ],
     []
   )
@@ -89,7 +95,8 @@ export default function ListeningHeatmap({ daysListening }: ListeningHeatmapProp
     setTooltipContent(content)
   }
 
-  const ariaLabel = (cell: HeatmapCellModel) => (cell.value > 0 ? `${cell.value} minutes on ${cell.datePretty}` : `No listening on ${cell.datePretty}`)
+  const ariaLabel = (cell: HeatmapCellModel) =>
+    cell.value > 0 ? `${cell.value} minutes on ${cell.datePretty}` : `No listening on ${cell.datePretty}`
 
   const showPortal = Boolean(heatmapLayout && anchor && tooltipContent != null)
   const outerHeight = HEATMAP_INNER_HEIGHT + 80 // inner + month labels + legend
@@ -101,17 +108,26 @@ export default function ListeningHeatmap({ daysListening }: ListeningHeatmapProp
       ) : (
         <>
           <div className="mx-auto overflow-x-auto" style={{ maxWidth: heatmapLayout.innerWidthPx + 52 }}>
-            <p className="text-foreground-muted mb-2 px-1 text-sm">{heatmapLayout.daysListenedInTheLastYear} days with listening in the last year</p>
+            <p className="text-foreground-muted mb-2 px-1 text-sm">
+              {heatmapLayout.daysListenedInTheLastYear} days with listening in the last year
+            </p>
 
-            <div className="border-border bg-read-only relative w-full rounded border py-3" style={{ height: outerHeight }}>
-              <div className="absolute mt-5 ml-10" style={{ width: heatmapLayout.innerWidthPx, height: HEATMAP_INNER_HEIGHT }} onMouseLeave={hideTooltip}>
+            <div
+              className="border-border bg-read-only relative w-full rounded border py-3"
+              style={{ height: outerHeight }}
+            >
+              <div
+                className="absolute mt-5 ml-10"
+                style={{ width: heatmapLayout.innerWidthPx, height: HEATMAP_INNER_HEIGHT }}
+                onMouseLeave={hideTooltip}
+              >
                 {/* Day-of-week labels */}
                 {dayLabels.map((d) => (
                   <div
                     key={d.label}
                     className="text-foreground-muted absolute top-0 left-0 text-[10px] leading-[10px]"
                     style={{
-                      transform: `translate(${-28}px, ${d.row * HEATMAP_BLOCK_PX}px)`
+                      transform: `translate(${-28}px, ${d.row * HEATMAP_BLOCK_PX}px)`,
                     }}
                   >
                     {d.label}
@@ -124,7 +140,7 @@ export default function ListeningHeatmap({ daysListening }: ListeningHeatmapProp
                     key={m.id}
                     className="text-foreground-muted absolute top-0 left-0 text-[10px] leading-[10px]"
                     style={{
-                      transform: `translate(${m.col * HEATMAP_BLOCK_PX}px, -14px)`
+                      transform: `translate(${m.col * HEATMAP_BLOCK_PX}px, -14px)`,
                     }}
                   >
                     {m.label}
@@ -140,7 +156,7 @@ export default function ListeningHeatmap({ daysListening }: ListeningHeatmapProp
                     data-intensity={cell.intensity}
                     className="stats-heatmap-cell"
                     style={{
-                      transform: `translate(${cell.col * HEATMAP_BLOCK_PX}px, ${cell.row * HEATMAP_BLOCK_PX}px)`
+                      transform: `translate(${cell.col * HEATMAP_BLOCK_PX}px, ${cell.row * HEATMAP_BLOCK_PX}px)`,
                     }}
                     onMouseEnter={(e) => openTooltip(cell, e.currentTarget.getBoundingClientRect())}
                     onFocus={(e) => openTooltip(cell, e.currentTarget.getBoundingClientRect())}
@@ -153,7 +169,12 @@ export default function ListeningHeatmap({ daysListening }: ListeningHeatmapProp
                   <div className="grow" />
                   <span className="text-foreground-muted px-1 text-[10px]">Less</span>
                   {HEATMAP_INTENSITY_LEVELS.map((level) => (
-                    <div key={level} data-intensity={level} className="stats-heatmap-swatch mx-[1.5px] h-2.5 w-2.5 shrink-0 rounded-sm" aria-hidden />
+                    <div
+                      key={level}
+                      data-intensity={level}
+                      className="stats-heatmap-swatch mx-[1.5px] h-2.5 w-2.5 shrink-0 rounded-sm"
+                      aria-hidden
+                    />
                   ))}
                   <span className="text-foreground-muted px-1 text-[10px]">More</span>
                 </div>
@@ -171,7 +192,7 @@ export default function ListeningHeatmap({ daysListening }: ListeningHeatmapProp
                 style={{
                   left: tooltipPos?.left ?? -9999,
                   top: tooltipPos?.top ?? 0,
-                  visibility: tooltipPos ? 'visible' : 'hidden'
+                  visibility: tooltipPos ? 'visible' : 'hidden',
                 }}
               >
                 {tooltipContent}

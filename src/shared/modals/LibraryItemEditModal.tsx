@@ -1,11 +1,23 @@
 'use client'
 
-import { type TransitionStartFunction, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from 'react'
+import {
+  type TransitionStartFunction,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { updateLibraryItemMediaAction } from '@/features/player/actions/mediaActions'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import LibraryItemModal, { type LibraryItemModalItemSource, useLibraryItemModal } from '@/shared/modals/LibraryItemModal'
+import LibraryItemModal, {
+  type LibraryItemModalItemSource,
+  useLibraryItemModal,
+} from '@/shared/modals/LibraryItemModal'
 import Btn from '@/shared/ui/Btn'
 import LoadingIndicator from '@/shared/ui/LoadingIndicator'
 import BookDetailsEdit, { BookDetailsEditRef, BookUpdatePayload } from '@/shared/widgets/BookDetailsEdit'
@@ -20,7 +32,7 @@ function createPlaceholderBookLibraryItem(id: string, libraryId: string): BookLi
     series: [],
     genres: [],
     explicit: false,
-    abridged: false
+    abridged: false,
   }
   const media: BookMedia = { mediaType: 'book', metadata, tags: [] }
   return {
@@ -38,7 +50,7 @@ function createPlaceholderBookLibraryItem(id: string, libraryId: string): BookLi
     isMissing: false,
     isInvalid: false,
     mediaType: 'book',
-    media
+    media,
   }
 }
 
@@ -46,7 +58,7 @@ function createPlaceholderPodcastLibraryItem(id: string, libraryId: string): Pod
   const metadata: PodcastMetadata = {
     genres: [],
     explicit: false,
-    type: 'episodic'
+    type: 'episodic',
   }
   const media: PodcastMedia = { mediaType: 'podcast', metadata, tags: [] }
   return {
@@ -64,7 +76,7 @@ function createPlaceholderPodcastLibraryItem(id: string, libraryId: string): Pod
     isMissing: false,
     isInvalid: false,
     mediaType: 'podcast',
-    media
+    media,
   }
 }
 
@@ -84,7 +96,14 @@ type LibraryItemEditModalContentProps = {
   stableBodyHeight: boolean
 }
 
-function LibraryItemEditModalContent({ isOpen, startSaveTransition, isSavePending, onClose, onSaved, stableBodyHeight }: LibraryItemEditModalContentProps) {
+function LibraryItemEditModalContent({
+  isOpen,
+  startSaveTransition,
+  isSavePending,
+  onClose,
+  onSaved,
+  stableBodyHeight,
+}: LibraryItemEditModalContentProps) {
   const { resolvedItem, fetchPending, pendingEntityId, syncResolvedItem } = useLibraryItemModal()
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
@@ -174,7 +193,7 @@ function LibraryItemEditModalContent({ isOpen, startSaveTransition, isSavePendin
         try {
           const updatedItem = await updateLibraryItemMediaAction(itemId, {
             metadata: details.updatePayload.metadata,
-            tags: details.updatePayload.tags
+            tags: details.updatePayload.tags,
           })
           if (!updatedItem) {
             showToast(t('ToastItemUpdateSuccess'), { type: 'success' })

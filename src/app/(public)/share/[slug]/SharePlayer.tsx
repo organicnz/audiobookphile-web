@@ -111,7 +111,10 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
     return playbackSession.audioTracks.map((track: AudioTrackData) => new AudioTrack(track))
   }, [playbackSession?.audioTracks])
 
-  const currentChapter = useMemo(() => chapters.find((ch) => ch.start <= currentTime && currentTime < ch.end) ?? null, [chapters, currentTime])
+  const currentChapter = useMemo(
+    () => chapters.find((ch) => ch.start <= currentTime && currentTime < ch.end) ?? null,
+    [chapters, currentTime]
+  )
 
   // Cover size calculations
   const isMobileLandscape = windowWidth > windowHeight && windowHeight < 450
@@ -133,7 +136,8 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
   const bufferedPercent = duration ? Math.min(100, (bufferedTime / duration) * 100) : 0
   const timeRemaining = duration - currentTime
   const currentTimeFormatted = secondsToTimestamp(currentTime)
-  const timeRemainingFormatted = timeRemaining < 0 ? secondsToTimestamp(timeRemaining * -1) : `-${secondsToTimestamp(timeRemaining)}`
+  const timeRemainingFormatted =
+    timeRemaining < 0 ? secondsToTimestamp(timeRemaining * -1) : `-${secondsToTimestamp(timeRemaining)}`
 
   // ============================================================================
   // Progress sync
@@ -145,7 +149,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentTime: time }),
-        credentials: 'include'
+        credentials: 'include',
       }).catch((err) => console.error('[SharePlayer] Progress sync failed:', err))
     },
     [slug]
@@ -311,7 +315,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
     navigator.mediaSession.metadata = new MediaMetadata({
       title: playbackSession.displayTitle || 'No title',
       artist: playbackSession.displayAuthor || 'Unknown',
-      artwork: playbackSession.coverPath ? [{ src: coverUrl }] : []
+      artwork: playbackSession.coverPath ? [{ src: coverUrl }] : [],
     })
 
     navigator.mediaSession.setActionHandler('play', play)
@@ -432,7 +436,11 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
 
   if (isLoading) {
     return (
-      <div className="text-foreground flex h-dvh w-full items-center justify-center bg-neutral-900" role="status" aria-live="polite">
+      <div
+        className="text-foreground flex h-dvh w-full items-center justify-center bg-neutral-900"
+        role="status"
+        aria-live="polite"
+      >
         <div className="flex flex-col items-center gap-6">
           <LoadingSpinner size="la-3x" color="rgb(168 85 247)" />
           <p className="text-xl font-black tracking-widest text-white/40 uppercase">Loading...</p>
@@ -446,7 +454,9 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
       <div className="text-foreground flex h-dvh w-full items-center justify-center bg-neutral-900">
         <div className="flex flex-col items-center gap-6 rounded-3xl border border-white/10 bg-white/5 p-12 backdrop-blur-xl">
           <AlertCircle size={64} className="text-error drop-shadow-[0_0_15px_rgba(var(--error-rgb),0.5)]" />
-          <p className="text-2xl font-black tracking-widest text-white/90 uppercase">{fetchError || 'Failed to load shared item'}</p>
+          <p className="text-2xl font-black tracking-widest text-white/90 uppercase">
+            {fetchError || 'Failed to load shared item'}
+          </p>
         </div>
       </div>
     )
@@ -469,11 +479,15 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
           )}
 
           {/* Title */}
-          <p className="text-foreground mb-1 line-clamp-2 text-center text-2xl font-semibold lg:text-3xl">{playbackSession.displayTitle || 'No title'}</p>
+          <p className="text-foreground mb-1 line-clamp-2 text-center text-2xl font-semibold lg:text-3xl">
+            {playbackSession.displayTitle || 'No title'}
+          </p>
 
           {/* Author */}
           {playbackSession.displayAuthor && (
-            <p className="mb-1 truncate text-center text-lg font-semibold text-slate-400 lg:text-xl">{playbackSession.displayAuthor}</p>
+            <p className="mb-1 truncate text-center text-lg font-semibold text-slate-400 lg:text-xl">
+              {playbackSession.displayAuthor}
+            </p>
           )}
 
           {/* Player UI */}
@@ -521,14 +535,24 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
             <div className="flex items-center justify-center gap-3 sm:gap-4">
               {/* Volume */}
               <Tooltip text="Volume" position="top">
-                <IconBtn borderless size="custom" className="h-10 w-10 text-white/60 transition-colors hover:text-white" onClick={toggleMute}>
+                <IconBtn
+                  borderless
+                  size="custom"
+                  className="h-10 w-10 text-white/60 transition-colors hover:text-white"
+                  onClick={toggleMute}
+                >
                   <VolumeIcon size={24} />
                 </IconBtn>
               </Tooltip>
 
               {/* Jump backward */}
               <Tooltip text={`Jump back ${settings.jumpBackwardAmount}s`} position="top">
-                <IconBtn borderless size="custom" className="h-12 w-12 text-white/60 transition-colors hover:text-white" onClick={jumpBackward}>
+                <IconBtn
+                  borderless
+                  size="custom"
+                  className="h-12 w-12 text-white/60 transition-colors hover:text-white"
+                  onClick={jumpBackward}
+                >
                   <RotateCcw size={28} />
                 </IconBtn>
               </Tooltip>
@@ -542,12 +566,21 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
                 className="bg-accent h-16 w-16 rounded-full text-white shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all hover:scale-110 active:scale-95"
                 onClick={playPause}
               >
-                {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
+                {isPlaying ? (
+                  <Pause size={32} fill="currentColor" />
+                ) : (
+                  <Play size={32} fill="currentColor" className="ml-1" />
+                )}
               </IconBtn>
 
               {/* Jump forward */}
               <Tooltip text={`Jump forward ${settings.jumpForwardAmount}s`} position="top">
-                <IconBtn borderless size="custom" className="h-12 w-12 text-white/60 transition-colors hover:text-white" onClick={jumpForward}>
+                <IconBtn
+                  borderless
+                  size="custom"
+                  className="h-12 w-12 text-white/60 transition-colors hover:text-white"
+                  onClick={jumpForward}
+                >
                   <RotateCw size={28} />
                 </IconBtn>
               </Tooltip>

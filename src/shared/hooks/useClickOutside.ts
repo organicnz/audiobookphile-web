@@ -22,7 +22,8 @@ export function useClickOutside(
       const isInside = menuRef.current.contains(clickTarget) || (triggerRef?.current?.contains(clickTarget) ?? false)
 
       // 2. Check if the mousedown (start) was inside the modal or trigger
-      const startedInside = menuRef.current.contains(startTarget) || (triggerRef?.current?.contains(startTarget) ?? false)
+      const startedInside =
+        menuRef.current.contains(startTarget) || (triggerRef?.current?.contains(startTarget) ?? false)
 
       // ONLY trigger handler if both the start and end of the click were truly outside
       if (!isInside && !startedInside) {

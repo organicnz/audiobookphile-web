@@ -22,9 +22,17 @@ export default function CommandPalette() {
 
   const activeLibraryId = libraryContext?.library?.id || user?.defaultLibraryId
 
-  const { searchQuery, setSearchQuery, searchResults, isSearching, handleSearch, useSemanticSearch, setUseSemanticSearch } = useLibrarySearch({
+  const {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    isSearching,
+    handleSearch,
+    useSemanticSearch,
+    setUseSemanticSearch,
+  } = useLibrarySearch({
     libraryId: activeLibraryId || undefined,
-    autoSelectFirst: false
+    autoSelectFirst: false,
   })
 
   const [activeIndex, setActiveIndex] = useState(0)
@@ -57,15 +65,15 @@ export default function CommandPalette() {
       type: 'book' as const,
       id: b.libraryItem.id,
       title: b.libraryItem.media?.metadata?.title,
-      item: b.libraryItem
+      item: b.libraryItem,
     })),
     ...podcasts.map((p) => ({
       type: 'podcast' as const,
       id: p.libraryItem.id,
       title: p.libraryItem.media?.metadata?.title,
-      item: p.libraryItem
+      item: p.libraryItem,
     })),
-    { type: 'action' as const, id: 'settings', title: t('HeaderSettings'), icon: Settings, href: '/settings' }
+    { type: 'action' as const, id: 'settings', title: t('HeaderSettings'), icon: Settings, href: '/settings' },
   ]
 
   // Keyboard navigation
@@ -150,7 +158,9 @@ export default function CommandPalette() {
                 setActiveIndex(0)
               }}
             />
-            {isSearching && <div className="border-foreground mr-3 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />}
+            {isSearching && (
+              <div className="border-foreground mr-3 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
+            )}
 
             {/* Semantic Search Toggle */}
             <button
@@ -167,9 +177,14 @@ export default function CommandPalette() {
               title="Toggle AI Semantic Search"
             >
               <span className="relative flex h-2 w-2">
-                {useSemanticSearch && <span className="bg-primary-400 absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>}
+                {useSemanticSearch && (
+                  <span className="bg-primary-400 absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"></span>
+                )}
                 <span
-                  className={mergeClasses('relative inline-flex h-2 w-2 rounded-full', useSemanticSearch ? 'bg-primary-500' : 'bg-foreground-muted')}
+                  className={mergeClasses(
+                    'relative inline-flex h-2 w-2 rounded-full',
+                    useSemanticSearch ? 'bg-primary-500' : 'bg-foreground-muted'
+                  )}
                 ></span>
               </span>
               AI Search
@@ -183,7 +198,10 @@ export default function CommandPalette() {
           </div>
 
           {/* Results Area */}
-          <div ref={listRef} className="max-h-[60vh] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent overflow-y-auto p-2">
+          <div
+            ref={listRef}
+            className="max-h-[60vh] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent overflow-y-auto p-2"
+          >
             {items.length === 0 && searchQuery.length > 0 && !isSearching && (
               <div className="text-foreground-muted py-14 text-center text-sm">{t('MessageNoItems')}</div>
             )}

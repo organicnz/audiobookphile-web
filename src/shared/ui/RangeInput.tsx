@@ -18,7 +18,17 @@ interface RangeInputProps {
   ref?: React.Ref<HTMLInputElement>
 }
 
-const RangeInput = ({ value, min = 0, max = 100, step = 1, onChange, label, className = '', disabled = false, ref }: RangeInputProps) => {
+const RangeInput = ({
+  value,
+  min = 0,
+  max = 100,
+  step = 1,
+  onChange,
+  label,
+  className = '',
+  disabled = false,
+  ref,
+}: RangeInputProps) => {
   const rangeInputId = useId()
   const inputId = `${rangeInputId}-input`
   const [readInputRef, writeInputRef] = useMergedRef<HTMLInputElement>(ref)

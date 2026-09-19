@@ -62,7 +62,7 @@ export default function ApiKeysTable({ apiKeys, onEditClick }: ApiKeysTableProps
   const columns: DataTableColumn<ApiKey>[] = [
     {
       label: t('LabelName'),
-      accessor: 'name'
+      accessor: 'name',
     },
     {
       label: t('LabelApiKeyUser'),
@@ -70,12 +70,12 @@ export default function ApiKeysTable({ apiKeys, onEditClick }: ApiKeysTableProps
         <Link href={`/settings/users/${apiKey.user.id}`} className="text-foreground hover:underline">
           {apiKey.user.username}
         </Link>
-      )
+      ),
     },
     {
       label: t('LabelExpiresAt'),
       accessor: (apiKey) => getExpiresAtDisplay(apiKey.expiresAt),
-      cellClassName: 'text-xs'
+      cellClassName: 'text-xs',
     },
     {
       label: t('LabelCreatedAt'),
@@ -85,13 +85,19 @@ export default function ApiKeysTable({ apiKeys, onEditClick }: ApiKeysTableProps
             <span className="text-xs">{formatJsDate(new Date(apiKey.createdAt), dateFormat)}</span>
           </Tooltip>
         )
-      }
+      },
     },
     {
       label: '',
       accessor: (apiKey) => (
         <div className="flex items-center justify-end gap-1">
-          <IconBtn ariaLabel={t('ButtonEdit')} borderless size="small" className="text-foreground-muted" onClick={() => onEditClick(apiKey)}>
+          <IconBtn
+            ariaLabel={t('ButtonEdit')}
+            borderless
+            size="small"
+            className="text-foreground-muted"
+            onClick={() => onEditClick(apiKey)}
+          >
             edit
           </IconBtn>
           <IconBtn
@@ -105,8 +111,8 @@ export default function ApiKeysTable({ apiKeys, onEditClick }: ApiKeysTableProps
             delete
           </IconBtn>
         </div>
-      )
-    }
+      ),
+    },
   ]
 
   return (

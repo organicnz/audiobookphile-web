@@ -46,7 +46,7 @@ export default function CollapsibleSection({
   keepOpen = false,
   children,
   className,
-  headerActions
+  headerActions,
 }: CollapsibleSectionProps) {
   const id = useId()
   const t = useTypeSafeTranslations()
@@ -101,7 +101,9 @@ export default function CollapsibleSection({
       mergeClasses(
         'w-full bg-primary py-2 pl-4 pr-2 md:pl-6 md:pr-3 flex items-center',
         'transition-colors duration-150',
-        keepOpen ? '' : 'cursor-pointer focus-visible:outline-1 focus-visible:outline-foreground-muted focus-visible:outline-offset-0'
+        keepOpen
+          ? ''
+          : 'cursor-pointer focus-visible:outline-1 focus-visible:outline-foreground-muted focus-visible:outline-offset-0'
       ),
     [keepOpen]
   )
@@ -117,16 +119,25 @@ export default function CollapsibleSection({
   )
 
   const gridWrapperClasses = useMemo(
-    () => mergeClasses('grid transition-[grid-template-rows] duration-100 ease-in-out', isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'),
+    () =>
+      mergeClasses(
+        'grid transition-[grid-template-rows] duration-100 ease-in-out',
+        isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+      ),
     [isExpanded]
   )
 
   const contentClasses = useMemo(
-    () => mergeClasses('overflow-hidden transition-opacity duration-100 ease-in-out', isExpanded ? 'opacity-100' : 'opacity-0'),
+    () =>
+      mergeClasses(
+        'overflow-hidden transition-opacity duration-100 ease-in-out',
+        isExpanded ? 'opacity-100' : 'opacity-0'
+      ),
     [isExpanded]
   )
 
-  const countBadgeClasses = 'h-5 md:h-7 w-5 md:w-7 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0'
+  const countBadgeClasses =
+    'h-5 md:h-7 w-5 md:w-7 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0'
   const countAriaLabel = count !== undefined ? t('LabelItemsPlural', { count }) : ''
 
   return (
@@ -156,7 +167,10 @@ export default function CollapsibleSection({
               </div>
             )}
             {badge && (
-              <div className="flex h-6 items-center justify-center rounded-full bg-white/10 px-2 text-sm" aria-hidden="true">
+              <div
+                className="flex h-6 items-center justify-center rounded-full bg-white/10 px-2 text-sm"
+                aria-hidden="true"
+              >
                 {badge}
               </div>
             )}
@@ -186,7 +200,13 @@ export default function CollapsibleSection({
       </div>
 
       {/* Collapsible content */}
-      <div className={gridWrapperClasses} role="region" aria-labelledby={headerId} id={contentId} inert={!keepOpen && !isExpanded ? true : undefined}>
+      <div
+        className={gridWrapperClasses}
+        role="region"
+        aria-labelledby={headerId}
+        id={contentId}
+        inert={!keepOpen && !isExpanded ? true : undefined}
+      >
         <div className={contentClasses}>{children}</div>
       </div>
     </div>

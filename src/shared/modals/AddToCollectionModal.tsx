@@ -3,7 +3,11 @@
 import { HelpCircle, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { addBookToCollectionAction, createCollectionAction, removeBookFromCollectionAction } from '@/features/library/actions/collectionActions'
+import {
+  addBookToCollectionAction,
+  createCollectionAction,
+  removeBookFromCollectionAction,
+} from '@/features/library/actions/collectionActions'
 import { fetchCollectionsAction } from '@/features/library/actions/libraryActions'
 import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
@@ -31,7 +35,13 @@ function collectionHasItem(collection: Collection, libraryItemId: string) {
   return collection.books?.some((b) => b.id === libraryItemId) ?? false
 }
 
-export default function AddToCollectionModal({ isOpen, onClose, libraryId, libraryItemId, itemTitle }: AddToCollectionModalProps) {
+export default function AddToCollectionModal({
+  isOpen,
+  onClose,
+  libraryId,
+  libraryItemId,
+  itemTitle,
+}: AddToCollectionModalProps) {
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
   const bookCoverAspectRatio = useBookCoverAspectRatio()
@@ -50,7 +60,7 @@ export default function AddToCollectionModal({ isOpen, onClose, libraryId, libra
       .map(
         (c): CollectionRow => ({
           ...c,
-          isBookIncluded: collectionHasItem(c, libraryItemId)
+          isBookIncluded: collectionHasItem(c, libraryItemId),
         })
       )
       .sort((a, b) => {
@@ -143,7 +153,7 @@ export default function AddToCollectionModal({ isOpen, onClose, libraryId, libra
           const created = await createCollectionAction({
             libraryId,
             name,
-            books: [libraryItemId]
+            books: [libraryItemId],
           })
           setCollections((prev) => {
             if (prev.some((c) => c.id === created.id)) {
@@ -195,7 +205,10 @@ export default function AddToCollectionModal({ isOpen, onClose, libraryId, libra
                   const included = collection.isBookIncluded
                   const books = collection.books ?? []
                   return (
-                    <div key={collection.id} className="relative flex items-center justify-start px-4 py-2 transition-colors hover:bg-white/10">
+                    <div
+                      key={collection.id}
+                      className="relative flex items-center justify-start px-4 py-2 transition-colors hover:bg-white/10"
+                    >
                       {included && <div className="bg-success absolute start-0 top-0 z-10 h-full w-1" aria-hidden />}
                       <div className="w-20 max-w-20 shrink-0 text-center">
                         <CollectionGroupCover books={books} width={coverWidth} height={coverHeight} />
@@ -274,7 +287,13 @@ export default function AddToCollectionModal({ isOpen, onClose, libraryId, libra
                     className="w-full"
                   />
                 </div>
-                <Btn type="submit" color="bg-success" size="small" className="h-10 shrink-0" disabled={controlsDisabled || !newCollectionName.trim()}>
+                <Btn
+                  type="submit"
+                  color="bg-success"
+                  size="small"
+                  className="h-10 shrink-0"
+                  disabled={controlsDisabled || !newCollectionName.trim()}
+                >
                   {t('ButtonCreate')}
                 </Btn>
               </div>

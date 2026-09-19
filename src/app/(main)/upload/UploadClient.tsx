@@ -58,7 +58,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
     toggleTableExpanded,
     handleFetchMetadata,
     handleRemoveStagedItem,
-    handleStartUpload
+    handleStartUpload,
   } = useUploader(libraries)
 
   function preventDef(e: React.DragEvent<HTMLDivElement>): void {
@@ -68,7 +68,7 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
   const tableHeaders = [
     { label: t('LabelFilename'), className: 'text-left px-2' },
     { label: t('LabelSize'), className: 'text-left' },
-    { label: t('LabelType'), className: 'text-left' }
+    { label: t('LabelType'), className: 'text-left' },
   ]
   return (
     <div
@@ -105,7 +105,12 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
       {currentLibraryMediaType === 'book' && (
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center pt-6">
-            <ToggleSwitch label={t('LabelAutoFetchMetadata')} value={autoFetch} className="pr-0" onChange={setAutoFetch} />
+            <ToggleSwitch
+              label={t('LabelAutoFetchMetadata')}
+              value={autoFetch}
+              className="pr-0"
+              onChange={setAutoFetch}
+            />
             <Tooltip maxWidth={300} text={t('LabelAutoFetchMetadataHelp')}>
               <Info size={18} className="hover:text-primary cursor-help text-white/40 transition-colors" />
             </Tooltip>
@@ -115,7 +120,11 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
             <label htmlFor="provider" className="mb-1 block px-1 text-sm font-medium">
               {t('LabelProvider')}
             </label>
-            <Dropdown items={bookProviders} value={selectedProvider} onChange={(value) => setSelectedProvider(value as string)} />
+            <Dropdown
+              items={bookProviders}
+              value={selectedProvider}
+              onChange={(value) => setSelectedProvider(value as string)}
+            />
           </div>
         </div>
       )}
@@ -137,7 +146,8 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
               <strong>{t('LabelSupportedFileTypes')}:</strong> {supFileTypes}
             </p>
             <p className="text-foreground-subdued px-6 pb-6 text-sm">
-              {t('NoteUploaderFoldersWithMediaFiles')} {currentLibraryMediaType === 'book' ? t('NoteUploaderOnlyAudioFiles') : ''}
+              {t('NoteUploaderFoldersWithMediaFiles')}{' '}
+              {currentLibraryMediaType === 'book' ? t('NoteUploaderOnlyAudioFiles') : ''}
             </p>
           </DragDrop>
         </div>
@@ -195,7 +205,10 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
             </Alert>
           )}
           {uploadItems.map((item, index) => (
-            <div key={index} className="border-border relative my-6 flex w-full flex-col gap-1 rounded-md border px-2 py-4 shadow-lg md:px-6">
+            <div
+              key={index}
+              className="border-border relative my-6 flex w-full flex-col gap-1 rounded-md border px-2 py-4 shadow-lg md:px-6"
+            >
               <>
                 {!item.uploadComplete && !item.uploadFailed && (
                   <>
@@ -231,7 +244,10 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
                         <label htmlFor="" className="mb-1 px-1 text-sm">
                           {t('LabelTitle')}
                         </label>
-                        <TextInput value={item.title} onChange={(value) => handleItemPropertyChange(index, 'title', value)} />
+                        <TextInput
+                          value={item.title}
+                          onChange={(value) => handleItemPropertyChange(index, 'title', value)}
+                        />
                       </div>
                       {currentLibraryMediaType === 'book' && (
                         <div className="w-full p-2 md:w-1/2">
@@ -240,7 +256,10 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
                               <label htmlFor="" className="mb-1 px-1 text-sm">
                                 {t('LabelAuthor')}
                               </label>
-                              <TextInput value={item.author} onChange={(value) => handleItemPropertyChange(index, 'author', value)} />
+                              <TextInput
+                                value={item.author}
+                                onChange={(value) => handleItemPropertyChange(index, 'author', value)}
+                              />
                             </div>
                             <Tooltip text={t('LabelUploaderItemFetchMetadataHelp')}>
                               <IconBtn onClick={() => handleFetchMetadata(index)} icon={RefreshCw} />
@@ -254,7 +273,10 @@ export default function UploadClient({ libraries }: LibraryClientProps) {
                           <label htmlFor="" className="mb-1 px-1 text-sm">
                             {t('LabelUploaderItemSeriesLabel')}
                           </label>
-                          <TextInput value={item.series} onChange={(value) => handleItemPropertyChange(index, 'series', value)} />
+                          <TextInput
+                            value={item.series}
+                            onChange={(value) => handleItemPropertyChange(index, 'series', value)}
+                          />
                         </div>
                       )}
 

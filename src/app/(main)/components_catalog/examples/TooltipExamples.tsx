@@ -14,16 +14,21 @@ export function TooltipExamples() {
 
   return (
     <ComponentExamples title="Tooltips">
-      <ComponentInfo component="Tooltip" description="Tooltip component with various positions and hover/focus interactions">
+      <ComponentInfo
+        component="Tooltip"
+        description="Tooltip component with various positions and hover/focus interactions"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Tooltip from &apos;@/shared/ui/Tooltip&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import Tooltip from &apos;@/shared/ui/Tooltip&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>text</Code>, <Code>children</Code>, <Code>position</Code>, <Code>usePortal</Code>
+          <span className="font-bold">Props:</span> <Code>text</Code>, <Code>children</Code>, <Code>position</Code>,{' '}
+          <Code>usePortal</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Note:</span> If <Code>usePortal</Code> is true, or the tooltip is inside a modal, the tooltip will be rendered in a
-          portal.
+          <span className="font-bold">Note:</span> If <Code>usePortal</Code> is true, or the tooltip is inside a modal,
+          the tooltip will be rendered in a portal.
         </p>
       </ComponentInfo>
 
@@ -70,7 +75,11 @@ export function TooltipExamples() {
 
         <Example title="Long Text with maxWidth">
           <div className="space-y-4">
-            <Tooltip text="This is a very long tooltip text that demonstrates how the tooltip handles longer content" position="bottom" maxWidth={200}>
+            <Tooltip
+              text="This is a very long tooltip text that demonstrates how the tooltip handles longer content"
+              position="bottom"
+              maxWidth={200}
+            >
               <Btn>Long tooltip</Btn>
             </Tooltip>
           </div>
@@ -80,7 +89,11 @@ export function TooltipExamples() {
           <div className="space-y-4">
             <div className="overflow-hidden rounded-md border border-gray-600 p-4">
               <p className="mb-2 text-sm text-gray-400">This container has overflow: hidden</p>
-              <Tooltip text="This tooltip uses a portal and won't be clipped by the container" position="bottom" usePortal>
+              <Tooltip
+                text="This tooltip uses a portal and won't be clipped by the container"
+                position="bottom"
+                usePortal
+              >
                 <Btn>Portal tooltip</Btn>
               </Tooltip>
             </div>
@@ -120,7 +133,9 @@ export function TooltipExamples() {
 
         <Example title="Bottom Edge">
           <div className="space-y-4">
-            <p className="mb-2 text-sm text-gray-400">Slowly scroll to make this button appear on the bottom edge of the screen</p>
+            <p className="mb-2 text-sm text-gray-400">
+              Slowly scroll to make this button appear on the bottom edge of the screen
+            </p>
             <Tooltip text="bottom tooltip" position="bottom">
               <Btn>Bottom</Btn>
             </Tooltip>
@@ -129,7 +144,9 @@ export function TooltipExamples() {
 
         <Example title="Right Edge" className="col-span-1 md:col-span-2 lg:col-span-2">
           <div className="flex flex-col items-end space-y-4">
-            <p className="mb-2 text-sm text-gray-400">Resize to make this button appear close to the right edge of the screen</p>
+            <p className="mb-2 text-sm text-gray-400">
+              Resize to make this button appear close to the right edge of the screen
+            </p>
             <Tooltip text="Very long tooltip text that should be shifted to the left" position="bottom">
               <Btn>Right</Btn>
             </Tooltip>

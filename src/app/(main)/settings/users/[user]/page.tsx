@@ -23,7 +23,10 @@ export default async function UserPage({ params }: { params: Promise<{ user: str
   return (
     <div className="mx-auto w-full max-w-4xl p-2 md:p-6">
       <div className="mb-8 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
-        <Link href="/settings/users" className="group mb-6 flex items-center gap-3 text-white/40 transition-colors hover:text-white">
+        <Link
+          href="/settings/users"
+          className="group mb-6 flex items-center gap-3 text-white/40 transition-colors hover:text-white"
+        >
           <div className="rounded-xl bg-white/5 p-2 transition-colors group-hover:bg-white/10">
             <ArrowLeft size={20} />
           </div>

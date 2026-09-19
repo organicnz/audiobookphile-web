@@ -43,8 +43,13 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
 
   const effectivePlaybackRate = playbackRate && !isNaN(playbackRate) ? playbackRate : 1
 
-  const timeRemainingToShow = (useChapterTrack ? currentChapterDuration - (currentTime - currentChapterStart) : duration - currentTime) / effectivePlaybackRate
-  const timeRemainingFormatted = timeRemainingToShow < 0 ? secondsToTimestamp(timeRemainingToShow * -1) : `-${secondsToTimestamp(timeRemainingToShow)}`
+  const timeRemainingToShow =
+    (useChapterTrack ? currentChapterDuration - (currentTime - currentChapterStart) : duration - currentTime) /
+    effectivePlaybackRate
+  const timeRemainingFormatted =
+    timeRemainingToShow < 0
+      ? secondsToTimestamp(timeRemainingToShow * -1)
+      : `-${secondsToTimestamp(timeRemainingToShow)}`
 
   const currentTimeToShow = useChapterTrack ? Math.max(0, currentTime - currentChapterStart) : currentTime
   const currentTimeFormatted = secondsToTimestamp(currentTimeToShow / effectivePlaybackRate)
@@ -63,7 +68,7 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
     if (!duration || trackWidth === 0) return []
     return chapters.map((chapter) => ({
       title: chapter.title,
-      left: (chapter.start / duration) * trackWidth
+      left: (chapter.start / duration) * trackWidth,
     }))
   }, [chapters, duration, trackWidth])
 
@@ -283,7 +288,11 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
         {/* Chapter ticks */}
         <div className={mergeClasses('relative h-2 w-full overflow-hidden', useChapterTrack ? 'opacity-0' : '')}>
           {chapterTicks.map((tick, index) => (
-            <div key={index} className="bg-track-progress/30 pointer-events-none absolute top-0 h-1 w-px" style={{ left: `${tick.left}px` }} />
+            <div
+              key={index}
+              className="bg-track-progress/30 pointer-events-none absolute top-0 h-1 w-px"
+              style={{ left: `${tick.left}px` }}
+            />
           ))}
         </div>
 
@@ -295,7 +304,10 @@ export default function PlayerTrackBar({ playerHandler }: PlayerTrackBarProps) {
             isHovering || isDragging ? 'opacity-100' : 'opacity-0'
           )}
         >
-          <p ref={hoverTimestampTextRef} className="truncate px-2 py-0.5 text-center font-mono text-xs whitespace-nowrap">
+          <p
+            ref={hoverTimestampTextRef}
+            className="truncate px-2 py-0.5 text-center font-mono text-xs whitespace-nowrap"
+          >
             00:00
           </p>
         </div>

@@ -41,7 +41,7 @@ export default function TabbedModal({
   onClose,
   className,
   contentClassName,
-  style
+  style,
 }: TabbedModalProps) {
   return (
     <Modal

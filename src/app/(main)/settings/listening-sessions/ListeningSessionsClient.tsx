@@ -11,12 +11,20 @@ interface ListeningSessionsClientProps {
   openSessionsResponse: GetOpenListeningSessionsResponse
 }
 
-export default function ListeningSessionsClient({ users, sessionsResponse, openSessionsResponse }: ListeningSessionsClientProps) {
+export default function ListeningSessionsClient({
+  users,
+  sessionsResponse,
+  openSessionsResponse,
+}: ListeningSessionsClientProps) {
   const t = useTypeSafeTranslations()
 
   return (
     <SettingsContent title={t('HeaderListeningSessions')}>
-      <ListeningSessionsTable users={users} sessionsResponse={sessionsResponse} openSessionsResponse={openSessionsResponse} />
+      <ListeningSessionsTable
+        users={users}
+        sessionsResponse={sessionsResponse}
+        openSessionsResponse={openSessionsResponse}
+      />
     </SettingsContent>
   )
 }

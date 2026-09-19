@@ -13,20 +13,20 @@ export enum LogLevel {
   WARN = 3,
   ERROR = 4,
   FATAL = 5,
-  NOTE = 6
+  NOTE = 6,
 }
 
 export enum BookshelfView {
   STANDARD = 0, // Skeumorphic (original) design
   DETAIL = 1, // Modern default design
-  AUTHOR = 2 // Books shown on author page
+  AUTHOR = 2, // Books shown on author page
 }
 
 export enum PlayMethod {
   DIRECT_PLAY = 0,
   DIRECT_STREAM = 1,
   TRANSCODE = 2,
-  LOCAL = 3
+  LOCAL = 3,
 }
 
 export enum PlayerState {
@@ -36,5 +36,5 @@ export enum PlayerState {
   PLAYING = 'PLAYING',
   PAUSED = 'PAUSED',
   FINISHED = 'FINISHED',
-  ERROR = 'ERROR'
+  ERROR = 'ERROR',
 }

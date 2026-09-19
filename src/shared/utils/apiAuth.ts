@@ -14,14 +14,14 @@ export async function requireApiAuth(request: Request) {
   const supabase = createSupabaseClient(supabaseUrl, supabaseKey, {
     global: {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
+        Authorization: `Bearer ${token}`,
+      },
+    },
   })
 
   const {
     data: { user },
-    error: userError
+    error: userError,
   } = await supabase.auth.getUser(token)
 
   if (userError || !user) {

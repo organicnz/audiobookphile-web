@@ -7,14 +7,16 @@ import type { UpdateLibraryItemMediaPayload } from '@/types/api'
 export async function toggleFinishedAction(libraryItemId: string, params: { isFinished: boolean; episodeId?: string }) {
   return await apiRequest(`/api/me/progress/${libraryItemId}`, {
     method: 'PATCH',
-    body: JSON.stringify({ isFinished: params.isFinished, episodeId: params.episodeId })
+    body: JSON.stringify({ isFinished: params.isFinished, episodeId: params.episodeId }),
   })
 }
 
-export async function batchUpdateMediaFinishedAction(payload: { libraryItemId: string; episodeId?: string; isFinished: boolean }[]) {
+export async function batchUpdateMediaFinishedAction(
+  payload: { libraryItemId: string; episodeId?: string; isFinished: boolean }[]
+) {
   return await apiRequest('/api/me/progress-batch', {
     method: 'PATCH',
-    body: JSON.stringify({ items: payload })
+    body: JSON.stringify({ items: payload }),
   })
 }
 
@@ -58,7 +60,7 @@ export async function sendEbookToDeviceAction(_payload: { libraryItemId: string;
  */
 export async function removeSeriesFromContinueListeningAction(seriesId: string) {
   return await apiRequest(`/api/me/progress/series/${seriesId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -68,7 +70,7 @@ export async function removeSeriesFromContinueListeningAction(seriesId: string) 
 export async function removeFromContinueListeningAction(progressId: string) {
   return await apiRequest(`/api/me/progress/id/${progressId}`, {
     method: 'PATCH',
-    body: JSON.stringify({ isFinished: true })
+    body: JSON.stringify({ isFinished: true }),
   })
 }
 
@@ -85,7 +87,11 @@ export async function getExpandedLibraryItemAction(libraryItemId: string) {
   return getLibraryItem(libraryItemId)
 }
 
-export async function deleteLibraryItemMediaEpisodeAction(_libraryItemId: string, _episodeId: string, _hardDelete = false) {
+export async function deleteLibraryItemMediaEpisodeAction(
+  _libraryItemId: string,
+  _episodeId: string,
+  _hardDelete = false
+) {
   // Podcast episodes not yet supported
   return null
 }

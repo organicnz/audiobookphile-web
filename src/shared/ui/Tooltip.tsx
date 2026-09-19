@@ -1,5 +1,14 @@
 'use client'
-import { arrow as arrowMw, autoUpdate, flip, offset, type Placement, shift, size, useFloating } from '@floating-ui/react-dom'
+import {
+  arrow as arrowMw,
+  autoUpdate,
+  flip,
+  offset,
+  type Placement,
+  shift,
+  size,
+  useFloating,
+} from '@floating-ui/react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -27,7 +36,7 @@ const placementMap: Record<NonNullable<TooltipProps['position']>, Placement> = {
   top: 'top',
   bottom: 'bottom',
   left: 'left',
-  right: 'right'
+  right: 'right',
 }
 
 const Tooltip = ({
@@ -44,7 +53,7 @@ const Tooltip = ({
   tooltipClassName,
   disabled = false,
   addTabIndex = false,
-  openOnClick = false
+  openOnClick = false,
 }: TooltipProps) => {
   const tooltipId = useId()
   const [open, setOpen] = useState(false)
@@ -73,8 +82,8 @@ const Tooltip = ({
             const effectiveMaxWidth = Math.min(maxWidth, availableWidth)
             Object.assign(elements.floating.style, { maxWidth: `${Math.round(effectiveMaxWidth)}px` })
           }
-        }
-      })
+        },
+      }),
     ]
     if (withArrow) mw.push(arrowMw({ element: arrowRef }))
     return mw
@@ -86,12 +95,12 @@ const Tooltip = ({
     elements,
     floatingStyles,
     placement: resolvedPlacement,
-    middlewareData
+    middlewareData,
   } = useFloating({
     open,
     placement,
     strategy: 'absolute',
-    middleware
+    middleware,
   })
 
   useEffect(() => {
@@ -184,12 +193,12 @@ const Tooltip = ({
       top: 'bottom',
       bottom: 'top',
       left: 'right',
-      right: 'left'
+      right: 'left',
     }
     return {
       left: x != null ? `${x}px` : '',
       top: y != null ? `${y}px` : '',
-      [staticSide[resolvedPlacement.split('-')[0]]]: '-4px'
+      [staticSide[resolvedPlacement.split('-')[0]]]: '-4px',
     } as React.CSSProperties
   }, [middlewareData.arrow, resolvedPlacement, withArrow])
 
@@ -216,7 +225,13 @@ const Tooltip = ({
           onMouseLeave={onMouseLeave}
         >
           {text}
-          {withArrow && <div ref={arrowRef} style={arrowStyles} className="bg-primary absolute h-2 w-2 rotate-45 border-r border-b border-white/10" />}
+          {withArrow && (
+            <div
+              ref={arrowRef}
+              style={arrowStyles}
+              className="bg-primary absolute h-2 w-2 rotate-45 border-r border-b border-white/10"
+            />
+          )}
         </motion.div>
       )}
     </AnimatePresence>

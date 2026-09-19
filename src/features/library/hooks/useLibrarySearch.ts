@@ -4,7 +4,16 @@ import { useCallback, useEffect, useState } from 'react'
 import { getCollectionsAction, getPlaylistsAction, searchLibraryAction } from '@/features/library/actions/searchActions'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { createClient } from '@/shared/utils/supabase/client'
-import { Author, BookLibraryItem, Collection, LibraryItem, Playlist, PodcastLibraryItem, SearchLibraryResponse, Series } from '@/types/api'
+import {
+  Author,
+  BookLibraryItem,
+  Collection,
+  LibraryItem,
+  Playlist,
+  PodcastLibraryItem,
+  SearchLibraryResponse,
+  Series,
+} from '@/types/api'
 
 export interface UseLibrarySearchOptions {
   autoSelectFirst?: boolean
@@ -113,7 +122,10 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
     if (hasFetchedExtras || !selectedLibraryId) return
 
     try {
-      const [collectionsResponse, playlistsResponse] = await Promise.all([getCollectionsAction(selectedLibraryId), getPlaylistsAction(selectedLibraryId)])
+      const [collectionsResponse, playlistsResponse] = await Promise.all([
+        getCollectionsAction(selectedLibraryId),
+        getPlaylistsAction(selectedLibraryId),
+      ])
 
       setCachedCollections(collectionsResponse?.results || [])
       setCachedPlaylists(playlistsResponse?.results || [])
@@ -149,7 +161,7 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
       if (useSemanticSearch) {
         const supabase = createClient()
         const { data, error } = await supabase.functions.invoke('api/search/semantic', {
-          body: { query: searchQuery.trim() }
+          body: { query: searchQuery.trim() },
         })
         if (error) {
           throw new Error(error.message || 'Semantic search failed')
@@ -173,7 +185,7 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
           collections: [],
           playlists: [],
           narrators: [],
-          genres: []
+          genres: [],
         }
       } else {
         result = await searchLibraryAction(selectedLibraryId, searchQuery.trim(), 10)
@@ -189,7 +201,7 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
         const mergedResults: SearchLibraryResponse = {
           ...result,
           collections: filteredCollections,
-          playlists: filteredPlaylists
+          playlists: filteredPlaylists,
         }
 
         setSearchResults(mergedResults)
@@ -241,7 +253,16 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
     } finally {
       setIsSearching(false)
     }
-  }, [searchQuery, selectedLibraryId, autoSelectFirst, mediaTypes, cachedCollections, cachedPlaylists, fetchCollectionsAndPlaylists, useSemanticSearch])
+  }, [
+    searchQuery,
+    selectedLibraryId,
+    autoSelectFirst,
+    mediaTypes,
+    cachedCollections,
+    cachedPlaylists,
+    fetchCollectionsAndPlaylists,
+    useSemanticSearch,
+  ])
 
   const clearSelection = useCallback(() => {
     setSelectedBook(null)
@@ -287,6 +308,6 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
     setSelectedAuthor,
 
     useSemanticSearch,
-    setUseSemanticSearch
+    setUseSemanticSearch,
   }
 }

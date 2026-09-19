@@ -136,19 +136,29 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
             style={{ maxHeight: '80vh', willChange: 'transform, opacity' }}
           >
             <div className="flex items-center justify-between border-b border-white/10 bg-white/5 px-4 py-3">
-              <h3 className="text-[10px] font-black tracking-[0.2em] text-white/50 uppercase">{t('LabelActivities')}</h3>
+              <h3 className="text-[10px] font-black tracking-[0.2em] text-white/50 uppercase">
+                {t('LabelActivities')}
+              </h3>
               <button onClick={closeMenu} className="text-white/30 transition-colors hover:text-white">
                 <Bell size={14} className="opacity-50" />
               </button>
             </div>
-            <ul className="scrollbar-hide h-full max-h-[calc(80vh-3rem)] w-full overflow-y-auto py-2" role="listbox" aria-label={t('LabelTasks')}>
+            <ul
+              className="scrollbar-hide h-full max-h-[calc(80vh-3rem)] w-full overflow-y-auto py-2"
+              role="listbox"
+              aria-label={t('LabelTasks')}
+            >
               {tasksToShow.map((task) => {
                 const actionLink = getActionLink(task)
 
                 if (actionLink) {
                   return (
                     <li key={task.id} className="relative select-none">
-                      <Link href={actionLink} onClick={closeMenu} className="block cursor-pointer px-1 py-0.5 transition-colors hover:bg-white/5">
+                      <Link
+                        href={actionLink}
+                        onClick={closeMenu}
+                        className="block cursor-pointer px-1 py-0.5 transition-colors hover:bg-white/5"
+                      >
                         <ItemTaskRunningCard task={task} />
                       </Link>
                     </li>

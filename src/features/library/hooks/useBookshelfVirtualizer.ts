@@ -25,7 +25,13 @@ export type VisibleBookshelfPageRangeInput = {
  * Inclusive API page indices `[startPage, endPage]` for the visible virtual shelf window.
  * `itemsPerPage` is typically `columns * shelvesPerPage` from the same layout as the virtualizer.
  */
-export function getVisibleBookshelfPageRange({ visibleShelfStart, visibleShelfEnd, columns, itemsPerPage, totalEntities }: VisibleBookshelfPageRangeInput): {
+export function getVisibleBookshelfPageRange({
+  visibleShelfStart,
+  visibleShelfEnd,
+  columns,
+  itemsPerPage,
+  totalEntities,
+}: VisibleBookshelfPageRangeInput): {
   startPage: number
   endPage: number
 } {
@@ -48,7 +54,14 @@ export function getVisibleBookshelfPageRange({ visibleShelfStart, visibleShelfEn
 // Buffer of shelves to render above/below viewport
 const VISIBILITY_BUFFER = 2
 
-export function useBookshelfVirtualizer({ totalEntities, itemWidth, itemHeight, containerWidth, containerHeight, padding = 0 }: UseBookshelfVirtualizerProps) {
+export function useBookshelfVirtualizer({
+  totalEntities,
+  itemWidth,
+  itemHeight,
+  containerWidth,
+  containerHeight,
+  padding = 0,
+}: UseBookshelfVirtualizerProps) {
   // Calculate layout synchronously with useMemo - this ensures layout is immediately
   // available in the same render cycle when dimensions change
   const layout = useMemo(() => {
@@ -57,7 +70,7 @@ export function useBookshelfVirtualizer({ totalEntities, itemWidth, itemHeight, 
         columns: 0,
         shelfHeight: 0,
         totalShelves: 0,
-        shelvesPerPage: 0
+        shelvesPerPage: 0,
       }
     }
 
@@ -71,13 +84,13 @@ export function useBookshelfVirtualizer({ totalEntities, itemWidth, itemHeight, 
       columns,
       totalShelves,
       shelfHeight,
-      shelvesPerPage
+      shelvesPerPage,
     }
   }, [containerWidth, containerHeight, totalEntities, itemWidth, itemHeight, padding])
 
   const [visibleRange, setVisibleRange] = useState({
     visibleShelfStart: 0,
-    visibleShelfEnd: 0
+    visibleShelfEnd: 0,
   })
 
   const lastScrollTopRef = useRef(0)
@@ -93,7 +106,7 @@ export function useBookshelfVirtualizer({ totalEntities, itemWidth, itemHeight, 
 
       return {
         visibleShelfStart: Math.max(0, start - VISIBILITY_BUFFER),
-        visibleShelfEnd: Math.min(totalShelves, end + VISIBILITY_BUFFER + 1)
+        visibleShelfEnd: Math.min(totalShelves, end + VISIBILITY_BUFFER + 1),
       }
     },
     [layout, containerHeight]
@@ -132,7 +145,10 @@ export function useBookshelfVirtualizer({ totalEntities, itemWidth, itemHeight, 
 
       // Only update if range actually changed
       setVisibleRange((prev) => {
-        if (prev.visibleShelfStart === newRange.visibleShelfStart && prev.visibleShelfEnd === newRange.visibleShelfEnd) {
+        if (
+          prev.visibleShelfStart === newRange.visibleShelfStart &&
+          prev.visibleShelfEnd === newRange.visibleShelfEnd
+        ) {
           return prev
         }
         return newRange
@@ -151,7 +167,7 @@ export function useBookshelfVirtualizer({ totalEntities, itemWidth, itemHeight, 
         visibleShelfEnd,
         columns: layout.columns,
         itemsPerPage,
-        totalEntities
+        totalEntities,
       }),
     [visibleShelfStart, visibleShelfEnd, layout.columns]
   )
@@ -160,6 +176,6 @@ export function useBookshelfVirtualizer({ totalEntities, itemWidth, itemHeight, 
     ...layout,
     ...visibleRange,
     handleScroll,
-    getVisiblePageRange
+    getVisiblePageRange,
   }
 }

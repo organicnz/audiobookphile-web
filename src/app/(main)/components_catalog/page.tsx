@@ -29,7 +29,7 @@ export default function ComponentsCatalogPage() {
             { href: '/components_catalog/inputs', label: 'Input & Selection', icon: Layout },
             { href: '/components_catalog/modals', label: 'Modal Components', icon: Layout },
             { href: '/components_catalog/checkboxes', label: 'Checkbox & Switch', icon: CheckSquare },
-            { href: '/components_catalog/alerts', label: 'Alert & Notification', icon: Bell }
+            { href: '/components_catalog/alerts', label: 'Alert & Notification', icon: Bell },
           ].map((item) => (
             <a
               key={item.href}
@@ -61,12 +61,18 @@ export default function ComponentsCatalogPage() {
               </a>
             </li>
             <li>
-              <a href="#cover-size-widget-examples" className="hover:text-primary text-sm font-black tracking-widest text-white/60 uppercase transition-colors">
+              <a
+                href="#cover-size-widget-examples"
+                className="hover:text-primary text-sm font-black tracking-widest text-white/60 uppercase transition-colors"
+              >
                 Cover Size Widget
               </a>
             </li>
             <li>
-              <a href="#edit-list-examples" className="hover:text-primary text-sm font-black tracking-widest text-white/60 uppercase transition-colors">
+              <a
+                href="#edit-list-examples"
+                className="hover:text-primary text-sm font-black tracking-widest text-white/60 uppercase transition-colors"
+              >
                 Edit List
               </a>
             </li>

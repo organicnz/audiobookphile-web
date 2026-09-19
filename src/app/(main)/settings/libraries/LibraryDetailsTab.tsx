@@ -10,7 +10,7 @@ import { LibraryFormData } from './LibraryEditModal'
 
 const mediaTypeItems: DropdownItem[] = [
   { text: 'Books', value: 'book' },
-  { text: 'Podcasts', value: 'podcast' }
+  { text: 'Podcasts', value: 'podcast' },
 ]
 
 interface LibraryDetailsTabProps {
@@ -36,7 +36,7 @@ export default function LibraryDetailsTab({
   onNewFolderPathChange,
   onCommitNewFolder,
   onNewFolderKeyDown,
-  onRemoveFolder
+  onRemoveFolder,
 }: LibraryDetailsTabProps) {
   const t = useTypeSafeTranslations()
 
@@ -65,7 +65,11 @@ export default function LibraryDetailsTab({
         />
 
         {/* Icon */}
-        <MediaIconPicker value={formData.icon} label={t('LabelIcon')} onChange={(value) => onFormDataChange((prev) => ({ ...prev, icon: value }))} />
+        <MediaIconPicker
+          value={formData.icon}
+          label={t('LabelIcon')}
+          onChange={(value) => onFormDataChange((prev) => ({ ...prev, icon: value }))}
+        />
 
         {/* Metadata Provider */}
         <Dropdown
@@ -92,7 +96,12 @@ export default function LibraryDetailsTab({
               <div className="bg-primary/20 border-primary/20 rounded-xl border p-2">
                 <Folder size={18} className="text-primary fill-current" />
               </div>
-              <TextInput value={folder.fullPath} readOnly borderless className="flex-1 text-sm font-medium text-white/80" />
+              <TextInput
+                value={folder.fullPath}
+                readOnly
+                borderless
+                className="flex-1 text-sm font-medium text-white/80"
+              />
               <button
                 type="button"
                 className="hover:text-error hover:bg-error/10 rounded-xl p-2 text-white/20 transition-all"

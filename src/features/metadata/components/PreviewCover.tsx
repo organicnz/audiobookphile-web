@@ -26,7 +26,7 @@ export default function PreviewCover({
   forceErrorState = false,
   onClick,
   fill = false,
-  priority = false
+  priority = false,
 }: PreviewCoverProps) {
   const libraryBookCoverAspectRatio = useBookCoverAspectRatio()
   const bookCoverAspectRatio = bookCoverAspectRatioProp ?? libraryBookCoverAspectRatio
@@ -94,7 +94,7 @@ export default function PreviewCover({
         src,
         naturalWidth: err.currentTarget.naturalWidth,
         naturalHeight: err.currentTarget.naturalHeight,
-        errorType: err.type
+        errorType: err.type,
       })
       setImageFailed(true)
     },
@@ -125,7 +125,7 @@ export default function PreviewCover({
       height: `${finalDimensions.height}px`,
       width: `${finalDimensions.width}px`,
       maxWidth: `${finalDimensions.width}px`,
-      minWidth: `${finalDimensions.width}px`
+      minWidth: `${finalDimensions.width}px`,
     }
   }, [fill, finalDimensions.height, finalDimensions.width])
 
@@ -161,9 +161,20 @@ export default function PreviewCover({
       </div>
 
       {imageFailed && (
-        <div className="absolute start-0 end-0 top-0 bottom-0 h-full w-full bg-red-100" style={{ padding: `${placeholderCoverPadding}rem` }}>
+        <div
+          className="absolute start-0 end-0 top-0 bottom-0 h-full w-full bg-red-100"
+          style={{ padding: `${placeholderCoverPadding}rem` }}
+        >
           <div className="border-error flex h-full w-full flex-col items-center justify-center border-2">
-            {width > 100 && <Image src="/images/Logo.png" alt={t('LabelLogo')} width={40 * sizeMultiplier} height={40 * sizeMultiplier} className="mb-2" />}
+            {width > 100 && (
+              <Image
+                src="/images/Logo.png"
+                alt={t('LabelLogo')}
+                width={40 * sizeMultiplier}
+                height={40 * sizeMultiplier}
+                className="mb-2"
+              />
+            )}
             <p className="text-error text-center" style={{ fontSize: `${invalidCoverFontSize}rem` }}>
               {t('MessageInvalidCover')}
             </p>
@@ -172,7 +183,9 @@ export default function PreviewCover({
       )}
 
       {!imageFailed && showResolution && resolution && (
-        <p className="text-foreground-muted absolute start-0 end-0 bottom-0 mx-auto text-center text-xs">{resolution}</p>
+        <p className="text-foreground-muted absolute start-0 end-0 bottom-0 mx-auto text-center text-xs">
+          {resolution}
+        </p>
       )}
     </div>
   )

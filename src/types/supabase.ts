@@ -124,7 +124,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'libraries'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       book_authors: {
@@ -160,7 +160,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'library_items'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       book_series: {
@@ -199,7 +199,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'series'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       collection_items: {
@@ -238,7 +238,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'library_items'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       collections: {
@@ -273,7 +273,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'libraries'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       custom_metadata_providers: {
@@ -419,7 +419,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'feeds'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       feeds: {
@@ -595,7 +595,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'libraries'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       library_items: {
@@ -744,7 +744,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'libraries'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       media_item_shares: {
@@ -839,7 +839,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'library_items'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       migrations_meta: {
@@ -934,7 +934,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'libraries'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       playlist_media_items: {
@@ -969,7 +969,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'playlists'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       playlists: {
@@ -1007,7 +1007,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'libraries'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       podcast_episodes: {
@@ -1081,7 +1081,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'podcasts'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       podcasts: {
@@ -1212,7 +1212,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'libraries'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       search_history: {
@@ -1283,7 +1283,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'libraries'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       server_settings: {
@@ -1374,13 +1374,15 @@ type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
 
 export type Tables<
-  DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views']) | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
-    : never = never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1404,7 +1406,7 @@ export type TablesInsert<
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
-    : never = never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1427,7 +1429,7 @@ export type TablesUpdate<
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
-    : never = never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1450,7 +1452,7 @@ export type Enums<
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
-    : never = never
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1460,12 +1462,14 @@ export type Enums<
     : never
 
 export type CompositeTypes<
-  PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes'] | { schema: keyof DatabaseWithoutInternals },
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema['CompositeTypes']
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
-    : never = never
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1476,6 +1480,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {}
-  }
+    Enums: {},
+  },
 } as const

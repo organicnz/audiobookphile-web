@@ -34,12 +34,21 @@ export default function LibraryLayoutWrapper({ children }: LibraryLayoutWrapperP
   }, [pathname, setBoundModal])
 
   return (
-    <div className={mergeClasses('page-wrapper relative flex overflow-hidden', libraryItemIdStreaming ? 'streaming' : '')}>
+    <div
+      className={mergeClasses('page-wrapper relative flex overflow-hidden', libraryItemIdStreaming ? 'streaming' : '')}
+    >
       <SideRail serverVersion={serverVersion} installSource={installSource} />
       <div className="page-bg-gradient min-w-0 flex-1 overflow-hidden">
         {!isLibraryItemPage && <Toolbar />}
         {/* subtract height of toolbar if not library item page */}
-        <div className={mergeClasses('w-full overflow-x-hidden overflow-y-auto', isLibraryItemPage ? 'h-full' : 'h-[calc(100%-2.5rem)]')}>{children}</div>
+        <div
+          className={mergeClasses(
+            'w-full overflow-x-hidden overflow-y-auto',
+            isLibraryItemPage ? 'h-full' : 'h-[calc(100%-2.5rem)]'
+          )}
+        >
+          {children}
+        </div>
       </div>
 
       {!isLibraryItemPage && <CoverSizeWidget className="absolute right-4 bottom-4 z-50" />}

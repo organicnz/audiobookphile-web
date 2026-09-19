@@ -35,7 +35,7 @@ export default function CollapsedSeriesCard(props: CollapsedSeriesCardProps) {
     showSubtitles,
     isSelectionMode = false,
     selected = false,
-    onSelect
+    onSelect,
   } = props
 
   const t = useTypeSafeTranslations()
@@ -67,8 +67,11 @@ export default function CollapsedSeriesCard(props: CollapsedSeriesCardProps) {
     isFinished: itemIsFinished,
     lastUpdated,
     startedAt,
-    finishedAt
-  } = useMemo(() => computeProgress({ progress: null, seriesProgressPercent, useSeriesProgress: true }), [seriesProgressPercent])
+    finishedAt,
+  } = useMemo(
+    () => computeProgress({ progress: null, seriesProgressPercent, useSeriesProgress: true }),
+    [seriesProgressPercent]
+  )
 
   const params = useParams()
   const handleCardClick = () => {

@@ -75,7 +75,7 @@ export function MultiSelect<T = string>({
   onItemRemoved,
   onInputChange,
   onEditingPillIndexChange,
-  onEditDone
+  onEditDone,
 }: MultiSelectProps<T>) {
   const t = useTypeSafeTranslations()
 
@@ -104,7 +104,7 @@ export function MultiSelect<T = string>({
     removeItem,
     onMutate,
     setIsMenuOpen,
-    setFocusIndex
+    setFocusIndex,
   } = useMultiSelect({
     value,
     selectedItems,
@@ -128,7 +128,7 @@ export function MultiSelect<T = string>({
     onItemRemoved,
     onInputChange,
     onEditingPillIndexChange,
-    onEditDone
+    onEditDone,
   })
 
   // Compute the id of the currently focused descendant for aria-activedescendant
@@ -176,7 +176,10 @@ export function MultiSelect<T = string>({
           <div
             ref={inputWrapperRef}
             role="list"
-            className={mergeClasses('relative flex w-full flex-wrap items-center py-1', disabled ? 'text-disabled cursor-not-allowed' : 'cursor-text')}
+            className={mergeClasses(
+              'relative flex w-full flex-wrap items-center py-1',
+              disabled ? 'text-disabled cursor-not-allowed' : 'cursor-text'
+            )}
             onClick={handleInputWrapperClick}
             onMouseDown={(e) => e.preventDefault()}
           >

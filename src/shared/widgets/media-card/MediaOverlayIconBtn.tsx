@@ -24,13 +24,13 @@ export default function MediaOverlayIconBtn({
   selected,
   cyId,
   whileHover,
-  transition
+  transition,
 }: MediaOverlayIconBtnProps) {
   const positionClasses = {
     'top-start': 'top-2 start-2',
     'top-end': 'top-2 end-2',
     'bottom-start': 'bottom-2 start-2',
-    'bottom-end': 'bottom-2 end-2'
+    'bottom-end': 'bottom-2 end-2',
   }
 
   const EffectiveIcon = icon

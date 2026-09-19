@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       secure: false,
       sameSite: 'lax',
       path: '/',
-      maxAge: 365 * 24 * 60 * 60 // 1 year
+      maxAge: 365 * 24 * 60 * 60, // 1 year
     })
 
     return response

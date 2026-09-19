@@ -45,13 +45,21 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
   }, [])
 
   // Floating UI positioning
-  const middleware = useMemo(() => [offset(8), shift({ padding: 8 }), flip({ fallbackAxisSideDirection: 'start' }), arrowMw({ element: arrowRef })], [])
+  const middleware = useMemo(
+    () => [
+      offset(8),
+      shift({ padding: 8 }),
+      flip({ fallbackAxisSideDirection: 'start' }),
+      arrowMw({ element: arrowRef }),
+    ],
+    []
+  )
 
   const {
     refs,
     floatingStyles,
     placement: resolvedPlacement,
-    middlewareData
+    middlewareData,
   } = useFloating({
     open: isOpen,
     placement: 'top',
@@ -59,8 +67,8 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
     middleware,
     whileElementsMounted: autoUpdate,
     elements: {
-      reference: triggerRef.current
-    }
+      reference: triggerRef.current,
+    },
   })
 
   // Sync popover ref with Floating UI
@@ -128,12 +136,12 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
       top: 'bottom',
       bottom: 'top',
       left: 'right',
-      right: 'left'
+      right: 'left',
     }
     return {
       left: x != null ? `${x}px` : '',
       top: y != null ? `${y}px` : '',
-      [staticSide[resolvedPlacement.split('-')[0]]]: '-4px'
+      [staticSide[resolvedPlacement.split('-')[0]]]: '-4px',
     } as React.CSSProperties
   }, [middlewareData.arrow, resolvedPlacement])
 
@@ -170,14 +178,20 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
         <IconBtn onClick={handleDecrement} icon={Minus} size="small" />
 
         {/* Current rate display */}
-        <div className="text-foreground flex min-w-[100px] flex-1 items-center justify-center text-2xl font-bold tabular-nums">{formatRate(playbackRate)}x</div>
+        <div className="text-foreground flex min-w-[100px] flex-1 items-center justify-center text-2xl font-bold tabular-nums">
+          {formatRate(playbackRate)}x
+        </div>
 
         {/* Plus button */}
         <IconBtn onClick={handleIncrement} icon={Plus} size="small" />
       </div>
 
       {/* Arrow */}
-      <div ref={arrowRef} style={arrowStyles} className="bg-background/90 absolute h-2 w-2 rotate-45 border-r border-b border-white/15" />
+      <div
+        ref={arrowRef}
+        style={arrowStyles}
+        className="bg-background/90 absolute h-2 w-2 rotate-45 border-r border-b border-white/15"
+      />
     </div>
   ) : null
 

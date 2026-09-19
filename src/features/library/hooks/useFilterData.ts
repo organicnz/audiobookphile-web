@@ -37,7 +37,7 @@ export function useFilterData(libraryId: string | undefined) {
     queryKey,
     queryFn: () => fetchLibraryFilterDataAction(libraryId!),
     enabled: !!libraryId,
-    staleTime: 5 * 60 * 1000 // 5 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 
   const updateFilterDataWithItem = useCallback(
@@ -55,13 +55,20 @@ export function useFilterData(libraryId: string | undefined) {
           updated.genres = addUniqueStrings(updated.genres, metadata.genres)
           updated.tags = addUniqueStrings(updated.tags, tags)
           updated.narrators = addUniqueStrings(updated.narrators, metadata.narrators)
-          updated.publishers = addUniqueStrings(updated.publishers, metadata.publisher ? [metadata.publisher] : undefined)
+          updated.publishers = addUniqueStrings(
+            updated.publishers,
+            metadata.publisher ? [metadata.publisher] : undefined
+          )
           updated.languages = addUniqueStrings(updated.languages, metadata.language ? [metadata.language] : undefined)
 
           if (metadata.publishedYear && !isNaN(parseInt(metadata.publishedYear, 10))) {
             const year = parseInt(metadata.publishedYear, 10)
             const decade = (Math.floor(year / 10) * 10).toString()
-            updated.publishedDecades = addUniqueStrings(updated.publishedDecades, [decade], (a, b) => parseInt(a, 10) - parseInt(b, 10))
+            updated.publishedDecades = addUniqueStrings(
+              updated.publishedDecades,
+              [decade],
+              (a, b) => parseInt(a, 10) - parseInt(b, 10)
+            )
           }
         } else if (isPodcastLibraryItem(libraryItem)) {
           const { metadata, tags } = libraryItem.media
@@ -82,7 +89,7 @@ export function useFilterData(libraryId: string | undefined) {
         if (!prev) return prev
         return {
           ...prev,
-          series: prev.series.filter((s) => s.id !== seriesId)
+          series: prev.series.filter((s) => s.id !== seriesId),
         }
       })
     },
@@ -105,6 +112,6 @@ export function useFilterData(libraryId: string | undefined) {
     isLoading: query.isLoading,
     error: query.error,
     updateFilterDataWithItem,
-    removeSeriesFromFilterData
+    removeSeriesFromFilterData,
   }
 }

@@ -27,7 +27,10 @@ function DetailRow({ label, value, filterKey, libraryId }: DetailRowProps) {
     if (Array.isArray(value)) {
       displayValue = (value as string[]).map((v, index) => (
         <Fragment key={v}>
-          <a href={`/library/${libraryId}/items?filter=${filterKey}.${filterEncode(v)}`} className="text-foreground hover:underline">
+          <a
+            href={`/library/${libraryId}/items?filter=${filterKey}.${filterEncode(v)}`}
+            className="text-foreground hover:underline"
+          >
             {v}
           </a>
           {index < (value as string[]).length - 1 && <span className="text-foreground">, </span>}
@@ -35,7 +38,10 @@ function DetailRow({ label, value, filterKey, libraryId }: DetailRowProps) {
       ))
     } else {
       displayValue = (
-        <a href={`/library/${libraryId}/items?filter=${filterKey}.${filterEncode(value)}`} className="text-foreground hover:underline">
+        <a
+          href={`/library/${libraryId}/items?filter=${filterKey}.${filterEncode(value)}`}
+          className="text-foreground hover:underline"
+        >
           {value}
         </a>
       )
@@ -56,7 +62,10 @@ function getLibraryItemDuration(libraryItem: BookLibraryItem | PodcastLibraryIte
   if (libraryItem.mediaType === 'book') {
     return (libraryItem.media as BookLibraryItem['media'])?.duration
   } else if (libraryItem.mediaType === 'podcast') {
-    return (libraryItem.media as PodcastLibraryItem['media'])?.episodes?.reduce((acc, episode) => acc + (episode.audioTrack?.duration || 0), 0)
+    return (libraryItem.media as PodcastLibraryItem['media'])?.episodes?.reduce(
+      (acc, episode) => acc + (episode.audioTrack?.duration || 0),
+      0
+    )
   }
   return undefined
 }
@@ -79,9 +88,19 @@ export default function LibraryItemDetails({ libraryItem }: LibraryItemDetailsPr
       {/* Book-specific fields */}
       {isBook && bookMetadata && (
         <>
-          <DetailRow label={t('LabelNarrators')} value={bookMetadata.narrators} filterKey="narrators" libraryId={libraryItem.libraryId} />
+          <DetailRow
+            label={t('LabelNarrators')}
+            value={bookMetadata.narrators}
+            filterKey="narrators"
+            libraryId={libraryItem.libraryId}
+          />
           <DetailRow label={t('LabelPublishYear')} value={bookMetadata.publishedYear} />
-          <DetailRow label={t('LabelPublisher')} value={bookMetadata.publisher} filterKey="publishers" libraryId={libraryItem.libraryId} />
+          <DetailRow
+            label={t('LabelPublisher')}
+            value={bookMetadata.publisher}
+            filterKey="publishers"
+            libraryId={libraryItem.libraryId}
+          />
         </>
       )}
 
@@ -89,9 +108,24 @@ export default function LibraryItemDetails({ libraryItem }: LibraryItemDetailsPr
       {isPodcast && podcastMetadata && <DetailRow label={t('LabelPodcastType')} value={podcastMetadata.type} />}
 
       {/* Common fields */}
-      <DetailRow label={t('LabelGenres')} value={metadata?.genres} filterKey="genres" libraryId={libraryItem.libraryId} />
-      <DetailRow label={t('LabelTags')} value={libraryItem.media?.tags} filterKey="tags" libraryId={libraryItem.libraryId} />
-      <DetailRow label={t('LabelLanguage')} value={metadata?.language} filterKey="languages" libraryId={libraryItem.libraryId} />
+      <DetailRow
+        label={t('LabelGenres')}
+        value={metadata?.genres}
+        filterKey="genres"
+        libraryId={libraryItem.libraryId}
+      />
+      <DetailRow
+        label={t('LabelTags')}
+        value={libraryItem.media?.tags}
+        filterKey="tags"
+        libraryId={libraryItem.libraryId}
+      />
+      <DetailRow
+        label={t('LabelLanguage')}
+        value={metadata?.language}
+        filterKey="languages"
+        libraryId={libraryItem.libraryId}
+      />
       <DetailRow label={t('LabelDuration')} value={formatDuration(duration || 0, t)} />
       <DetailRow label={t('LabelSize')} value={bytesPretty(size)} />
     </div>

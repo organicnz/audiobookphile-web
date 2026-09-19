@@ -45,7 +45,12 @@ export default function AuthorImage({ author, className }: AuthorImageProps) {
   // SVG placeholder when no image
   if (!imageSrc || imageError) {
     return (
-      <div className={mergeClasses('bg-primary/50 flex h-full w-full items-center justify-center overflow-hidden rounded-lg', className)}>
+      <div
+        className={mergeClasses(
+          'bg-primary/50 flex h-full w-full items-center justify-center overflow-hidden rounded-lg',
+          className
+        )}
+      >
         <User className="text-muted-foreground/50 h-1/3 w-1/3" />
       </div>
     )
@@ -53,14 +58,23 @@ export default function AuthorImage({ author, className }: AuthorImageProps) {
 
   return (
     <div className={mergeClasses('bg-primary relative h-full w-full overflow-hidden rounded-md', className)}>
-      {showCoverBg && <div className="cover-bg absolute start-0 top-0 h-full w-full" style={{ backgroundImage: `url(${imageSrc})` }} aria-hidden="true" />}
+      {showCoverBg && (
+        <div
+          className="cover-bg absolute start-0 top-0 h-full w-full"
+          style={{ backgroundImage: `url(${imageSrc})` }}
+          aria-hidden="true"
+        />
+      )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageSrc}
         alt=""
         onLoad={handleImageLoad}
         onError={handleImageError}
-        className={mergeClasses('absolute start-0 top-0 h-full w-full', showCoverBg ? 'object-contain' : 'object-cover')}
+        className={mergeClasses(
+          'absolute start-0 top-0 h-full w-full',
+          showCoverBg ? 'object-contain' : 'object-cover'
+        )}
       />
     </div>
   )

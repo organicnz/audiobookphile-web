@@ -13,7 +13,10 @@ export type EntityNavigationContext = {
  * Prev/next entity scope for one bookshelf entity slot: contiguous non-null run around `entityIndex`, in array order.
  * Call when opening a modal (lazy). Returns a fresh `entityIds` array; safe to pass through to the modal.
  */
-function getEntityNavigationContext(entities: (BookshelfEntity | null)[], entityIndex: number): EntityNavigationContext | null {
+function getEntityNavigationContext(
+  entities: (BookshelfEntity | null)[],
+  entityIndex: number
+): EntityNavigationContext | null {
   if (entityIndex < 0 || entityIndex >= entities.length) return null
 
   const at = entities[entityIndex]
@@ -48,7 +51,7 @@ function getEntityNavigationContext(entities: (BookshelfEntity | null)[], entity
 
 const defaultSingleEntityNavCtx = (libraryItemId: string): EntityNavigationContext => ({
   entityIds: [libraryItemId],
-  initialIndex: 0
+  initialIndex: 0,
 })
 
 /**

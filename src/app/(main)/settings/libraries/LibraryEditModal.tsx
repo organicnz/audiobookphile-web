@@ -31,7 +31,7 @@ const defaultLibrarySettings: LibrarySettings = {
   onlyShowLaterBooksInContinueSeries: false,
   epubsAllowScriptedContent: false,
   markAsFinishedTimeRemaining: 30,
-  markAsFinishedPercentComplete: null
+  markAsFinishedPercentComplete: null,
 }
 
 const getInitialFormData = (library: Library | null): LibraryFormData => {
@@ -42,7 +42,7 @@ const getInitialFormData = (library: Library | null): LibraryFormData => {
       icon: library.icon || 'database',
       provider: library.provider || '',
       folders: library.folders?.map((f) => ({ id: f.id, fullPath: f.fullPath })) || [],
-      settings: { ...defaultLibrarySettings, ...library.settings }
+      settings: { ...defaultLibrarySettings, ...library.settings },
     }
   }
 
@@ -52,7 +52,7 @@ const getInitialFormData = (library: Library | null): LibraryFormData => {
     icon: 'database',
     provider: '',
     folders: [],
-    settings: { ...defaultLibrarySettings }
+    settings: { ...defaultLibrarySettings },
   }
 }
 
@@ -64,7 +64,13 @@ interface LibraryEditModalProps {
   onSubmit: (formData: LibraryFormData) => void
 }
 
-export default function LibraryEditModal({ isOpen, library, processing = false, onClose, onSubmit }: LibraryEditModalProps) {
+export default function LibraryEditModal({
+  isOpen,
+  library,
+  processing = false,
+  onClose,
+  onSubmit,
+}: LibraryEditModalProps) {
   const t = useTypeSafeTranslations()
   const { bookProviders, podcastProviders, ensureProvidersLoaded } = useMetadata()
   const [formData, setFormData] = useState<LibraryFormData>(getInitialFormData(library))
@@ -79,7 +85,7 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
       { id: 'details', label: t('HeaderDetails') },
       { id: 'settings', label: t('HeaderSettings') },
       ...(formData.mediaType === 'book' ? [{ id: 'scanner', label: t('HeaderSettingsScanner') }] : []),
-      { id: 'schedule', label: t('HeaderSchedule') }
+      { id: 'schedule', label: t('HeaderSchedule') },
     ]
   }, [formData.mediaType, t])
 
@@ -110,7 +116,7 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
   const providerItems: DropdownItem[] = useMemo(() => {
     return providers.map((p) => ({
       text: p.text,
-      value: p.value
+      value: p.value,
     }))
   }, [providers])
 
@@ -131,14 +137,14 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
     setFormData((prev) => ({
       ...prev,
       mediaType,
-      provider: newProviders.length > 0 ? newProviders[0].value : ''
+      provider: newProviders.length > 0 ? newProviders[0].value : '',
     }))
   }
 
   const handleRemoveFolder = (index: number) => {
     setFormData((prev) => ({
       ...prev,
-      folders: prev.folders.filter((_, i) => i !== index)
+      folders: prev.folders.filter((_, i) => i !== index),
     }))
   }
 
@@ -149,7 +155,7 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
       if (!existingFolder) {
         setFormData((prev) => ({
           ...prev,
-          folders: [...prev.folders, { fullPath: trimmed }]
+          folders: [...prev.folders, { fullPath: trimmed }],
         }))
         setNewFolderPath('')
       }
@@ -184,7 +190,7 @@ export default function LibraryEditModal({ isOpen, library, processing = false, 
     if (trimmedNew && !formData.folders.some((f) => f.fullPath.trim() === trimmedNew)) {
       onSubmit({
         ...formData,
-        folders: [...formData.folders, { fullPath: trimmedNew }]
+        folders: [...formData.folders, { fullPath: trimmedNew }],
       })
     } else {
       onSubmit(formData)

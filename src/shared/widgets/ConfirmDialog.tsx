@@ -48,7 +48,7 @@ export default function ConfirmDialog({
   yesButtonClassName = 'bg-success text-white',
   onClose,
   onConfirm,
-  className
+  className,
 }: ConfirmDialogProps) {
   const t = useTypeSafeTranslations()
   const [checkboxValue, setCheckboxValue] = useState(false)
@@ -113,7 +113,13 @@ export default function ConfirmDialog({
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} className="w-sm">
-      <div ref={dialogContentRef} className={mergeClasses('px-4 py-6 text-sm', className)} aria-labelledby={titleId} aria-describedby={messageId} tabIndex={-1}>
+      <div
+        ref={dialogContentRef}
+        className={mergeClasses('px-4 py-6 text-sm', className)}
+        aria-labelledby={titleId}
+        aria-describedby={messageId}
+        tabIndex={-1}
+      >
         <h2 id={titleId} className="sr-only">
           {dialogTitle}
         </h2>
@@ -132,7 +138,12 @@ export default function ConfirmDialog({
           <Btn color="bg-primary" onClick={handleClose} ariaLabel={t('ButtonCancel')} type="button">
             {t('ButtonCancel')}
           </Btn>
-          <Btn color={yesButtonClassName} onClick={handleConfirm} ariaLabel={yesButtonText || t('ButtonYes')} type="button">
+          <Btn
+            color={yesButtonClassName}
+            onClick={handleConfirm}
+            ariaLabel={yesButtonText || t('ButtonYes')}
+            type="button"
+          >
             {yesButtonText || t('ButtonYes')}
           </Btn>
         </div>

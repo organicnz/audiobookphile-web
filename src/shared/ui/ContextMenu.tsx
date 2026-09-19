@@ -62,7 +62,7 @@ export default function ContextMenu<T = string>({
   onItemClick,
   onSubItemClick,
   usePortal: usePortalProp = false,
-  triggerRef
+  triggerRef,
 }: ContextMenuProps<T>) {
   const t = useTypeSafeTranslations()
   const modalRef = useModalRef()
@@ -83,7 +83,7 @@ export default function ContextMenu<T = string>({
     () => [
       offset(4), // 4px gap between trigger and menu
       shift({ padding: 8 }), // Keep menu within viewport with 8px padding
-      flip({ fallbackAxisSideDirection: 'start' }) // Flip to opposite side if no space
+      flip({ fallbackAxisSideDirection: 'start' }), // Flip to opposite side if no space
     ],
     []
   )
@@ -93,7 +93,7 @@ export default function ContextMenu<T = string>({
     open: usePortal && isOpen,
     placement,
     strategy: 'absolute',
-    middleware
+    middleware,
   })
 
   // Auto-update position when menu is open and using portal
@@ -242,7 +242,7 @@ export default function ContextMenu<T = string>({
             style={{
               left: `${submenuLeftPos}px`,
               top: `${index * 28}px`, // index * (text-xs line-height + py-1.5)
-              ...(autoWidth ? { minWidth: `${menuWidth}px` } : { width: `${submenuWidth}px` })
+              ...(autoWidth ? { minWidth: `${menuWidth}px` } : { width: `${submenuWidth}px` }),
             }}
           >
             {item.subitems.length > 0 ? (
@@ -328,9 +328,9 @@ export default function ContextMenu<T = string>({
           ? {
               ...floatingStyles,
               zIndex: 9999,
-              ...(autoWidth ? {} : { width: `${menuWidth}px` })
+              ...(autoWidth ? {} : { width: `${menuWidth}px` }),
             }
-          : {})
+          : {}),
       }}
     >
       {menuItems}

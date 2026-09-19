@@ -8,7 +8,11 @@ interface UseEpisodeFilterAndSortReturn {
   getMediaItemProgress?: (mediaItemId: string) => MediaProgress | null
 }
 
-export function useEpisodeFilterAndSort({ libraryItemId, episodes, getMediaItemProgress }: UseEpisodeFilterAndSortReturn) {
+export function useEpisodeFilterAndSort({
+  libraryItemId,
+  episodes,
+  getMediaItemProgress,
+}: UseEpisodeFilterAndSortReturn) {
   const storageKey = `episodeTable:${libraryItemId}`
 
   const [filterKey, setFilterKey] = useState<string>('incomplete')
@@ -71,7 +75,9 @@ export function useEpisodeFilterAndSort({ libraryItemId, episodes, getMediaItemP
 
     // Apply search
     if (searchText) {
-      result = result.filter((ep) => ep.title?.toLowerCase().includes(searchText) || ep.subtitle?.toLowerCase().includes(searchText))
+      result = result.filter(
+        (ep) => ep.title?.toLowerCase().includes(searchText) || ep.subtitle?.toLowerCase().includes(searchText)
+      )
     }
 
     // Apply sort
@@ -124,6 +130,6 @@ export function useEpisodeFilterAndSort({ libraryItemId, episodes, getMediaItemP
     setSearch,
     isSearching,
     filteredEpisodes,
-    hasMounted
+    hasMounted,
   }
 }

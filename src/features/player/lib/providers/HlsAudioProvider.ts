@@ -39,7 +39,7 @@ export class HlsAudioProvider implements IAudioProvider {
           timeoutRetry: {
             maxNumRetry: 4,
             retryDelayMs: 0,
-            maxRetryDelayMs: 0
+            maxRetryDelayMs: 0,
           },
           errorRetry: {
             maxNumRetry: 8,
@@ -51,10 +51,10 @@ export class HlsAudioProvider implements IAudioProvider {
                 return true
               }
               return retry
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     }
 
     this.hlsInstance = new Hls(hlsOptions)

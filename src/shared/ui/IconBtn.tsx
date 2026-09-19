@@ -32,7 +32,11 @@ interface IconBtnProps {
 }
 
 const LoadingSpinner = memo(() => (
-  <div cy-id="icon-btn-loading-spinner" className="text-foreground absolute start-0 top-0 flex h-full w-full items-center justify-center" aria-hidden="true">
+  <div
+    cy-id="icon-btn-loading-spinner"
+    className="text-foreground absolute start-0 top-0 flex h-full w-full items-center justify-center"
+    aria-hidden="true"
+  >
     <svg className="animate-spin" style={{ width: '1.2em', height: '1.2em' }} viewBox="0 0 24 24">
       <path fill="currentColor" d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
     </svg>
@@ -68,7 +72,8 @@ export default function IconBtn({
   const t = useTypeSafeTranslations()
   const isDisabled = disabled || loading
 
-  const sizeClass = size === 'small' ? 'w-9' : size === 'large' ? 'w-11' : size === 'medium' ? 'w-10' : size === 'auto' ? 'w-auto' : ''
+  const sizeClass =
+    size === 'small' ? 'w-9' : size === 'large' ? 'w-11' : size === 'medium' ? 'w-10' : size === 'auto' ? 'w-auto' : ''
   const activeClass = isActive ? 'bg-primary/20 text-primary border-primary/40 shadow-primary/20' : ''
   const classList = mergeClasses(sizeClass, activeClass, className)
 

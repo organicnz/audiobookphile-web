@@ -11,7 +11,7 @@ export default async function RootPage() {
   try {
     const supabase = await createClient()
     const {
-      data: { user }
+      data: { user },
     } = await supabase.auth.getUser()
     if (user) {
       isAuthed = true

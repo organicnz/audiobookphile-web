@@ -69,5 +69,5 @@ export interface ApiKey {
 
 export enum AuthMethod {
   LOCAL = 'local',
-  OPENID = 'openid'
+  OPENID = 'openid',
 }

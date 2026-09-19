@@ -17,11 +17,11 @@ export function MultiSelectExamples() {
     { content: 'Elderberry', value: 'elderberry' },
     { content: 'Fig', value: 'fig' },
     { content: 'Grape', value: 'grape' },
-    { content: 'Honeydew', value: 'honeydew' }
+    { content: 'Honeydew', value: 'honeydew' },
   ]
   const [multiSelectValue, setMultiSelectValue] = useState<MultiSelectItem[]>([
     { content: 'Apple', value: 'apple' },
-    { content: 'Banana', value: 'banana' }
+    { content: 'Banana', value: 'banana' },
   ])
 
   // MultiSelect handlers
@@ -58,7 +58,10 @@ export function MultiSelectExamples() {
   return (
     <ComponentExamples title="Multi Selects">
       <div className="col-span-1 md:col-span-2 lg:col-span-3">
-        <ComponentInfo component="MultiSelect" description="Multi-select component with item management, editing, and validation">
+        <ComponentInfo
+          component="MultiSelect"
+          description="Multi-select component with item management, editing, and validation"
+        >
           <p className="mb-2">
             <span className="font-bold">Import:</span>{' '}
             <Code overflow>
@@ -66,8 +69,9 @@ export function MultiSelectExamples() {
             </Code>
           </p>
           <p className="mb-2">
-            <span className="font-bold">Props:</span> <Code>selectedItems</Code> (MultiSelectItem[]), <Code>onItemAdded</Code>, <Code>onItemRemoved</Code>,{' '}
-            <Code>onItemEdited</Code>, <Code>items</Code> (MultiSelectItem[]), <Code>label</Code>, <Code>disabled</Code>, <Code>showEdit</Code>,{' '}
+            <span className="font-bold">Props:</span> <Code>selectedItems</Code> (MultiSelectItem[]),{' '}
+            <Code>onItemAdded</Code>, <Code>onItemRemoved</Code>, <Code>onItemEdited</Code>, <Code>items</Code>{' '}
+            (MultiSelectItem[]), <Code>label</Code>, <Code>disabled</Code>, <Code>showEdit</Code>,{' '}
             <Code>onValidate</Code>
           </p>
         </ComponentInfo>

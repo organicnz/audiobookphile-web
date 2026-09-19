@@ -17,7 +17,7 @@ interface State {
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
-    error: null
+    error: null,
   }
 
   public static getDerivedStateFromError(error: Error): State {
@@ -42,7 +42,8 @@ export class ErrorBoundary extends Component<Props, State> {
           </div>
           <h1 className="mb-2 text-2xl font-bold tracking-tight">Something went wrong.</h1>
           <p className="mb-8 max-w-md text-sm text-zinc-400">
-            We&apos;ve encountered an unexpected error. Please try refreshing the page. If the problem persists, contact support.
+            We&apos;ve encountered an unexpected error. Please try refreshing the page. If the problem persists, contact
+            support.
           </p>
           <button
             onClick={() => {

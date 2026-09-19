@@ -105,10 +105,18 @@ export default function AudioFileDataModal({ isOpen, audioFile, libraryItemId, o
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div
-        className={mergeClasses('w-full overflow-x-hidden p-4 sm:p-6', ffprobeData ? 'flex flex-col overflow-hidden' : 'overflow-y-auto')}
+        className={mergeClasses(
+          'w-full overflow-x-hidden p-4 sm:p-6',
+          ffprobeData ? 'flex flex-col overflow-hidden' : 'overflow-y-auto'
+        )}
         style={ffprobeData ? { height: '80vh' } : { maxHeight: '80vh' }}
       >
-        <div className={mergeClasses('flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0', ffprobeData && 'shrink-0')}>
+        <div
+          className={mergeClasses(
+            'flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0',
+            ffprobeData && 'shrink-0'
+          )}
+        >
           <h2 className="text-foreground truncate text-base" title={metadata?.filename}>
             {metadata?.filename}
           </h2>
@@ -190,7 +198,9 @@ export default function AudioFileDataModal({ isOpen, audioFile, libraryItemId, o
               <dl className="text-sm">
                 {Object.entries(metaTags).map(([key, value]) => (
                   <div key={key} className="mb-1 flex flex-col gap-1 sm:flex-row sm:gap-2">
-                    <dt className="text-foreground-subdued w-32 min-w-24 shrink-0 sm:min-w-32 sm:break-words">{key.replace('tag', '')}</dt>
+                    <dt className="text-foreground-subdued w-32 min-w-24 shrink-0 sm:min-w-32 sm:break-words">
+                      {key.replace('tag', '')}
+                    </dt>
                     <dd className="min-w-0 flex-1 break-words">{value}</dd>
                   </div>
                 ))}

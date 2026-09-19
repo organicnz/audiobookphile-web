@@ -109,7 +109,7 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
         })
         .map((book) => ({
           id: book.id,
-          coverUrl: getLibraryItemCoverSrc(book, placeholderUrl)
+          coverUrl: getLibraryItemCoverSrc(book, placeholderUrl),
         }))
         .filter((b) => b.coverUrl !== placeholderUrl)
         .slice(0, MAX_COVERS)
@@ -130,7 +130,7 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
         validBooks.map(async (book) => ({
           id: book.id,
           coverUrl: book.coverUrl,
-          showCoverBg: forceCoverBg || (await checkImageAspectRatio(book.coverUrl))
+          showCoverBg: forceCoverBg || (await checkImageAspectRatio(book.coverUrl)),
         }))
       )
 
@@ -201,7 +201,7 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
               width: `${displayWidth}px`,
               left: `${offsetLeft}px`,
               zIndex,
-              boxShadow: isLastCover ? undefined : '4px 0px 4px #11111166'
+              boxShadow: isLastCover ? undefined : '4px 0px 4px #11111166',
             }}
           >
             {/* Cover background for aspect ratio mismatches */}
@@ -210,7 +210,7 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
                 <div
                   className="cover-bg absolute"
                   style={{
-                    backgroundImage: `url("${cover.coverUrl}")`
+                    backgroundImage: `url("${cover.coverUrl}")`,
                   }}
                 />
               </div>
@@ -220,11 +220,18 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               data-cover-id={cover.id}
-              src={retryCount > 0 ? `${cover.coverUrl}${cover.coverUrl.includes('?') ? '&' : '?'}retry=${retryCount}` : cover.coverUrl}
+              src={
+                retryCount > 0
+                  ? `${cover.coverUrl}${cover.coverUrl.includes('?') ? '&' : '?'}retry=${retryCount}`
+                  : cover.coverUrl
+              }
               alt=""
               aria-hidden="true"
               onError={() => handleImageError(cover.id, cover.coverUrl)}
-              className={mergeClasses('absolute start-0 top-0 h-full w-full', cover.showCoverBg ? 'object-contain' : 'object-cover')}
+              className={mergeClasses(
+                'absolute start-0 top-0 h-full w-full',
+                cover.showCoverBg ? 'object-contain' : 'object-cover'
+              )}
             />
           </div>
         )

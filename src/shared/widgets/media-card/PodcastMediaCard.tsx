@@ -27,7 +27,15 @@ export default function PodcastMediaCard(props: PodcastMediaCardProps) {
   const numEpisodesIncomplete = useMemo(() => libraryItem.numEpisodesIncomplete || 0, [libraryItem])
 
   const renderBadges = useMemo(() => {
-    const PodcastBadges = ({ isHovering, isSelectionMode, processing }: { isHovering: boolean; isSelectionMode: boolean; processing: boolean }) => {
+    const PodcastBadges = ({
+      isHovering,
+      isSelectionMode,
+      processing,
+    }: {
+      isHovering: boolean
+      isSelectionMode: boolean
+      processing: boolean
+    }) => {
       // Podcast episode number badge (when showing recent episode)
       if (recentEpisodeNumber !== null && !isHovering && !isSelectionMode && !processing) {
         return (

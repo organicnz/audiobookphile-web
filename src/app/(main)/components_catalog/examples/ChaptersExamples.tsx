@@ -36,26 +36,30 @@ const mockBookWithoutChapters: BookLibraryItem = {
       narrators: [],
       series: [],
       genres: [],
-      explicit: false
+      explicit: false,
     },
     coverPath: undefined,
     tags: [],
     audioFiles: [],
     chapters: [],
     duration: 0,
-    size: 0
+    size: 0,
   },
   libraryFiles: [],
   size: 0,
-  numFiles: 0
+  numFiles: 0,
 }
 
 export function ChaptersExamples({ selectedBook }: ChaptersExamplesProps) {
   return (
     <ComponentExamples title="Chapters">
-      <ComponentInfo component="Chapters" description="Component that displays chapters information including ID, title, start time, and duration.">
+      <ComponentInfo
+        component="Chapters"
+        description="Component that displays chapters information including ID, title, start time, and duration."
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Chapters from &apos;@/shared/widgets/Chapters&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import Chapters from &apos;@/shared/widgets/Chapters&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>
@@ -79,7 +83,9 @@ export function ChaptersExamples({ selectedBook }: ChaptersExamplesProps) {
         </>
       ) : (
         <div className="rounded-lg border-2 border-dashed border-gray-600 p-8">
-          <p className="text-gray-400">Select a book from the search box above to see the Chapters components with real data.</p>
+          <p className="text-gray-400">
+            Select a book from the search box above to see the Chapters components with real data.
+          </p>
         </div>
       )}
     </ComponentExamples>

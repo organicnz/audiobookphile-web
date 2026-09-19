@@ -10,6 +10,6 @@ export function useLibraryStats(libraryId: string | undefined) {
       return fetchLibraryStatsAction(libraryId)
     },
     enabled: !!libraryId,
-    staleTime: 5 * 60 * 1000 // 5 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }

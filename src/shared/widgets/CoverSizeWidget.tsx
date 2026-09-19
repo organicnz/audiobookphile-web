@@ -51,7 +51,11 @@ export default function CoverSizeWidget({ className }: CoverSizeWidgetProps) {
 
   const buttonClass = useMemo(() => 'text-base h-6 w-4 disabled:bg-transparent disabled:cursor-default', [])
   const containerClass = useMemo(
-    () => mergeClasses('rounded-full py-1 bg-primary px-2 border border-border text-center flex items-center shadow-modal-content select-none', className),
+    () =>
+      mergeClasses(
+        'rounded-full py-1 bg-primary px-2 border border-border text-center flex items-center shadow-modal-content select-none',
+        className
+      ),
     [className]
   )
   const textClass = useMemo(() => 'px-2 font-mono text-center w-10 text-base', [])
@@ -59,13 +63,25 @@ export default function CoverSizeWidget({ className }: CoverSizeWidgetProps) {
   return (
     <div>
       <div aria-label={t('LabelCoverSize')} role="group" className={containerClass}>
-        <IconBtn className={buttonClass} disabled={isAtMinSize} onClick={decreaseSize} ariaLabel={t('LabelDecreaseCoverSize')} borderless>
+        <IconBtn
+          className={buttonClass}
+          disabled={isAtMinSize}
+          onClick={decreaseSize}
+          ariaLabel={t('LabelDecreaseCoverSize')}
+          borderless
+        >
           remove
         </IconBtn>
         <p className={textClass} aria-live="polite">
           {coverWidth}
         </p>
-        <IconBtn className={buttonClass} disabled={isAtMaxSize} onClick={increaseSize} ariaLabel={t('LabelIncreaseCoverSize')} borderless>
+        <IconBtn
+          className={buttonClass}
+          disabled={isAtMaxSize}
+          onClick={increaseSize}
+          ariaLabel={t('LabelIncreaseCoverSize')}
+          borderless
+        >
           add
         </IconBtn>
       </div>

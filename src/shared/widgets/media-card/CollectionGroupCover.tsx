@@ -45,7 +45,12 @@ export default function CollectionGroupCover({ books, width, height }: Collectio
           <div className="absolute top-0 left-0 h-full w-full bg-gray-400/5" />
           <div className="relative z-10 h-full" style={{ width: `${width / 2}px` }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={getLibraryItemCoverSrc(books[0], placeholderUrl)} alt="" aria-hidden="true" className="h-full w-full object-cover" />
+            <img
+              src={getLibraryItemCoverSrc(books[0], placeholderUrl)}
+              alt=""
+              aria-hidden="true"
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </div>
@@ -61,13 +66,23 @@ export default function CollectionGroupCover({ books, width, height }: Collectio
         {/* First book cover */}
         <div className="relative h-full" style={{ width: `${width / 2}px` }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={getLibraryItemCoverSrc(books[0], placeholderUrl)} alt="" aria-hidden="true" className="h-full w-full object-cover" />
+          <img
+            src={getLibraryItemCoverSrc(books[0], placeholderUrl)}
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover"
+          />
         </div>
 
         {/* Second book cover */}
         <div className="relative h-full" style={{ width: `${width / 2}px` }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={getLibraryItemCoverSrc(books[1], placeholderUrl)} alt="" aria-hidden="true" className="h-full w-full object-cover" />
+          <img
+            src={getLibraryItemCoverSrc(books[1], placeholderUrl)}
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover"
+          />
         </div>
       </div>
     </div>

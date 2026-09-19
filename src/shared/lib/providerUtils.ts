@@ -10,7 +10,7 @@ export enum AudibleRegion {
   JP = 'jp',
   IT = 'it',
   IN = 'in',
-  ES = 'es'
+  ES = 'es',
 }
 
 export const getProviderRegion = (provider: Library['provider']): AudibleRegion => {

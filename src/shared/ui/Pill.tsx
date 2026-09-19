@@ -41,7 +41,7 @@ export const Pill = <T,>({
   onClick,
   onEdit,
   onRemove,
-  onEditDone
+  onEditDone,
 }: PillProps<T>) => {
   const t = useTypeSafeTranslations()
   const [isInputReady, setIsInputReady] = useState(false)
@@ -192,9 +192,13 @@ export const Pill = <T,>({
   const handlePillKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Tab') {
       e.preventDefault()
-      const focusableElements = [editInputRef.current, cancelButtonRef.current, saveButtonRef.current].filter(Boolean) as HTMLElement[]
+      const focusableElements = [editInputRef.current, cancelButtonRef.current, saveButtonRef.current].filter(
+        Boolean
+      ) as HTMLElement[]
       const currentIndex = focusableElements.indexOf(document.activeElement as HTMLElement)
-      const nextIndex = e.shiftKey ? (currentIndex - 1 + focusableElements.length) % focusableElements.length : (currentIndex + 1) % focusableElements.length
+      const nextIndex = e.shiftKey
+        ? (currentIndex - 1 + focusableElements.length) % focusableElements.length
+        : (currentIndex + 1) % focusableElements.length
       focusableElements[nextIndex]?.focus()
     }
   }

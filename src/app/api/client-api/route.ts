@@ -4,6 +4,6 @@ export async function GET() {
   const cookiesStore = await cookies()
 
   return Response.json({
-    auth: 'cookies' // Fixed: was 'none' - now includes cookies in requests
+    auth: 'cookies', // Fixed: was 'none' - now includes cookies in requests
   })
 }

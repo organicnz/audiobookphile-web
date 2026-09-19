@@ -15,9 +15,9 @@ const containerVariants: Variants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 }
 
 const itemVariants: Variants = {
@@ -28,9 +28,9 @@ const itemVariants: Variants = {
     transition: {
       type: 'spring',
       stiffness: 100,
-      damping: 15
-    }
-  }
+      damping: 15,
+    },
+  },
 }
 
 export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
@@ -42,7 +42,7 @@ export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
       color: 'bg-amber-500',
       iconColor: 'text-amber-400',
       trend: '+12% this week',
-      trendColor: 'text-amber-400 bg-amber-500/15 border border-amber-500/20'
+      trendColor: 'text-amber-400 bg-amber-500/15 border border-amber-500/20',
     },
     {
       title: 'Active Playback Sessions',
@@ -51,7 +51,7 @@ export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
       color: 'bg-emerald-500',
       iconColor: 'text-emerald-400',
       trend: 'Live',
-      trendColor: 'text-emerald-400 bg-emerald-500/15 border border-emerald-500/20'
+      trendColor: 'text-emerald-400 bg-emerald-500/15 border border-emerald-500/20',
     },
     {
       title: 'Total Library Items',
@@ -60,7 +60,7 @@ export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
       color: 'bg-accent',
       iconColor: 'text-accent',
       trend: '+45 this month',
-      trendColor: 'text-accent bg-accent/15 border border-accent/20'
+      trendColor: 'text-accent bg-accent/15 border border-accent/20',
     },
     {
       title: 'Libraries Configured',
@@ -69,12 +69,17 @@ export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
       color: 'bg-orange-500',
       iconColor: 'text-orange-400',
       trend: 'Stable',
-      trendColor: 'text-orange-400 bg-orange-500/15 border border-orange-500/20'
-    }
+      trendColor: 'text-orange-400 bg-orange-500/15 border border-orange-500/20',
+    },
   ]
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
+    >
       {kpis.map((kpi) => (
         <motion.div
           key={kpi.title}
@@ -92,7 +97,11 @@ export function AdminAnalyticsGrid({ data }: { data: AdminAnalyticsData }) {
             <h2 className="text-foreground text-4xl font-bold tracking-tight">
               {kpi.value === null || kpi.value === undefined ? '—' : kpi.value.toLocaleString()}
             </h2>
-            <span className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${kpi.trendColor}`}>{kpi.trend}</span>
+            <span
+              className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${kpi.trendColor}`}
+            >
+              {kpi.trend}
+            </span>
           </div>
 
           {/* Decorative background circle */}

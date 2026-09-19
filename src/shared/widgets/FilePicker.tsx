@@ -21,7 +21,7 @@ export default function FilePicker({
   directory = false,
   disabled = false,
   children,
-  className = ''
+  className = '',
 }: FilePickerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const t = useTypeSafeTranslations()

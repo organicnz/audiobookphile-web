@@ -36,7 +36,7 @@ const BookDetailsEdit = ({
   availableSeries = [],
   onChange,
   onSubmit,
-  ref
+  ref,
 }: BookDetailsEditProps) => {
   const t = useTypeSafeTranslations()
 
@@ -45,14 +45,24 @@ const BookDetailsEdit = ({
   const batchAppendLogic = useCallback(
     (state: { details: Details }, detailsToUpdate: Partial<Details>) => ({
       ...state.details,
-      genres: detailsToUpdate.genres ? [...new Set([...(state.details.genres || []), ...detailsToUpdate.genres])] : state.details.genres,
-      narrators: detailsToUpdate.narrators ? [...new Set([...(state.details.narrators || []), ...detailsToUpdate.narrators])] : state.details.narrators,
+      genres: detailsToUpdate.genres
+        ? [...new Set([...(state.details.genres || []), ...detailsToUpdate.genres])]
+        : state.details.genres,
+      narrators: detailsToUpdate.narrators
+        ? [...new Set([...(state.details.narrators || []), ...detailsToUpdate.narrators])]
+        : state.details.narrators,
       authors: detailsToUpdate.authors
-        ? [...state.details.authors, ...detailsToUpdate.authors.filter((newItem) => !state.details.authors.find((p) => p.id === newItem.id))]
+        ? [
+            ...state.details.authors,
+            ...detailsToUpdate.authors.filter((newItem) => !state.details.authors.find((p) => p.id === newItem.id)),
+          ]
         : state.details.authors,
       series: detailsToUpdate.series
-        ? [...state.details.series, ...detailsToUpdate.series.filter((newItem) => !state.details.series.find((p) => p.id === newItem.id))]
-        : state.details.series
+        ? [
+            ...state.details.series,
+            ...detailsToUpdate.series.filter((newItem) => !state.details.series.find((p) => p.id === newItem.id)),
+          ]
+        : state.details.series,
     }),
     []
   )
@@ -67,7 +77,7 @@ const BookDetailsEdit = ({
     updateField: handleFieldUpdate,
     updateTags,
     submitForm,
-    initialDetails
+    initialDetails,
   } = useDetailsEdit<Details>({
     metadata: (media.metadata as Details) || {},
     tags: media.tags || [],
@@ -76,7 +86,7 @@ const BookDetailsEdit = ({
     extractAuthor,
     onChange,
     onSubmit,
-    batchAppendLogic
+    batchAppendLogic,
   })
 
   const authorItems = useMemo(() => details.authors.map((a) => ({ value: a.id, content: a.name })), [details.authors])
@@ -106,7 +116,7 @@ const BookDetailsEdit = ({
     () =>
       details.series.map((s) => ({
         value: s.id,
-        content: { value: s.name, modifier: s.sequence || '' }
+        content: { value: s.name, modifier: s.sequence || '' },
       })),
     [details.series]
   )
@@ -115,7 +125,7 @@ const BookDetailsEdit = ({
       const newSeries: Series = {
         id: item.value,
         name: item.content.value,
-        sequence: item.content.modifier
+        sequence: item.content.modifier,
       }
       handleFieldUpdate('series')([...details.series, newSeries])
     },
@@ -132,7 +142,7 @@ const BookDetailsEdit = ({
       const editedSeries: Series = {
         id: item.value,
         name: item.content.value,
-        sequence: item.content.modifier
+        sequence: item.content.modifier,
       }
       const newSeriesList = [...details.series]
       newSeriesList[index] = editedSeries
@@ -169,7 +179,10 @@ const BookDetailsEdit = ({
     [tags, updateTags]
   )
 
-  const narratorItems = useMemo(() => (details.narrators || []).map((n) => ({ value: n, content: n })), [details.narrators])
+  const narratorItems = useMemo(
+    () => (details.narrators || []).map((n) => ({ value: n, content: n })),
+    [details.narrators]
+  )
   const handleAddNarrator = useCallback(
     (item: MultiSelectItem<string>) => {
       handleFieldUpdate('narrators')([...(details.narrators || []), item.content])
@@ -197,7 +210,11 @@ const BookDetailsEdit = ({
             <TextInput value={details.title || ''} onChange={handleFieldUpdate('title')} label={t('LabelTitle')} />
           </div>
           <div className="mt-2 grow px-1 md:mt-0">
-            <TextInput value={details.subtitle || ''} onChange={handleFieldUpdate('subtitle')} label={t('LabelSubtitle')} />
+            <TextInput
+              value={details.subtitle || ''}
+              onChange={handleFieldUpdate('subtitle')}
+              label={t('LabelSubtitle')}
+            />
           </div>
         </div>
 
@@ -213,7 +230,12 @@ const BookDetailsEdit = ({
             />
           </div>
           <div className="mt-2 grow px-1 md:mt-0 md:w-28">
-            <TextInput value={details.publishedYear || ''} onChange={handleFieldUpdate('publishedYear')} type="number" label={t('LabelPublishYear')} />
+            <TextInput
+              value={details.publishedYear || ''}
+              onChange={handleFieldUpdate('publishedYear')}
+              type="number"
+              label={t('LabelPublishYear')}
+            />
           </div>
         </div>
 
@@ -230,7 +252,12 @@ const BookDetailsEdit = ({
           </div>
         </div>
 
-        <SlateEditor srcContent={initialDetails.description || ''} onUpdate={handleFieldUpdate('description')} label={t('LabelDescription')} className="mt-2" />
+        <SlateEditor
+          srcContent={initialDetails.description || ''}
+          onUpdate={handleFieldUpdate('description')}
+          label={t('LabelDescription')}
+          className="mt-2"
+        />
 
         <div className="-mx-1 mt-2 flex flex-wrap">
           <div className="w-full px-1 md:w-1/2">
@@ -276,10 +303,18 @@ const BookDetailsEdit = ({
 
         <div className="-mx-1 mt-2 flex flex-wrap">
           <div className="w-full px-1 md:w-1/4">
-            <TextInput value={details.publisher || ''} onChange={handleFieldUpdate('publisher')} label={t('LabelPublisher')} />
+            <TextInput
+              value={details.publisher || ''}
+              onChange={handleFieldUpdate('publisher')}
+              label={t('LabelPublisher')}
+            />
           </div>
           <div className="mt-2 w-1/2 px-1 md:mt-0 md:w-1/4">
-            <TextInput value={details.language || ''} onChange={handleFieldUpdate('language')} label={t('LabelLanguage')} />
+            <TextInput
+              value={details.language || ''}
+              onChange={handleFieldUpdate('language')}
+              label={t('LabelLanguage')}
+            />
           </div>
           <div className="mt-2 grow px-1 pt-6 md:mt-0">
             <div className="flex justify-center">

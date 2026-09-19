@@ -39,7 +39,7 @@ export default function MediaCardDetailView({
   lastUpdated,
   startedAt,
   finishedAt,
-  isSkeleton = false
+  isSkeleton = false,
 }: MediaCardDetailViewProps) {
   const t = useTypeSafeTranslations()
   const descriptionId = useId()
@@ -55,14 +55,19 @@ export default function MediaCardDetailView({
               className="h-[1em] w-3/4 animate-pulse rounded bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700"
               style={{
                 animationDelay: '0s',
-                animationDuration: '1.5s'
+                animationDuration: '1.5s',
               }}
               aria-hidden="true"
             />
             &nbsp;
           </div>
         ) : (
-          <Tooltip text={displayTitle} position="bottom" className="flex items-center" disabled={!displayTitleTruncated}>
+          <Tooltip
+            text={displayTitle}
+            position="bottom"
+            className="flex items-center"
+            disabled={!displayTitleTruncated}
+          >
             <p cy-id="title" ref={titleRef} className="truncate">
               {displayTitle}
             </p>
@@ -77,14 +82,19 @@ export default function MediaCardDetailView({
               className="inline-block h-[1em] w-1/2 animate-pulse rounded bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700"
               style={{
                 animationDelay: '0.1s',
-                animationDuration: '1.5s'
+                animationDuration: '1.5s',
               }}
               aria-hidden="true"
             />
             &nbsp;
           </p>
         ) : (
-          <Tooltip text={displaySubtitle} position="bottom" disabled={!displaySubtitleTruncated} className="block w-full">
+          <Tooltip
+            text={displaySubtitle}
+            position="bottom"
+            disabled={!displaySubtitleTruncated}
+            className="block w-full"
+          >
             <p cy-id="subtitle" ref={subtitleRef} className="truncate" style={{ fontSize: `${0.6}em` }}>
               {displaySubtitle}
             </p>
@@ -96,7 +106,7 @@ export default function MediaCardDetailView({
             className="inline-block h-[1em] w-2/3 animate-pulse rounded bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700"
             style={{
               animationDelay: '0.2s',
-              animationDuration: '1.5s'
+              animationDuration: '1.5s',
             }}
             aria-hidden="true"
           />
@@ -117,17 +127,22 @@ export default function MediaCardDetailView({
             lastUpdated,
             startedAt,
             finishedAt,
-            t
+            t,
           })
           // Only render if there's actual content or if skeleton
           if (isSkeleton) {
             return sortLine !== null ? (
-              <p className="truncate text-gray-400" style={{ fontSize: `${0.8}em` }} aria-busy="true" aria-live="polite">
+              <p
+                className="truncate text-gray-400"
+                style={{ fontSize: `${0.8}em` }}
+                aria-busy="true"
+                aria-live="polite"
+              >
                 <span
                   className="inline-block h-[1em] w-1/2 animate-pulse rounded bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700"
                   style={{
                     animationDelay: '0.3s',
-                    animationDuration: '1.5s'
+                    animationDuration: '1.5s',
                   }}
                   aria-hidden="true"
                 />

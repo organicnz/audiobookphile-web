@@ -17,7 +17,11 @@ export default function LogsClient({ currentDailyLogs, logLevel, updateServerSet
   return (
     <SettingsContent title={t('HeaderLogs')} moreInfoUrl="https://www.audiobookphile.org/guides/server_logs">
       <div className="py-4">
-        <LogsContainer currentDailyLogs={currentDailyLogs} logLevel={logLevel} updateServerSettings={updateServerSettings} />
+        <LogsContainer
+          currentDailyLogs={currentDailyLogs}
+          logLevel={logLevel}
+          updateServerSettings={updateServerSettings}
+        />
       </div>
     </SettingsContent>
   )

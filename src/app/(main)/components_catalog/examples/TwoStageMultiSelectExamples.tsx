@@ -10,9 +10,11 @@ import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '
 export function TwoStageMultiSelectExamples() {
   const { showToast } = useGlobalToast()
 
-  const [twoStageMultiSelectValue, setTwoStageMultiSelectValue] = useState<MultiSelectItem<TwoStageMultiSelectContent>[]>([
+  const [twoStageMultiSelectValue, setTwoStageMultiSelectValue] = useState<
+    MultiSelectItem<TwoStageMultiSelectContent>[]
+  >([
     { value: '1', content: { value: 'Harry Potter', modifier: '1' } },
-    { value: '2', content: { value: 'Lord of the Rings', modifier: '3' } }
+    { value: '2', content: { value: 'Lord of the Rings', modifier: '3' } },
   ])
 
   const twoStageMultiSelectItems = [
@@ -23,7 +25,7 @@ export function TwoStageMultiSelectExamples() {
     { value: '5', content: 'The Hunger Games' },
     { value: '6', content: 'Foundation' },
     { value: '7', content: 'A song of ice and fire' },
-    { value: '8', content: 'Robots' }
+    { value: '8', content: 'Robots' },
   ]
 
   const handleTwoStageMultiSelectItemAdded = (item: MultiSelectItem<TwoStageMultiSelectContent>) => {
@@ -33,7 +35,7 @@ export function TwoStageMultiSelectExamples() {
       console.log('new item', item)
       showToast(`New item created: ${item.content.value}${item.content.modifier ? ` #${item.content.modifier}` : ''}`, {
         type: 'success',
-        title: 'Item Created'
+        title: 'Item Created',
       })
     }
   }
@@ -43,7 +45,7 @@ export function TwoStageMultiSelectExamples() {
     setTwoStageMultiSelectValue(newItems)
     showToast(`Removed: ${item.content.value}${item.content.modifier ? ` #${item.content.modifier}` : ''}`, {
       type: 'info',
-      title: 'Item Removed'
+      title: 'Item Removed',
     })
   }
 
@@ -64,16 +66,21 @@ export function TwoStageMultiSelectExamples() {
 
   return (
     <ComponentExamples title="Two Stage Multi Selects">
-      <ComponentInfo component="TwoStageMultiSelect" description="Two-stage multi-select component with primary and modifier values">
+      <ComponentInfo
+        component="TwoStageMultiSelect"
+        description="Two-stage multi-select component with primary and modifier values"
+      >
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
           <Code overflow>
-            import TwoStageMultiSelect, {'{'} TwoStageMultiSelectContent {'}'} from &apos;@/shared/ui/TwoStageMultiSelect&apos;
+            import TwoStageMultiSelect, {'{'} TwoStageMultiSelectContent {'}'} from
+            &apos;@/shared/ui/TwoStageMultiSelect&apos;
           </Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>selectedItems</Code>, <Code>onItemAdded</Code>, <Code>onItemRemoved</Code>, <Code>onItemEdited</Code>,{' '}
-          <Code>items</Code>, <Code>label</Code>, <Code>onValidate</Code>
+          <span className="font-bold">Props:</span> <Code>selectedItems</Code>, <Code>onItemAdded</Code>,{' '}
+          <Code>onItemRemoved</Code>, <Code>onItemEdited</Code>, <Code>items</Code>, <Code>label</Code>,{' '}
+          <Code>onValidate</Code>
         </p>
       </ComponentInfo>
 

@@ -11,7 +11,17 @@ import { buttonClassBase } from './constants'
 // --- UndoButton Component ---
 
 export const UndoButton = memo(
-  ({ buttonId, tabIndex, onFocus, isUndoAvailable }: { buttonId: string; tabIndex: number; onFocus: () => void; isUndoAvailable: boolean }) => {
+  ({
+    buttonId,
+    tabIndex,
+    onFocus,
+    isUndoAvailable,
+  }: {
+    buttonId: string
+    tabIndex: number
+    onFocus: () => void
+    isUndoAvailable: boolean
+  }) => {
     const editor = useSlate() as Editor & HistoryEditor
 
     const handleKeyDown = useCallback(
@@ -56,7 +66,17 @@ UndoButton.displayName = 'UndoButton'
 // --- RedoButton Component ---
 
 export const RedoButton = memo(
-  ({ buttonId, tabIndex, onFocus, isRedoAvailable }: { buttonId: string; tabIndex: number; onFocus: () => void; isRedoAvailable: boolean }) => {
+  ({
+    buttonId,
+    tabIndex,
+    onFocus,
+    isRedoAvailable,
+  }: {
+    buttonId: string
+    tabIndex: number
+    onFocus: () => void
+    isRedoAvailable: boolean
+  }) => {
     const editor = useSlate() as Editor & HistoryEditor
 
     const handleKeyDown = useCallback(

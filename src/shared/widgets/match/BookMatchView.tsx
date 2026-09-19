@@ -63,7 +63,7 @@ const defaultMatchUsage: BookMatchUsage = {
   explicit: true,
   asin: true,
   isbn: true,
-  abridged: true
+  abridged: true,
 }
 
 export default function BookMatchView({
@@ -76,7 +76,7 @@ export default function BookMatchView({
   availableTags,
   availableNarrators,
   availableSeries,
-  onDone
+  onDone,
 }: BookMatchViewProps) {
   const t = useTypeSafeTranslations()
   const [selectedMatch, setSelectedMatch] = useState<BookSearchResult>(() => processBookMatchData(selectedMatchOrig))
@@ -97,13 +97,21 @@ export default function BookMatchView({
   // Combined items for multi-selects
   const allGenres = useMemo(() => {
     const currentGenres = availableGenres.map((g) => g.value)
-    const matchGenres = selectedMatch?.genres ? (Array.isArray(selectedMatch.genres) ? selectedMatch.genres : [selectedMatch.genres]) : []
+    const matchGenres = selectedMatch?.genres
+      ? Array.isArray(selectedMatch.genres)
+        ? selectedMatch.genres
+        : [selectedMatch.genres]
+      : []
     return [...new Set([...currentGenres, ...matchGenres])].map((g) => ({ value: g, content: g }))
   }, [availableGenres, selectedMatch?.genres])
 
   const allTags = useMemo(() => {
     const currentTags = availableTags.map((t) => t.value)
-    const matchTags = selectedMatch?.tags ? (Array.isArray(selectedMatch.tags) ? selectedMatch.tags : [selectedMatch.tags]) : []
+    const matchTags = selectedMatch?.tags
+      ? Array.isArray(selectedMatch.tags)
+        ? selectedMatch.tags
+        : [selectedMatch.tags]
+      : []
     return [...new Set([...currentTags, ...matchTags])].map((t) => ({ value: t, content: t }))
   }, [availableTags, selectedMatch?.tags])
 
@@ -112,18 +120,21 @@ export default function BookMatchView({
     if (!selectedMatch?.series) return []
     return selectedMatch.series.map((s: { series: string; sequence?: string; id?: string; name?: string }) => ({
       value: s.id || `new-${crypto.randomUUID()}`,
-      content: { value: s.name || s.series, modifier: s.sequence || '' }
+      content: { value: s.name || s.series, modifier: s.sequence || '' },
     }))
   }, [selectedMatch])
 
-  const seriesItemsMap = useMemo(() => availableSeries.map((item) => ({ value: item.value, content: item.content as string })), [availableSeries])
+  const seriesItemsMap = useMemo(
+    () => availableSeries.map((item) => ({ value: item.value, content: item.content as string })),
+    [availableSeries]
+  )
 
   const handleAddSeries = useCallback((item: MultiSelectItem<{ value: string; modifier: string }>) => {
     const newSeries = {
       id: item.value,
       name: item.content.value,
       series: item.content.value,
-      sequence: item.content.modifier
+      sequence: item.content.modifier,
     }
     setSelectedMatch((prev) => ({ ...prev, series: [...(prev.series || []), newSeries] }))
   }, [])
@@ -131,7 +142,9 @@ export default function BookMatchView({
   const handleRemoveSeries = useCallback((item: MultiSelectItem<{ value: string; modifier: string }>) => {
     setSelectedMatch((prev) => ({
       ...prev,
-      series: (prev.series || []).filter((s: { series: string; sequence?: string; id?: string }) => s.series !== item.content.value)
+      series: (prev.series || []).filter(
+        (s: { series: string; sequence?: string; id?: string }) => s.series !== item.content.value
+      ),
     }))
   }, [])
 
@@ -140,7 +153,7 @@ export default function BookMatchView({
       id: item.value,
       name: item.content.value,
       series: item.content.value,
-      sequence: item.content.modifier
+      sequence: item.content.modifier,
     }
     setSelectedMatch((prev) => {
       const newSeriesList = [...(prev.series || [])]
@@ -154,14 +167,16 @@ export default function BookMatchView({
       id: s.id || `new-${crypto.randomUUID()}`,
       name: s.name,
       series: s.name,
-      sequence: s.sequence || ''
+      sequence: s.sequence || '',
     }))
     setSelectedMatch((prev) => ({ ...prev, series: convertedSeries }))
   }, [])
 
   // Computed current values
   const authorCurrentValue = useMemo(() => {
-    return isBookMedia(media) && media.metadata.authors && media.metadata.authors.length > 0 ? media.metadata.authors.map((a) => a.name).join(', ') : undefined
+    return isBookMedia(media) && media.metadata.authors && media.metadata.authors.length > 0
+      ? media.metadata.authors.map((a) => a.name).join(', ')
+      : undefined
   }, [media])
 
   const seriesCurrentValue = useMemo(() => {
@@ -171,63 +186,77 @@ export default function BookMatchView({
   const abridgedCurrentValue = useMemo(() => (isBookMedia(media) ? media.metadata.abridged : undefined), [media])
 
   // Helper functions to get match values with proper types
-  const getStringValue = useCallback((field: keyof BookSearchResult, fallback = '') => getMatchStringValue(selectedMatch, field, fallback), [selectedMatch])
+  const getStringValue = useCallback(
+    (field: keyof BookSearchResult, fallback = '') => getMatchStringValue(selectedMatch, field, fallback),
+    [selectedMatch]
+  )
 
   const getBooleanValue = useCallback(
     (field: keyof BookSearchResult, fallback = false) => getMatchBooleanValue(selectedMatch, field, fallback),
     [selectedMatch]
   )
 
-  const buildMatchUpdatePayload = useCallback((selectedMatchUsage: BookMatchUsage, selectedMatch: BookSearchResult): UpdateLibraryItemMediaPayload | null => {
-    const updatePayload: UpdateLibraryItemMediaPayload = { metadata: {} }
+  const buildMatchUpdatePayload = useCallback(
+    (selectedMatchUsage: BookMatchUsage, selectedMatch: BookSearchResult): UpdateLibraryItemMediaPayload | null => {
+      const updatePayload: UpdateLibraryItemMediaPayload = { metadata: {} }
 
-    for (const key in selectedMatchUsage) {
-      if (!selectedMatchUsage[key as keyof BookMatchUsage]) continue
+      for (const key in selectedMatchUsage) {
+        if (!selectedMatchUsage[key as keyof BookMatchUsage]) continue
 
-      const value = selectedMatch[key as keyof BookSearchResult]
-      if (value === undefined) continue
+        const value = selectedMatch[key as keyof BookSearchResult]
+        if (value === undefined) continue
 
-      if (key === 'series' && Array.isArray(selectedMatch.series)) {
-        updatePayload.metadata!.series = selectedMatch.series.map((s) => ({
-          id: `new-${crypto.randomUUID()}`,
-          name: s.series,
-          sequence: s.sequence || ''
-        }))
-      } else if (key === 'author') {
-        const authorValue = selectedMatch.author
-        if (authorValue) {
-          const authorNames = Array.isArray(authorValue)
-            ? authorValue
-            : String(authorValue)
-                .split(',')
-                .map((au: string) => au.trim())
-          updatePayload.metadata!.authors = authorNames.filter((au: string) => !!au).map((name: string) => ({ id: `new-${crypto.randomUUID()}`, name }))
+        if (key === 'series' && Array.isArray(selectedMatch.series)) {
+          updatePayload.metadata!.series = selectedMatch.series.map((s) => ({
+            id: `new-${crypto.randomUUID()}`,
+            name: s.series,
+            sequence: s.sequence || '',
+          }))
+        } else if (key === 'author') {
+          const authorValue = selectedMatch.author
+          if (authorValue) {
+            const authorNames = Array.isArray(authorValue)
+              ? authorValue
+              : String(authorValue)
+                  .split(',')
+                  .map((au: string) => au.trim())
+            updatePayload.metadata!.authors = authorNames
+              .filter((au: string) => !!au)
+              .map((name: string) => ({ id: `new-${crypto.randomUUID()}`, name }))
+          }
+        } else if (key === 'narrator') {
+          const narratorValue = selectedMatch.narrator
+          if (Array.isArray(narratorValue)) {
+            updatePayload.metadata!.narrators = narratorValue
+          } else if (narratorValue) {
+            updatePayload.metadata!.narrators = String(narratorValue)
+              .split(',')
+              .map((n: string) => n.trim())
+              .filter((n: string) => !!n)
+          }
+        } else if (key === 'genres') {
+          updatePayload.metadata!.genres = Array.isArray(value)
+            ? value.filter((g): g is string => !!g)
+            : [value].filter((g): g is string => !!g)
+        } else if (key === 'tags') {
+          updatePayload.tags = Array.isArray(value)
+            ? value.filter((t): t is string => !!t)
+            : [value].filter((t): t is string => !!t)
+        } else if (key === 'cover') {
+          updatePayload.url = value as string
+        } else if (key === 'explicit' || key === 'abridged') {
+          updatePayload.metadata![key] = value as boolean
+        } else if (
+          ['title', 'subtitle', 'description', 'publisher', 'publishedYear', 'language', 'isbn', 'asin'].includes(key)
+        ) {
+          updatePayload.metadata![key] = value as string | undefined
         }
-      } else if (key === 'narrator') {
-        const narratorValue = selectedMatch.narrator
-        if (Array.isArray(narratorValue)) {
-          updatePayload.metadata!.narrators = narratorValue
-        } else if (narratorValue) {
-          updatePayload.metadata!.narrators = String(narratorValue)
-            .split(',')
-            .map((n: string) => n.trim())
-            .filter((n: string) => !!n)
-        }
-      } else if (key === 'genres') {
-        updatePayload.metadata!.genres = Array.isArray(value) ? value.filter((g): g is string => !!g) : [value].filter((g): g is string => !!g)
-      } else if (key === 'tags') {
-        updatePayload.tags = Array.isArray(value) ? value.filter((t): t is string => !!t) : [value].filter((t): t is string => !!t)
-      } else if (key === 'cover') {
-        updatePayload.url = value as string
-      } else if (key === 'explicit' || key === 'abridged') {
-        updatePayload.metadata![key] = value as boolean
-      } else if (['title', 'subtitle', 'description', 'publisher', 'publishedYear', 'language', 'isbn', 'asin'].includes(key)) {
-        updatePayload.metadata![key] = value as string | undefined
       }
-    }
 
-    return updatePayload
-  }, [])
+      return updatePayload
+    },
+    []
+  )
 
   return (
     <BaseMatchView

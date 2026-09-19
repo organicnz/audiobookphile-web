@@ -21,36 +21,45 @@ export function ToggleBtnsExamples() {
   const basicItems = [
     { text: 'Option 1', value: 'option1' },
     { text: 'Option 2', value: 'option2' },
-    { text: 'Option 3', value: 'option3' }
+    { text: 'Option 3', value: 'option3' },
   ]
 
   const sizeItems = [
     { text: 'Small', value: 'small' },
     { text: 'Medium', value: 'medium' },
-    { text: 'Large', value: 'large' }
+    { text: 'Large', value: 'large' },
   ]
 
   const stateItems = [
     { text: 'Enabled', value: 'enabled' },
-    { text: 'Disabled', value: 'disabled' }
+    { text: 'Disabled', value: 'disabled' },
   ]
 
   return (
     <ComponentExamples title="Toggle Buttons">
-      <ComponentInfo component="ToggleButtonGroup" description="Toggle button group component with radio button behavior and keyboard navigation">
+      <ComponentInfo
+        component="ToggleButtonGroup"
+        description="Toggle button group component with radio button behavior and keyboard navigation"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ToggleButtonGroup from &apos;@/shared/ui/ToggleButtonGroup&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import ToggleButtonGroup from &apos;@/shared/ui/ToggleButtonGroup&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>items</Code>, <Code>value</Code>, <Code>onChange</Code>, <Code>size</Code>, <Code>label</Code>,{' '}
-          <Code>disabled</Code>
+          <span className="font-bold">Props:</span> <Code>items</Code>, <Code>value</Code>, <Code>onChange</Code>,{' '}
+          <Code>size</Code>, <Code>label</Code>, <Code>disabled</Code>
         </p>
       </ComponentInfo>
 
       <ExamplesBlock>
         <Example title="Basic Toggle Buttons">
           <div className="space-y-4">
-            <ToggleButtonGroup items={basicItems} value={selectedValue1} onChange={handleChange1} label="Select an option" />
+            <ToggleButtonGroup
+              items={basicItems}
+              value={selectedValue1}
+              onChange={handleChange1}
+              label="Select an option"
+            />
           </div>
         </Example>
 
@@ -58,13 +67,31 @@ export function ToggleBtnsExamples() {
           <div className="space-y-4">
             <div className="space-y-3">
               <div>
-                <ToggleButtonGroup items={sizeItems} value={selectedValue2} onChange={handleChange2} size="small" label="Small" />
+                <ToggleButtonGroup
+                  items={sizeItems}
+                  value={selectedValue2}
+                  onChange={handleChange2}
+                  size="small"
+                  label="Small"
+                />
               </div>
               <div>
-                <ToggleButtonGroup items={sizeItems} value={selectedValue4} onChange={handleChange4} size="medium" label="Medium" />
+                <ToggleButtonGroup
+                  items={sizeItems}
+                  value={selectedValue4}
+                  onChange={handleChange4}
+                  size="medium"
+                  label="Medium"
+                />
               </div>
               <div>
-                <ToggleButtonGroup items={sizeItems} value={selectedValue5} onChange={handleChange5} size="large" label="Large" />
+                <ToggleButtonGroup
+                  items={sizeItems}
+                  value={selectedValue5}
+                  onChange={handleChange5}
+                  size="large"
+                  label="Large"
+                />
               </div>
             </div>
           </div>
@@ -72,7 +99,13 @@ export function ToggleBtnsExamples() {
 
         <Example title="Disabled State">
           <div className="space-y-4">
-            <ToggleButtonGroup items={stateItems} value={selectedValue3} onChange={handleChange3} disabled={true} label="Select state" />
+            <ToggleButtonGroup
+              items={stateItems}
+              value={selectedValue3}
+              onChange={handleChange3}
+              disabled={true}
+              label="Select state"
+            />
           </div>
         </Example>
       </ExamplesBlock>

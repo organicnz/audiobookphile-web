@@ -10,14 +10,19 @@ export function MediaIconPickerExamples() {
 
   return (
     <ComponentExamples title="Media Icon Pickers">
-      <ComponentInfo component="MediaIconPicker" description="Icon picker component for selecting library icons with dropdown menu">
+      <ComponentInfo
+        component="MediaIconPicker"
+        description="Icon picker component for selecting library icons with dropdown menu"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import MediaIconPicker from &apos;@/shared/ui/MediaIconPicker&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import MediaIconPicker from &apos;@/shared/ui/MediaIconPicker&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>value</Code> (selected icon name, defaults to &apos;database&apos;), <Code>onChange</Code> (callback
-          when icon is selected), <Code>label</Code> (label text, defaults to &apos;Icon&apos;), <Code>disabled</Code> (disables the picker),{' '}
-          <Code>className</Code> (additional CSS classes), <Code>align</Code> (menu alignment, defaults to &apos;left&apos;, options: &apos;left&apos;,
+          <span className="font-bold">Props:</span> <Code>value</Code> (selected icon name, defaults to
+          &apos;database&apos;), <Code>onChange</Code> (callback when icon is selected), <Code>label</Code> (label text,
+          defaults to &apos;Icon&apos;), <Code>disabled</Code> (disables the picker), <Code>className</Code> (additional
+          CSS classes), <Code>align</Code> (menu alignment, defaults to &apos;left&apos;, options: &apos;left&apos;,
           &apos;right&apos;, &apos;center&apos;)
         </p>
       </ComponentInfo>

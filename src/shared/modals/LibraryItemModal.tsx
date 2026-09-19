@@ -1,7 +1,17 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { createContext, type ReactNode, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState, useTransition } from 'react'
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react'
 import { getExpandedLibraryItemAction } from '@/features/player/actions/mediaActions'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useEntityNavigationContext } from '@/shared/hooks/useEntityNavigationContext'
@@ -36,7 +46,9 @@ export function useLibraryItemModal(): LibraryItemModalContextValue {
 }
 
 /** Either `navCtx` (fetch + prev/next) or `libraryItem` (no fetch); object literals cannot include both. */
-export type LibraryItemModalItemSource = { navCtx: EntityNavigationContext } | { libraryItem: BookLibraryItem | PodcastLibraryItem }
+export type LibraryItemModalItemSource =
+  | { navCtx: EntityNavigationContext }
+  | { libraryItem: BookLibraryItem | PodcastLibraryItem }
 
 export type LibraryItemModalProps = Omit<ModalProps, 'outerContent' | 'sideNavigation' | 'processing' | 'children'> &
   LibraryItemModalItemSource & {
@@ -50,7 +62,17 @@ export type LibraryItemModalProps = Omit<ModalProps, 'outerContent' | 'sideNavig
  * Descendants read `resolvedItem` / `fetchPending` / `pendingEntityId` / `syncResolvedItem` via {@link useLibraryItemModal}.
  */
 export default function LibraryItemModal(props: LibraryItemModalProps) {
-  const { additionalProcessing = false, children, isOpen, onClose, persistent, zIndexClass, bgOpacityClass, className, style } = props
+  const {
+    additionalProcessing = false,
+    children,
+    isOpen,
+    onClose,
+    persistent,
+    zIndexClass,
+    bgOpacityClass,
+    className,
+    style,
+  } = props
 
   const navCtxMode = 'navCtx' in props
   const navCtx = navCtxMode ? props.navCtx : undefined
@@ -125,13 +147,19 @@ export default function LibraryItemModal(props: LibraryItemModalProps) {
   const outerContent = useMemo(() => {
     if (!mediaTitle) return undefined
     return (
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="pointer-events-none absolute inset-x-0 top-0 z-10 px-6 py-4">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="pointer-events-none absolute inset-x-0 top-0 z-10 px-6 py-4"
+      >
         <div className="max-w-prose">
           <h2 className="truncate text-xl font-semibold tracking-tight text-white/90 drop-shadow-md" title={mediaTitle}>
             {mediaTitle}
           </h2>
           {resolvedItem && 'authors' in resolvedItem.media.metadata && (
-            <p className="truncate text-sm font-medium text-white/60">{(resolvedItem.media.metadata.authors as any[])?.map((a) => a.name).join(', ')}</p>
+            <p className="truncate text-sm font-medium text-white/60">
+              {(resolvedItem.media.metadata.authors as any[])?.map((a) => a.name).join(', ')}
+            </p>
           )}
         </div>
       </motion.div>
@@ -145,7 +173,14 @@ export default function LibraryItemModal(props: LibraryItemModalProps) {
 
   const sideNavigation = useMemo(() => {
     if (!showRails || !isOpen) return undefined
-    return <ModalSideNavigation canGoPrev={canGoPrev} canGoNext={canGoNext} onPrevAction={handleGoPrev} onNextAction={handleGoNext} />
+    return (
+      <ModalSideNavigation
+        canGoPrev={canGoPrev}
+        canGoNext={canGoNext}
+        onPrevAction={handleGoPrev}
+        onNextAction={handleGoNext}
+      />
+    )
   }, [showRails, isOpen, canGoPrev, canGoNext, handleGoPrev, handleGoNext])
 
   const modalItemCtx = useMemo(
@@ -153,7 +188,7 @@ export default function LibraryItemModal(props: LibraryItemModalProps) {
       resolvedItem,
       fetchPending,
       pendingEntityId,
-      syncResolvedItem
+      syncResolvedItem,
     }),
     [resolvedItem, fetchPending, pendingEntityId, syncResolvedItem]
   )

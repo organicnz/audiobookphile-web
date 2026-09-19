@@ -10,7 +10,9 @@ export type UpdateSortingPrefixesApiResponse = {
 }
 
 // Server Action — ABS-specific, not available in Supabase-backed version
-export async function updateServerSettings(_settingsUpdatePayload: Partial<ServerSettings>): Promise<UpdateServerSettingsApiResponse> {
+export async function updateServerSettings(
+  _settingsUpdatePayload: Partial<ServerSettings>
+): Promise<UpdateServerSettingsApiResponse> {
   'use server'
   console.warn('[settings/actions] updateServerSettings is not available in the Supabase-backed version')
   return { serverSettings: {} as ServerSettings }

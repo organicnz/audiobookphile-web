@@ -691,7 +691,14 @@ export interface Backup {
 }
 
 export interface BookShelf {
-  id: 'continue-listening' | 'continue-reading' | 'continue-series' | 'recently-added' | 'discover' | 'listen-again' | 'read-again'
+  id:
+    | 'continue-listening'
+    | 'continue-reading'
+    | 'continue-series'
+    | 'recently-added'
+    | 'discover'
+    | 'listen-again'
+    | 'read-again'
   label: string
   labelStringKey: string
   type: PersonalizedShelfType
@@ -963,7 +970,11 @@ export type BookshelfEntity = LibraryItem | Series | Collection | Playlist | Aut
 
 export type FFProbeData = Record<string, unknown>
 
-export type MediaByType<T extends LibraryItem['mediaType']> = T extends 'book' ? BookMedia : T extends 'podcast' ? PodcastMedia : never
+export type MediaByType<T extends LibraryItem['mediaType']> = T extends 'book'
+  ? BookMedia
+  : T extends 'podcast'
+    ? PodcastMedia
+    : never
 
 export type MatchResult = BookSearchResult | PodcastSearchResult
 

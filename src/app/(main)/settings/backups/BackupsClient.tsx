@@ -31,7 +31,8 @@ import BackupScheduleModal from './BackupScheduleModal'
 import RestoreBackupModal from './RestoreBackupModal'
 
 /** Rare legacy backups message pre version 2 */
-const LEGACY_BACKUP_UNSUPPORTED_HINT = 'This backup was created with an old version of Audiobookphile that is no longer supported'
+const LEGACY_BACKUP_UNSUPPORTED_HINT =
+  'This backup was created with an old version of Audiobookphile that is no longer supported'
 
 interface BackupsClientProps {
   backupResponse: GetBackupsResponse
@@ -39,7 +40,11 @@ interface BackupsClientProps {
   appliedBackupToast?: boolean
 }
 
-export default function BackupsClient({ backupResponse, updateServerSettings, appliedBackupToast = false }: BackupsClientProps) {
+export default function BackupsClient({
+  backupResponse,
+  updateServerSettings,
+  appliedBackupToast = false,
+}: BackupsClientProps) {
   const t = useTypeSafeTranslations()
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -62,8 +67,12 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
   const dateFormat = serverSettings.dateFormat ?? 'MM/dd/yyyy'
   const timeFormat = serverSettings.timeFormat ?? 'HH:mm'
 
-  const [backupsToKeep, setBackupsToKeep] = useState((serverSettings as any).backupsToKeep ? String((serverSettings as any).backupsToKeep) : '')
-  const [maxBackupSize, setMaxBackupSize] = useState((serverSettings as any).maxBackupSize ? String((serverSettings as any).maxBackupSize) : '')
+  const [backupsToKeep, setBackupsToKeep] = useState(
+    (serverSettings as any).backupsToKeep ? String((serverSettings as any).backupsToKeep) : ''
+  )
+  const [maxBackupSize, setMaxBackupSize] = useState(
+    (serverSettings as any).maxBackupSize ? String((serverSettings as any).maxBackupSize) : ''
+  )
 
   const backupSchedule = (serverSettings as any).backupSchedule as string | false | undefined
 
@@ -235,12 +244,15 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
       title={t('HeaderBackups')}
       description={t.rich('MessageBackupsDescription', {
         code: (chunks) => <code className="bg-foreground/10 text-foreground rounded-md px-1 py-0.5">{chunks}</code>,
-        strong: (chunks) => <strong className="text-foreground font-bold">{chunks}</strong>
+        strong: (chunks) => <strong className="text-foreground font-bold">{chunks}</strong>,
       })}
     >
       <div>
         {/* backup location */}
-        <BackupLocation backupLocation={backupResponse.backupLocation} backupPathEnvSet={backupResponse.backupPathEnvSet} />
+        <BackupLocation
+          backupLocation={backupResponse.backupLocation}
+          backupPathEnvSet={backupResponse.backupPathEnvSet}
+        />
 
         <div className="mb-4 -ml-2">
           <SettingsToggleSwitch
@@ -315,11 +327,17 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
             accept=".audiobookphile"
             ariaLabel={t('ButtonUploadBackup')}
             onChange={(file) => void handleUploadBackup(file)}
-            className={isUploadingBackup || isCreatingBackup || isApplyingBackup ? 'pointer-events-none opacity-50' : ''}
+            className={
+              isUploadingBackup || isCreatingBackup || isApplyingBackup ? 'pointer-events-none opacity-50' : ''
+            }
           >
             {t('ButtonUploadBackup')}
           </FileInput>
-          <Btn loading={isCreatingBackup} disabled={isCreatingBackup || isUploadingBackup || isApplyingBackup} onClick={() => void handleCreateBackup()}>
+          <Btn
+            loading={isCreatingBackup}
+            disabled={isCreatingBackup || isUploadingBackup || isApplyingBackup}
+            onClick={() => void handleCreateBackup()}
+          >
             {t('ButtonCreateBackup')}
           </Btn>
         </div>
@@ -340,7 +358,11 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
             <p className="text-foreground py-4 text-center text-lg">{t('MessageNoBackups')}</p>
           )}
           {isUploadingBackup || isApplyingBackup ? (
-            <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black/25" aria-busy="true" aria-live="polite">
+            <div
+              className="absolute inset-0 flex items-center justify-center rounded-md bg-black/25"
+              aria-busy="true"
+              aria-live="polite"
+            >
               <LoadingSpinner size="la-lg" />
             </div>
           ) : null}
@@ -364,7 +386,9 @@ export default function BackupsClient({ backupResponse, updateServerSettings, ap
       <ConfirmDialog
         isOpen={showDeleteConfirmDialog}
         message={t('MessageConfirmDeleteBackup', {
-          0: backupPendingDeleteRef.current ? formatJsDatetime(new Date(backupPendingDeleteRef.current.createdAt), dateFormat, timeFormat) : ''
+          0: backupPendingDeleteRef.current
+            ? formatJsDatetime(new Date(backupPendingDeleteRef.current.createdAt), dateFormat, timeFormat)
+            : '',
         })}
         yesButtonText={t('ButtonDelete')}
         yesButtonClassName="bg-error text-white"
@@ -392,23 +416,31 @@ function backupIsRestorable(backup: Backup): boolean {
   return !!(backup.serverVersion && backup.key)
 }
 
-function BackupsTable({ backups, dateFormat, timeFormat, onRestore, onDownload, onDelete, deletingBackupId }: BackupsTableProps) {
+function BackupsTable({
+  backups,
+  dateFormat,
+  timeFormat,
+  onRestore,
+  onDownload,
+  onDelete,
+  deletingBackupId,
+}: BackupsTableProps) {
   const t = useTypeSafeTranslations()
 
   const columns: DataTableColumn<Backup>[] = useMemo(
     () => [
       {
         label: t('LabelFile'),
-        accessor: (backup) => `/backups/${backup.filename}`
+        accessor: (backup) => `/backups/${backup.filename}`,
       },
       {
         label: t('LabelDatetime'),
-        accessor: (backup) => formatJsDatetime(new Date(backup.createdAt), dateFormat, timeFormat)
+        accessor: (backup) => formatJsDatetime(new Date(backup.createdAt), dateFormat, timeFormat),
       },
       {
         label: t('LabelSize'),
         accessor: (backup) => bytesPretty(backup.fileSize),
-        cellClassName: 'font-mono'
+        cellClassName: 'font-mono',
       },
       {
         label: '',
@@ -452,8 +484,8 @@ function BackupsTable({ backups, dateFormat, timeFormat, onRestore, onDownload, 
           </div>
         ),
         headerClassName: 'w-48',
-        cellClassName: 'text-right'
-      }
+        cellClassName: 'text-right',
+      },
     ],
     [t, onRestore, onDownload, onDelete, deletingBackupId, dateFormat, timeFormat]
   )

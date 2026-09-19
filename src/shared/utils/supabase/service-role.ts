@@ -37,7 +37,7 @@ export function createServiceRoleClient() {
     auth: {
       // Disable automatic session persistence — this is a server-only client.
       persistSession: false,
-      autoRefreshToken: false
-    }
+      autoRefreshToken: false,
+    },
   })
 }

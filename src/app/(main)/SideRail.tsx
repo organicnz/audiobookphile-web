@@ -14,7 +14,7 @@ import {
   Mic2,
   Plus,
   Upload,
-  Users
+  Users,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -39,76 +39,78 @@ export default function SideRail({ serverVersion, installSource }: { serverVersi
     {
       icon: Home,
       label: t('ButtonHome'),
-      href: `/library/${librarySlug}`
+      href: `/library/${librarySlug}`,
     },
     {
       icon: Clock,
       label: t('ButtonLatest'),
       href: `/library/${librarySlug}/latest`,
-      mediaType: 'podcast'
+      mediaType: 'podcast',
     },
     {
       icon: LibraryIcon,
       label: t('ButtonLibrary'),
-      href: `/library/${librarySlug}/items`
+      href: `/library/${librarySlug}/items`,
     },
     {
       icon: Layers,
       label: t('ButtonSeries'),
       href: `/library/${librarySlug}/series`,
-      mediaType: 'book'
+      mediaType: 'book',
     },
     {
       icon: FolderHeart,
       label: t('ButtonCollections'),
       href: `/library/${librarySlug}/collections`,
-      mediaType: 'book'
+      mediaType: 'book',
     },
     {
       icon: ListMusic,
       label: t('ButtonPlaylists'),
-      href: `/library/${librarySlug}/playlists`
+      href: `/library/${librarySlug}/playlists`,
     },
     {
       icon: Users,
       label: t('ButtonAuthors'),
       href: `/library/${librarySlug}/authors`,
-      mediaType: 'book'
+      mediaType: 'book',
     },
     {
       icon: Mic2,
       label: t('LabelNarrators'),
       href: `/library/${librarySlug}/narrators`,
-      mediaType: 'book'
+      mediaType: 'book',
     },
     {
       icon: BarChart2,
       label: t('ButtonStats'),
       href: `/library/${librarySlug}/stats`,
-      mediaType: 'book'
+      mediaType: 'book',
     },
     {
       icon: Plus,
       label: t('ButtonAdd'),
       href: `/library/${librarySlug}/add-podcast`,
-      mediaType: 'podcast'
+      mediaType: 'podcast',
     },
 
     {
       icon: Download,
       label: t('ButtonDownloadQueue'),
       href: `/library/${librarySlug}/download-queue`,
-      mediaType: 'podcast'
+      mediaType: 'podcast',
     },
     {
       icon: AlertTriangle,
       label: t('ButtonIssues'),
       href: `/library/${librarySlug}/issues`,
-      hidden: true
-    }
+      hidden: true,
+    },
   ]
 
-  const filteredButtons = buttons.filter((button) => (!button.mediaType || button.mediaType === currentLibraryMediaType) && !button.hidden)
+  const filteredButtons = buttons.filter(
+    (button) => (!button.mediaType || button.mediaType === currentLibraryMediaType) && !button.hidden
+  )
 
   return (
     <aside className="bg-primary/95 z-10 hidden h-full max-h-[calc(100vh-4rem)] w-20 min-w-20 flex-col overflow-hidden border-e border-white/10 shadow-2xl backdrop-blur-xl md:flex">
@@ -141,7 +143,12 @@ export default function SideRail({ serverVersion, installSource }: { serverVersi
                       isActive ? 'text-accent' : 'text-foreground/40 group-hover:text-foreground/80'
                     )}
                   />
-                  {isActive && <motion.div layoutId="active-glow" className="bg-accent/20 absolute inset-0 -z-10 rounded-full blur-md" />}
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-glow"
+                      className="bg-accent/20 absolute inset-0 -z-10 rounded-full blur-md"
+                    />
+                  )}
                 </div>
 
                 <p

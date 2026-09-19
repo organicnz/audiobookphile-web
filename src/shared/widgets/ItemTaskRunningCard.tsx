@@ -110,7 +110,7 @@ export default function ItemTaskRunningCard({ task }: ItemTaskRunningCardProps) 
     const elapsed = formatDuration(scanResults.elapsed / 1000, t, {
       style: 'compact',
       showDays: true,
-      showSeconds: true
+      showSeconds: true,
     })
 
     return elapsed ? `${changesDetected} (${elapsed})` : changesDetected
@@ -153,7 +153,9 @@ export default function ItemTaskRunningCard({ task }: ItemTaskRunningCardProps) 
 
       <div className="min-w-0 flex-1">
         <div className="mb-0.5 flex items-center gap-2">
-          <p className="truncate text-[11px] leading-none font-black tracking-widest text-white/90 uppercase">{title}</p>
+          <p className="truncate text-[11px] leading-none font-black tracking-widest text-white/90 uppercase">
+            {title}
+          </p>
           {!isFinished && (
             <div className="bg-primary/20 border-primary/20 rounded-full border px-1.5 py-0.5">
               <span className="text-primary text-[8px] font-black tracking-tighter uppercase">Live</span>
@@ -161,7 +163,11 @@ export default function ItemTaskRunningCard({ task }: ItemTaskRunningCardProps) 
           )}
         </div>
 
-        {!!description && <p className="line-clamp-2 text-[10px] leading-relaxed font-medium break-words whitespace-normal text-white/40">{description}</p>}
+        {!!description && (
+          <p className="line-clamp-2 text-[10px] leading-relaxed font-medium break-words whitespace-normal text-white/40">
+            {description}
+          </p>
+        )}
 
         {!!specialMessage && (
           <div className="mt-1 flex items-center gap-1.5 text-white/50">
@@ -172,7 +178,9 @@ export default function ItemTaskRunningCard({ task }: ItemTaskRunningCardProps) 
 
         {isFailed && !!failedMessage && (
           <div className="bg-error/10 border-error/10 mt-1.5 rounded-lg border p-2">
-            <p className="text-error text-[10px] leading-tight font-medium break-words whitespace-normal italic">{failedMessage}</p>
+            <p className="text-error text-[10px] leading-tight font-medium break-words whitespace-normal italic">
+              {failedMessage}
+            </p>
           </div>
         )}
       </div>

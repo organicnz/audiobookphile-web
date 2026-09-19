@@ -35,12 +35,12 @@ export const SupportedFileTypes = {
     'ogv',
     'rmvb',
     'asf',
-    '3gp'
+    '3gp',
   ],
   ebook: ['epub', 'pdf', 'mobi', 'azw', 'azw3', 'cbr', 'cbz', 'fb2', 'djvu', 'prc'],
   info: ['nfo'],
   text: ['txt'],
-  metadata: ['opf', 'abs', 'xml', 'json', 'cue', 'lrc']
+  metadata: ['opf', 'abs', 'xml', 'json', 'cue', 'lrc'],
 }
 
 export const sanitizeFileName = (filename: string, colonReplacement = ' - '): string => {

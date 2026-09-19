@@ -31,7 +31,7 @@ export function SettingsDrawerProvider({ children }: { children: React.ReactNode
       isOpen,
       toggle,
       open,
-      close
+      close,
     }),
     [isOpen, toggle, open, close]
   )

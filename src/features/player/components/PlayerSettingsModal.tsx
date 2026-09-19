@@ -16,7 +16,7 @@ interface PlayerSettingsModalProps {
 // Playback rate increment/decrement values
 const PLAYBACK_RATE_INCREMENT_VALUES: DropdownItem[] = [
   { text: '0.1', value: 0.1 },
-  { text: '0.05', value: 0.05 }
+  { text: '0.05', value: 0.05 },
 ]
 
 export default function PlayerSettingsModal({ isOpen, settings, onClose, onUpdateSettings }: PlayerSettingsModalProps) {
@@ -29,7 +29,7 @@ export default function PlayerSettingsModal({ isOpen, settings, onClose, onUpdat
     { text: t('LabelTimeDurationXSeconds', { 0: 30 }), value: 30 },
     { text: t('LabelTimeDurationXSeconds', { 0: 60 }), value: 60 },
     { text: t('LabelTimeDurationXMinutes', { 0: 2 }), value: 120 },
-    { text: t('LabelTimeDurationXMinutes', { 0: 5 }), value: 300 }
+    { text: t('LabelTimeDurationXMinutes', { 0: 5 }), value: 300 },
   ]
 
   const handleUseChapterTrackChange = (value: boolean) => {
@@ -55,10 +55,20 @@ export default function PlayerSettingsModal({ isOpen, settings, onClose, onUpdat
 
         <div className="flex flex-col gap-5">
           {/* Use chapter track toggle */}
-          <ToggleSwitch value={settings.useChapterTrack} label={t('LabelUseChapterTrack')} onChange={handleUseChapterTrackChange} />
+          <ToggleSwitch
+            value={settings.useChapterTrack}
+            label={t('LabelUseChapterTrack')}
+            onChange={handleUseChapterTrackChange}
+          />
 
           {/* Jump forward amount dropdown */}
-          <Dropdown label={t('LabelJumpForwardAmount')} value={settings.jumpForwardAmount} items={JUMP_VALUES} onChange={handleJumpForwardChange} usePortal />
+          <Dropdown
+            label={t('LabelJumpForwardAmount')}
+            value={settings.jumpForwardAmount}
+            items={JUMP_VALUES}
+            onChange={handleJumpForwardChange}
+            usePortal
+          />
 
           {/* Jump backward amount dropdown */}
           <Dropdown

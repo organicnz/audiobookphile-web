@@ -52,7 +52,7 @@ export function CardSizeProvider({ children }: { children: React.ReactNode }) {
     () => ({
       isMobile,
       sizeMultiplier,
-      setSizeMultiplier
+      setSizeMultiplier,
     }),
     [isMobile, sizeMultiplier, setSizeMultiplier]
   )

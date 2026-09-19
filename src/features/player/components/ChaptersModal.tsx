@@ -57,7 +57,11 @@ const ChapterRow = memo(function ChapterRow({ chapter, isCurrentChapter, isListe
       <div
         className={mergeClasses(
           'grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm leading-none font-medium',
-          isCurrentChapter ? 'bg-accent text-primary' : isListened ? 'bg-success/20 text-success' : 'bg-foreground-muted/10 text-foreground-muted'
+          isCurrentChapter
+            ? 'bg-accent text-primary'
+            : isListened
+              ? 'bg-success/20 text-success'
+              : 'bg-foreground-muted/10 text-foreground-muted'
         )}
       >
         {chapter.id + 1}
@@ -67,7 +71,10 @@ const ChapterRow = memo(function ChapterRow({ chapter, isCurrentChapter, isListe
       <div className="min-w-0 flex-1">
         <p
           dir="auto"
-          className={mergeClasses('truncate text-sm font-medium', isCurrentChapter ? 'text-accent' : isListened ? 'text-foreground/80' : 'text-foreground')}
+          className={mergeClasses(
+            'truncate text-sm font-medium',
+            isCurrentChapter ? 'text-accent' : isListened ? 'text-foreground/80' : 'text-foreground'
+          )}
         >
           {chapter.title}
         </p>
@@ -96,7 +103,7 @@ export default function ChaptersModal({ isOpen, playerHandler, onClose }: Chapte
         if (currentElement) {
           currentElement.scrollIntoView({
             behavior: 'instant',
-            block: 'center'
+            block: 'center',
           })
         }
       })
@@ -123,7 +130,15 @@ export default function ChaptersModal({ isOpen, playerHandler, onClose }: Chapte
                 const isCurrentChapter = chapter.id === currentChapterId
                 const isListened = chapter.id < currentChapterId
 
-                return <ChapterRow key={chapter.id} chapter={chapter} isCurrentChapter={isCurrentChapter} isListened={isListened} onSeek={handleSeek} />
+                return (
+                  <ChapterRow
+                    key={chapter.id}
+                    chapter={chapter}
+                    isCurrentChapter={isCurrentChapter}
+                    isListened={isListened}
+                    onSeek={handleSeek}
+                  />
+                )
               })}
             </div>
           )}

@@ -32,7 +32,9 @@ export default function RawCoverPreviewModal({ isOpen, coverUrl, onClose }: RawC
         className="relative flex h-full w-full items-center justify-center"
         onClick={onClose}
       >
-        {coverUrl && <Image src={coverUrl} alt={t('LabelCoverPreview')} fill className="object-scale-down" unoptimized />}
+        {coverUrl && (
+          <Image src={coverUrl} alt={t('LabelCoverPreview')} fill className="object-scale-down" unoptimized />
+        )}
       </div>
     </Modal>
   )

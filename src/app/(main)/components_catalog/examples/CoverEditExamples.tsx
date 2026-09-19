@@ -16,7 +16,8 @@ export function CoverEditExamples({ selectedLibraryItem }: CoverEditExamplesProp
         description="A comprehensive cover management component for library items. Supports uploading covers, searching from multiple providers, managing local covers, and cover URL submission. Cover providers are automatically loaded from the global MetadataContext based on the media type. Processing state is managed internally using React transitions."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import CoverEdit from &apos;@/shared/widgets/CoverEdit&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import CoverEdit from &apos;@/shared/widgets/CoverEdit&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>
@@ -40,7 +41,9 @@ export function CoverEditExamples({ selectedLibraryItem }: CoverEditExamplesProp
         ) : (
           <div className="border-primary/20 rounded-lg border-2 border-dashed p-8 text-center">
             <p className="mb-2 text-gray-400">No book selected</p>
-            <p className="text-sm text-gray-500">Use the search box above to select a book and see the Cover component in action with real data</p>
+            <p className="text-sm text-gray-500">
+              Use the search box above to select a book and see the Cover component in action with real data
+            </p>
           </div>
         )}
       </Example>

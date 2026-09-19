@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePlaybackSession } from '@/features/player/hooks/usePlaybackSession'
-import { type PlayerSettings, type UsePlayerSettingsReturn, usePlayerSettings } from '@/features/player/hooks/usePlayerSettings'
+import {
+  type PlayerSettings,
+  type UsePlayerSettingsReturn,
+  usePlayerSettings,
+} from '@/features/player/hooks/usePlayerSettings'
 import { AudioTrack } from '@/features/player/lib/AudioTrack'
 import { LocalAudioPlayer } from '@/features/player/lib/LocalAudioPlayer'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
@@ -132,40 +136,44 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
 
   const currentChapter = chapters.find((chapter) => chapter.start <= currentTime && chapter.end > currentTime) ?? null
   const nextChapter = chapters.find((chapter) => chapter.start > currentTime && chapter.end > currentTime) ?? null
-  const previousChapter = chapters.findLast((chapter) => chapter.end <= currentTime && chapter.start < currentTime) ?? null
+  const previousChapter =
+    chapters.findLast((chapter) => chapter.end <= currentTime && chapter.start < currentTime) ?? null
 
   // ============================================================================
   // Session Management
   // ============================================================================
 
-  const handleSessionReady = useCallback((session: PlaybackSession, audioTracks: AudioTrack[], hlsTranscode: boolean) => {
-    setSessionId(session.id)
-    sessionIdRef.current = session.id
-    setDisplayTitle(session.displayTitle)
-    setDisplayAuthor(session.displayAuthor)
-    setChapters(
-      (session.chapters ?? []).map((chapter) => {
-        const start = parseFloat((chapter.start ?? 0).toFixed(6))
-        const end = parseFloat((chapter.end ?? 0).toFixed(6))
-        return {
-          ...chapter,
-          start,
-          end
-        }
-      })
-    )
-    setPlayMethod(session.playMethod)
-    setIsHlsTranscode(hlsTranscode)
-    setDuration(session.duration)
+  const handleSessionReady = useCallback(
+    (session: PlaybackSession, audioTracks: AudioTrack[], hlsTranscode: boolean) => {
+      setSessionId(session.id)
+      sessionIdRef.current = session.id
+      setDisplayTitle(session.displayTitle)
+      setDisplayAuthor(session.displayAuthor)
+      setChapters(
+        (session.chapters ?? []).map((chapter) => {
+          const start = parseFloat((chapter.start ?? 0).toFixed(6))
+          const end = parseFloat((chapter.end ?? 0).toFixed(6))
+          return {
+            ...chapter,
+            start,
+            end,
+          }
+        })
+      )
+      setPlayMethod(session.playMethod)
+      setIsHlsTranscode(hlsTranscode)
+      setDuration(session.duration)
 
-    audioTracksRef.current = audioTracks
+      audioTracksRef.current = audioTracks
 
-    // Start playback
-    const item = libraryItemRef.current
-    if (playerRef.current && item) {
-      playerRef.current.set(item, audioTracks, hlsTranscode, session.currentTime, true)
-    }
-  }, [])
+      // Start playback
+      const item = libraryItemRef.current
+      if (playerRef.current && item) {
+        playerRef.current.set(item, audioTracks, hlsTranscode, session.currentTime, true)
+      }
+    },
+    []
+  )
 
   const handleSessionError = useCallback((error: Error) => {
     console.error('[usePlayerHandler] Session error:', error)
@@ -174,7 +182,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
 
   const { startSession, closeSession, startSyncInterval, stopSyncInterval } = usePlaybackSession({
     onSessionReady: handleSessionReady,
-    onError: handleSessionError
+    onError: handleSessionError,
   })
 
   // ============================================================================
@@ -398,7 +406,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: displayTitle,
       artist: displayAuthor || 'Audiobookphile',
-      album: currentChapter?.title || displayTitle
+      album: currentChapter?.title || displayTitle,
     })
 
     navigator.mediaSession.setActionHandler('play', () => playerRef.current?.play())
@@ -412,14 +420,15 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
       }
     })
 
-    navigator.mediaSession.playbackState = playerState === PlayerState.PLAYING ? 'playing' : playerState === PlayerState.PAUSED ? 'paused' : 'none'
+    navigator.mediaSession.playbackState =
+      playerState === PlayerState.PLAYING ? 'playing' : playerState === PlayerState.PAUSED ? 'paused' : 'none'
 
     if (duration > 0 && typeof navigator.mediaSession.setPositionState === 'function') {
       try {
         navigator.mediaSession.setPositionState({
           duration: Math.max(0, duration),
           playbackRate: Math.max(0.1, settings.playbackRate || 1),
-          position: Math.min(Math.max(0, currentTime), duration)
+          position: Math.min(Math.max(0, currentTime), duration),
         })
       } catch {
         // Ignore edge-case timestamp mismatch errors
@@ -434,7 +443,18 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
         } catch {}
       })
     }
-  }, [displayTitle, displayAuthor, currentChapter?.title, playerState, duration, currentTime, settings.playbackRate, jumpBackward, jumpForward, seek])
+  }, [
+    displayTitle,
+    displayAuthor,
+    currentChapter?.title,
+    playerState,
+    duration,
+    currentTime,
+    settings.playbackRate,
+    jumpBackward,
+    jumpForward,
+    seek,
+  ])
 
   const closePlayer = useCallback(async () => {
     stopSyncInterval()
@@ -492,7 +512,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
       nextChapter,
       previousChapter,
       settings,
-      sleepTimerRemaining
+      sleepTimerRemaining,
     },
     controls: {
       load,
@@ -510,7 +530,7 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
       updateSettings: playerSettings.updateSettings,
       closePlayer,
       startSleepTimer,
-      stopSleepTimer
-    }
+      stopSleepTimer,
+    },
   }
 }

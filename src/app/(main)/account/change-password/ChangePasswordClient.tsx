@@ -47,7 +47,12 @@ export default function ChangePasswordClient({ changePassword }: ChangePasswordC
     <div className="mt-8 flex flex-col gap-4">
       <TextInput label={t('LabelPassword')} value={oldPassword} type="password" onChange={setOldPassword} />
       <TextInput label={t('LabelNewPassword')} value={newPassword} type="password" onChange={setNewPassword} />
-      <TextInput label={t('LabelConfirmPassword')} value={confirmPassword} type="password" onChange={setConfirmPassword} />
+      <TextInput
+        label={t('LabelConfirmPassword')}
+        value={confirmPassword}
+        type="password"
+        onChange={setConfirmPassword}
+      />
       <div className="flex justify-end">
         <Btn type="submit" loading={isPending} onClick={handleSubmit}>
           {t('LabelSubmit')}

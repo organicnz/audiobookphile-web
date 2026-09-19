@@ -12,13 +12,18 @@ export function TextareaInputExamples() {
 
   return (
     <ComponentExamples title="Textarea Inputs">
-      <ComponentInfo component="TextareaInput" description="Accessible textarea input with disabled and focus styles consistent with InputDropdown">
+      <ComponentInfo
+        component="TextareaInput"
+        description="Accessible textarea input with disabled and focus styles consistent with InputDropdown"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import TextareaInput from &apos;@/shared/ui/TextareaInput&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import TextareaInput from &apos;@/shared/ui/TextareaInput&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>, <Code>placeholder</Code>, <Code>rows</Code>,{' '}
-          <Code>readOnly</Code>, <Code>disabled</Code>, <Code>className</Code>, <Code>id</Code>, <Code>fillHeight</Code>
+          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>label</Code>,{' '}
+          <Code>placeholder</Code>, <Code>rows</Code>, <Code>readOnly</Code>, <Code>disabled</Code>,{' '}
+          <Code>className</Code>, <Code>id</Code>, <Code>fillHeight</Code>
         </p>
       </ComponentInfo>
 
@@ -32,7 +37,11 @@ export function TextareaInputExamples() {
         </Example>
 
         <Example title="Disabled Textarea">
-          <TextareaInput label="Disabled" value={'Disabled state. \nThis is a long text\nto test the textarea input.'} disabled />
+          <TextareaInput
+            label="Disabled"
+            value={'Disabled state. \nThis is a long text\nto test the textarea input.'}
+            disabled
+          />
         </Example>
 
         <Example title="Textarea with 4 Rows">
@@ -45,7 +54,12 @@ export function TextareaInputExamples() {
 
         <Example title="Textarea with fillHeight (Full Height)">
           <div className="h-64">
-            <TextareaInput value={textValue2} onChange={setTextValue2} placeholder="This textarea fills the available height..." fillHeight />
+            <TextareaInput
+              value={textValue2}
+              onChange={setTextValue2}
+              placeholder="This textarea fills the available height..."
+              fillHeight
+            />
           </div>
         </Example>
       </ExamplesBlock>

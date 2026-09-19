@@ -15,7 +15,15 @@ interface SlateEditorMatchFieldEditorProps {
   currentValue?: string
 }
 
-function SlateEditorMatchFieldEditor({ usageChecked, onUsageChange, value, onChange, disabled, label, currentValue }: SlateEditorMatchFieldEditorProps) {
+function SlateEditorMatchFieldEditor({
+  usageChecked,
+  onUsageChange,
+  value,
+  onChange,
+  disabled,
+  label,
+  currentValue,
+}: SlateEditorMatchFieldEditorProps) {
   const t = useTypeSafeTranslations()
 
   const handleUseCurrentValue = useCallback(() => {
@@ -26,19 +34,30 @@ function SlateEditorMatchFieldEditor({ usageChecked, onUsageChange, value, onCha
 
   const hasCurrentValue = currentValue !== undefined && currentValue !== null && currentValue !== ''
 
-  const formattedValue = currentValue ? String(currentValue).substring(0, 100) + (String(currentValue).length > 100 ? '...' : '') : ''
+  const formattedValue = currentValue
+    ? String(currentValue).substring(0, 100) + (String(currentValue).length > 100 ? '...' : '')
+    : ''
 
   const currentValueDisplay = hasCurrentValue ? (
     <>
       {t('LabelCurrently')}{' '}
-      <a title={t('LabelClickToUseCurrentValue')} className="cursor-pointer hover:underline" onClick={handleUseCurrentValue}>
+      <a
+        title={t('LabelClickToUseCurrentValue')}
+        className="cursor-pointer hover:underline"
+        onClick={handleUseCurrentValue}
+      >
         {formattedValue}
       </a>
     </>
   ) : null
 
   return (
-    <BaseMatchFieldEditor usageChecked={usageChecked} onUsageChange={onUsageChange} currentValueDisplay={currentValueDisplay} hasCurrentValue={hasCurrentValue}>
+    <BaseMatchFieldEditor
+      usageChecked={usageChecked}
+      onUsageChange={onUsageChange}
+      currentValueDisplay={currentValueDisplay}
+      hasCurrentValue={hasCurrentValue}
+    >
       <SlateEditor srcContent={value || ''} onUpdate={onChange} disabled={disabled || !usageChecked} label={label} />
     </BaseMatchFieldEditor>
   )

@@ -26,13 +26,15 @@ export default function LibrariesListRow({ item, handleDeleteLibrary, handleEdit
   const libraryTasks = useMemo(() => getTasksByLibraryId(item.id), [getTasksByLibraryId, item.id])
 
   const isLibraryTaskRunning = useMemo(() => {
-    return libraryTasks.find((task) => (task.action === 'library-scan' || task.action === 'library-match-all') && !task.isFinished)
+    return libraryTasks.find(
+      (task) => (task.action === 'library-scan' || task.action === 'library-match-all') && !task.isFinished
+    )
   }, [libraryTasks])
 
   const contextMenuItems: ContextMenuDropdownItem[] = [
     { text: t('ButtonEdit'), action: 'edit' },
     { text: t('ButtonScan'), action: 'scan' },
-    { text: t('ButtonDelete'), action: 'delete' }
+    { text: t('ButtonDelete'), action: 'delete' },
   ]
 
   if (item.mediaType === 'book') {
@@ -78,7 +80,11 @@ export default function LibrariesListRow({ item, handleDeleteLibrary, handleEdit
   return (
     <div className="text-foreground/50 hover:text-foreground flex items-center gap-4 border-b border-white/5 px-4 py-2 transition-all duration-200 hover:bg-white/5">
       {isLibraryTaskRunning ? <LoadingSpinner size="la-sm" /> : <LibraryIcon icon={item.icon} className="opacity-80" />}
-      <Link prefetch={true} className="text-foreground hover:text-primary py-2 text-[13px] font-bold transition-colors" href={`/library/${item.id}`}>
+      <Link
+        prefetch={true}
+        className="text-foreground hover:text-primary py-2 text-[13px] font-bold transition-colors"
+        href={`/library/${item.id}`}
+      >
         {escapeHtml(item.name)}
       </Link>
       <div className="grow" />
@@ -93,7 +99,13 @@ export default function LibrariesListRow({ item, handleDeleteLibrary, handleEdit
           >
             {t('ButtonScan')}
           </Btn>
-          <ContextMenuDropdown usePortal borderless size="small" items={contextMenuItems} onAction={handleContextMenuActions} />
+          <ContextMenuDropdown
+            usePortal
+            borderless
+            size="small"
+            items={contextMenuItems}
+            onAction={handleContextMenuActions}
+          />
         </div>
       )}
       <div className="drag-handle cursor-grab rounded-md p-1 transition-colors hover:bg-white/10 active:cursor-grabbing">

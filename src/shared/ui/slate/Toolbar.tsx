@@ -33,7 +33,7 @@ export const Toolbar = () => {
       'numbered-list': true,
       link: true,
       undo: isUndoAvailable,
-      redo: isRedoAvailable
+      redo: isRedoAvailable,
     }),
     [isUndoAvailable, isRedoAvailable]
   )
@@ -63,7 +63,9 @@ export const Toolbar = () => {
 
         // If we have a toolbar ref, try to move focus
         if (toolbarRef.current) {
-          const newButtonElement = toolbarRef.current.querySelector(`[data-button-id="${newFocusedButton}"]`) as HTMLButtonElement
+          const newButtonElement = toolbarRef.current.querySelector(
+            `[data-button-id="${newFocusedButton}"]`
+          ) as HTMLButtonElement
           if (newButtonElement && !newButtonElement.disabled) {
             // Use a small delay to ensure React has updated the disabled state
             setTimeout(() => {
@@ -146,7 +148,7 @@ export const Toolbar = () => {
         if (isButtonAvailable) {
           setFocusedButtonId(buttonId)
         }
-      }
+      },
     }),
     [focusedButtonId, buttonAvailability]
   )
@@ -180,7 +182,9 @@ export const Toolbar = () => {
             setFocusedButtonId(newFocusedButton)
 
             setTimeout(() => {
-              const newButtonElement = toolbar.querySelector(`[data-button-id="${newFocusedButton}"]`) as HTMLButtonElement
+              const newButtonElement = toolbar.querySelector(
+                `[data-button-id="${newFocusedButton}"]`
+              ) as HTMLButtonElement
               if (newButtonElement && !newButtonElement.disabled) {
                 newButtonElement.focus()
               }

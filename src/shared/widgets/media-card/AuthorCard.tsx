@@ -72,7 +72,9 @@ function AuthorCard(props: AuthorCardProps) {
       event.preventDefault()
       event.stopPropagation()
       if (user) {
-        setBoundModal(<AuthorEditModal key={author.id} isOpen={true} user={user} onClose={clearBoundModal} author={author} />)
+        setBoundModal(
+          <AuthorEditModal key={author.id} isOpen={true} user={user} onClose={clearBoundModal} author={author} />
+        )
       }
     },
     [user, author, clearBoundModal, setBoundModal]
@@ -144,12 +146,24 @@ function AuthorCard(props: AuthorCardProps) {
 
                 {/* Quick Match button (top-left) */}
                 {!isSelectionMode && userCanUpdate && (
-                  <MediaOverlayIconBtn cyId="quickMatch" position="top-start" icon={Search} onClick={handleQuickMatchClick} ariaLabel={t('ButtonQuickMatch')} />
+                  <MediaOverlayIconBtn
+                    cyId="quickMatch"
+                    position="top-start"
+                    icon={Search}
+                    onClick={handleQuickMatchClick}
+                    ariaLabel={t('ButtonQuickMatch')}
+                  />
                 )}
 
                 {/* Edit button (top-right) */}
                 {!isSelectionMode && userCanUpdate && (
-                  <MediaOverlayIconBtn cyId="editButton" position="top-end" icon={Edit2} onClick={handleEditClick} ariaLabel={t('ButtonEdit')} />
+                  <MediaOverlayIconBtn
+                    cyId="editButton"
+                    position="top-end"
+                    icon={Edit2}
+                    onClick={handleEditClick}
+                    ariaLabel={t('ButtonEdit')}
+                  />
                 )}
               </MediaCardOverlayContainer>
             )}

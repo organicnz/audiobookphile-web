@@ -11,22 +11,24 @@ export default function UserClient({ user }: { user: User }) {
   const columns: DataTableColumn<MediaProgress>[] = [
     {
       label: t('LabelItem'),
-      accessor: (mediaProgress) => mediaProgress.displayTitle
+      accessor: (mediaProgress) => mediaProgress.displayTitle,
     },
     {
       label: t('LabelProgress'),
       accessor: (mediaProgress) => `${Math.round(mediaProgress.progress * 100)}%`,
       cellClassName: 'text-center',
-      headerClassName: 'text-center'
+      headerClassName: 'text-center',
     },
     {
       label: t('LabelStartedAt'),
-      accessor: (mediaProgress) => (mediaProgress.startedAt ? formatDistanceToNow(new Date(mediaProgress.startedAt), { addSuffix: true }) : '')
+      accessor: (mediaProgress) =>
+        mediaProgress.startedAt ? formatDistanceToNow(new Date(mediaProgress.startedAt), { addSuffix: true }) : '',
     },
     {
       label: t('LabelLastUpdate'),
-      accessor: (mediaProgress) => (mediaProgress.lastUpdate ? formatDistanceToNow(new Date(mediaProgress.lastUpdate), { addSuffix: true }) : '')
-    }
+      accessor: (mediaProgress) =>
+        mediaProgress.lastUpdate ? formatDistanceToNow(new Date(mediaProgress.lastUpdate), { addSuffix: true }) : '',
+    },
   ]
 
   return (

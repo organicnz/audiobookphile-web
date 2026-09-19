@@ -8,7 +8,13 @@ export const dynamic = 'force-dynamic'
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
-export default async function SearchPage({ params, searchParams }: { params: Promise<{ library: string }>; searchParams: Promise<{ q?: string }> }) {
+export default async function SearchPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ library: string }>
+  searchParams: Promise<{ q?: string }>
+}) {
   const { library: libraryId } = await params
   const { q: query } = await searchParams
 

@@ -46,7 +46,7 @@ export default function LibrariesClient({ libraries }: LibraryClientProps) {
           icon: formData.icon,
           provider: formData.provider,
           folders: validFolders,
-          settings: formData.settings
+          settings: formData.settings,
         } as Library
 
         if (editingLibrary) {
@@ -71,14 +71,24 @@ export default function LibrariesClient({ libraries }: LibraryClientProps) {
         title={t('HeaderLibraries')}
         addButton={{
           label: t('ButtonAddLibrary'),
-          onClick: handleAddLibrary
+          onClick: handleAddLibrary,
         }}
         moreInfoUrl="https://www.audiobookphile.org/guides/library_creation"
       >
-        <LibrariesList libraries={libraries} saveLibraryOrderAction={saveLibraryOrder} onEditLibrary={handleEditLibrary} />
+        <LibrariesList
+          libraries={libraries}
+          saveLibraryOrderAction={saveLibraryOrder}
+          onEditLibrary={handleEditLibrary}
+        />
       </SettingsContent>
 
-      <LibraryEditModal isOpen={isModalOpen} library={editingLibrary} processing={isProcessing} onClose={handleCloseModal} onSubmit={handleSubmit} />
+      <LibraryEditModal
+        isOpen={isModalOpen}
+        library={editingLibrary}
+        processing={isProcessing}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit}
+      />
     </>
   )
 }

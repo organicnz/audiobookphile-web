@@ -52,13 +52,25 @@ export default function PlaylistCardSkeleton({ bookshelfView, sizeMultiplier }: 
         {/* Simulated 2x2 grid of covers */}
         <div className="absolute inset-0 flex flex-wrap">
           {/* Top-left cover placeholder */}
-          <div className="bg-gradient-to-br from-gray-700 to-gray-800" style={{ width: `${itemWidth}px`, height: `${itemHeight}px` }} />
+          <div
+            className="bg-gradient-to-br from-gray-700 to-gray-800"
+            style={{ width: `${itemWidth}px`, height: `${itemHeight}px` }}
+          />
           {/* Top-right cover placeholder */}
-          <div className="bg-gradient-to-br from-gray-600 to-gray-700" style={{ width: `${itemWidth}px`, height: `${itemHeight}px` }} />
+          <div
+            className="bg-gradient-to-br from-gray-600 to-gray-700"
+            style={{ width: `${itemWidth}px`, height: `${itemHeight}px` }}
+          />
           {/* Bottom-left cover placeholder */}
-          <div className="bg-gradient-to-br from-gray-600 to-gray-700" style={{ width: `${itemWidth}px`, height: `${itemHeight}px` }} />
+          <div
+            className="bg-gradient-to-br from-gray-600 to-gray-700"
+            style={{ width: `${itemWidth}px`, height: `${itemHeight}px` }}
+          />
           {/* Bottom-right cover placeholder */}
-          <div className="bg-gradient-to-br from-gray-700 to-gray-800" style={{ width: `${itemWidth}px`, height: `${itemHeight}px` }} />
+          <div
+            className="bg-gradient-to-br from-gray-700 to-gray-800"
+            style={{ width: `${itemWidth}px`, height: `${itemHeight}px` }}
+          />
         </div>
       </div>
 
@@ -67,7 +79,10 @@ export default function PlaylistCardSkeleton({ bookshelfView, sizeMultiplier }: 
         // Detail view footer skeleton
         <div className="relative start-0 end-0 z-30 mx-auto rounded-md py-[0.25em] text-center">
           {/* Title skeleton */}
-          <p className="mx-auto animate-pulse truncate rounded bg-gray-600" style={{ fontSize: `${labelFontSize}em`, width: '70%' }}>
+          <p
+            className="mx-auto animate-pulse truncate rounded bg-gray-600"
+            style={{ fontSize: `${labelFontSize}em`, width: '70%' }}
+          >
             &nbsp;
           </p>
         </div>
@@ -77,7 +92,10 @@ export default function PlaylistCardSkeleton({ bookshelfView, sizeMultiplier }: 
           className="categoryPlacard absolute start-0 end-0 -bottom-[1.5em] z-30 mx-auto h-[1.5em] rounded-md text-center"
           style={{ width: `${Math.min(200, coverWidth)}px` }}
         >
-          <div className="flex h-full w-full animate-pulse items-center justify-center rounded-xs bg-gray-700" style={{ padding: '0em 0.5em' }}>
+          <div
+            className="flex h-full w-full animate-pulse items-center justify-center rounded-xs bg-gray-700"
+            style={{ padding: '0em 0.5em' }}
+          >
             {/* Title text skeleton */}
             <p className="truncate rounded bg-gray-600" style={{ fontSize: `${labelFontSize}em`, width: '60%' }}>
               &nbsp;

@@ -60,7 +60,7 @@ export default function TextInput({
   ref,
   error,
   autocomplete = 'off',
-  borderless = false
+  borderless = false,
 }: TextInputProps) {
   const t = useTypeSafeTranslations()
   const generatedId = useId()

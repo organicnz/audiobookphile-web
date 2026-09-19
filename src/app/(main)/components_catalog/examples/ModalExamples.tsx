@@ -27,17 +27,22 @@ export function ModalExamples() {
 
   return (
     <ComponentExamples title="Modals">
-      <ComponentInfo component="Modal" description="Modal dialog component with backdrop, animations, and various customization options">
+      <ComponentInfo
+        component="Modal"
+        description="Modal dialog component with backdrop, animations, and various customization options"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Modal from &apos;@/shared/modals/Modal&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import Modal from &apos;@/shared/modals/Modal&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>isOpen</Code>, <Code>onClose</Code>, <Code>children</Code>, <Code>persistent</Code>,{' '}
-          <Code>processing</Code>, <Code>zIndexClass</Code>, <Code>bgOpacityClass</Code>, <Code>outerContent</Code>, <Code>className</Code>
+          <span className="font-bold">Props:</span> <Code>isOpen</Code>, <Code>onClose</Code>, <Code>children</Code>,{' '}
+          <Code>persistent</Code>, <Code>processing</Code>, <Code>zIndexClass</Code>, <Code>bgOpacityClass</Code>,{' '}
+          <Code>outerContent</Code>, <Code>className</Code>
         </p>
         <p className="mb-2 text-sm text-gray-400">
-          Features: portal rendering, smooth animations, focus management, keyboard navigation (Escape), backdrop click to close, processing overlay, persistent
-          mode, customizable styling via className
+          Features: portal rendering, smooth animations, focus management, keyboard navigation (Escape), backdrop click
+          to close, processing overlay, persistent mode, customizable styling via className
         </p>
       </ComponentInfo>
 
@@ -51,7 +56,8 @@ export function ModalExamples() {
               <div className="p-6">
                 <h3 className="mb-4 text-xl font-semibold text-white">Basic Modal Example</h3>
                 <p className="mb-6 text-gray-300">
-                  This is a basic modal dialog. You can close it by clicking the close button, pressing Escape, or clicking outside the modal content.
+                  This is a basic modal dialog. You can close it by clicking the close button, pressing Escape, or
+                  clicking outside the modal content.
                 </p>
                 <div className="flex justify-end gap-3">
                   <Btn onClick={() => setIsBasicModalOpen(false)} color="bg-gray-600">
@@ -65,14 +71,22 @@ export function ModalExamples() {
 
         <Example title="Processing Modal">
           <div>
-            <p className="mb-4 text-sm text-gray-400">A modal with a processing overlay that prevents interaction during operations.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              A modal with a processing overlay that prevents interaction during operations.
+            </p>
             <Btn onClick={() => setIsProcessingModalOpen(true)}>Open Processing Modal</Btn>
 
-            <Modal isOpen={isProcessingModalOpen} onClose={() => setIsProcessingModalOpen(false)} processing={isProcessing} className="h-[300px] w-[500px]">
+            <Modal
+              isOpen={isProcessingModalOpen}
+              onClose={() => setIsProcessingModalOpen(false)}
+              processing={isProcessing}
+              className="h-[300px] w-[500px]"
+            >
               <div className="flex h-full flex-col p-6">
                 <h3 className="mb-4 text-xl font-semibold text-white">Processing Example</h3>
                 <p className="mb-6 flex-1 text-gray-300">
-                  Click the &quot;Start Processing&quot; button to see the processing overlay in action. The modal will be disabled during processing.
+                  Click the &quot;Start Processing&quot; button to see the processing overlay in action. The modal will
+                  be disabled during processing.
                 </p>
                 <div className="flex justify-end gap-3">
                   <Btn onClick={() => setIsProcessingModalOpen(false)} color="bg-gray-600">
@@ -89,7 +103,9 @@ export function ModalExamples() {
 
         <Example title="Persistent Modal">
           <div>
-            <p className="mb-4 text-sm text-gray-400">A modal that cannot be closed by clicking outside or pressing Escape.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              A modal that cannot be closed by clicking outside or pressing Escape.
+            </p>
             <Btn onClick={() => setIsPersistentModalOpen(true)}>Open Persistent Modal</Btn>
 
             <Modal
@@ -102,7 +118,8 @@ export function ModalExamples() {
               <div className="flex h-full flex-col p-6">
                 <h3 className="mb-4 text-xl font-semibold text-white">Persistent Modal</h3>
                 <p className="mb-6 flex-1 text-gray-300">
-                  This modal is persistent - you can only close it by clicking the &quot;Close&quot; button. Background clicks and Escape key are disabled.
+                  This modal is persistent - you can only close it by clicking the &quot;Close&quot; button. Background
+                  clicks and Escape key are disabled.
                 </p>
                 <div className="flex justify-end">
                   <Btn onClick={() => setIsPersistentModalOpen(false)} color="bg-red-600">
@@ -116,7 +133,9 @@ export function ModalExamples() {
 
         <Example title="Custom Styled Modal">
           <div>
-            <p className="mb-4 text-sm text-gray-400">A modal with custom dimensions and Tailwind z-index/opacity classes.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              A modal with custom dimensions and Tailwind z-index/opacity classes.
+            </p>
             <Btn onClick={() => setIsCustomModalOpen(true)}>Open Custom Modal</Btn>
 
             <Modal
@@ -140,7 +159,8 @@ export function ModalExamples() {
                   <div className="mt-4 rounded bg-blue-800/30 p-4">
                     <h4 className="mb-2 text-lg font-semibold text-white">Modal Features</h4>
                     <p className="text-sm text-blue-100">
-                      The Modal component supports focus management, keyboard navigation, smooth animations, and portal rendering for proper z-index handling.
+                      The Modal component supports focus management, keyboard navigation, smooth animations, and portal
+                      rendering for proper z-index handling.
                     </p>
                   </div>
                 </div>
@@ -162,13 +182,18 @@ export function ModalExamples() {
             <Modal
               isOpen={isOuterContentModalOpen}
               onClose={() => setIsOuterContentModalOpen(false)}
-              outerContent={<div className="absolute start-10 top-10 rounded bg-yellow-500 px-3 py-1 text-sm font-semibold text-black">Outer Content!</div>}
+              outerContent={
+                <div className="absolute start-10 top-10 rounded bg-yellow-500 px-3 py-1 text-sm font-semibold text-black">
+                  Outer Content!
+                </div>
+              }
               className="w-[500px]"
             >
               <div className="flex h-full flex-col p-6">
                 <h3 className="mb-4 text-xl font-semibold text-white">Modal with Outer Content</h3>
                 <p className="mb-6 flex-1 text-gray-300">
-                  This modal has additional content rendered outside the main modal container. Check the yellow badge in the top-left corner.
+                  This modal has additional content rendered outside the main modal container. Check the yellow badge in
+                  the top-left corner.
                 </p>
                 <div className="flex justify-end">
                   <Btn onClick={() => setIsOuterContentModalOpen(false)} color="bg-gray-600">
@@ -182,10 +207,16 @@ export function ModalExamples() {
 
         <Example title="Responsive Modal">
           <div>
-            <p className="mb-4 text-sm text-gray-400">A modal that adapts to different screen sizes using string dimensions.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              A modal that adapts to different screen sizes using string dimensions.
+            </p>
             <Btn onClick={() => setIsResponsiveModalOpen(true)}>Open Responsive Modal</Btn>
 
-            <Modal isOpen={isResponsiveModalOpen} onClose={() => setIsResponsiveModalOpen(false)} className="h-[80vh] w-[90vw]">
+            <Modal
+              isOpen={isResponsiveModalOpen}
+              onClose={() => setIsResponsiveModalOpen(false)}
+              className="h-[80vh] w-[90vw]"
+            >
               <div className="flex h-full flex-col p-6">
                 <h3 className="mb-4 text-xl font-semibold text-white">Responsive Modal</h3>
                 <div className="flex-1 space-y-4">
@@ -197,7 +228,9 @@ export function ModalExamples() {
                     <li>Perfect for mobile devices</li>
                   </ul>
                   <div className="rounded bg-gray-700 p-4">
-                    <p className="text-sm text-gray-300">Try resizing your browser window to see how the modal adapts to different screen sizes.</p>
+                    <p className="text-sm text-gray-300">
+                      Try resizing your browser window to see how the modal adapts to different screen sizes.
+                    </p>
                   </div>
                 </div>
                 <div className="border-border flex justify-end border-t pt-4">

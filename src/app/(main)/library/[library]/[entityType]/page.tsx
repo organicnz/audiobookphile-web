@@ -1,5 +1,11 @@
 import { Suspense } from 'react'
-import { getLibraryAuthors, getLibraryCollections, getLibraryItems, getLibraryPlaylists, getLibrarySeries } from '@/shared/lib/api'
+import {
+  getLibraryAuthors,
+  getLibraryCollections,
+  getLibraryItems,
+  getLibraryPlaylists,
+  getLibrarySeries,
+} from '@/shared/lib/api'
 import { EntityType } from '@/types/api'
 import BookshelfClient from './BookshelfClient'
 
@@ -8,7 +14,11 @@ export const dynamic = 'force-dynamic'
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
-async function fetchInitialData(entityType: EntityType, libraryId: string, searchParams: { [key: string]: string | string[] | undefined }) {
+async function fetchInitialData(
+  entityType: EntityType,
+  libraryId: string,
+  searchParams: { [key: string]: string | string[] | undefined }
+) {
   const params = new URLSearchParams()
   Object.entries(searchParams).forEach(([key, value]) => {
     if (value === undefined) return
@@ -53,7 +63,7 @@ async function fetchInitialData(entityType: EntityType, libraryId: string, searc
 
 export default async function EntityPage({
   params,
-  searchParams
+  searchParams,
 }: {
   params: Promise<{ library: string; entityType: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>

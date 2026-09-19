@@ -45,7 +45,7 @@ export function useUploader(libraries: Library[]) {
 
   const libraryItems = libraries.map((lib) => ({
     value: lib.id,
-    text: lib.name
+    text: lib.name,
   }))
 
   const currentLibraryMediaType = libraries.find((lib) => lib.id === selectedLibrary)?.mediaType
@@ -165,7 +165,7 @@ export function useUploader(libraries: Library[]) {
     const updatedItems = [...uploadItems]
     updatedItems[itemIndex] = {
       ...updatedItems[itemIndex],
-      [property]: value
+      [property]: value,
     }
     setUploadItems(updatedItems)
   }
@@ -174,7 +174,7 @@ export function useUploader(libraries: Library[]) {
     const key = `${itemIndex}-${tableType}`
     setExpandedTables((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }))
   }
 
@@ -220,7 +220,12 @@ export function useUploader(libraries: Library[]) {
       const item = items[i]
 
       try {
-        const existingBookId = await checkExistingBook(item.title, item.author || '', selectedLibrary!, currentLibraryMediaType! || 'book')
+        const existingBookId = await checkExistingBook(
+          item.title,
+          item.author || '',
+          selectedLibrary!,
+          currentLibraryMediaType! || 'book'
+        )
         if (existingBookId) {
           const confirmed = window.confirm(
             `An audiobook with the title '${item.title}' already exists. Do you want to proceed and overwrite/append files to it?`
@@ -293,6 +298,6 @@ export function useUploader(libraries: Library[]) {
     toggleTableExpanded,
     handleFetchMetadata,
     handleRemoveStagedItem,
-    handleStartUpload
+    handleStartUpload,
   }
 }

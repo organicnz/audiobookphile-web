@@ -151,8 +151,8 @@ fi
 # FORMATTING & SUMMARY
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-echo "🔍 [13/13] Prettier Formatter..."
-bun run prettier --write "$@"
+echo "🔍 [13/13] Biome Formatter..."
+bunx biome format --write "$@"
 
 TOTAL_FILES=$(echo "$ALL_FILES" | wc -w | tr -d ' ')
 echo ""

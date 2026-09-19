@@ -50,7 +50,7 @@ function CollectionCard(props: CollectionCardProps) {
     onSelect,
     onEdit,
     onOpenRssFeedModal,
-    showSelectedButton = false
+    showSelectedButton = false,
   } = props
 
   const router = useRouter()
@@ -123,7 +123,7 @@ function CollectionCard(props: CollectionCardProps) {
   const { processing, confirmState, closeConfirm, handleMoreAction, moreMenuItems } = useCollectionCardActions({
     collection,
     rssFeed,
-    onOpenRssFeedModal: handleOpenRssFeedModal
+    onOpenRssFeedModal: handleOpenRssFeedModal,
   })
 
   return (
@@ -156,16 +156,30 @@ function CollectionCard(props: CollectionCardProps) {
 
                 {/* Edit button */}
                 {userCanUpdate && !isSelectionMode && (
-                  <MediaOverlayIconBtn cyId="editButton" position="top-end" icon={Edit2} onClick={handleEditClick} ariaLabel={t('ButtonEdit')} />
+                  <MediaOverlayIconBtn
+                    cyId="editButton"
+                    position="top-end"
+                    icon={Edit2}
+                    onClick={handleEditClick}
+                    ariaLabel={t('ButtonEdit')}
+                  />
                 )}
 
                 {/* More menu button */}
                 {!isSelectionMode && moreMenuItems.length > 0 && (
                   <div
                     cy-id="moreButton"
-                    className={mergeClasses('absolute end-2 bottom-2 cursor-pointer transition-transform duration-300 md:block', 'hover:scale-125')}
+                    className={mergeClasses(
+                      'absolute end-2 bottom-2 cursor-pointer transition-transform duration-300 md:block',
+                      'hover:scale-125'
+                    )}
                   >
-                    <MediaCardMoreMenu items={moreMenuItems} processing={processing} onAction={handleMoreAction} onOpenChange={handleMoreMenuOpenChange} />
+                    <MediaCardMoreMenu
+                      items={moreMenuItems}
+                      processing={processing}
+                      onAction={handleMoreAction}
+                      onOpenChange={handleMoreMenuOpenChange}
+                    />
                   </div>
                 )}
               </MediaCardOverlayContainer>
@@ -173,7 +187,10 @@ function CollectionCard(props: CollectionCardProps) {
 
             {/* Processing overlay */}
             {processing && (
-              <div cy-id="loadingSpinner" className="absolute start-0 top-0 z-10 flex h-full w-full items-center justify-center rounded-sm bg-black/40">
+              <div
+                cy-id="loadingSpinner"
+                className="absolute start-0 top-0 z-10 flex h-full w-full items-center justify-center rounded-sm bg-black/40"
+              >
                 <LoadingSpinner size="la-lg" />
               </div>
             )}
@@ -211,14 +228,21 @@ function CollectionCard(props: CollectionCardProps) {
         footer={
           isAlternativeBookshelfView ? (
             // Detail view footer
-            <div cy-id="detailBottomText" className="relative start-0 end-0 z-30 mx-auto rounded-md py-[0.25em] text-center">
+            <div
+              cy-id="detailBottomText"
+              className="relative start-0 end-0 z-30 mx-auto rounded-md py-[0.25em] text-center"
+            >
               <p cy-id="detailBottomDisplayTitle" className="truncate" style={{ fontSize: `${labelFontSize}em` }}>
                 {displayTitle}
               </p>
             </div>
           ) : (
             // Standard view footer (shiny black placard)
-            <MediaCardStandardFooter displayTitle={displayTitle} fontSize={labelFontSize} width={Math.min(200, coverWidth)} />
+            <MediaCardStandardFooter
+              displayTitle={displayTitle}
+              fontSize={labelFontSize}
+              width={Math.min(200, coverWidth)}
+            />
           )
         }
       />

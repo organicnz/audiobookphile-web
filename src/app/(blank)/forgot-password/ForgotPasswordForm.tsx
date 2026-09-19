@@ -34,7 +34,8 @@ export default function ForgotPasswordForm() {
     return (
       <AuthCard title="Check your email" icon="mail-check">
         <p className="text-foreground-muted mb-6 text-sm">
-          We sent a password reset link to <strong>{email}</strong>. Check your inbox and follow the link to reset your password.
+          We sent a password reset link to <strong>{email}</strong>. Check your inbox and follow the link to reset your
+          password.
         </p>
         <Link href="/login" className="text-accent text-sm hover:underline">
           Back to login
@@ -44,7 +45,11 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <AuthCard title="Forgot password" subtitle="Enter your email and we'll send you a reset link." onSubmit={handleSubmit}>
+    <AuthCard
+      title="Forgot password"
+      subtitle="Enter your email and we'll send you a reset link."
+      onSubmit={handleSubmit}
+    >
       <div className="mb-6">
         <TextInput label="Email" value={email} type="email" autocomplete="email" onChange={setEmail} />
       </div>

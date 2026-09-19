@@ -16,7 +16,7 @@ export default function ThemeDropdown(props: ThemeDropdownProps) {
     { text: t('LabelThemeSystem'), value: 'system' },
     { text: t('LabelThemeDark'), value: 'dark' },
     { text: t('LabelThemeLight'), value: 'light' },
-    { text: t('LabelThemeBlack'), value: 'black' }
+    { text: t('LabelThemeBlack'), value: 'black' },
   ]
 
   return (

@@ -12,14 +12,21 @@ interface CustomMetadataProvidersClientProps {
   providers: CustomMetadataProvider[]
 }
 
-export default function CustomMetadataProvidersClient({ providers: initialProviders }: CustomMetadataProvidersClientProps) {
+export default function CustomMetadataProvidersClient({
+  providers: initialProviders,
+}: CustomMetadataProvidersClientProps) {
   const t = useTypeSafeTranslations()
 
   const [providers, setProviders] = useState<CustomMetadataProvider[]>(initialProviders)
   const [processing, setProcessing] = useState(false)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
-  const handleAddProvider = async (payload: { name: string; url: string; mediaType: 'book' | 'podcast'; authHeaderValue?: string }) => {
+  const handleAddProvider = async (payload: {
+    name: string
+    url: string
+    mediaType: 'book' | 'podcast'
+    authHeaderValue?: string
+  }) => {
     const result = await createCustomMetadataProvider(payload)
     setProviders((prev) => [...prev, result.provider])
   }
@@ -42,14 +49,22 @@ export default function CustomMetadataProvidersClient({ providers: initialProvid
       moreInfoUrl="https://www.audiobookphile.org/guides/custom-metadata-providers"
       addButton={{
         label: t('ButtonAdd'),
-        onClick: () => setIsAddModalOpen(true)
+        onClick: () => setIsAddModalOpen(true),
       }}
     >
       <div className="pt-2">
-        <CustomMetadataProvidersTable providers={providers} processing={processing} onDeleteProvider={handleDeleteProvider} />
+        <CustomMetadataProvidersTable
+          providers={providers}
+          processing={processing}
+          onDeleteProvider={handleDeleteProvider}
+        />
       </div>
 
-      <AddCustomMetadataProviderModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSubmit={handleAddProvider} />
+      <AddCustomMetadataProviderModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleAddProvider}
+      />
     </SettingsContent>
   )
 }

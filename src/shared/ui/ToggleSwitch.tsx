@@ -26,7 +26,7 @@ export default function ToggleSwitch({
   onChange,
   ariaLabel = '',
   ariaLabelledBy = '',
-  className = ''
+  className = '',
 }: ToggleSwitchProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -39,7 +39,7 @@ export default function ToggleSwitch({
     success: 'bg-primary',
     primary: 'bg-white/10',
     warning: 'bg-warning',
-    error: 'bg-error'
+    error: 'bg-error',
   }
   const bgColorClasses = value ? colorMap[onColor] : colorMap[offColor]
 
@@ -94,10 +94,13 @@ export default function ToggleSwitch({
           <motion.span
             animate={{
               x: value ? (size === 'small' ? 16 : size === 'medium' ? 18 : 20) : 2,
-              scale: value ? 1.05 : 1
+              scale: value ? 1.05 : 1,
             }}
             transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-            className={mergeClasses('pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform', knobSize)}
+            className={mergeClasses(
+              'pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform',
+              knobSize
+            )}
           />
         </button>
         {label && (
@@ -106,7 +109,11 @@ export default function ToggleSwitch({
             id={labelId}
             className={mergeClasses(
               'cursor-pointer ps-3 font-medium transition-colors select-none',
-              size === 'small' ? 'text-xs sm:text-sm' : size === 'medium' ? 'text-sm sm:text-base' : 'text-base sm:text-lg',
+              size === 'small'
+                ? 'text-xs sm:text-sm'
+                : size === 'medium'
+                  ? 'text-sm sm:text-base'
+                  : 'text-base sm:text-lg',
               disabled ? 'text-disabled' : 'text-foreground/80 hover:text-foreground'
             )}
             htmlFor={toggleId}

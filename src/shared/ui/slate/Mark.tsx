@@ -52,7 +52,17 @@ export const toggleMark = (editor: Editor, format: keyof Omit<CustomText, 'text'
 // --- MarkButton Component ---
 
 export const MarkButton = memo(
-  ({ children, buttonId, tabIndex, onFocus }: { children: React.ReactNode; buttonId: string; tabIndex: number; onFocus: () => void }) => {
+  ({
+    children,
+    buttonId,
+    tabIndex,
+    onFocus,
+  }: {
+    children: React.ReactNode
+    buttonId: string
+    tabIndex: number
+    onFocus: () => void
+  }) => {
     const editor = useSlate()
 
     // Derive format from buttonId
@@ -77,7 +87,10 @@ export const MarkButton = memo(
     )
 
     const isActive = isMarkActive(editor, format)
-    const buttonClass = useMemo(() => mergeClasses(buttonClassBase, isActive ? 'bg-gray-300 text-black' : ''), [isActive])
+    const buttonClass = useMemo(
+      () => mergeClasses(buttonClassBase, isActive ? 'bg-gray-300 text-black' : ''),
+      [isActive]
+    )
 
     return (
       <IconBtn

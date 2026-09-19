@@ -5,10 +5,15 @@ import { apiRequest } from '../client'
 /**
  * Create a new collection
  */
-export async function createCollection(payload: { libraryId: string; name: string; description?: string | null; books?: string[] }): Promise<Collection> {
+export async function createCollection(payload: {
+  libraryId: string
+  name: string
+  description?: string | null
+  books?: string[]
+}): Promise<Collection> {
   return apiRequest<Collection>('/api/collections', {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -18,7 +23,7 @@ export async function createCollection(payload: { libraryId: string; name: strin
 export async function addBookToCollection(collectionId: string, libraryItemId: string): Promise<Collection> {
   return apiRequest<Collection>(`/api/collections/${collectionId}/book`, {
     method: 'POST',
-    body: JSON.stringify({ id: libraryItemId })
+    body: JSON.stringify({ id: libraryItemId }),
   })
 }
 
@@ -27,17 +32,20 @@ export async function addBookToCollection(collectionId: string, libraryItemId: s
  */
 export async function removeBookFromCollection(collectionId: string, libraryItemId: string): Promise<Collection> {
   return apiRequest<Collection>(`/api/collections/${collectionId}/book/${libraryItemId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
 /**
  * Update collection details
  */
-export async function updateCollection(collectionId: string, payload: { name?: string; description?: string }): Promise<Collection> {
+export async function updateCollection(
+  collectionId: string,
+  payload: { name?: string; description?: string }
+): Promise<Collection> {
   return apiRequest<Collection>(`/api/collections/${collectionId}`, {
     method: 'PATCH',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -46,7 +54,7 @@ export async function updateCollection(collectionId: string, payload: { name?: s
  */
 export async function deleteCollection(collectionId: string): Promise<void> {
   return apiRequest<void>(`/api/collections/${collectionId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -55,7 +63,7 @@ export async function deleteCollection(collectionId: string): Promise<void> {
  */
 export async function createPlaylistFromCollection(collectionId: string): Promise<{ id: string }> {
   return apiRequest<{ id: string }>(`/api/collections/${collectionId}/create-playlist`, {
-    method: 'POST'
+    method: 'POST',
   })
 }
 
@@ -64,17 +72,22 @@ export async function createPlaylistFromCollection(collectionId: string): Promis
  */
 export async function deletePlaylist(playlistId: string): Promise<void> {
   return apiRequest<void>(`/api/playlists/${playlistId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
 /**
  * Create a new playlist
  */
-export async function createPlaylist(payload: { libraryId: string; name: string; description?: string; items?: PlaylistItemPayload[] }): Promise<Playlist> {
+export async function createPlaylist(payload: {
+  libraryId: string
+  name: string
+  description?: string
+  items?: PlaylistItemPayload[]
+}): Promise<Playlist> {
   return apiRequest<Playlist>('/api/playlists', {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -84,7 +97,7 @@ export async function createPlaylist(payload: { libraryId: string; name: string;
 export async function batchAddToPlaylist(playlistId: string, items: PlaylistItemPayload[]): Promise<Playlist> {
   return apiRequest<Playlist>(`/api/playlists/${playlistId}/batch/add`, {
     method: 'POST',
-    body: JSON.stringify({ items })
+    body: JSON.stringify({ items }),
   })
 }
 
@@ -94,7 +107,7 @@ export async function batchAddToPlaylist(playlistId: string, items: PlaylistItem
 export async function batchRemoveFromPlaylist(playlistId: string, items: PlaylistItemPayload[]): Promise<Playlist> {
   return apiRequest<Playlist>(`/api/playlists/${playlistId}/batch/remove`, {
     method: 'POST',
-    body: JSON.stringify({ items })
+    body: JSON.stringify({ items }),
   })
 }
 

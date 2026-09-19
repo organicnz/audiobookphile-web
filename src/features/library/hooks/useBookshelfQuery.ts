@@ -16,7 +16,7 @@ export function useBookshelfQuery(entityType: EntityType) {
     authorSortBy,
     authorSortDesc,
     updateSetting,
-    isSettingsLoaded
+    isSettingsLoaded,
   } = useLibrary()
 
   const searchParams = useSearchParams()
@@ -40,7 +40,12 @@ export function useBookshelfQuery(entityType: EntityType) {
     if (!hasParams && !isNavigation) return
 
     // Helper to safely set setting if param exists
-    const syncSetting = (paramKey: string, settingKey: LibrarySettingKey, isBool: boolean = false, resetValue?: string | boolean) => {
+    const syncSetting = (
+      paramKey: string,
+      settingKey: LibrarySettingKey,
+      isBool: boolean = false,
+      resetValue?: string | boolean
+    ) => {
       const val = params.get(paramKey)
       if (val !== null && val !== '') {
         // Convert '1'/'0' to boolean if needed
@@ -133,7 +138,7 @@ export function useBookshelfQuery(entityType: EntityType) {
     authorSortDesc,
     isSettingsLoaded,
     searchParams,
-    currentParamsString
+    currentParamsString,
   ])
 
   // Build query string for API (separate from URL params, but often similar)
@@ -170,7 +175,19 @@ export function useBookshelfQuery(entityType: EntityType) {
         break
     }
     return params.toString()
-  }, [entityType, orderBy, orderDesc, filterBy, collapseSeries, isPodcastLibrary, seriesSortBy, seriesSortDesc, seriesFilterBy, authorSortBy, authorSortDesc])
+  }, [
+    entityType,
+    orderBy,
+    orderDesc,
+    filterBy,
+    collapseSeries,
+    isPodcastLibrary,
+    seriesSortBy,
+    seriesSortDesc,
+    seriesFilterBy,
+    authorSortBy,
+    authorSortDesc,
+  ])
 
   return { query }
 }

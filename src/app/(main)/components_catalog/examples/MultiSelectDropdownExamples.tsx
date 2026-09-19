@@ -14,11 +14,11 @@ export function MultiSelectDropdownExamples() {
     { content: 'Green', value: '#00ff00' },
     { content: 'Blue', value: '#0000ff' },
     { content: 'Yellow', value: '#ffff00' },
-    { content: 'Purple', value: '#800080' }
+    { content: 'Purple', value: '#800080' },
   ]
   const [multiSelectDropdownSelectedItems, setMultiSelectDropdownSelectedItems] = useState<MultiSelectItem[]>([
     { content: 'Red', value: '#ff0000' },
-    { content: 'Blue', value: '#0000ff' }
+    { content: 'Blue', value: '#0000ff' },
   ])
 
   const handleMultiSelectDropdownItemAdded = (item: MultiSelectItem) => {
@@ -39,11 +39,13 @@ export function MultiSelectDropdownExamples() {
     <ComponentExamples title="Multi Select Dropdowns">
       <ComponentInfo component="MultiSelectDropdown" description="Multi-select dropdown component with item management">
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import MultiSelectDropdown from &apos;@/shared/ui/MultiSelectDropdown&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import MultiSelectDropdown from &apos;@/shared/ui/MultiSelectDropdown&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>selectedItems</Code> (MultiSelectItem[]), <Code>onItemAdded</Code>, <Code>onItemRemoved</Code>,{' '}
-          <Code>items</Code> (MultiSelectItem[]), <Code>label</Code>, <Code>disabled</Code>
+          <span className="font-bold">Props:</span> <Code>selectedItems</Code> (MultiSelectItem[]),{' '}
+          <Code>onItemAdded</Code>, <Code>onItemRemoved</Code>, <Code>items</Code> (MultiSelectItem[]),{' '}
+          <Code>label</Code>, <Code>disabled</Code>
         </p>
       </ComponentInfo>
 

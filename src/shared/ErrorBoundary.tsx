@@ -84,7 +84,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       if (this.props.onError) {
         return this.props.onError({
           error: this.state.error,
-          resetErrorBoundaries: this.resetErrorBoundaries
+          resetErrorBoundaries: this.resetErrorBoundaries,
         })
       }
 
@@ -94,7 +94,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           <div className="mb-4 text-4xl">⚠️</div>
           <h2 className="mb-2 text-lg font-semibold">Something went wrong</h2>
           <p className="mb-4 text-sm text-gray-600">{this.state.error.message || 'An unexpected error occurred'}</p>
-          <button onClick={this.resetErrorBoundaries} className="rounded-lg bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600">
+          <button
+            onClick={this.resetErrorBoundaries}
+            className="rounded-lg bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600"
+          >
             Try again
           </button>
         </div>

@@ -6,10 +6,15 @@ import type { Collection } from '@/types/api'
 /**
  * Create a collection w/ initial book library item IDs
  */
-export async function createCollectionAction(payload: { libraryId: string; name: string; description?: string | null; books?: string[] }): Promise<Collection> {
+export async function createCollectionAction(payload: {
+  libraryId: string
+  name: string
+  description?: string | null
+  books?: string[]
+}): Promise<Collection> {
   return await apiRequest<Collection>('/api/collections', {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -19,7 +24,7 @@ export async function createCollectionAction(payload: { libraryId: string; name:
 export async function addBookToCollectionAction(collectionId: string, libraryItemId: string): Promise<Collection> {
   return await apiRequest<Collection>(`/api/collections/${collectionId}/items`, {
     method: 'POST',
-    body: JSON.stringify({ libraryItemId })
+    body: JSON.stringify({ libraryItemId }),
   })
 }
 
@@ -28,17 +33,20 @@ export async function addBookToCollectionAction(collectionId: string, libraryIte
  */
 export async function removeBookFromCollectionAction(collectionId: string, libraryItemId: string): Promise<Collection> {
   return await apiRequest<Collection>(`/api/collections/${collectionId}/items/${libraryItemId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
 /**
  * Update a collection's name and/or description
  */
-export async function updateCollectionAction(collectionId: string, payload: { name?: string; description?: string }): Promise<Collection> {
+export async function updateCollectionAction(
+  collectionId: string,
+  payload: { name?: string; description?: string }
+): Promise<Collection> {
   return await apiRequest<Collection>(`/api/collections/${collectionId}`, {
     method: 'PATCH',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -47,7 +55,7 @@ export async function updateCollectionAction(collectionId: string, payload: { na
  */
 export async function deleteCollectionAction(collectionId: string): Promise<void> {
   return await apiRequest<void>(`/api/collections/${collectionId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 

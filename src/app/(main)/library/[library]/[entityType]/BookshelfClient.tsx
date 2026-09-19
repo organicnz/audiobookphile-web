@@ -26,7 +26,18 @@ interface BookshelfClientProps {
 
 export default function BookshelfClient({ entityType }: BookshelfClientProps) {
   const t = useTypeSafeTranslations()
-  const { library, setItemCount, orderBy, collapseSeries, showSubtitles, seriesSortBy, authorSortBy, updateSetting, filterBy, bookshelfView } = useLibrary()
+  const {
+    library,
+    setItemCount,
+    orderBy,
+    collapseSeries,
+    showSubtitles,
+    seriesSortBy,
+    authorSortBy,
+    updateSetting,
+    filterBy,
+    bookshelfView,
+  } = useLibrary()
   const { user } = useUser()
 
   const { query } = useBookshelfQuery(entityType)
@@ -41,10 +52,15 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
   const isPodcastLibrary = library.mediaType === 'podcast'
 
   // VALIDATION CHECK
-  const validEntities = isPodcastLibrary ? ['items', 'playlists'] : ['items', 'series', 'collections', 'playlists', 'authors']
+  const validEntities = isPodcastLibrary
+    ? ['items', 'playlists']
+    : ['items', 'series', 'collections', 'playlists', 'authors']
 
   // Scroll storage key
-  const scrollKey = useMemo(() => `bookshelf-scroll-${library.id}-${entityType}-${query}`, [library.id, entityType, query])
+  const scrollKey = useMemo(
+    () => `bookshelf-scroll-${library.id}-${entityType}-${query}`,
+    [library.id, entityType, query]
+  )
 
   // Ref for the container div
   const containerRef = useRef<HTMLDivElement>(null)
@@ -71,12 +87,12 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
         if (entry.borderBoxSize?.length > 0) {
           setCardSize({
             width: entry.borderBoxSize[0].inlineSize,
-            height: entry.borderBoxSize[0].blockSize
+            height: entry.borderBoxSize[0].blockSize,
           })
         } else {
           setCardSize({
             width: entry.contentRect.width,
-            height: entry.contentRect.height
+            height: entry.contentRect.height,
           })
         }
       }
@@ -108,7 +124,7 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
       if (containerRef.current) {
         setDimensions({
           width: containerRef.current.clientWidth,
-          height: window.innerHeight - containerRef.current.getBoundingClientRect().top
+          height: window.innerHeight - containerRef.current.getBoundingClientRect().top,
         })
       }
     }
@@ -117,7 +133,7 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
       for (const entry of entries) {
         setDimensions({
           width: entry.contentRect.width,
-          height: entry.contentRect.height
+          height: entry.contentRect.height,
         })
       }
     })
@@ -127,22 +143,29 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
 
   // Virtualizer
   const hasMeasuredCard = cardSize.width > 0
-  const { columns, shelfHeight, totalShelves, shelvesPerPage, visibleShelfStart, visibleShelfEnd, handleScroll, getVisiblePageRange } = useBookshelfVirtualizer(
-    {
-      totalEntities,
-      itemWidth: hasMeasuredCard ? totalEntityCardWidth : 0,
-      itemHeight: hasMeasuredCard ? shelfRowHeight : 0,
-      containerWidth: dimensions.width,
-      containerHeight: dimensions.height,
-      padding: shelfPadding / 2
-    }
-  )
+  const {
+    columns,
+    shelfHeight,
+    totalShelves,
+    shelvesPerPage,
+    visibleShelfStart,
+    visibleShelfEnd,
+    handleScroll,
+    getVisiblePageRange,
+  } = useBookshelfVirtualizer({
+    totalEntities,
+    itemWidth: hasMeasuredCard ? totalEntityCardWidth : 0,
+    itemHeight: hasMeasuredCard ? shelfRowHeight : 0,
+    containerWidth: dimensions.width,
+    containerHeight: dimensions.height,
+    padding: shelfPadding / 2,
+  })
 
   // Use custom hook for persistent scroll logic
   const { handleScroll: handlePersistentScroll } = usePersistentScroll({
     scrollKey,
     containerRef,
-    isEnabled: hasMeasuredCard && totalEntities > 0
+    isEnabled: hasMeasuredCard && totalEntities > 0,
   })
 
   // Author actions hook
@@ -159,11 +182,11 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
     isLoading,
     isInitialized,
     error,
-    reconcilePagesAfterUpdate
+    reconcilePagesAfterUpdate,
   } = useBookshelfData({
     entityType,
     query,
-    itemsPerPage
+    itemsPerPage,
   })
 
   useBookshelfUpdater({
@@ -181,7 +204,7 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
     containerHeight: dimensions.height,
     reconcilePagesAfterUpdate,
     handleScroll,
-    isRandomSort
+    isRandomSort,
   })
 
   // Sync total count from data hook (reset to 0 while revalidating so loadPage runs for page 0)
@@ -231,7 +254,7 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
     const rawMenuItems = config.getContextMenuItems(user, library, { showSubtitles, collapseSeries })
     const menuItems = rawMenuItems.map((item) => ({
       text: t(item.textKey),
-      action: item.action
+      action: item.action,
     }))
 
     setContextMenuItems(menuItems)
@@ -245,7 +268,19 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
       setToolbarExtras(null)
       setContextMenuItems([])
     }
-  }, [entityType, config, setToolbarExtras, setContextMenuItems, setContextMenuActionHandler, updateSetting, library, showSubtitles, collapseSeries, user, t])
+  }, [
+    entityType,
+    config,
+    setToolbarExtras,
+    setContextMenuItems,
+    setContextMenuActionHandler,
+    updateSetting,
+    library,
+    showSubtitles,
+    collapseSeries,
+    user,
+    t,
+  ])
 
   // Get empty state message based on entity config
   const getEmptyMessage = () => {
@@ -266,7 +301,9 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
   return (
     <div
       ref={containerRef}
-      className={isAlternativeBookshelfView ? 'relative h-full overflow-y-auto py-8' : 'relative h-full overflow-y-auto'}
+      className={
+        isAlternativeBookshelfView ? 'relative h-full overflow-y-auto py-8' : 'relative h-full overflow-y-auto'
+      }
       style={{ fontSize: sizeMultiplier + 'rem' }}
       onScroll={(e) => {
         const scrollTop = e.currentTarget.scrollTop
@@ -275,8 +312,17 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
       }}
     >
       {/* Measurement Dummy - Hidden but rendered for sizing */}
-      <div ref={dummyCardRef} style={{ position: 'absolute', visibility: 'hidden', top: 0, left: 0, zIndex: -1 }} aria-hidden="true">
-        <config.SkeletonComponent bookshelfView={bookshelfView} seriesSortBy={seriesSortBy} showSubtitles={showSubtitles} orderBy={orderBy} />
+      <div
+        ref={dummyCardRef}
+        style={{ position: 'absolute', visibility: 'hidden', top: 0, left: 0, zIndex: -1 }}
+        aria-hidden="true"
+      >
+        <config.SkeletonComponent
+          bookshelfView={bookshelfView}
+          seriesSortBy={seriesSortBy}
+          showSubtitles={showSubtitles}
+          orderBy={orderBy}
+        />
       </div>
 
       {/* Error State */}
@@ -292,7 +338,10 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
 
       {/* Virtualized content */}
       {hasMeasuredCard && !error && (
-        <div className="relative w-full" style={{ height: totalShelves === 0 ? 'unset' : `${totalShelves * shelfHeight}px` }}>
+        <div
+          className="relative w-full"
+          style={{ height: totalShelves === 0 ? 'unset' : `${totalShelves * shelfHeight}px` }}
+        >
           {/* Render Visible Shelves */}
           {Array.from({ length: visibleShelfEnd - visibleShelfStart }).map((_, i) => {
             const shelfIndex = visibleShelfStart + i
@@ -316,7 +365,7 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
                   // To push the cards to the bottom of the flex container (and touch the divider), we align items to center and add some pt-6e equivalent to the cards or use items-end with padding-bottom for the divider.
                   // BookShelfRow uses pt-6e (24px) to push the content down. Then the divider is positioned exactly under it.
                   paddingTop: !isAlternativeBookshelfView ? `${16 * sizeMultiplier}px` : undefined,
-                  gap: `${cardMargin}px`
+                  gap: `${cardMargin}px`,
                 }}
               >
                 {shelfItems.map((item, k) => {
@@ -324,8 +373,16 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
 
                   if (!item) {
                     return (
-                      <div key={`skeleton-wrapper-${startIndex + k}`} style={{ width: `${currentCardWidth}px`, flexShrink: 0 }}>
-                        <config.SkeletonComponent bookshelfView={bookshelfView} seriesSortBy={seriesSortBy} showSubtitles={showSubtitles} orderBy={orderBy} />
+                      <div
+                        key={`skeleton-wrapper-${startIndex + k}`}
+                        style={{ width: `${currentCardWidth}px`, flexShrink: 0 }}
+                      >
+                        <config.SkeletonComponent
+                          bookshelfView={bookshelfView}
+                          seriesSortBy={seriesSortBy}
+                          showSubtitles={showSubtitles}
+                          orderBy={orderBy}
+                        />
                       </div>
                     )
                   }
@@ -348,7 +405,9 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
                     />
                   )
                 })}
-                {!isAlternativeBookshelfView && <div className="bookshelfDivider h-6e absolute right-0 bottom-0 left-0 z-20 w-full" />}
+                {!isAlternativeBookshelfView && (
+                  <div className="bookshelfDivider h-6e absolute right-0 bottom-0 left-0 z-20 w-full" />
+                )}
               </div>
             )
           })}

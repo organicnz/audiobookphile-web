@@ -9,7 +9,7 @@ const EMPTY: AdminAnalyticsData = {
   totalUsers: null,
   totalLibraries: null,
   totalItems: null,
-  activeSessions: null
+  activeSessions: null,
 }
 
 function sanitize(resData: AdminAnalyticsData): AdminAnalyticsData {
@@ -17,7 +17,7 @@ function sanitize(resData: AdminAnalyticsData): AdminAnalyticsData {
     totalUsers: typeof resData?.totalUsers === 'number' ? resData.totalUsers : null,
     totalLibraries: typeof resData?.totalLibraries === 'number' ? resData.totalLibraries : null,
     totalItems: typeof resData?.totalItems === 'number' ? resData.totalItems : null,
-    activeSessions: typeof resData?.activeSessions === 'number' ? resData.activeSessions : null
+    activeSessions: typeof resData?.activeSessions === 'number' ? resData.activeSessions : null,
   }
 }
 

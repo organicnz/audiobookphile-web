@@ -21,7 +21,7 @@ export default function LogoutBtn() {
 
       // Calls the Abs server logout endpoint and clears the NextJS server cookies
       const res = await fetch('/internal-api/logout', {
-        method: 'POST'
+        method: 'POST',
       })
       if (!res.ok) {
         console.error('Logout error:', res.status, res.statusText)

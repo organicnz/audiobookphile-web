@@ -34,7 +34,9 @@ export default function AuthorEditModal({ isOpen, user, author: authorProp, onCl
   const isDirty = useMemo(() => {
     if (!editedAuthor || !author) return false
     return (
-      editedAuthor.name !== author.name || (editedAuthor.asin || '') !== (author.asin || '') || (editedAuthor.description || '') !== (author.description || '')
+      editedAuthor.name !== author.name ||
+      (editedAuthor.asin || '') !== (author.asin || '') ||
+      (editedAuthor.description || '') !== (author.description || '')
     )
   }, [editedAuthor, author])
 
@@ -45,7 +47,7 @@ export default function AuthorEditModal({ isOpen, user, author: authorProp, onCl
     setEditedAuthor({
       name: author.name,
       asin: author.asin,
-      description: author.description
+      description: author.description,
     })
   }
   // Update author state when author prop changes
@@ -136,7 +138,12 @@ export default function AuthorEditModal({ isOpen, user, author: authorProp, onCl
               {/* form */}
               <div className="mb-2 grow px-2 pt-2">
                 <div className="flex flex-col gap-2 sm:flex-row sm:gap-0">
-                  <TextInput className="w-full" placeholder={t('LabelImageURLFromTheWeb')} value={imgUrl} onChange={setImgUrl}></TextInput>
+                  <TextInput
+                    className="w-full"
+                    placeholder={t('LabelImageURLFromTheWeb')}
+                    value={imgUrl}
+                    onChange={setImgUrl}
+                  ></TextInput>
                   <Btn
                     color="bg-success"
                     className="flex-shrink-0 sm:ml-2"
@@ -168,7 +175,11 @@ export default function AuthorEditModal({ isOpen, user, author: authorProp, onCl
                     <label htmlFor="" className="mb-1 px-1 text-sm">
                       ASIN
                     </label>
-                    <TextInput placeholder="ASIN" value={editedAuthor.asin || ''} onChange={(value) => setEditedAuthor({ ...editedAuthor, asin: value })} />
+                    <TextInput
+                      placeholder="ASIN"
+                      value={editedAuthor.asin || ''}
+                      onChange={(value) => setEditedAuthor({ ...editedAuthor, asin: value })}
+                    />
                   </div>
                 </div>
                 <div className="flex grow pt-4">

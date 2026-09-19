@@ -12,22 +12,22 @@ export async function GET(request: Request) {
       upgrades: ['websocket'],
       pingInterval: 25000,
       pingTimeout: 5000,
-      maxPayload: 1000000
+      maxPayload: 1000000,
     }
     // Engine.IO requires the '0' prefix for OPEN packet
     return new NextResponse(`0${JSON.stringify(handshake)}`, {
       status: 200,
       headers: {
         'Content-Type': 'text/plain',
-        'Access-Control-Allow-Origin': '*'
-      }
+        'Access-Control-Allow-Origin': '*',
+      },
     })
   }
 
   // For websocket transport attempts, we can't actually upgrade
   // Returning 400 will cause the client to fall back to polling or give up cleanly
   return new NextResponse('WebSockets not supported in serverless environment', {
-    status: 400
+    status: 400,
   })
 }
 
@@ -37,7 +37,7 @@ export async function POST() {
     status: 200,
     headers: {
       'Content-Type': 'text/plain',
-      'Access-Control-Allow-Origin': '*'
-    }
+      'Access-Control-Allow-Origin': '*',
+    },
   })
 }

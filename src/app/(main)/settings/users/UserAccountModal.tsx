@@ -35,7 +35,7 @@ const getDefaultPermissions = (type: AccountType): UserPermissions => {
     accessAllLibraries: true,
     accessAllTags: true,
     selectedTagsNotAccessible: false,
-    createEreader: type === 'admin'
+    createEreader: type === 'admin',
   }
   return permissions
 }
@@ -50,7 +50,7 @@ const getInitialFormData = (user: User | null): UserFormData => {
       isActive: user.isActive,
       permissions: { ...user.permissions },
       librariesAccessible: user.librariesAccessible,
-      itemTagsSelected: user.itemTagsAccessible || user.itemTagsSelected || []
+      itemTagsSelected: user.itemTagsAccessible || user.itemTagsSelected || [],
     }
   }
 
@@ -62,7 +62,7 @@ const getInitialFormData = (user: User | null): UserFormData => {
     isActive: true,
     permissions: { ...getDefaultPermissions('user') },
     librariesAccessible: [],
-    itemTagsSelected: []
+    itemTagsSelected: [],
   }
 }
 
@@ -151,7 +151,7 @@ export default function UserAccountModal({ isOpen, user, onClose, onSubmit, onUn
     setFormData((prev) => ({
       ...prev,
       type: value,
-      permissions: { ...getDefaultPermissions(value) }
+      permissions: { ...getDefaultPermissions(value) },
     }))
   }
 
@@ -161,8 +161,8 @@ export default function UserAccountModal({ isOpen, user, onClose, onSubmit, onUn
         ...prev,
         permissions: {
           ...prev.permissions,
-          [key]: value
-        }
+          [key]: value,
+        },
       }
 
       // When enabling "access all", clear the corresponding selection array
@@ -189,7 +189,7 @@ export default function UserAccountModal({ isOpen, user, onClose, onSubmit, onUn
   // Convert libraries to multi-select items
   const libraryItems: MultiSelectItem<string>[] = availableLibraries.map((lib) => ({
     value: lib.id,
-    content: lib.name
+    content: lib.name,
   }))
 
   const selectedLibraryItems: MultiSelectItem<string>[] = formData.librariesAccessible
@@ -202,18 +202,18 @@ export default function UserAccountModal({ isOpen, user, onClose, onSubmit, onUn
   // Convert tags to multi-select items
   const tagItems: MultiSelectItem<string>[] = availableTags.map((tag) => ({
     value: tag,
-    content: tag
+    content: tag,
   }))
 
   const selectedTagItems: MultiSelectItem<string>[] = formData.itemTagsSelected.map((tag) => ({
     value: tag,
-    content: tag
+    content: tag,
   }))
 
   const accountTypeItems = [
     { text: t('LabelAccountTypeAdmin'), value: 'admin' },
     { text: t('LabelAccountTypeUser'), value: 'user' },
-    { text: t('LabelAccountTypeGuest'), value: 'guest' }
+    { text: t('LabelAccountTypeGuest'), value: 'guest' },
   ]
 
   // Basic permissions (without access all libraries/tags)
@@ -223,7 +223,7 @@ export default function UserAccountModal({ isOpen, user, onClose, onSubmit, onUn
     { key: 'delete', label: t('LabelPermissionsDelete') },
     { key: 'upload', label: t('LabelPermissionsUpload') },
     { key: 'createEreader', label: t('LabelPermissionsCreateEreader') },
-    { key: 'accessExplicitContent', label: t('LabelPermissionsAccessExplicitContent') }
+    { key: 'accessExplicitContent', label: t('LabelPermissionsAccessExplicitContent') },
   ]
 
   const outerContentTitle = (
@@ -278,7 +278,11 @@ export default function UserAccountModal({ isOpen, user, onClose, onSubmit, onUn
                   className="flex-1"
                 />
 
-                <ToggleSwitch value={formData.isActive} label={t('LabelEnable')} onChange={(value) => setFormData((prev) => ({ ...prev, isActive: value }))} />
+                <ToggleSwitch
+                  value={formData.isActive}
+                  label={t('LabelEnable')}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, isActive: value }))}
+                />
               </div>
             )}
           </div>
@@ -319,13 +323,13 @@ export default function UserAccountModal({ isOpen, user, onClose, onSubmit, onUn
                         onItemAdded={(item) => {
                           setFormData((prev) => ({
                             ...prev,
-                            librariesAccessible: [...prev.librariesAccessible, item.value]
+                            librariesAccessible: [...prev.librariesAccessible, item.value],
                           }))
                         }}
                         onItemRemoved={(item) => {
                           setFormData((prev) => ({
                             ...prev,
-                            librariesAccessible: prev.librariesAccessible.filter((id) => id !== item.value)
+                            librariesAccessible: prev.librariesAccessible.filter((id) => id !== item.value),
                           }))
                         }}
                       />
@@ -346,7 +350,11 @@ export default function UserAccountModal({ isOpen, user, onClose, onSubmit, onUn
                       <div className="flex flex-col sm:flex-row sm:items-end sm:gap-4">
                         <div className="flex-1">
                           <MultiSelect
-                            label={formData.permissions.selectedTagsNotAccessible ? t('LabelTagsNotAccessibleToUser') : t('LabelTagsAccessibleToUser')}
+                            label={
+                              formData.permissions.selectedTagsNotAccessible
+                                ? t('LabelTagsNotAccessibleToUser')
+                                : t('LabelTagsAccessibleToUser')
+                            }
                             items={tagItems}
                             selectedItems={selectedTagItems}
                             allowNew={false}
@@ -354,13 +362,13 @@ export default function UserAccountModal({ isOpen, user, onClose, onSubmit, onUn
                             onItemAdded={(item) => {
                               setFormData((prev) => ({
                                 ...prev,
-                                itemTagsSelected: [...prev.itemTagsSelected, item.value]
+                                itemTagsSelected: [...prev.itemTagsSelected, item.value],
                               }))
                             }}
                             onItemRemoved={(item) => {
                               setFormData((prev) => ({
                                 ...prev,
-                                itemTagsSelected: prev.itemTagsSelected.filter((tag) => tag !== item.value)
+                                itemTagsSelected: prev.itemTagsSelected.filter((tag) => tag !== item.value),
                               }))
                             }}
                           />

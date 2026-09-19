@@ -118,13 +118,13 @@ function DataTablePagination({
   onPageChange,
   onRowsPerPageChange,
   rowsPerPageLabel = 'Rows per page',
-  pageLabel
+  pageLabel,
 }: DataTablePaginationProps) {
   const dropdownItems = useMemo(
     () =>
       rowsPerPageOptions.map((opt) => ({
         text: String(opt),
-        value: opt
+        value: opt,
       })),
     [rowsPerPageOptions]
   )
@@ -136,15 +136,30 @@ function DataTablePagination({
       <div className="flex items-center gap-3">
         <span className="text-foreground/60 text-xs font-bold tracking-wider uppercase">{rowsPerPageLabel}</span>
         <div className="w-24">
-          <Dropdown value={rowsPerPage} items={dropdownItems} onChange={(value) => onRowsPerPageChange(value as number)} size="small" />
+          <Dropdown
+            value={rowsPerPage}
+            items={dropdownItems}
+            onChange={(value) => onRowsPerPageChange(value as number)}
+            size="small"
+          />
         </div>
       </div>
       <span className="text-foreground/80 text-sm font-medium">{pageIndicator}</span>
       <div className="ms-2 flex items-center gap-2">
-        <IconBtn ariaLabel="Previous page" size="small" disabled={currentPage <= 1} onClick={() => onPageChange(currentPage - 1)}>
+        <IconBtn
+          ariaLabel="Previous page"
+          size="small"
+          disabled={currentPage <= 1}
+          onClick={() => onPageChange(currentPage - 1)}
+        >
           <ChevronLeft size={16} />
         </IconBtn>
-        <IconBtn ariaLabel="Next page" size="small" disabled={currentPage >= totalPages} onClick={() => onPageChange(currentPage + 1)}>
+        <IconBtn
+          ariaLabel="Next page"
+          size="small"
+          disabled={currentPage >= totalPages}
+          onClick={() => onPageChange(currentPage + 1)}
+        >
           <ChevronRight size={16} />
         </IconBtn>
       </div>
@@ -165,7 +180,7 @@ export default function DataTable<T>({
   onRowClick,
   selection,
   bulkActions,
-  sorting
+  sorting,
 }: DataTableProps<T>) {
   const id = useId()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -214,7 +229,7 @@ export default function DataTable<T>({
     const hiddenClasses: Record<TailwindBreakpoint, string> = {
       sm: 'hidden sm:table-cell',
       md: 'hidden md:table-cell',
-      lg: 'hidden lg:table-cell'
+      lg: 'hidden lg:table-cell',
     }
     return hiddenClasses[breakpoint]
   }
@@ -235,7 +250,9 @@ export default function DataTable<T>({
   const numSelectedRows = useMemo(() => {
     if (!selection) return 0
     return data.reduce((count, row, index) => {
-      const rowSelected = selection.getIsRowSelected ? selection.getIsRowSelected(row, index) : selectedRowKeySet.has(getRowKey(row, index))
+      const rowSelected = selection.getIsRowSelected
+        ? selection.getIsRowSelected(row, index)
+        : selectedRowKeySet.has(getRowKey(row, index))
       return rowSelected ? count + 1 : count
     }, 0)
   }, [data, selection, selectedRowKeySet, getRowKey])
@@ -313,7 +330,11 @@ export default function DataTable<T>({
       {visibleColumns.map((column, colIndex) => (
         <td
           key={`${id}-cell-${index}-${colIndex}`}
-          className={mergeClasses('text-foreground/80 px-4 py-3 font-medium', getResponsiveHiddenClass(column.hiddenBelow), column.cellClassName)}
+          className={mergeClasses(
+            'text-foreground/80 px-4 py-3 font-medium',
+            getResponsiveHiddenClass(column.hiddenBelow),
+            column.cellClassName
+          )}
         >
           {renderCellContent(row, column, index)}
         </td>
@@ -355,7 +376,12 @@ export default function DataTable<T>({
       >
         <div className="inline-flex items-center gap-1.5">
           {column.label}
-          <div className={mergeClasses('transition-all duration-200', isActiveSort ? 'text-primary opacity-100' : 'opacity-0 group-hover:opacity-40')}>
+          <div
+            className={mergeClasses(
+              'transition-all duration-200',
+              isActiveSort ? 'text-primary opacity-100' : 'opacity-0 group-hover:opacity-40'
+            )}
+          >
             {sorting.sortDesc ? <ChevronDown size={14} strokeWidth={3} /> : <ChevronUp size={14} strokeWidth={3} />}
           </div>
         </div>
@@ -364,7 +390,9 @@ export default function DataTable<T>({
   }
 
   const bulkSelectedLabel =
-    typeof bulkActions?.selectedLabel === 'function' ? bulkActions.selectedLabel(numSelectedRows) : bulkActions?.selectedLabel || `${numSelectedRows} selected`
+    typeof bulkActions?.selectedLabel === 'function'
+      ? bulkActions.selectedLabel(numSelectedRows)
+      : bulkActions?.selectedLabel || `${numSelectedRows} selected`
 
   const renderSelectionHeaderCell = () => {
     if (!selection) return null
@@ -403,7 +431,9 @@ export default function DataTable<T>({
               {visibleColumns.map((column, index) => renderHeaderCell(column, index))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">{data.map((row, index) => (renderRow ? renderRow(row, index) : renderDefaultRow(row, index)))}</tbody>
+          <tbody className="divide-y divide-white/5">
+            {data.map((row, index) => (renderRow ? renderRow(row, index) : renderDefaultRow(row, index)))}
+          </tbody>
         </table>
 
         <AnimatePresence>

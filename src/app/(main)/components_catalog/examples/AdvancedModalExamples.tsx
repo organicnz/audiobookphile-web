@@ -23,11 +23,11 @@ export function AdvancedModalExamples() {
     { content: 'Elderberry', value: 'elderberry' },
     { content: 'Fig', value: 'fig' },
     { content: 'Grape', value: 'grape' },
-    { content: 'Honeydew', value: 'honeydew' }
+    { content: 'Honeydew', value: 'honeydew' },
   ]
   const [multiSelectValue, setMultiSelectValue] = useState<MultiSelectItem[]>([
     { content: 'Apple', value: 'apple' },
-    { content: 'Banana', value: 'banana' }
+    { content: 'Banana', value: 'banana' },
   ])
 
   // MultiSelect handlers
@@ -57,7 +57,9 @@ export function AdvancedModalExamples() {
       <ExamplesBlock>
         <Example title="MultiSelect within Modal Dialog">
           <div>
-            <p className="mb-4 text-sm text-gray-400">This example shows how MultiSelect works inside a modal dialog.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              This example shows how MultiSelect works inside a modal dialog.
+            </p>
             <Btn onClick={() => setIsModalOpen(true)}>Open Modal with MultiSelect</Btn>
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} className="w-[600px]">
@@ -82,7 +84,8 @@ export function AdvancedModalExamples() {
                   />
 
                   <div className="mt-2 text-xs text-gray-400">
-                    Current selection: {multiSelectValue.length > 0 ? multiSelectValue.map((i) => i.content).join(', ') : 'None'}
+                    Current selection:{' '}
+                    {multiSelectValue.length > 0 ? multiSelectValue.map((i) => i.content).join(', ') : 'None'}
                   </div>
                 </div>
 
@@ -118,7 +121,7 @@ export function AdvancedModalExamples() {
                 { id: 'details', label: 'Details' },
                 { id: 'settings', label: 'Settings' },
                 { id: 'scanner', label: 'Scanner' },
-                { id: 'schedule', label: 'Schedule' }
+                { id: 'schedule', label: 'Schedule' },
               ]}
               selectedTab={selectedTab}
               onTabChange={setSelectedTab}
@@ -143,7 +146,9 @@ export function AdvancedModalExamples() {
               {selectedTab === 'details' && (
                 <div className="space-y-3">
                   <h3 className="text-foreground text-lg font-semibold">Details</h3>
-                  <p className="text-foreground-muted">Configure the basic details for this library. Name, description, and other metadata.</p>
+                  <p className="text-foreground-muted">
+                    Configure the basic details for this library. Name, description, and other metadata.
+                  </p>
                   <div className="bg-primary rounded p-4">
                     <p className="text-foreground-subdued text-sm">This is sample content for the Details tab.</p>
                   </div>
@@ -152,7 +157,9 @@ export function AdvancedModalExamples() {
               {selectedTab === 'settings' && (
                 <div className="space-y-3">
                   <h3 className="text-foreground text-lg font-semibold">Settings</h3>
-                  <p className="text-foreground-muted">Adjust library-level settings such as scan behavior, metadata preferences, and more.</p>
+                  <p className="text-foreground-muted">
+                    Adjust library-level settings such as scan behavior, metadata preferences, and more.
+                  </p>
                   <div className="bg-primary rounded p-4">
                     <p className="text-foreground-subdued text-sm">This is sample content for the Settings tab.</p>
                   </div>

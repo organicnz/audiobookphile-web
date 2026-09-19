@@ -19,7 +19,14 @@ interface AIInsights {
   mood?: string
 }
 
-export default function ChapterAIModal({ isOpen, onClose, bookTitle, bookAuthor, chapterTitle, chapterIndex }: ChapterAIModalProps) {
+export default function ChapterAIModal({
+  isOpen,
+  onClose,
+  bookTitle,
+  bookAuthor,
+  chapterTitle,
+  chapterIndex,
+}: ChapterAIModalProps) {
   const [insights, setInsights] = useState<AIInsights | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,14 +49,14 @@ export default function ChapterAIModal({ isOpen, onClose, bookTitle, bookAuthor,
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            ...(anonKey ? { apikey: anonKey, Authorization: `Bearer ${anonKey}` } : {})
+            ...(anonKey ? { apikey: anonKey, Authorization: `Bearer ${anonKey}` } : {}),
           },
           body: JSON.stringify({
             title: bookTitle,
             author: bookAuthor || 'Unknown Author',
             chapterTitle,
-            chapterIndex: chapterIndex || 1
-          })
+            chapterIndex: chapterIndex || 1,
+          }),
         })
 
         if (!response.ok) {

@@ -24,6 +24,6 @@ export function useLibraryFileActions(libraryItemId: string) {
     downloadFile,
     showMoreInfo,
     audioFileToShow,
-    closeMoreInfo
+    closeMoreInfo,
   }
 }

@@ -16,17 +16,21 @@ import {
   OpenRssFeedPayload,
   OpenRssFeedResponse,
   RssPodcastEpisode,
-  TasksResponse
+  TasksResponse,
 } from '@/types/api'
 import { apiRequest } from '../client'
 
 /**
  * Open RSS feed for an entity (series, collection, etc.)
  */
-export async function openEntityRssFeed(entityType: 'series' | 'collection', entityId: string, payload: OpenRssFeedPayload): Promise<OpenRssFeedResponse> {
+export async function openEntityRssFeed(
+  entityType: 'series' | 'collection',
+  entityId: string,
+  payload: OpenRssFeedPayload
+): Promise<OpenRssFeedResponse> {
   return apiRequest<OpenRssFeedResponse>(`/api/${entityType}/${entityId}/open-rss-feed`, {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -36,7 +40,7 @@ export async function openEntityRssFeed(entityType: 'series' | 'collection', ent
 export async function openMediaItemShare(payload: OpenMediaItemSharePayload): Promise<MediaItemShare> {
   return apiRequest<MediaItemShare>('/api/share', {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -45,7 +49,7 @@ export async function openMediaItemShare(payload: OpenMediaItemSharePayload): Pr
  */
 export async function closeMediaItemShare(shareId: string): Promise<void> {
   return apiRequest<void>(`/api/share/${shareId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -54,7 +58,7 @@ export async function closeMediaItemShare(shareId: string): Promise<void> {
  */
 export async function createBackup(): Promise<MutateBackupsResponse> {
   return apiRequest<MutateBackupsResponse>('/api/backups', {
-    method: 'POST'
+    method: 'POST',
   })
 }
 
@@ -63,7 +67,7 @@ export async function createBackup(): Promise<MutateBackupsResponse> {
  */
 export async function deleteBackup(backupId: string): Promise<MutateBackupsResponse> {
   return apiRequest<MutateBackupsResponse>(`/api/backups/${backupId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -72,7 +76,7 @@ export async function deleteBackup(backupId: string): Promise<MutateBackupsRespo
  */
 export async function applyBackup(backupId: string): Promise<void> {
   return apiRequest<void>(`/api/backups/${backupId}/apply`, {
-    method: 'POST'
+    method: 'POST',
   })
 }
 
@@ -81,7 +85,7 @@ export async function applyBackup(backupId: string): Promise<void> {
  */
 export async function deleteListeningSession(sessionId: string): Promise<void> {
   return apiRequest<void>(`/api/sessions/${sessionId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -90,7 +94,7 @@ export async function deleteListeningSession(sessionId: string): Promise<void> {
  */
 export async function closeListeningSession(sessionId: string): Promise<void> {
   return apiRequest<void>(`/api/sessions/${sessionId}/close`, {
-    method: 'POST'
+    method: 'POST',
   })
 }
 
@@ -100,7 +104,7 @@ export async function closeListeningSession(sessionId: string): Promise<void> {
 export async function batchDeleteListeningSessions(sessionIds: string[]): Promise<void> {
   return apiRequest<void>('/api/sessions/batch/delete', {
     method: 'POST',
-    body: JSON.stringify({ sessionIds })
+    body: JSON.stringify({ sessionIds }),
   })
 }
 
@@ -109,7 +113,7 @@ export async function batchDeleteListeningSessions(sessionIds: string[]): Promis
  */
 export async function fetchPodcastFeed(rssFeed: string): Promise<FetchPodcastFeedResponse> {
   const queryParams = new URLSearchParams({
-    rssFeed
+    rssFeed,
   })
   return apiRequest<FetchPodcastFeedResponse>(`/api/podcasts/feed?${queryParams.toString()}`, {})
 }
@@ -120,7 +124,7 @@ export async function fetchPodcastFeed(rssFeed: string): Promise<FetchPodcastFee
 export async function downloadPodcastEpisodes(libraryItemId: string, episodes: RssPodcastEpisode[]): Promise<void> {
   return apiRequest<void>(`/api/items/${libraryItemId}/download-episodes`, {
     method: 'POST',
-    body: JSON.stringify({ episodes })
+    body: JSON.stringify({ episodes }),
   })
 }
 
@@ -129,7 +133,7 @@ export async function downloadPodcastEpisodes(libraryItemId: string, episodes: R
  */
 export async function clearPodcastDownloadQueue(libraryItemId: string): Promise<void> {
   return apiRequest<void>(`/api/items/${libraryItemId}/clear-download-queue`, {
-    method: 'POST'
+    method: 'POST',
   })
 }
 
@@ -145,17 +149,19 @@ export async function getTasks(): Promise<TasksResponse> {
  */
 export async function matchAll(libraryId: string): Promise<void> {
   return apiRequest<void>(`/api/libraries/${libraryId}/match-all`, {
-    method: 'POST'
+    method: 'POST',
   })
 }
 
 /**
  * Create custom metadata provider
  */
-export async function createCustomMetadataProvider(payload: CreateCustomMetadataProviderPayload): Promise<CreateCustomMetadataProviderResponse> {
+export async function createCustomMetadataProvider(
+  payload: CreateCustomMetadataProviderPayload
+): Promise<CreateCustomMetadataProviderResponse> {
   return apiRequest<CreateCustomMetadataProviderResponse>('/api/custom-metadata-providers', {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -181,13 +187,13 @@ export const getCustomMetadataProviders = cache(async (): Promise<GetCustomMetad
 
 export const deleteCustomMetadataProvider = cache(async (providerId: string): Promise<void> => {
   return apiRequest<void>(`/api/custom-metadata-providers/${providerId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 })
 
 export const closeRssFeed = cache(async (feedId: string): Promise<void> => {
   return apiRequest<void>(`/api/feeds/${feedId}/close`, {
-    method: 'POST'
+    method: 'POST',
   })
 })
 

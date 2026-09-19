@@ -17,15 +17,18 @@ export function DurationPickerExamples() {
         description="Interactive duration input component with hours, minutes, and seconds. Supports keyboard navigation and 3-digit hours for long durations"
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import DurationPicker from &apos;@/shared/ui/DurationPicker&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import DurationPicker from &apos;@/shared/ui/DurationPicker&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>onInput</Code>, <Code>showThreeDigitHour</Code>,{' '}
-          <Code>disabled</Code>, <Code>readOnly</Code>, <Code>borderless</Code>, <Code>size</Code>, <Code>className</Code>
+          <span className="font-bold">Props:</span> <Code>value</Code>, <Code>onChange</Code>, <Code>onInput</Code>,{' '}
+          <Code>showThreeDigitHour</Code>, <Code>disabled</Code>, <Code>readOnly</Code>, <Code>borderless</Code>,{' '}
+          <Code>size</Code>, <Code>className</Code>
         </p>
         <p className="mb-2 text-sm text-gray-400">
-          Features: click-to-focus individual digits, keyboard navigation (arrow keys, number input), visual focus indicators, support for 3-digit hours (over
-          99 hours), click outside to blur, accessible with proper ARIA attributes
+          Features: click-to-focus individual digits, keyboard navigation (arrow keys, number input), visual focus
+          indicators, support for 3-digit hours (over 99 hours), click outside to blur, accessible with proper ARIA
+          attributes
         </p>
       </ComponentInfo>
 
@@ -34,7 +37,8 @@ export function DurationPickerExamples() {
           <div className="space-y-2">
             <DurationPicker value={timeValue1} onChange={setTimeValue1} className="w-fit" />
             <p className="text-sm text-gray-400">
-              Value: {timeValue1} seconds ({Math.floor(timeValue1 / 3600)}:{(Math.floor(timeValue1 / 60) % 60).toString().padStart(2, '0')}:
+              Value: {timeValue1} seconds ({Math.floor(timeValue1 / 3600)}:
+              {(Math.floor(timeValue1 / 60) % 60).toString().padStart(2, '0')}:
               {(timeValue1 % 60).toString().padStart(2, '0')})
             </p>
           </div>
@@ -44,7 +48,8 @@ export function DurationPickerExamples() {
           <div className="space-y-2">
             <DurationPicker value={timeValue3} onChange={setTimeValue3} showThreeDigitHour className="w-fit" />
             <p className="text-sm text-gray-400">
-              Value: {timeValue3} seconds ({Math.floor(timeValue3 / 3600)}:{(Math.floor(timeValue3 / 60) % 60).toString().padStart(2, '0')}:
+              Value: {timeValue3} seconds ({Math.floor(timeValue3 / 3600)}:
+              {(Math.floor(timeValue3 / 60) % 60).toString().padStart(2, '0')}:
               {(timeValue3 % 60).toString().padStart(2, '0')})
             </p>
           </div>

@@ -12,7 +12,13 @@ interface LoadingSpinnerProps {
 }
 
 const LoadingSpinner = memo(({ size = 'la-sm', className = '', color, invert = false }: LoadingSpinnerProps) => {
-  const classList = mergeClasses(styles['la-ball-spin-clockwise'], styles[size], invert ? styles['la-invert'] : '', 'cursor-not-allowed', className)
+  const classList = mergeClasses(
+    styles['la-ball-spin-clockwise'],
+    styles[size],
+    invert ? styles['la-invert'] : '',
+    'cursor-not-allowed',
+    className
+  )
 
   const style = color ? { color } : undefined
 

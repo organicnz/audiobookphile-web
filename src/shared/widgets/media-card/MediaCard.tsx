@@ -23,7 +23,16 @@ import MediaCardDetailView from '@/shared/widgets/media-card/MediaCardDetailView
 import MediaCardFrame from '@/shared/widgets/media-card/MediaCardFrame'
 import MediaCardOverlay from '@/shared/widgets/media-card/MediaCardOverlay'
 import { useMediaCardActions } from '@/shared/widgets/media-card/useMediaCardActions'
-import type { BookMedia, BookshelfEntity, EReaderDevice, LibraryItem, MediaProgress, PodcastEpisode, PodcastMedia, UserPermissions } from '@/types/api'
+import type {
+  BookMedia,
+  BookshelfEntity,
+  EReaderDevice,
+  LibraryItem,
+  MediaProgress,
+  PodcastEpisode,
+  PodcastMedia,
+  UserPermissions,
+} from '@/types/api'
 import { BookshelfView, isBookMedia, isBookMetadata, isPodcastLibraryItem } from '@/types/api'
 
 export interface MediaCardProps {
@@ -98,13 +107,20 @@ function MediaCard(props: MediaCardProps) {
     selected = false,
     onSelect,
     shelfEntities,
-    entityIndex
+    entityIndex,
   } = props
 
   const router = useRouter()
   const { setBoundModal } = useLibrary()
   const coverAspect = useBookCoverAspectRatio()
-  const { libraryItemIdStreaming, isStreaming, isPlaying, isStreamingFromDifferentLibrary, getIsMediaQueued, playerHandler } = useMediaContext()
+  const {
+    libraryItemIdStreaming,
+    isStreaming,
+    isPlaying,
+    isStreamingFromDifferentLibrary,
+    getIsMediaQueued,
+    playerHandler,
+  } = useMediaContext()
   const { sizeMultiplier: contextSizeMultiplier } = useCardSize()
   const cardId = useId()
   const t = useTypeSafeTranslations()
@@ -123,7 +139,9 @@ function MediaCard(props: MediaCardProps) {
 
   const handleOpenEdit = useCallback(() => {
     const navCtx = getMediaCardModalNavigationContext(libraryItem.id, shelfEntities, entityIndex)
-    setBoundModal(<LibraryItemEditModal key="library-item-edit-modal" isOpen navCtx={navCtx} onClose={clearBoundModal} />)
+    setBoundModal(
+      <LibraryItemEditModal key="library-item-edit-modal" isOpen navCtx={navCtx} onClose={clearBoundModal} />
+    )
   }, [clearBoundModal, libraryItem.id, shelfEntities, entityIndex, setBoundModal])
 
   const handleMoreMenuOpenChange = (isOpen: boolean) => {
@@ -146,7 +164,7 @@ function MediaCard(props: MediaCardProps) {
         titleIgnorePrefix: originalMetadata.titleIgnorePrefix,
         subtitle: originalMetadata.subtitle,
         seriesName: originalMetadata.seriesName,
-        publishedYear: originalMetadata.publishedYear
+        publishedYear: originalMetadata.publishedYear,
       }
     }
     return {
@@ -155,7 +173,7 @@ function MediaCard(props: MediaCardProps) {
       titleIgnorePrefix: null,
       subtitle: null,
       seriesName: null,
-      publishedYear: null
+      publishedYear: null,
     }
   }, [originalMetadata])
 
@@ -185,7 +203,7 @@ function MediaCard(props: MediaCardProps) {
     isFinished: itemIsFinished,
     lastUpdated,
     startedAt,
-    finishedAt
+    finishedAt,
   } = useMemo(() => computeProgress({ progress: mediaProgress, useSeriesProgress: false }), [mediaProgress])
 
   const playIconFontSize = Math.max(2, 3 * effectiveSizeMultiplier)
@@ -240,7 +258,8 @@ function MediaCard(props: MediaCardProps) {
 
   const isItemPlaying = isPlaying(libraryItem.id, episode?.id ?? null)
 
-  const showPlayButton = !isSelectionMode && !isMissing && !isInvalid && (numTracks > 0 || !!episode || !!libraryItem.recentEpisode)
+  const showPlayButton =
+    !isSelectionMode && !isMissing && !isInvalid && (numTracks > 0 || !!episode || !!libraryItem.recentEpisode)
 
   const showReadButton = !isSelectionMode && !showPlayButton && isBookMedia(media) && !!media.ebookFormat
 
@@ -262,7 +281,7 @@ function MediaCard(props: MediaCardProps) {
     handlePlay,
     handleReadEBook,
     handleMoreAction,
-    moreMenuItems
+    moreMenuItems,
   } = useMediaCardActions({
     libraryItem,
     media,
@@ -281,7 +300,7 @@ function MediaCard(props: MediaCardProps) {
     isQueued,
     initialShare: libraryItem.mediaItemShare ?? null,
     onOpenMatch: handleOpenMatch,
-    playerControls: playerHandler.controls
+    playerControls: playerHandler.controls,
   })
 
   const params = useParams()
@@ -301,7 +320,7 @@ function MediaCard(props: MediaCardProps) {
           type: 'spring',
           stiffness: 400,
           damping: 25,
-          delay: entityIndex ? (entityIndex % 20) * 0.02 : 0
+          delay: entityIndex ? (entityIndex % 20) * 0.02 : 0,
         }}
         style={{ willChange: 'transform, opacity' }}
         className="group h-full"
@@ -403,7 +422,7 @@ function MediaCard(props: MediaCardProps) {
             name: title,
             type: 'item',
             feed: rssFeed ?? null,
-            hasEpisodesWithoutPubDate: isPodcast && ((media as PodcastMedia).episodes ?? []).some((ep) => !ep.pubDate)
+            hasEpisodesWithoutPubDate: isPodcast && ((media as PodcastMedia).episodes ?? []).some((ep) => !ep.pubDate),
           }}
         />
       )}

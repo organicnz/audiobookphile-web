@@ -10,7 +10,11 @@ interface ProgressIndicatorProps {
   className?: string
 }
 
-export default function ProgressIndicator({ progress: rawProgress, label = 'LabelProgress', className = '' }: ProgressIndicatorProps) {
+export default function ProgressIndicator({
+  progress: rawProgress,
+  label = 'LabelProgress',
+  className = '',
+}: ProgressIndicatorProps) {
   const t = useTypeSafeTranslations()
   const progress = Math.min(Math.max(rawProgress, 0), 100)
 
@@ -18,7 +22,11 @@ export default function ProgressIndicator({ progress: rawProgress, label = 'Labe
     <div className={mergeClasses('w-full py-4', className)}>
       <div className="mb-2 flex items-center justify-between">
         <motion.div initial={{ opacity: 0, x: -5 }} animate={{ opacity: 1, x: 0 }} className="flex-1">
-          {typeof label === 'string' ? <p className="text-foreground/60 text-xs font-bold tracking-wider uppercase">{t(label)}</p> : label}
+          {typeof label === 'string' ? (
+            <p className="text-foreground/60 text-xs font-bold tracking-wider uppercase">{t(label)}</p>
+          ) : (
+            label
+          )}
         </motion.div>
         <motion.p
           key={progress}

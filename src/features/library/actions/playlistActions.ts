@@ -8,7 +8,7 @@ import type { Playlist, PlaylistItemPayload } from '@/types/api'
  */
 export async function deletePlaylistAction(playlistId: string): Promise<void> {
   return await apiRequest<void>(`/api/playlists/${playlistId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -20,20 +20,23 @@ export async function createPlaylistAction(payload: {
 }): Promise<Playlist> {
   return await apiRequest<Playlist>('/api/playlists', {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
 export async function batchAddToPlaylistAction(playlistId: string, items: PlaylistItemPayload[]): Promise<Playlist> {
   return await apiRequest<Playlist>(`/api/playlists/${playlistId}/batch-add`, {
     method: 'POST',
-    body: JSON.stringify({ items })
+    body: JSON.stringify({ items }),
   })
 }
 
-export async function batchRemoveFromPlaylistAction(playlistId: string, items: PlaylistItemPayload[]): Promise<Playlist> {
+export async function batchRemoveFromPlaylistAction(
+  playlistId: string,
+  items: PlaylistItemPayload[]
+): Promise<Playlist> {
   return await apiRequest<Playlist>(`/api/playlists/${playlistId}/batch-remove`, {
     method: 'POST',
-    body: JSON.stringify({ items })
+    body: JSON.stringify({ items }),
   })
 }

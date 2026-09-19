@@ -12,7 +12,13 @@ export interface DimensionRef {
   setDims: (dims: Dimensions) => void
 }
 
-export function DimensionComparison({ cardDimensions, skeletonDimensions }: { cardDimensions: Dimensions | null; skeletonDimensions: Dimensions | null }) {
+export function DimensionComparison({
+  cardDimensions,
+  skeletonDimensions,
+}: {
+  cardDimensions: Dimensions | null
+  skeletonDimensions: Dimensions | null
+}) {
   if (!cardDimensions || !skeletonDimensions) {
     return <p className="mt-2 text-xs text-gray-500">Measuring dimensions...</p>
   }
@@ -26,12 +32,16 @@ export function DimensionComparison({ cardDimensions, skeletonDimensions }: { ca
       <p className="mb-2 font-bold text-white">Dimension Check:</p>
       <div className="space-y-1">
         <p className={widthMatch ? 'text-green-400' : 'text-red-400'}>
-          Width: Card {cardDimensions.width.toFixed(2)}px | Skeleton {skeletonDimensions.width.toFixed(2)}px {widthMatch ? '✓' : '✗'}
+          Width: Card {cardDimensions.width.toFixed(2)}px | Skeleton {skeletonDimensions.width.toFixed(2)}px{' '}
+          {widthMatch ? '✓' : '✗'}
         </p>
         <p className={heightMatch ? 'text-green-400' : 'text-red-400'}>
-          Height: Card {cardDimensions.height.toFixed(2)}px | Skeleton {skeletonDimensions.height.toFixed(2)}px {heightMatch ? '✓' : '✗'}
+          Height: Card {cardDimensions.height.toFixed(2)}px | Skeleton {skeletonDimensions.height.toFixed(2)}px{' '}
+          {heightMatch ? '✓' : '✗'}
         </p>
-        <p className={`font-bold ${allMatch ? 'text-green-400' : 'text-red-400'}`}>{allMatch ? '✓ Dimensions match!' : '✗ Dimensions do not match'}</p>
+        <p className={`font-bold ${allMatch ? 'text-green-400' : 'text-red-400'}`}>
+          {allMatch ? '✓ Dimensions match!' : '✗ Dimensions do not match'}
+        </p>
       </div>
     </div>
   )

@@ -16,7 +16,8 @@ interface LibrarySortSelectProps {
 const DEFAULT_SORT = 'media.metadata.title'
 
 export default function LibrarySortSelect({ entityType = 'items', libraryMediaType = 'book' }: LibrarySortSelectProps) {
-  const { orderBy, orderDesc, seriesSortBy, seriesSortDesc, authorSortBy, authorSortDesc, filterBy, updateSetting } = useLibrary()
+  const { orderBy, orderDesc, seriesSortBy, seriesSortDesc, authorSortBy, authorSortDesc, filterBy, updateSetting } =
+    useLibrary()
   const t = useTypeSafeTranslations()
 
   const isPodcast = libraryMediaType === 'podcast'
@@ -43,7 +44,7 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
       'media.metadata.authorNameLF',
       'sequence',
       'name',
-      'lastFirst'
+      'lastFirst',
     ].includes(val)
   }, [])
 
@@ -88,7 +89,7 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
       { text: t('LabelNumberOfEpisodes'), value: 'media.numTracks' },
       { text: t('LabelFileBirthtime'), value: 'birthtimeMs' },
       { text: t('LabelFileModified'), value: 'mtimeMs' },
-      { text: t('LabelRandomly'), value: 'random' }
+      { text: t('LabelRandomly'), value: 'random' },
     ],
     [t]
   )
@@ -108,13 +109,16 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
       { text: t('LabelLibrarySortByProgress'), value: 'progress' },
       { text: t('LabelLibrarySortByProgressStarted'), value: 'progress.createdAt' },
       { text: t('LabelLibrarySortByProgressFinished'), value: 'progress.finishedAt' },
-      { text: t('LabelRandomly'), value: 'random' }
+      { text: t('LabelRandomly'), value: 'random' },
     ],
     [t]
   )
 
   // Series sort items (bookItems + sequence, matching Vue seriesItems)
-  const seriesItems = useMemo((): DropdownItem[] => [...bookItems, { text: t('LabelSequence'), value: 'sequence' }], [bookItems, t])
+  const seriesItems = useMemo(
+    (): DropdownItem[] => [...bookItems, { text: t('LabelSequence'), value: 'sequence' }],
+    [bookItems, t]
+  )
 
   // Series page sort items (for isSeries=true prop, different from filtering by series)
   const seriesPageItems = useMemo(
@@ -125,7 +129,7 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
       { text: t('LabelLastBookAdded'), value: 'lastBookAdded' },
       { text: t('LabelLastBookUpdated'), value: 'lastBookUpdated' },
       { text: t('LabelTotalDuration'), value: 'totalDuration' },
-      { text: t('LabelRandomly'), value: 'random' }
+      { text: t('LabelRandomly'), value: 'random' },
     ],
     [t]
   )
@@ -137,7 +141,7 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
       { text: t('LabelAuthorLastFirst'), value: 'lastFirst' },
       { text: t('LabelNumberOfBooks'), value: 'numBooks' },
       { text: t('LabelAddedAt'), value: 'addedAt' },
-      { text: t('LabelUpdatedAt'), value: 'updatedAt' }
+      { text: t('LabelUpdatedAt'), value: 'updatedAt' },
     ],
     [t]
   )
@@ -149,7 +153,17 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
     if (isPodcast) return podcastItems
     if (isFilteredBySeries) return seriesItems
     return bookItems
-  }, [isSeries, isAuthors, isPodcast, isFilteredBySeries, seriesPageItems, authorPageItems, podcastItems, seriesItems, bookItems])
+  }, [
+    isSeries,
+    isAuthors,
+    isPodcast,
+    isFilteredBySeries,
+    seriesPageItems,
+    authorPageItems,
+    podcastItems,
+    seriesItems,
+    bookItems,
+  ])
 
   // Auto-reset sort to a valid value when current sort doesn't exist in available items
   // This handles switching between library types with incompatible sort keys, or corrupted saved state
@@ -172,7 +186,11 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
       if (selectedItem) {
         const Icon = currentSortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
         selectedItem.rightIcon = (
-          <Icon size={16} className="text-primary opacity-80" aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')} />
+          <Icon
+            size={16}
+            className="text-primary opacity-80"
+            aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
+          />
         )
       }
     }
@@ -181,7 +199,13 @@ export default function LibrarySortSelect({ entityType = 'items', libraryMediaTy
   }, [t, availableItems, currentSortBy, currentSortDesc])
 
   const Icon = currentSortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
-  const rightIcon = <Icon size={16} className="text-primary" aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')} />
+  const rightIcon = (
+    <Icon
+      size={16}
+      className="text-primary"
+      aria-label={currentSortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
+    />
+  )
 
   return (
     <div className="h-9 w-36 sm:w-44 md:w-48">

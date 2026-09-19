@@ -62,7 +62,9 @@ export function Example({ title, children, className }: ExampleProps) {
 }
 
 export function ExamplesBlock({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={mergeClasses('grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3', className)}>{children}</div>
+  return (
+    <div className={mergeClasses('grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3', className)}>{children}</div>
+  )
 }
 
 interface CodeProps {
@@ -72,5 +74,15 @@ interface CodeProps {
 }
 
 export function Code({ children, overflow = false, className }: CodeProps) {
-  return <code className={mergeClasses('rounded bg-gray-700 px-2 py-1', overflow && 'block max-w-full overflow-x-auto', className)}>{children}</code>
+  return (
+    <code
+      className={mergeClasses(
+        'rounded bg-gray-700 px-2 py-1',
+        overflow && 'block max-w-full overflow-x-auto',
+        className
+      )}
+    >
+      {children}
+    </code>
+  )
 }

@@ -29,9 +29,9 @@ export async function UserDataFetcher({ children }: { children: React.ReactNode 
           id: result.user.id,
           email: result.user.email ?? '',
           username: result.user.username ?? '',
-          type: result.user.type ?? ''
+          type: result.user.type ?? '',
         },
-        userDefaultLibraryId: result.userDefaultLibraryId ?? null
+        userDefaultLibraryId: result.userDefaultLibraryId ?? null,
       }
     }
   } catch {
@@ -59,8 +59,8 @@ export async function UserDataFetcher({ children }: { children: React.ReactNode 
           language: null,
           theme: null,
           is_2fa_enabled: null,
-          totp_secret: null
-        }
+          totp_secret: null,
+        },
       }}
     >
       <TasksProvider>

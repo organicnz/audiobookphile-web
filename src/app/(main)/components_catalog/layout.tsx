@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'audiobookphile - Components Catalog',
-  description: 'Components catalog for audiobookphile client'
+  description: 'Components catalog for audiobookphile client',
 }
 
 export default async function ComponentsCatalogLayout({ children }: Readonly<{ children: React.ReactNode }>) {

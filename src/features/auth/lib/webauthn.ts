@@ -56,7 +56,7 @@ export function serializeRegistrationCredential(credential: PublicKeyCredential)
     id: bufferToBase64url(credential.rawId),
     clientDataJSON: bufferToBase64url(response.clientDataJSON),
     attestationObject: bufferToBase64url(response.attestationObject),
-    transports: getCredentialTransports(credential)
+    transports: getCredentialTransports(credential),
   }
 }
 
@@ -73,7 +73,7 @@ export function serializeAssertionCredential(credential: PublicKeyCredential): A
     credentialId: bufferToBase64url(credential.rawId),
     clientDataJSON: bufferToBase64url(response.clientDataJSON),
     authenticatorData: bufferToBase64url(response.authenticatorData),
-    signature: bufferToBase64url(response.signature)
+    signature: bufferToBase64url(response.signature),
   }
 }
 
@@ -86,11 +86,14 @@ interface PasskeyLoginOptionsResponse {
   userVerification?: string
 }
 
-export async function requestPasskeyLoginOptions(userId: string, tempToken: string): Promise<PasskeyLoginOptionsResponse> {
+export async function requestPasskeyLoginOptions(
+  userId: string,
+  tempToken: string
+): Promise<PasskeyLoginOptionsResponse> {
   const res = await fetch('/api/auth/2fa/webauthn/login/options', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, tempToken })
+    body: JSON.stringify({ userId, tempToken }),
   })
   const data = await res.json()
   if (!res.ok) {
@@ -107,7 +110,7 @@ export async function verifyPasskeyLogin(
   const res = await fetch('/api/auth/2fa/webauthn/login/verify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, tempToken, ...assertion })
+    body: JSON.stringify({ userId, tempToken, ...assertion }),
   })
   const data = await res.json()
   if (!res.ok) {
@@ -128,14 +131,17 @@ interface PasskeyRegisterOptions {
   extensions?: Record<string, unknown>
 }
 
-export async function requestPasskeyRegisterOptions(token: string, existingCredentialIds?: string[]): Promise<PasskeyRegisterOptions> {
+export async function requestPasskeyRegisterOptions(
+  token: string,
+  existingCredentialIds?: string[]
+): Promise<PasskeyRegisterOptions> {
   const res = await fetch('/api/auth/2fa/webauthn/register/options', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(existingCredentialIds?.length ? { excludeCredentials: existingCredentialIds } : {})
+    body: JSON.stringify(existingCredentialIds?.length ? { excludeCredentials: existingCredentialIds } : {}),
   })
   const data = await res.json()
   if (!res.ok) {
@@ -153,9 +159,9 @@ export async function verifyPasskeyRegistration(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ ...registration, ...(deviceName ? { deviceName } : {}) })
+    body: JSON.stringify({ ...registration, ...(deviceName ? { deviceName } : {}) }),
   })
   const data = await res.json()
   if (!res.ok) {
@@ -169,9 +175,9 @@ export async function removePasskey(token: string, credentialId: string): Promis
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ credentialId })
+    body: JSON.stringify({ credentialId }),
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
@@ -187,11 +193,11 @@ function credentialRequestOptionsFromResponse(options: PasskeyLoginOptionsRespon
       allowCredentials: (options.allowCredentials || []).map((cred) => ({
         type: 'public-key' as PublicKeyCredentialType,
         id: base64urlToBuffer(cred.id),
-        ...(cred.transports ? { transports: cred.transports as AuthenticatorTransport[] } : {})
+        ...(cred.transports ? { transports: cred.transports as AuthenticatorTransport[] } : {}),
       })),
       userVerification: (options.userVerification || 'preferred') as UserVerificationRequirement,
-      timeout: options.timeout || 60_000
-    }
+      timeout: options.timeout || 60_000,
+    },
   }
 }
 
@@ -203,7 +209,9 @@ export async function performPasskeyLogin(
     throw new Error('Passkeys are not supported in this browser. Use another sign-in method.')
   }
   const options = await requestPasskeyLoginOptions(userId, tempToken)
-  const credential = (await navigator.credentials.get(credentialRequestOptionsFromResponse(options))) as PublicKeyCredential | null
+  const credential = (await navigator.credentials.get(
+    credentialRequestOptionsFromResponse(options)
+  )) as PublicKeyCredential | null
   if (!credential) {
     throw new Error('Passkey sign-in was cancelled.')
   }
@@ -223,7 +231,7 @@ export async function performPasskeyRegistration(
     rp: options.rp,
     user: {
       ...options.user,
-      id: base64urlToBuffer(options.user.id)
+      id: base64urlToBuffer(options.user.id),
     },
     challenge: base64urlToBuffer(options.challenge),
     pubKeyCredParams: options.pubKeyCredParams,
@@ -231,17 +239,21 @@ export async function performPasskeyRegistration(
     attestation: (options.attestation || 'none') as AttestationConveyancePreference,
     excludeCredentials: (options.excludeCredentials || []).map((cred) => ({
       type: 'public-key' as PublicKeyCredentialType,
-      id: base64urlToBuffer(cred.id)
+      id: base64urlToBuffer(cred.id),
     })),
     authenticatorSelection: options.authenticatorSelection as AuthenticatorSelectionCriteria,
-    ...(options.extensions ? { extensions: options.extensions as AuthenticationExtensionsClientInputs } : {})
+    ...(options.extensions ? { extensions: options.extensions as AuthenticationExtensionsClientInputs } : {}),
   }
 
   const credential = (await navigator.credentials.create({
-    publicKey: publicKeyOptions
+    publicKey: publicKeyOptions,
   })) as PublicKeyCredential | null
   if (!credential) {
     throw new Error('Passkey registration was cancelled.')
   }
-  return verifyPasskeyRegistration(token, serializeRegistrationCredential(credential), opts?.deviceName || 'Web Browser')
+  return verifyPasskeyRegistration(
+    token,
+    serializeRegistrationCredential(credential),
+    opts?.deviceName || 'Web Browser'
+  )
 }

@@ -24,7 +24,13 @@ interface MediaCardMoreMenuProps {
   className?: string
 }
 
-export default function MediaCardMoreMenu({ items, processing = false, onAction, onOpenChange, className }: MediaCardMoreMenuProps) {
+export default function MediaCardMoreMenu({
+  items,
+  processing = false,
+  onAction,
+  onOpenChange,
+  className,
+}: MediaCardMoreMenuProps) {
   const contextMenuItems = useMemo<ContextMenuDropdownItem<string>[]>(() => {
     return items.map((item) => ({
       text: item.text,
@@ -32,8 +38,8 @@ export default function MediaCardMoreMenu({ items, processing = false, onAction,
       subitems: item.subitems?.map((subitem) => ({
         text: subitem.text,
         action: subitem.func,
-        data: subitem.data ?? {}
-      }))
+        data: subitem.data ?? {},
+      })),
     }))
   }, [items])
 

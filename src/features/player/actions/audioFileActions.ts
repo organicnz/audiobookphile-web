@@ -15,6 +15,6 @@ export async function getAudioFileFFProbeDataAction(_itemId: string, _fileIno: s
  */
 export async function deleteLibraryFileAction(itemId: string, fileIno: string): Promise<void> {
   await apiRequest(`/api/items/${itemId}/audio-files/${fileIno}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }

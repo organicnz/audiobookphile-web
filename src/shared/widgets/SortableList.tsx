@@ -25,14 +25,14 @@ export default function SortableList<T extends SortableItem>({
   renderItem,
   className = '',
   itemClassName = '',
-  disabled = false
+  disabled = false,
 }: SortableListProps<T>) {
   // Ensure each item has a unique identifier
   const itemsWithIds = useMemo(
     () =>
       items.map((item, index) => ({
         ...item,
-        id: item.id || `item-${index}`
+        id: item.id || `item-${index}`,
       })),
     [items]
   )
@@ -54,7 +54,7 @@ export default function SortableList<T extends SortableItem>({
     disabled,
     onDragend,
     onDragstart,
-    handleDragend: () => onSortEnd(sortedItems)
+    handleDragend: () => onSortEnd(sortedItems),
   })
 
   // Order-independent content hash: detects add/remove/property-change but NOT reorder.

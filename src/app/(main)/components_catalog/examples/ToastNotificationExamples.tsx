@@ -12,7 +12,10 @@ export function ToastNotificationExamples() {
 
   return (
     <ComponentExamples title="Toasts">
-      <ComponentInfo component="Global Toast Hook" description="Global toast hook for easy toast management throughout the app">
+      <ComponentInfo
+        component="Global Toast Hook"
+        description="Global toast hook for easy toast management throughout the app"
+      >
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
           <Code overflow>
@@ -31,12 +34,16 @@ export function ToastNotificationExamples() {
             showToast(message, {'{'} type, title, duration {'}'})
           </Code>
         </p>
-        <p className="mb-2 text-sm text-gray-400">Note: Global toast is automatically available in all pages. No need to include ToastContainer manually.</p>
+        <p className="mb-2 text-sm text-gray-400">
+          Note: Global toast is automatically available in all pages. No need to include ToastContainer manually.
+        </p>
       </ComponentInfo>
 
       <ExamplesBlock>
         <Example title="Success Toast">
-          <Btn onClick={() => showToast('Operation completed successfully!', { type: 'success', title: 'Success' })}>Show Success</Btn>
+          <Btn onClick={() => showToast('Operation completed successfully!', { type: 'success', title: 'Success' })}>
+            Show Success
+          </Btn>
         </Example>
 
         <Example title="Error Toast">
@@ -48,15 +55,29 @@ export function ToastNotificationExamples() {
         </Example>
 
         <Example title="Info Toast">
-          <Btn onClick={() => showToast('Here is some information.', { type: 'info', title: 'Information' })}>Show Info</Btn>
+          <Btn onClick={() => showToast('Here is some information.', { type: 'info', title: 'Information' })}>
+            Show Info
+          </Btn>
         </Example>
 
         <Example title="Long Duration Toast">
-          <Btn onClick={() => showToast('This toast will stay for 10 seconds.', { type: 'info', title: 'Long Toast', duration: 10000 })}>Show Long Toast</Btn>
+          <Btn
+            onClick={() =>
+              showToast('This toast will stay for 10 seconds.', { type: 'info', title: 'Long Toast', duration: 10000 })
+            }
+          >
+            Show Long Toast
+          </Btn>
         </Example>
 
         <Example title="No Auto-Dismiss Toast">
-          <Btn onClick={() => showToast('This toast will not auto-dismiss.', { type: 'warning', title: 'Persistent', duration: 0 })}>Show Persistent</Btn>
+          <Btn
+            onClick={() =>
+              showToast('This toast will not auto-dismiss.', { type: 'warning', title: 'Persistent', duration: 0 })
+            }
+          >
+            Show Persistent
+          </Btn>
         </Example>
 
         <Example title="Toggle Persistent Toast">
@@ -69,7 +90,7 @@ export function ToastNotificationExamples() {
                   type: 'info',
                   title: 'Persistent',
                   duration: 0,
-                  onDismiss: () => setTogglePersistentId(null)
+                  onDismiss: () => setTogglePersistentId(null),
                 })
                 setTogglePersistentId(id)
               }

@@ -36,7 +36,7 @@ export default function LoginForm() {
       const supabase = createClient()
       const { error: sessionError } = await supabase.auth.setSession({
         access_token: accessToken,
-        refresh_token: refreshToken
+        refresh_token: refreshToken,
       })
 
       if (sessionError) {
@@ -61,8 +61,8 @@ export default function LoginForm() {
         const libsRes = await fetch('/api/libraries', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            ...(anonKey ? { apikey: anonKey } : {})
-          }
+            ...(anonKey ? { apikey: anonKey } : {}),
+          },
         })
         if (libsRes.ok) {
           const libsData = await libsRes.json()
@@ -100,9 +100,9 @@ export default function LoginForm() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            ...(anonKey ? { apikey: anonKey } : {})
+            ...(anonKey ? { apikey: anonKey } : {}),
           },
-          body: JSON.stringify({ username: email, password })
+          body: JSON.stringify({ username: email, password }),
         })
 
         const data = await res.json()
@@ -178,7 +178,7 @@ export default function LoginForm() {
         const res = await fetch('/api/auth/2fa/verify-login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, tempToken, code: codeToSend, method: chosenMethod })
+          body: JSON.stringify({ userId, tempToken, code: codeToSend, method: chosenMethod }),
         })
 
         const data = await res.json()
@@ -253,7 +253,9 @@ export default function LoginForm() {
     window.history.replaceState(null, '', window.location.pathname + window.location.search)
     if (type === 'recovery') {
       const supabase = createClient()
-      supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(() => router.replace('/reset-password'))
+      supabase.auth
+        .setSession({ access_token: accessToken, refresh_token: refreshToken })
+        .then(() => router.replace('/reset-password'))
       return
     }
     completeSession(accessToken, refreshToken)
@@ -273,12 +275,12 @@ export default function LoginForm() {
             key: 'biometric' as const,
             label: 'Biometric',
             icon: Fingerprint,
-            enrolled: enrolledMethods.biometric === true
-          }
+            enrolled: enrolledMethods.biometric === true,
+          },
         ]
       : []),
     { key: 'pin' as const, label: 'PIN Code', icon: Lock, enrolled: enrolledMethods.pin === true },
-    { key: 'totp' as const, label: 'TOTP', icon: Smartphone, enrolled: enrolledMethods.totp === true }
+    { key: 'totp' as const, label: 'TOTP', icon: Smartphone, enrolled: enrolledMethods.totp === true },
   ]
 
   if (requires2FA) {
@@ -309,8 +311,12 @@ export default function LoginForm() {
         <div className="mb-6 flex flex-col gap-4">
           {!hasEnrolledMethods && (
             <div className="border-border bg-bg-light/30 flex flex-col gap-3 rounded-xl border p-4 text-center">
-              <p className="text-foreground-muted text-sm">No two-factor methods are configured for this account, so no verification code can be requested.</p>
-              <p className="text-foreground-muted text-xs">Please contact an administrator to reconfigure your security settings.</p>
+              <p className="text-foreground-muted text-sm">
+                No two-factor methods are configured for this account, so no verification code can be requested.
+              </p>
+              <p className="text-foreground-muted text-xs">
+                Please contact an administrator to reconfigure your security settings.
+              </p>
             </div>
           )}
 
@@ -319,8 +325,15 @@ export default function LoginForm() {
               <div className="bg-accent/15 text-accent flex h-16 w-16 items-center justify-center rounded-2xl shadow-inner">
                 <Fingerprint className="h-9 w-9 animate-pulse" />
               </div>
-              <p className="text-foreground-muted text-sm">Verify your identity using Face ID, Touch ID, or security key.</p>
-              <Btn type="button" onClick={() => handle2FASubmit(undefined, 'biometric')} loading={loading} className="w-full py-3">
+              <p className="text-foreground-muted text-sm">
+                Verify your identity using Face ID, Touch ID, or security key.
+              </p>
+              <Btn
+                type="button"
+                onClick={() => handle2FASubmit(undefined, 'biometric')}
+                loading={loading}
+                className="w-full py-3"
+              >
                 Authenticate with Facial 2FA / Passkey
               </Btn>
             </div>
@@ -337,8 +350,16 @@ export default function LoginForm() {
 
           {activeTab === 'pin' && enrolledMethods.pin && (
             <div>
-              <p className="text-foreground-muted mb-4 text-center text-sm">Enter your 4-8 digit security PIN code to sign in.</p>
-              <TextInput label="PIN Code" value={pinCode} type="password" placeholder="••••••••" onChange={setPinCode} />
+              <p className="text-foreground-muted mb-4 text-center text-sm">
+                Enter your 4-8 digit security PIN code to sign in.
+              </p>
+              <TextInput
+                label="PIN Code"
+                value={pinCode}
+                type="password"
+                placeholder="••••••••"
+                onChange={setPinCode}
+              />
             </div>
           )}
 
@@ -394,7 +415,13 @@ export default function LoginForm() {
     <AuthCard title="Login" onSubmit={handleSubmit}>
       <div className="mb-4 flex flex-col gap-4">
         <TextInput label="Email" value={email} type="email" autocomplete="email" onChange={setEmail} />
-        <TextInput label="Password" value={password} type="password" autocomplete="current-password" onChange={setPassword} />
+        <TextInput
+          label="Password"
+          value={password}
+          type="password"
+          autocomplete="current-password"
+          onChange={setPassword}
+        />
       </div>
 
       <div className="mb-4 flex justify-end">
@@ -404,7 +431,11 @@ export default function LoginForm() {
       </div>
 
       {error && <div className="mb-4 text-center text-sm text-red-400">{error}</div>}
-      {magicSuccess && <div className="mb-4 rounded-lg border border-green-500/20 bg-green-500/10 p-3 text-center text-sm text-green-400">{magicSuccess}</div>}
+      {magicSuccess && (
+        <div className="mb-4 rounded-lg border border-green-500/20 bg-green-500/10 p-3 text-center text-sm text-green-400">
+          {magicSuccess}
+        </div>
+      )}
 
       <div className="flex flex-col gap-4">
         <Btn type="submit" loading={loading} className="w-full">
@@ -428,7 +459,13 @@ export default function LoginForm() {
             loading={magicLoading}
             onClick={handleMagicLinkSignIn}
           >
-            <svg className="text-accent h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <svg
+              className="text-accent h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -456,7 +493,9 @@ export default function LoginForm() {
           </Btn>
         </div>
 
-        <p className="text-foreground-muted text-center text-xs">Registration is invitation-only. Please contact an administrator for access.</p>
+        <p className="text-foreground-muted text-center text-xs">
+          Registration is invitation-only. Please contact an administrator for access.
+        </p>
       </div>
     </AuthCard>
   )

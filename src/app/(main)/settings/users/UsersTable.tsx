@@ -63,11 +63,11 @@ export default function UsersTable({ profiles, dateFormat, timeFormat }: UsersTa
           <OnlineIndicator value={profile.id === currentUserId} />
           <p className="text-base font-medium">{profile.username ?? profile.id}</p>
         </div>
-      )
+      ),
     },
     {
       label: t('LabelAccountType'),
-      accessor: 'user_type'
+      accessor: 'user_type',
     },
     {
       label: t('LabelCreatedAt'),
@@ -78,7 +78,7 @@ export default function UsersTable({ profiles, dateFormat, timeFormat }: UsersTa
             <span className="text-xs">{formatJsDate(new Date(profile.created_at), dateFormat)}</span>
           </Tooltip>
         )
-      }
+      },
     },
     {
       label: t('LabelLastSeen'),
@@ -89,7 +89,7 @@ export default function UsersTable({ profiles, dateFormat, timeFormat }: UsersTa
             <span className="text-xs">{formatDistanceToNow(new Date(profile.updated_at), { addSuffix: true })}</span>
           </Tooltip>
         )
-      }
+      },
     },
     {
       label: '',
@@ -119,8 +119,8 @@ export default function UsersTable({ profiles, dateFormat, timeFormat }: UsersTa
             </IconBtn>
           )}
         </div>
-      )
-    }
+      ),
+    },
   ]
 
   return (

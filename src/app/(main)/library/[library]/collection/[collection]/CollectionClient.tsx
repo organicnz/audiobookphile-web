@@ -43,7 +43,7 @@ export default function CollectionClient({ collection }: CollectionClientProps) 
     collection,
     rssFeed,
     onOpenRssFeedModal: handleOpenRssFeedModal,
-    onCollectionDeleted: handleCollectionDeleted
+    onCollectionDeleted: handleCollectionDeleted,
   })
 
   const showHeaderActions = userCanUpdate || moreMenuItems.length > 0
@@ -60,7 +60,13 @@ export default function CollectionClient({ collection }: CollectionClientProps) 
                 {userCanUpdate && (
                   <Tooltip text={t('LabelEdit')} position="top">
                     <span className="inline-flex">
-                      <IconBtn ariaLabel={t('LabelEdit')} onClick={() => setEditModalOpen(true)} outlined className="mx-0.5" size="small">
+                      <IconBtn
+                        ariaLabel={t('LabelEdit')}
+                        onClick={() => setEditModalOpen(true)}
+                        outlined
+                        className="mx-0.5"
+                        size="small"
+                      >
                         edit
                       </IconBtn>
                     </span>
@@ -82,7 +88,12 @@ export default function CollectionClient({ collection }: CollectionClientProps) 
       </div>
 
       {userCanUpdate && (
-        <CollectionEditModal isOpen={editModalOpen} collection={collection} onClose={() => setEditModalOpen(false)} onSaved={() => router.refresh()} />
+        <CollectionEditModal
+          isOpen={editModalOpen}
+          collection={collection}
+          onClose={() => setEditModalOpen(false)}
+          onSaved={() => router.refresh()}
+        />
       )}
 
       <RssFeedOpenCloseModal
@@ -92,7 +103,7 @@ export default function CollectionClient({ collection }: CollectionClientProps) 
           id: collection.id,
           name: collection.name,
           type: 'collection',
-          feed: rssFeed
+          feed: rssFeed,
         }}
         onFeedChange={() => router.refresh()}
       />

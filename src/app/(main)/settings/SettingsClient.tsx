@@ -33,7 +33,7 @@ export default function SettingsClient(props: SettingsClientProps) {
     return (
       (serverSettings?.allowedOrigins || []).map?.((origin) => ({
         content: origin,
-        value: origin
+        value: origin,
       })) || []
     )
   }, [serverSettings?.allowedOrigins])
@@ -41,13 +41,16 @@ export default function SettingsClient(props: SettingsClientProps) {
   const sortingPrefixItems = useMemo(() => {
     return sortingPrefixes.map((prefix) => ({
       content: prefix,
-      value: prefix
+      value: prefix,
     }))
   }, [sortingPrefixes])
 
   const hasPrefixesChanged = useMemo(() => {
     const serverPrefixes = serverSettings?.sortingPrefixes || []
-    return sortingPrefixes.some((p) => !serverPrefixes.includes(p)) || serverPrefixes.some((p) => !sortingPrefixes.includes(p))
+    return (
+      sortingPrefixes.some((p) => !serverPrefixes.includes(p)) ||
+      serverPrefixes.some((p) => !sortingPrefixes.includes(p))
+    )
   }, [sortingPrefixes, serverSettings?.sortingPrefixes])
 
   const exampleDateFormat = useMemo(() => {
@@ -114,9 +117,9 @@ export default function SettingsClient(props: SettingsClientProps) {
       await fetch('/internal-api/set-language', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ language })
+        body: JSON.stringify({ language }),
       })
 
       // Refresh so next-intl picks up the language change
@@ -198,14 +201,22 @@ export default function SettingsClient(props: SettingsClientProps) {
                 }}
                 onItemAdded={(value: MultiSelectItem<string>) => {
                   if (!sortingPrefixes.includes(value.content)) {
-                    handleSortingPrefixesChanged([...sortingPrefixes, value.content].map((p) => ({ content: p, value: p })))
+                    handleSortingPrefixesChanged(
+                      [...sortingPrefixes, value.content].map((p) => ({ content: p, value: p }))
+                    )
                   }
                 }}
                 selectedItems={sortingPrefixItems}
               />
               {hasPrefixesChanged && (
                 <div className="flex justify-end py-1">
-                  <Btn onClick={handleSaveSortingPrefixes} disabled={isPending} loading={isPending} color="bg-success text-white" size="small">
+                  <Btn
+                    onClick={handleSaveSortingPrefixes}
+                    disabled={isPending}
+                    loading={isPending}
+                    color="bg-success text-white"
+                    size="small"
+                  >
                     {t('ButtonSave')}
                   </Btn>
                 </div>
@@ -220,7 +231,7 @@ export default function SettingsClient(props: SettingsClientProps) {
             value={serverSettings?.scannerParseSubtitle}
             onChange={(value) => handleSettingChanged('scannerParseSubtitle', value)}
             tooltip={t.rich('LabelSettingsParseSubtitlesHelp', {
-              br: () => <br />
+              br: () => <br />,
             })}
           />
           <SettingsToggleSwitch
@@ -228,7 +239,7 @@ export default function SettingsClient(props: SettingsClientProps) {
             value={serverSettings?.scannerFindCovers}
             onChange={(value) => handleSettingChanged('scannerFindCovers', value)}
             tooltip={t.rich('LabelSettingsFindCoversHelp', {
-              br: () => <br />
+              br: () => <br />,
             })}
           />
           <SettingsToggleSwitch
@@ -309,16 +320,27 @@ export default function SettingsClient(props: SettingsClientProps) {
               items={corsAllowedItems}
               showEdit
               onItemEdited={(value: MultiSelectItem<string>) => {
-                handleSettingChanged('allowedOrigins', serverSettings?.allowedOrigins?.map((item) => (item === value.value ? value.content : item)) as string[])
+                handleSettingChanged(
+                  'allowedOrigins',
+                  serverSettings?.allowedOrigins?.map((item) =>
+                    item === value.value ? value.content : item
+                  ) as string[]
+                )
               }}
               onItemRemoved={(value: MultiSelectItem<string>) => {
-                handleSettingChanged('allowedOrigins', serverSettings?.allowedOrigins?.filter((item) => item !== value.content) as string[])
+                handleSettingChanged(
+                  'allowedOrigins',
+                  serverSettings?.allowedOrigins?.filter((item) => item !== value.content) as string[]
+                )
               }}
               onItemAdded={(value: MultiSelectItem<string>) => {
                 if (!corsAllowedItems.some((item) => item.content === value.content)) {
                   handleSettingChanged('allowedOrigins', [...serverSettings?.allowedOrigins, value.content] as string[])
                 } else {
-                  handleSettingChanged('allowedOrigins', serverSettings?.allowedOrigins?.filter((item) => item !== value.content) as string[])
+                  handleSettingChanged(
+                    'allowedOrigins',
+                    serverSettings?.allowedOrigins?.filter((item) => item !== value.content) as string[]
+                  )
                 }
               }}
               selectedItems={corsAllowedItems}

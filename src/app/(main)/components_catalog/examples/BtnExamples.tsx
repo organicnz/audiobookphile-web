@@ -10,23 +10,32 @@ export function BtnExamples() {
 
   return (
     <ComponentExamples title="Buttons">
-      <ComponentInfo component="Btn" description="Button component with various states (loading, disabled, small, link)">
+      <ComponentInfo
+        component="Btn"
+        description="Button component with various states (loading, disabled, small, link)"
+      >
         <p className="mb-2">
           <span className="font-bold">Import:</span> <Code overflow>import Btn from &apos;@/shared/ui/Btn&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>color</Code>, <Code>small</Code>, <Code>loading</Code>, <Code>disabled</Code>, <Code>to</Code> (for
-          navigation)
+          <span className="font-bold">Props:</span> <Code>color</Code>, <Code>small</Code>, <Code>loading</Code>,{' '}
+          <Code>disabled</Code>, <Code>to</Code> (for navigation)
         </p>
       </ComponentInfo>
 
       <ExamplesBlock>
         <Example title="Default Button">
-          <Btn onClick={() => showToast('Default Button clicked', { type: 'info', title: 'Default Button' })}>Default Button</Btn>
+          <Btn onClick={() => showToast('Default Button clicked', { type: 'info', title: 'Default Button' })}>
+            Default Button
+          </Btn>
         </Example>
 
         <Example title="Button with Span Content">
-          <Btn onClick={() => showToast('Button with span content clicked', { type: 'info', title: 'Button with span content' })}>
+          <Btn
+            onClick={() =>
+              showToast('Button with span content clicked', { type: 'info', title: 'Button with span content' })
+            }
+          >
             <span>Inside Span</span>
           </Btn>
         </Example>

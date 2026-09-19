@@ -15,7 +15,13 @@ import SimpleDataTable from '@/shared/ui/SimpleDataTable'
 import Tooltip from '@/shared/ui/Tooltip'
 import TruncatingTooltipText from '@/shared/ui/TruncatingTooltipText'
 import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
-import { GetListeningSessionsResponse, GetOpenListeningSessionsResponse, PlaybackSession, PlayMethod, User } from '@/types/api'
+import {
+  GetListeningSessionsResponse,
+  GetOpenListeningSessionsResponse,
+  PlaybackSession,
+  PlayMethod,
+  User,
+} from '@/types/api'
 import { batchDeleteListeningSessions, getListeningSessionsData, getOpenListeningSessionsData } from './actions'
 import DeviceInfoCell from './DeviceInfoCell'
 import ListeningSessionModal from './ListeningSessionModal'
@@ -30,7 +36,11 @@ const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100]
 
 type SortColumn = 'displayTitle' | 'playMethod' | 'timeListening' | 'currentTime' | 'updatedAt'
 
-export default function ListeningSessionsTable({ users, sessionsResponse, openSessionsResponse }: ListeningSessionsTableProps) {
+export default function ListeningSessionsTable({
+  users,
+  sessionsResponse,
+  openSessionsResponse,
+}: ListeningSessionsTableProps) {
   const t = useTypeSafeTranslations()
   const { serverSettings } = useUser()
   const { showToast } = useGlobalToast()
@@ -51,10 +61,12 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
   const [openListeningSessions, setOpenListeningSessions] = useState<PlaybackSession[]>(
     (openSessionsResponse.sessions || []).map((session) => ({
       ...session,
-      open: true
+      open: true,
     }))
   )
-  const [openShareListeningSessions, setOpenShareListeningSessions] = useState<PlaybackSession[]>(openSessionsResponse.shareSessions || [])
+  const [openShareListeningSessions, setOpenShareListeningSessions] = useState<PlaybackSession[]>(
+    openSessionsResponse.shareSessions || []
+  )
 
   const [numPages, setNumPages] = useState(sessionsResponse.numPages)
   const [total, setTotal] = useState(sessionsResponse.total)
@@ -71,14 +83,20 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
   const numSelected = selectedSessionIds.length
   const isAllSelected = listeningSessions.length > 0 && numSelected === listeningSessions.length
 
-  const userItems = useMemo(() => [{ value: '', text: t('LabelAllUsers') }, ...users.map((user) => ({ value: user.id, text: user.username }))], [users, t])
+  const userItems = useMemo(
+    () => [{ value: '', text: t('LabelAllUsers') }, ...users.map((user) => ({ value: user.id, text: user.username }))],
+    [users, t]
+  )
 
   const filteredUserUsername = useMemo(() => {
     if (!selectedUser) return null
     return users.find((user) => user.id === selectedUser)?.username || null
   }, [selectedUser, users])
 
-  const loadSessions = async (page: number, overrides?: { sortBy?: SortColumn; sortDesc?: boolean; selectedUser?: string; itemsPerPage?: number }) => {
+  const loadSessions = async (
+    page: number,
+    overrides?: { sortBy?: SortColumn; sortDesc?: boolean; selectedUser?: string; itemsPerPage?: number }
+  ) => {
     const nextSortBy = overrides?.sortBy ?? sortBy
     const nextSortDesc = overrides?.sortDesc ?? sortDesc
     const nextSelectedUser = overrides?.selectedUser ?? selectedUser
@@ -92,7 +110,7 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
         itemsPerPage: nextItemsPerPage,
         sort: nextSortBy,
         desc: nextSortDesc,
-        user: nextSelectedUser || undefined
+        user: nextSelectedUser || undefined,
       })
 
       setNumPages(response.numPages)
@@ -114,7 +132,7 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
       setOpenListeningSessions(
         (response.sessions || []).map((session) => ({
           ...session,
-          open: true
+          open: true,
         }))
       )
       setOpenShareListeningSessions(response.shareSessions || [])
@@ -234,13 +252,15 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
           </div>
         ),
         headerClassName: 'w-auto text-start px-2',
-        cellClassName: 'px-2 py-1'
+        cellClassName: 'px-2 py-1',
       },
       {
         label: t('LabelUser'),
-        accessor: (session) => <p className="truncate text-xs">{filteredUserUsername || session.user?.username || 'N/A'}</p>,
+        accessor: (session) => (
+          <p className="truncate text-xs">{filteredUserUsername || session.user?.username || 'N/A'}</p>
+        ),
         headerClassName: 'w-16 text-left hidden md:table-cell',
-        cellClassName: 'hidden md:table-cell py-1'
+        cellClassName: 'hidden md:table-cell py-1',
       },
       {
         label: t('LabelPlayMethod'),
@@ -248,21 +268,23 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
         sortable: true,
         accessor: (session) => <p className="text-xs">{getPlayMethodName(session.playMethod, t)}</p>,
         headerClassName: 'w-26 text-left hidden md:table-cell',
-        cellClassName: 'hidden md:table-cell py-1'
+        cellClassName: 'hidden md:table-cell py-1',
       },
       {
         label: t('LabelDeviceInfo'),
         accessor: (session) => <DeviceInfoCell session={session} />,
         headerClassName: 'w-auto text-left hidden sm:table-cell',
-        cellClassName: 'hidden sm:table-cell py-1'
+        cellClassName: 'hidden sm:table-cell py-1',
       },
       {
         label: t('LabelTimeListened'),
         sortKey: 'timeListening',
         sortable: true,
-        accessor: (session) => <p className="font-mono text-xs">{formatDuration(session.timeListening, t, { showSeconds: true })}</p>,
+        accessor: (session) => (
+          <p className="font-mono text-xs">{formatDuration(session.timeListening, t, { showSeconds: true })}</p>
+        ),
         headerClassName: 'w-20 text-center',
-        cellClassName: 'text-center py-1'
+        cellClassName: 'text-center py-1',
       },
       {
         label: t('LabelLastTime'),
@@ -281,7 +303,7 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
           </button>
         ),
         headerClassName: 'w-20 text-center',
-        cellClassName: 'text-center py-1'
+        cellClassName: 'text-center py-1',
       },
       {
         label: t('LabelLastUpdate'),
@@ -293,8 +315,8 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
           </Tooltip>
         ),
         headerClassName: 'w-24 hidden sm:table-cell text-left',
-        cellClassName: 'text-left hidden sm:table-cell py-1'
-      }
+        cellClassName: 'text-left hidden sm:table-cell py-1',
+      },
     ],
     [t, filteredUserUsername, dateFormat, timeFormat]
   )
@@ -305,7 +327,14 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
     <>
       {(total > 0 || selectedUser !== '') && (
         <div className="mb-2 flex justify-end">
-          <Dropdown value={selectedUser} items={userItems} label={t('LabelFilterByUser')} size="small" className="max-w-48" onChange={handleUpdateUserFilter} />
+          <Dropdown
+            value={selectedUser}
+            items={userItems}
+            label={t('LabelFilterByUser')}
+            size="small"
+            className="max-w-48"
+            onChange={handleUpdateUserFilter}
+          />
         </div>
       )}
 
@@ -319,20 +348,26 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
             selection={{
               selectedRowKeys: selectedSessionIds,
               onToggleAllRows: handleSetSelectionForAll,
-              onToggleRow: (session, _index, selected) => handleToggleSessionSelection(session.id, selected)
+              onToggleRow: (session, _index, selected) => handleToggleSessionSelection(session.id, selected),
             }}
             bulkActions={{
               selectedLabel: t('MessageSelected', { 0: numSelected }),
               actions: (
-                <Btn className="h-7" size="small" color="bg-error" loading={deletingSessions} onClick={() => setShowDeleteConfirmDialog(true)}>
+                <Btn
+                  className="h-7"
+                  size="small"
+                  color="bg-error"
+                  loading={deletingSessions}
+                  onClick={() => setShowDeleteConfirmDialog(true)}
+                >
                   {t('ButtonDelete')}
                 </Btn>
-              )
+              ),
             }}
             sorting={{
               sortBy,
               sortDesc,
-              onSortChange: (nextSortBy, nextSortDesc) => handleSortColumn(nextSortBy as SortColumn, nextSortDesc)
+              onSortChange: (nextSortBy, nextSortDesc) => handleSortColumn(nextSortBy as SortColumn, nextSortDesc),
             }}
             onRowClick={(session) => {
               if (numSelected > 0) {
@@ -350,7 +385,7 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
               onPageChange: (page) => loadSessions(page - 1),
               onRowsPerPageChange: handleUpdateItemsPerPage,
               rowsPerPageLabel: t('LabelRowsPerPage'),
-              pageLabel
+              pageLabel,
             }}
           />
         ) : (
@@ -407,7 +442,7 @@ export default function ListeningSessionsTable({ users, sessionsResponse, openSe
           resumePlaybackSession
             ? t('MessageStartPlaybackAtTime', {
                 0: resumePlaybackSession.displayTitle,
-                1: secondsToTimestamp(Math.max(0, resumePlaybackSession.currentTime || 0))
+                1: secondsToTimestamp(Math.max(0, resumePlaybackSession.currentTime || 0)),
               })
             : ''
         }
@@ -428,7 +463,7 @@ function SessionListTable({
   onSelectSession,
   onPromptResumePlayback,
   filteredUserUsername,
-  isShareSessions = false
+  isShareSessions = false,
 }: {
   sessions: PlaybackSession[]
   onSelectSession: (session: PlaybackSession) => void
@@ -453,34 +488,36 @@ function SessionListTable({
           </div>
         ),
         headerClassName: 'w-32 text-left px-2',
-        cellClassName: 'py-1'
+        cellClassName: 'py-1',
       },
       {
         label: t('LabelUser'),
         accessor: (session) => <p className="text-xs">{filteredUserUsername || session.user?.username || 'N/A'}</p>,
         headerClassName: 'w-20 text-left hidden md:table-cell px-2',
-        cellClassName: 'hidden md:table-cell py-1 w-20'
+        cellClassName: 'hidden md:table-cell py-1 w-20',
       },
       {
         label: t('LabelPlayMethod'),
         accessor: (session) => <p className="text-xs">{getPlayMethodName(session.playMethod, t)}</p>,
         headerClassName: 'w-20 text-left hidden md:table-cell px-2',
-        cellClassName: 'hidden md:table-cell py-1 w-20'
+        cellClassName: 'hidden md:table-cell py-1 w-20',
       },
       {
         label: t('LabelDeviceInfo'),
         accessor: (session) => <DeviceInfoCell session={session} />,
         headerClassName: 'w-32 text-left hidden sm:table-cell px-2',
-        cellClassName: 'hidden sm:table-cell w-32 py-1'
+        cellClassName: 'hidden sm:table-cell w-32 py-1',
       },
       ...(!isShareSessions
         ? [
             {
               label: t('LabelTimeListened'),
-              accessor: (session: PlaybackSession) => <p className="font-mono text-xs">{formatDuration(session.timeListening, t, { showSeconds: true })}</p>,
+              accessor: (session: PlaybackSession) => (
+                <p className="font-mono text-xs">{formatDuration(session.timeListening, t, { showSeconds: true })}</p>
+              ),
               headerClassName: 'w-20 text-center px-2',
-              cellClassName: 'text-center w-20 py-1'
-            }
+              cellClassName: 'text-center w-20 py-1',
+            },
           ]
         : []),
       {
@@ -498,7 +535,7 @@ function SessionListTable({
           </button>
         ),
         headerClassName: 'w-16 text-center px-2',
-        cellClassName: 'text-center w-16 py-1'
+        cellClassName: 'text-center w-16 py-1',
       },
       {
         label: t('LabelLastUpdate'),
@@ -508,8 +545,8 @@ function SessionListTable({
           </Tooltip>
         ),
         headerClassName: 'w-24 hidden sm:table-cell text-left px-2',
-        cellClassName: 'text-left hidden sm:table-cell w-24 py-1'
-      }
+        cellClassName: 'text-left hidden sm:table-cell w-24 py-1',
+      },
     ],
     [t, filteredUserUsername, isShareSessions, dateFormat, timeFormat, onPromptResumePlayback]
   )

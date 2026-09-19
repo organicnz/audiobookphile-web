@@ -2,7 +2,14 @@
 
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { getTasksAction } from '@/features/tools/actions/toolsActions'
-import { MetadataEmbedQueueUpdate, Task, TaskProgressPayload, TrackFinishedPayload, TrackProgressPayload, TrackStartedPayload } from '@/types/api'
+import {
+  MetadataEmbedQueueUpdate,
+  Task,
+  TaskProgressPayload,
+  TrackFinishedPayload,
+  TrackProgressPayload,
+  TrackStartedPayload,
+} from '@/types/api'
 import { useSocketEvent } from './SocketContext'
 
 interface TasksState {
@@ -113,8 +120,8 @@ export function TasksProvider({ children }: TasksProviderProps) {
       ...prev,
       [libraryItemId]: {
         ...prev[libraryItemId],
-        [ino]: progress
-      }
+        [ino]: progress,
+      },
     }))
   }, [])
 
@@ -123,15 +130,15 @@ export function TasksProvider({ children }: TasksProviderProps) {
       ...prev,
       [libraryItemId]: {
         ...prev[libraryItemId],
-        [ino]: finished
-      }
+        [ino]: finished,
+      },
     }))
   }, [])
 
   const updateTaskProgressValue = useCallback((libraryItemId: string, progress: string) => {
     setTaskProgress((prev) => ({
       ...prev,
-      [libraryItemId]: progress
+      [libraryItemId]: progress,
     }))
   }, [])
 
@@ -233,7 +240,7 @@ export function TasksProvider({ children }: TasksProviderProps) {
       getAudioFilesEncoding,
       getAudioFilesFinished,
       getTaskProgress,
-      getTasksByLibraryId
+      getTasksByLibraryId,
     }),
     [
       tasks,
@@ -247,7 +254,7 @@ export function TasksProvider({ children }: TasksProviderProps) {
       getAudioFilesEncoding,
       getAudioFilesFinished,
       getTaskProgress,
-      getTasksByLibraryId
+      getTasksByLibraryId,
     ]
   )
 

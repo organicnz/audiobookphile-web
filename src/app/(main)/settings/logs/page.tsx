@@ -20,18 +20,18 @@ export default async function LogsPage() {
     links.push({
       label: 'Supabase API Logs',
       desc: 'Database and auth requests',
-      href: `https://supabase.com/dashboard/project/${projectRef}/logs/edge-logs`
+      href: `https://supabase.com/dashboard/project/${projectRef}/logs/edge-logs`,
     })
     links.push({
       label: 'Supabase Auth Logs',
       desc: 'Login and auth events',
-      href: `https://supabase.com/dashboard/project/${projectRef}/logs/auth-logs`
+      href: `https://supabase.com/dashboard/project/${projectRef}/logs/auth-logs`,
     })
   } else {
     links.push({
       label: 'Local Studio',
       desc: 'Self-hosted Supabase dashboard',
-      href: supabaseUrl.replace(':8000', ':54323').replace('/v1', '')
+      href: supabaseUrl.replace(':8000', ':54323').replace('/v1', ''),
     })
   }
 
@@ -39,7 +39,7 @@ export default async function LogsPage() {
     links.push({
       label: 'Vercel Function Logs',
       desc: 'Server-side function logs',
-      href: `https://vercel.com/dashboard`
+      href: `https://vercel.com/dashboard`,
     })
     links.push({ label: 'Vercel Deployments', desc: 'Build and deploy history', href: `https://vercel.com/dashboard` })
   }
@@ -47,7 +47,9 @@ export default async function LogsPage() {
   return (
     <SettingsContent title={t('HeaderLogs')}>
       <div className="space-y-4 p-6">
-        <p className="text-foreground-muted text-sm">Application logs are available in your deployment environment&apos;s dashboard.</p>
+        <p className="text-foreground-muted text-sm">
+          Application logs are available in your deployment environment&apos;s dashboard.
+        </p>
         <div className="grid gap-4 sm:grid-cols-2">
           {links.map((item) => (
             <a

@@ -11,9 +11,13 @@ import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '
 export function InlineIndicatorExamples() {
   return (
     <ComponentExamples title="Inline Indicators">
-      <ComponentInfo component="AbridgedIndicator" description="A small indicator showing that content is abridged, with a tooltip">
+      <ComponentInfo
+        component="AbridgedIndicator"
+        description="A small indicator showing that content is abridged, with a tooltip"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import AbridgedIndicator from &apos;@/shared/widgets/AbridgedIndicator&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import AbridgedIndicator from &apos;@/shared/widgets/AbridgedIndicator&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>className</Code> (optional)
@@ -23,28 +27,39 @@ export function InlineIndicatorExamples() {
         </p>
       </ComponentInfo>
 
-      <ComponentInfo component="AlreadyInLibraryIndicator" description="A small indicator showing that content is already in your library, with a tooltip">
+      <ComponentInfo
+        component="AlreadyInLibraryIndicator"
+        description="A small indicator showing that content is already in your library, with a tooltip"
+      >
         <p className="mb-2">
           <span className="font-bold">Import:</span>{' '}
-          <Code overflow>import AlreadyInLibraryIndicator from &apos;@/shared/widgets/AlreadyInLibraryIndicator&apos;</Code>
+          <Code overflow>
+            import AlreadyInLibraryIndicator from &apos;@/shared/widgets/AlreadyInLibraryIndicator&apos;
+          </Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>className</Code> (optional)
         </p>
         <p className="mb-2">
-          <span className="font-bold">Note:</span> Uses a material symbols check_circle icon with a tooltip that says &quot;Already in your library&quot;
+          <span className="font-bold">Note:</span> Uses a material symbols check_circle icon with a tooltip that says
+          &quot;Already in your library&quot;
         </p>
       </ComponentInfo>
 
-      <ComponentInfo component="ExplicitIndicator" description="A small indicator showing that content is explicit, with a tooltip">
+      <ComponentInfo
+        component="ExplicitIndicator"
+        description="A small indicator showing that content is explicit, with a tooltip"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ExplicitIndicator from &apos;@/shared/widgets/ExplicitIndicator&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import ExplicitIndicator from &apos;@/shared/widgets/ExplicitIndicator&apos;</Code>
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <Code>className</Code> (optional)
         </p>
         <p className="mb-2">
-          <span className="font-bold">Note:</span> Uses a material symbols explicit icon with a tooltip that says &quot;Explicit&quot;
+          <span className="font-bold">Note:</span> Uses a material symbols explicit icon with a tooltip that says
+          &quot;Explicit&quot;
         </p>
       </ComponentInfo>
 

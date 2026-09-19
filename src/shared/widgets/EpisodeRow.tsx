@@ -55,7 +55,7 @@ export default function EpisodeRow({
   onRemove,
   onDownloadFile,
   onShowMoreInfo,
-  onAddToPlaylist
+  onAddToPlaylist,
 }: EpisodeRowProps) {
   const t = useTypeSafeTranslations()
   const { userCanUpdate, userCanDelete, userCanDownload, userIsAdminOrUp } = useUser()
@@ -82,7 +82,7 @@ export default function EpisodeRow({
       onConfirm: (hardDelete?: boolean) => {
         setConfirmState(null)
         onRemove?.(episode, !!hardDelete)
-      }
+      },
     })
   }
 
@@ -104,7 +104,10 @@ export default function EpisodeRow({
 
   // Stamp tabindex="-1" and pointer-events:none on all anchor tags in the raw HTML
   // before injection. A post-mount effect is unreliable with virtual scrolling (row reuse).
-  const descriptionHtml = (episode.subtitle || episode.description || '').replace(/<a\b/gi, '<a tabindex="-1" style="pointer-events:none"')
+  const descriptionHtml = (episode.subtitle || episode.description || '').replace(
+    /<a\b/gi,
+    '<a tabindex="-1" style="pointer-events:none"'
+  )
 
   const handleRowClick = () => {
     onView(episode)
@@ -133,7 +136,10 @@ export default function EpisodeRow({
           <div className="flex min-h-0 w-full flex-1">
             <div className="flex min-w-0 grow flex-col justify-start">
               {/* Title */}
-              <div dir="auto" className="relative flex h-10 w-full flex-shrink-0 items-center pe-2 break-words whitespace-normal">
+              <div
+                dir="auto"
+                className="relative flex h-10 w-full flex-shrink-0 items-center pe-2 break-words whitespace-normal"
+              >
                 <button
                   id={`btn-episode-${episode.id}`}
                   type="button"
@@ -225,13 +231,23 @@ export default function EpisodeRow({
                 }}
                 className={`h-9 flex-nowrap border border-white/5 px-3 shadow-lg backdrop-blur-md hover:border-white/10 hover:bg-white/10 ${userIsFinished ? 'text-white/30' : 'text-white/90'}`}
               >
-                {streamIsPlaying ? <Pause size={18} className="text-accent fill-current" /> : <Play size={18} className="text-success fill-current" />}
-                <span className="ps-2 text-[10px] font-black tracking-widest whitespace-nowrap uppercase">{timeRemaining}</span>
+                {streamIsPlaying ? (
+                  <Pause size={18} className="text-accent fill-current" />
+                ) : (
+                  <Play size={18} className="text-success fill-current" />
+                )}
+                <span className="ps-2 text-[10px] font-black tracking-widest whitespace-nowrap uppercase">
+                  {timeRemaining}
+                </span>
               </Btn>
 
               <div className="mx-1 h-4 w-px bg-white/5" />
 
-              <Tooltip position="top" text={userIsFinished ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')} className="flex-shrink-0">
+              <Tooltip
+                position="top"
+                text={userIsFinished ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')}
+                className="flex-shrink-0"
+              >
                 <div
                   role="button"
                   tabIndex={0}
@@ -271,7 +287,14 @@ export default function EpisodeRow({
                 />
               )}
 
-              {userCanDelete && <IconBtn borderless className="hover:text-error text-white/20" onClick={handleDeleteClick} icon={Trash2} />}
+              {userCanDelete && (
+                <IconBtn
+                  borderless
+                  className="hover:text-error text-white/20"
+                  onClick={handleDeleteClick}
+                  icon={Trash2}
+                />
+              )}
 
               {episode.audioFile && contextMenuItems.length > 0 && (
                 <div

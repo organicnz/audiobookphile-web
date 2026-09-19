@@ -23,7 +23,7 @@ describe('fetchAsResult (unified non-throwing fetch core)', () => {
       new Response(JSON.stringify({ error: 'Internal Server Error' }), {
         status: 500,
         statusText: 'Internal Server Error',
-        headers: { 'content-type': 'application/json' }
+        headers: { 'content-type': 'application/json' },
       })
     ) as unknown as typeof fetch
 
@@ -44,7 +44,7 @@ describe('fetchAsResult (unified non-throwing fetch core)', () => {
     globalThis.fetch = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ totalUsers: 3 }), {
         status: 200,
-        headers: { 'content-type': 'application/json' }
+        headers: { 'content-type': 'application/json' },
       })
     ) as unknown as typeof fetch
 
@@ -55,7 +55,9 @@ describe('fetchAsResult (unified non-throwing fetch core)', () => {
   })
 
   it('maps 401 to the unauthorized error type without throwing', async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(new Response('Unauthorized', { status: 401 })) as unknown as typeof fetch
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(new Response('Unauthorized', { status: 401 })) as unknown as typeof fetch
 
     const result = await fetchAsResult<unknown>('http://edge/api/me')
 

@@ -27,7 +27,7 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
     timeFormat: 'h:mm a',
     userPermissions: user.permissions,
     ereaderDevices: [] as EReaderDevice[],
-    showSubtitles: true
+    showSubtitles: true,
   }
 
   // Selection handler
@@ -68,8 +68,11 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
   const [bookDetailOrderBySkeletonDims, setBookDetailOrderBySkeletonDims] = useState<Dimensions | null>(null)
   const [bookCollapsedSeriesCardDims, setBookCollapsedSeriesCardDims] = useState<Dimensions | null>(null)
   const [bookCollapsedSeriesSkeletonDims, setBookCollapsedSeriesSkeletonDims] = useState<Dimensions | null>(null)
-  const [bookCollapsedSeriesBooksCountCardDims, setBookCollapsedSeriesBooksCountCardDims] = useState<Dimensions | null>(null)
-  const [bookCollapsedSeriesBooksCountSkeletonDims, setBookCollapsedSeriesBooksCountSkeletonDims] = useState<Dimensions | null>(null)
+  const [bookCollapsedSeriesBooksCountCardDims, setBookCollapsedSeriesBooksCountCardDims] = useState<Dimensions | null>(
+    null
+  )
+  const [bookCollapsedSeriesBooksCountSkeletonDims, setBookCollapsedSeriesBooksCountSkeletonDims] =
+    useState<Dimensions | null>(null)
   const [bookEbookCardDims, setBookEbookCardDims] = useState<Dimensions | null>(null)
   const [bookEbookSkeletonDims, setBookEbookSkeletonDims] = useState<Dimensions | null>(null)
 
@@ -89,7 +92,7 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
       { ref: bookCollapsedSeriesBooksCountCardRef, setDims: setBookCollapsedSeriesBooksCountCardDims },
       { ref: bookCollapsedSeriesBooksCountSkeletonRef, setDims: setBookCollapsedSeriesBooksCountSkeletonDims },
       { ref: bookEbookCardRef, setDims: setBookEbookCardDims },
-      { ref: bookEbookSkeletonRef, setDims: setBookEbookSkeletonDims }
+      { ref: bookEbookSkeletonRef, setDims: setBookEbookSkeletonDims },
     ],
     [selectedBook]
   )
@@ -101,7 +104,8 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
         description="Media card components for displaying books in the bookshelf. BookMediaCard displays books with book-specific badges (series sequence, ebook format). CollapsedSeriesCard displays collapsed series items with series count badges. MediaCardSkeleton provides a loading state."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import BookMediaCard from &apos;@/shared/widgets/media-card/BookMediaCard&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import BookMediaCard from &apos;@/shared/widgets/media-card/BookMediaCard&apos;</Code>
           <br />
           <Code overflow>import MediaCardSkeleton from &apos;@/shared/widgets/media-card/MediaCardSkeleton&apos;</Code>
         </p>
@@ -112,7 +116,8 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
               <Code>libraryItem</Code>: The library item to display (BookLibraryItem).
             </li>
             <li>
-              <Code>bookshelfView</Code>: View mode (BookshelfView.STANDARD, BookshelfView.DETAIL, or BookshelfView.AUTHOR).
+              <Code>bookshelfView</Code>: View mode (BookshelfView.STANDARD, BookshelfView.DETAIL, or
+              BookshelfView.AUTHOR).
             </li>
             <li>
               <Code>showSubtitles</Code>: Whether to show subtitles.
@@ -215,7 +220,10 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={bookDetailNoSubCardDims} skeletonDimensions={bookDetailNoSubSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={bookDetailNoSubCardDims}
+            skeletonDimensions={bookDetailNoSubSkeletonDims}
+          />
         </Example>
 
         <Example title={`Ebook`}>
@@ -234,8 +242,8 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                         tracks: [],
                         numTracks: 0,
                         audioFiles: [],
-                        numAudioFiles: 0
-                      }
+                        numAudioFiles: 0,
+                      },
                     } as BookLibraryItem
                   }
                   bookshelfView={BookshelfView.DETAIL}
@@ -280,8 +288,8 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                         name: 'The Example Series',
                         nameIgnorePrefix: 'Example Series',
                         numBooks: 5,
-                        seriesSequenceList: '1-3'
-                      }
+                        seriesSequenceList: '1-3',
+                      },
                     } as BookLibraryItem
                   }
                   isSelectionMode={isBookSelectionMode}
@@ -302,7 +310,10 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={bookCollapsedSeriesCardDims} skeletonDimensions={bookCollapsedSeriesSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={bookCollapsedSeriesCardDims}
+            skeletonDimensions={bookCollapsedSeriesSkeletonDims}
+          />
         </Example>
 
         <Example title={`Collapsed Series (Books Count Only)`}>
@@ -323,8 +334,8 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                         name: 'The Example Series',
                         nameIgnorePrefix: 'Example Series',
                         numBooks: 5,
-                        seriesSequenceList: undefined
-                      }
+                        seriesSequenceList: undefined,
+                      },
                     } as BookLibraryItem
                   }
                   isSelectionMode={isBookSelectionMode}
@@ -345,7 +356,10 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={bookCollapsedSeriesBooksCountCardDims} skeletonDimensions={bookCollapsedSeriesBooksCountSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={bookCollapsedSeriesBooksCountCardDims}
+            skeletonDimensions={bookCollapsedSeriesBooksCountSkeletonDims}
+          />
         </Example>
 
         <Example title={`Detail View Ordered by AddedAt`}>
@@ -377,7 +391,10 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={bookDetailOrderByCardDims} skeletonDimensions={bookDetailOrderBySkeletonDims} />
+          <DimensionComparison
+            cardDimensions={bookDetailOrderByCardDims}
+            skeletonDimensions={bookDetailOrderBySkeletonDims}
+          />
         </Example>
       </div>
 
@@ -410,7 +427,7 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                   libraryItem={
                     {
                       ...selectedBook,
-                      isMissing: true
+                      isMissing: true,
                     } as BookLibraryItem
                   }
                   bookshelfView={BookshelfView.DETAIL}
@@ -435,8 +452,8 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                       ...selectedBook,
                       media: {
                         ...selectedBook.media,
-                        coverPath: undefined
-                      }
+                        coverPath: undefined,
+                      },
                     } as BookLibraryItem
                   }
                   bookshelfView={BookshelfView.DETAIL}
@@ -463,9 +480,10 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                         ...selectedBook.media,
                         metadata: {
                           ...selectedBook.media.metadata,
-                          title: 'The Incredibly Long and Extraordinarily Detailed Title of This Audiobook That Should Definitely Be Truncated'
-                        }
-                      }
+                          title:
+                            'The Incredibly Long and Extraordinarily Detailed Title of This Audiobook That Should Definitely Be Truncated',
+                        },
+                      },
                     } as BookLibraryItem
                   }
                   bookshelfView={BookshelfView.DETAIL}
@@ -510,10 +528,10 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                           ownerName: null,
                           preventIndexing: false,
                           title: selectedBook.media.metadata.title,
-                          type: 'serial'
+                          type: 'serial',
                         },
                         createdAt: Date.now(),
-                        updatedAt: Date.now()
+                        updatedAt: Date.now(),
                       },
                       mediaItemShare: {
                         id: 'share-book-123',
@@ -523,8 +541,8 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                         expiresAt: null,
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString(),
-                        isDownloadable: true
-                      }
+                        isDownloadable: true,
+                      },
                     } as BookLibraryItem
                   }
                   bookshelfView={BookshelfView.DETAIL}
@@ -556,7 +574,7 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                       isFinished: false,
                       ebookProgress: 0,
                       lastUpdate: Date.now(),
-                      startedAt: Date.now() - 86400000
+                      startedAt: Date.now() - 86400000,
                     } as MediaProgress
                   }
                   isSelectionMode={isBookSelectionMode}
@@ -588,7 +606,7 @@ export function BookMediaCardExamples({ selectedBook }: BookMediaCardExamplesPro
                       ebookProgress: 0,
                       lastUpdate: Date.now(),
                       startedAt: Date.now() - 172800000,
-                      finishedAt: Date.now() - 86400000
+                      finishedAt: Date.now() - 86400000,
                     } as MediaProgress
                   }
                   isSelectionMode={isBookSelectionMode}

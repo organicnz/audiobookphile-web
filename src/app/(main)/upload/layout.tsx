@@ -10,11 +10,11 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'audiobookphile',
-  description: 'audiobookphile'
+  description: 'audiobookphile',
 }
 
 export default async function UploadLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode
 }>) {

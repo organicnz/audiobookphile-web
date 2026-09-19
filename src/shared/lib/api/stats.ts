@@ -36,7 +36,7 @@ export interface UserStatsData {
  */
 export async function getUserStatsData(): Promise<UserStatsData> {
   const data = await apiRequest<UserStatsData>('/api/me/stats', {
-    method: 'GET'
+    method: 'GET',
   })
   return data ?? { mediaProgress: [], recentSessions: [] }
 }

@@ -14,9 +14,13 @@ export function FilesExamples({ selectedBook, selectedPodcast }: FilesExamplesPr
 
   return (
     <ComponentExamples title="Files">
-      <ComponentInfo component="Files" description="Files tab container component that displays library files table for a library item.">
+      <ComponentInfo
+        component="Files"
+        description="Files tab container component that displays library files table for a library item."
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Files from &apos;@/shared/widgets/Files&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import Files from &apos;@/shared/widgets/Files&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>
@@ -34,7 +38,9 @@ export function FilesExamples({ selectedBook, selectedPodcast }: FilesExamplesPr
         </Example>
       ) : (
         <div className="rounded-lg border-2 border-dashed border-gray-600 p-8">
-          <p className="text-gray-400">Select a book or podcast from the search box above to see the Files component with real data.</p>
+          <p className="text-gray-400">
+            Select a book or podcast from the search box above to see the Files component with real data.
+          </p>
         </div>
       )}
     </ComponentExamples>

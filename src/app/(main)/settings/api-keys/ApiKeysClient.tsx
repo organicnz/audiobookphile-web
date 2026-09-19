@@ -41,7 +41,7 @@ export default function ApiKeysClient({ apiKeys, users }: ApiKeysClientProps) {
         name: formData.name,
         expiresIn: formData.expiresIn,
         isActive: formData.isActive,
-        userId: formData.userId
+        userId: formData.userId,
       }
 
       if (editingApiKey) {
@@ -68,14 +68,27 @@ export default function ApiKeysClient({ apiKeys, users }: ApiKeysClientProps) {
       moreInfoUrl="https://www.audiobookphile.org/guides/api-keys"
       addButton={{
         label: t('ButtonAddApiKey'),
-        onClick: handleAddClick
+        onClick: handleAddClick,
       }}
     >
       <ApiKeysTable apiKeys={apiKeys} onEditClick={handleEditClick} />
 
-      <EditApiKeyModal isOpen={isModalOpen} apiKey={editingApiKey} users={users} onClose={handleCloseModal} onSubmit={handleSubmit} />
+      <EditApiKeyModal
+        isOpen={isModalOpen}
+        apiKey={editingApiKey}
+        users={users}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit}
+      />
 
-      {newApiKey && <NewApiKeyModal isOpen={!!newApiKey} apiKeyName={newApiKey.name} apiKeyValue={newApiKey.value} onClose={handleCloseNewApiKeyModal} />}
+      {newApiKey && (
+        <NewApiKeyModal
+          isOpen={!!newApiKey}
+          apiKeyName={newApiKey.name}
+          apiKeyValue={newApiKey.value}
+          onClose={handleCloseNewApiKeyModal}
+        />
+      )}
     </SettingsContent>
   )
 }

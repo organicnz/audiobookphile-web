@@ -2,7 +2,11 @@
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import MediaPlayerContainer from '@/features/player/components/MediaPlayerContainer'
-import { type PlayerHandlerControls, type PlayerHandlerState, usePlayerHandler } from '@/features/player/hooks/usePlayerHandler'
+import {
+  type PlayerHandlerControls,
+  type PlayerHandlerState,
+  usePlayerHandler,
+} from '@/features/player/hooks/usePlayerHandler'
 import { LibraryItem, PlayerState } from '@/types/api'
 
 export interface PlayerQueueItem {
@@ -40,7 +44,12 @@ interface MediaContextValue {
   removeItemFromQueue: (params: { libraryItemId: string; episodeId?: string | null }) => void
 
   // Main play function
-  playItem: (params: { libraryItem: LibraryItem; episodeId?: string | null; startTime?: number; queueItems?: PlayerQueueItem[] }) => Promise<void>
+  playItem: (params: {
+    libraryItem: LibraryItem
+    episodeId?: string | null
+    startTime?: number
+    queueItems?: PlayerQueueItem[]
+  }) => Promise<void>
 
   // Player handler (state + controls grouped together)
   playerHandler: {
@@ -134,14 +143,17 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
-  const removeItemFromQueue = useCallback(({ libraryItemId, episodeId }: { libraryItemId: string; episodeId?: string | null }) => {
-    setPlayerQueueItems((prev) =>
-      prev.filter((item) => {
-        if (!episodeId) return item.libraryItemId !== libraryItemId
-        return item.libraryItemId !== libraryItemId || item.episodeId !== episodeId
-      })
-    )
-  }, [])
+  const removeItemFromQueue = useCallback(
+    ({ libraryItemId, episodeId }: { libraryItemId: string; episodeId?: string | null }) => {
+      setPlayerQueueItems((prev) =>
+        prev.filter((item) => {
+          if (!episodeId) return item.libraryItemId !== libraryItemId
+          return item.libraryItemId !== libraryItemId || item.episodeId !== episodeId
+        })
+      )
+    },
+    []
+  )
 
   // ============================================================================
   // Main Play Function
@@ -152,7 +164,7 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
       libraryItem,
       episodeId = null,
       startTime,
-      queueItems = []
+      queueItems = [],
     }: {
       libraryItem: LibraryItem
       episodeId?: string | null
@@ -204,8 +216,8 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
       // Player handler (state + controls)
       playerHandler: {
         state: playerState,
-        controls: playerControls
-      }
+        controls: playerControls,
+      },
     }),
     [
       lastCurrentLibraryId,
@@ -224,7 +236,7 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
       removeItemFromQueue,
       playItem,
       playerState,
-      playerControls
+      playerControls,
     ]
   )
 

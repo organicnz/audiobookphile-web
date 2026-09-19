@@ -6,14 +6,18 @@ import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '
 export function LibraryIconExamples() {
   return (
     <ComponentExamples title="Library Icons">
-      <ComponentInfo component="LibraryIcon" description="Library icon component using absicons font with validation and fallback">
+      <ComponentInfo
+        component="LibraryIcon"
+        description="Library icon component using absicons font with validation and fallback"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import LibraryIcon from &apos;@/shared/ui/LibraryIcon&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import LibraryIcon from &apos;@/shared/ui/LibraryIcon&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>icon</Code> (icon name from absicons, defaults to &apos;audiobookphile&apos;), <Code>fontSize</Code>{' '}
-          (CSS font size class, defaults to &apos;text-lg&apos;), <Code>size</Code> (5 or 6 for container size, defaults to 5), <Code>className</Code>{' '}
-          (additional CSS classes)
+          <span className="font-bold">Props:</span> <Code>icon</Code> (icon name from absicons, defaults to
+          &apos;audiobookphile&apos;), <Code>fontSize</Code> (CSS font size class, defaults to &apos;text-lg&apos;),{' '}
+          <Code>size</Code> (5 or 6 for container size, defaults to 5), <Code>className</Code> (additional CSS classes)
         </p>
       </ComponentInfo>
 

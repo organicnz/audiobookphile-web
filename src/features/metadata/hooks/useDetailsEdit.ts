@@ -31,41 +31,47 @@ export function createDetailsReducer<TDetails extends Record<string, any>>(
           details: action.payload.details,
           tags: action.payload.tags,
           initialDetails: action.payload.details,
-          initialTags: action.payload.tags
+          initialTags: action.payload.tags,
         }
       case 'UPDATE_FIELD':
         return {
           ...state,
           details: {
             ...state.details,
-            [action.payload.field]: action.payload.value
-          }
+            [action.payload.field]: action.payload.value,
+          },
         }
       case 'UPDATE_TAGS':
         return {
           ...state,
-          tags: action.payload.tags
+          tags: action.payload.tags,
         }
       case 'BATCH_UPDATE': {
         const { batchDetails, mapType } = action.payload
         const { tags: newTags, ...detailsToUpdate } = batchDetails
 
-        const finalTags = newTags ? (mapType === 'append' ? [...new Set([...state.tags, ...newTags])] : [...newTags]) : state.tags
+        const finalTags = newTags
+          ? mapType === 'append'
+            ? [...new Set([...state.tags, ...newTags])]
+            : [...newTags]
+          : state.tags
 
         if (mapType === 'overwrite') {
           return {
             ...state,
             details: { ...state.details, ...detailsToUpdate },
-            tags: finalTags
+            tags: finalTags,
           }
         } else {
           // Append logic - use custom logic if provided
-          const appendedDetails = batchAppendLogic ? batchAppendLogic(state, detailsToUpdate as Partial<TDetails>) : { ...state.details, ...detailsToUpdate }
+          const appendedDetails = batchAppendLogic
+            ? batchAppendLogic(state, detailsToUpdate as Partial<TDetails>)
+            : { ...state.details, ...detailsToUpdate }
 
           return {
             ...state,
             details: appendedDetails,
-            tags: finalTags
+            tags: finalTags,
           }
         }
       }
@@ -108,7 +114,7 @@ export function useDetailsEdit<TDetails extends Record<string, any>>({
   onChange,
   onSubmit,
   batchAppendLogic,
-  useLooseEquality = false
+  useLooseEquality = false,
 }: UseDetailsEditOptions<TDetails>) {
   const reducer = useMemo(() => createDetailsReducer<TDetails>(batchAppendLogic), [batchAppendLogic])
 
@@ -116,7 +122,7 @@ export function useDetailsEdit<TDetails extends Record<string, any>>({
     details: metadata || ({} as TDetails),
     tags: [...(tags || [])],
     initialDetails: metadata || ({} as TDetails),
-    initialTags: [...(tags || [])]
+    initialTags: [...(tags || [])],
   })
 
   const { details, tags: currentTags, initialDetails, initialTags } = state
@@ -127,8 +133,8 @@ export function useDetailsEdit<TDetails extends Record<string, any>>({
       type: 'RESET_STATE',
       payload: {
         details: metadata || ({} as TDetails),
-        tags: [...(tags || [])]
-      }
+        tags: [...(tags || [])],
+      },
     })
   }, [metadata, tags, libraryItemId])
 
@@ -144,9 +150,12 @@ export function useDetailsEdit<TDetails extends Record<string, any>>({
     dispatch({ type: 'UPDATE_TAGS', payload: { tags: newTags } })
   }, [])
 
-  const mapBatchDetails = useCallback((batchDetails: Partial<TDetails & { tags: string[] }>, mapType: 'overwrite' | 'append' = 'overwrite') => {
-    dispatch({ type: 'BATCH_UPDATE', payload: { batchDetails, mapType } })
-  }, [])
+  const mapBatchDetails = useCallback(
+    (batchDetails: Partial<TDetails & { tags: string[] }>, mapType: 'overwrite' | 'append' = 'overwrite') => {
+      dispatch({ type: 'BATCH_UPDATE', payload: { batchDetails, mapType } })
+    },
+    []
+  )
 
   // Calculate changes
   const changes = useMemo(() => {
@@ -177,7 +186,7 @@ export function useDetailsEdit<TDetails extends Record<string, any>>({
 
     return {
       updatePayload,
-      hasChanges: Object.keys(updatePayload).length > 0
+      hasChanges: Object.keys(updatePayload).length > 0,
     }
   }, [details, initialDetails, currentTags, initialTags, useLooseEquality])
 
@@ -185,7 +194,7 @@ export function useDetailsEdit<TDetails extends Record<string, any>>({
   const handleInputChange = useCallback(() => {
     onChange?.({
       libraryItemId,
-      hasChanges: changes.hasChanges
+      hasChanges: changes.hasChanges,
     })
   }, [libraryItemId, onChange, changes.hasChanges])
 
@@ -216,9 +225,9 @@ export function useDetailsEdit<TDetails extends Record<string, any>>({
       submit: () => submitForm(),
       getTitleAndAuthorName: () => ({
         title,
-        author
+        author,
       }),
-      mapBatchDetails
+      mapBatchDetails,
     }),
     [submitForm, title, author, mapBatchDetails]
   )
@@ -232,6 +241,6 @@ export function useDetailsEdit<TDetails extends Record<string, any>>({
     mapBatchDetails,
     changes,
     submitForm,
-    dispatch
+    dispatch,
   }
 }

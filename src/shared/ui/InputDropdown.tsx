@@ -40,7 +40,7 @@ function InputDropdown({
   onChange,
   onNewItem,
   className,
-  ref
+  ref,
 }: InputDropdownProps) {
   const [showMenu, setShowMenu] = useState(false)
   const [textInput, setTextInput] = useState(value?.toString() || '')
@@ -55,7 +55,7 @@ function InputDropdown({
     () => ({
       focus: () => {
         inputRef.current?.focus()
-      }
+      },
     }),
     []
   )
@@ -242,7 +242,7 @@ function InputDropdown({
     () =>
       itemsToShow.map((item) => ({
         text: String(item),
-        value: item
+        value: item,
       })),
     [itemsToShow]
   )

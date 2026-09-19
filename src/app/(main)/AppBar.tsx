@@ -46,7 +46,9 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
       <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white/5 p-1 shadow-inner transition-transform group-hover:scale-105 group-active:scale-95">
         <Image src="/images/logo.png" alt="Audiobookphile Logo" fill sizes="40px" className="object-contain" priority />
       </div>
-      <span className="text-foreground/90 group-hover:text-foreground hidden text-lg font-black tracking-tight transition-colors md:block">audiobookphile</span>
+      <span className="text-foreground/90 group-hover:text-foreground hidden text-lg font-black tracking-tight transition-colors md:block">
+        audiobookphile
+      </span>
     </>
   )
 
@@ -58,18 +60,32 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
       >
         <div className="flex min-w-0 flex-shrink-0 items-center gap-4">
           {redirectLibraryId ? (
-            <Link href={redirectUrl} prefetch={true} aria-label={`audiobookphile - ${t('ButtonHome')}`} className="group flex items-center gap-3">
+            <Link
+              href={redirectUrl}
+              prefetch={true}
+              aria-label={`audiobookphile - ${t('ButtonHome')}`}
+              className="group flex items-center gap-3"
+            >
               {LogoContent}
             </Link>
           ) : (
-            <a href={redirectUrl} aria-label={`audiobookphile - ${t('ButtonHome')}`} className="group flex items-center gap-3">
+            <a
+              href={redirectUrl}
+              aria-label={`audiobookphile - ${t('ButtonHome')}`}
+              className="group flex items-center gap-3"
+            >
               {LogoContent}
             </a>
           )}
 
           <AnimatePresence mode="wait">
             {!isSearchMode && libraries && currentLibraryId && (
-              <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="hidden sm:block">
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="hidden sm:block"
+              >
                 <LibrariesDropdown currentLibraryId={currentLibraryId} libraries={libraries} />
               </motion.div>
             )}
@@ -89,7 +105,13 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
                 <GlobalSearchInput autoFocus onSubmit={handleSearchSubmit} libraryId={currentLibraryId} />
               </motion.div>
             ) : (
-              <motion.div key="default-mode" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="hidden w-full md:block">
+              <motion.div
+                key="default-mode"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="hidden w-full md:block"
+              >
                 <GlobalSearchInput onSubmit={handleSearchSubmit} libraryId={currentLibraryId} />
               </motion.div>
             )}
@@ -98,7 +120,13 @@ export default function AppBar({ libraries, currentLibraryId }: AppBarProps) {
 
         <div className="flex items-center gap-2 md:gap-4">
           {!isSearchMode && currentLibrary && (
-            <IconBtn borderless ariaLabel={t('ButtonSearch')} onClick={handleSearchModeToggle} className="md:hidden" icon={Search} />
+            <IconBtn
+              borderless
+              ariaLabel={t('ButtonSearch')}
+              onClick={handleSearchModeToggle}
+              className="md:hidden"
+              icon={Search}
+            />
           )}
 
           <div className="flex items-center gap-1.5 border-s border-white/10 ps-2 md:ps-4">

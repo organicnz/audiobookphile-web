@@ -10,7 +10,10 @@ import MultiSelect, { MultiSelectItem } from '../ui/MultiSelect'
 import SlateEditor from '../ui/SlateEditor'
 import TextInput from '../ui/TextInput'
 
-type Details = Omit<PodcastMetadata, 'titleIgnorePrefix' | 'descriptionPlain' | 'imageUrl' | 'itunesPageUrl' | 'itunesArtistId'>
+type Details = Omit<
+  PodcastMetadata,
+  'titleIgnorePrefix' | 'descriptionPlain' | 'imageUrl' | 'itunesPageUrl' | 'itunesArtistId'
+>
 
 export type PodcastDetailsEditRef = DetailsEditRef<Details>
 export type PodcastUpdatePayload = UpdatePayload<Details>
@@ -24,7 +27,14 @@ interface PodcastDetailsEditProps {
   ref?: React.Ref<PodcastDetailsEditRef>
 }
 
-const PodcastDetailsEdit = ({ libraryItem, availableGenres = [], availableTags = [], onChange, onSubmit, ref }: PodcastDetailsEditProps) => {
+const PodcastDetailsEdit = ({
+  libraryItem,
+  availableGenres = [],
+  availableTags = [],
+  onChange,
+  onSubmit,
+  ref,
+}: PodcastDetailsEditProps) => {
   const t = useTypeSafeTranslations()
 
   const media = useMemo(() => libraryItem.media || {}, [libraryItem.media])
@@ -32,7 +42,9 @@ const PodcastDetailsEdit = ({ libraryItem, availableGenres = [], availableTags =
   const batchAppendLogic = useCallback(
     (state: { details: Details }, detailsToUpdate: Partial<Details>) => ({
       ...state.details,
-      genres: detailsToUpdate.genres ? [...new Set([...(state.details.genres || []), ...detailsToUpdate.genres])] : state.details.genres
+      genres: detailsToUpdate.genres
+        ? [...new Set([...(state.details.genres || []), ...detailsToUpdate.genres])]
+        : state.details.genres,
     }),
     []
   )
@@ -47,7 +59,7 @@ const PodcastDetailsEdit = ({ libraryItem, availableGenres = [], availableTags =
     updateField: handleFieldUpdate,
     updateTags,
     submitForm,
-    initialDetails
+    initialDetails,
   } = useDetailsEdit<Details>({
     metadata: (media.metadata as Details) || {},
     tags: media.tags || [],
@@ -57,13 +69,13 @@ const PodcastDetailsEdit = ({ libraryItem, availableGenres = [], availableTags =
     onChange,
     onSubmit,
     batchAppendLogic,
-    useLooseEquality: true
+    useLooseEquality: true,
   })
 
   const podcastTypeItems = useMemo<DropdownItem[]>(
     () => [
       { text: t('LabelEpisodic'), value: 'episodic' },
-      { text: t('LabelSerial'), value: 'serial' }
+      { text: t('LabelSerial'), value: 'serial' },
     ],
     [t]
   )
@@ -114,10 +126,18 @@ const PodcastDetailsEdit = ({ libraryItem, availableGenres = [], availableTags =
       >
         <div className="-mx-1 flex flex-wrap">
           <div className="w-full px-1 md:w-1/2">
-            <TextInput value={details.title || ''} onChange={handleFieldUpdate('title') as (value: string) => void} label={t('LabelTitle')} />
+            <TextInput
+              value={details.title || ''}
+              onChange={handleFieldUpdate('title') as (value: string) => void}
+              label={t('LabelTitle')}
+            />
           </div>
           <div className="mt-2 grow px-1 md:mt-0">
-            <TextInput value={details.author || ''} onChange={handleFieldUpdate('author') as (value: string) => void} label={t('LabelAuthor')} />
+            <TextInput
+              value={details.author || ''}
+              onChange={handleFieldUpdate('author') as (value: string) => void}
+              label={t('LabelAuthor')}
+            />
           </div>
         </div>
 
@@ -128,7 +148,12 @@ const PodcastDetailsEdit = ({ libraryItem, availableGenres = [], availableTags =
           className="mt-2"
         />
 
-        <SlateEditor srcContent={initialDetails.description || ''} onUpdate={handleFieldUpdate('description')} label={t('LabelDescription')} className="mt-2" />
+        <SlateEditor
+          srcContent={initialDetails.description || ''}
+          onUpdate={handleFieldUpdate('description')}
+          label={t('LabelDescription')}
+          className="mt-2"
+        />
 
         <div className="-mx-1 mt-2 flex flex-wrap">
           <div className="w-full px-1 md:w-1/2">
@@ -155,13 +180,25 @@ const PodcastDetailsEdit = ({ libraryItem, availableGenres = [], availableTags =
 
         <div className="-mx-1 mt-2 flex flex-wrap">
           <div className="w-full px-1 md:w-1/4">
-            <TextInput value={details.releaseDate || ''} onChange={handleFieldUpdate('releaseDate') as (value: string) => void} label={t('LabelReleaseDate')} />
+            <TextInput
+              value={details.releaseDate || ''}
+              onChange={handleFieldUpdate('releaseDate') as (value: string) => void}
+              label={t('LabelReleaseDate')}
+            />
           </div>
           <div className="mt-2 w-full px-1 md:mt-0 md:w-1/4">
-            <TextInput value={details.itunesId || ''} onChange={handleFieldUpdate('itunesId') as (value: string | number) => void} label="iTunes ID" />
+            <TextInput
+              value={details.itunesId || ''}
+              onChange={handleFieldUpdate('itunesId') as (value: string | number) => void}
+              label="iTunes ID"
+            />
           </div>
           <div className="mt-2 w-full px-1 md:mt-0 md:w-1/4">
-            <TextInput value={details.language || ''} onChange={handleFieldUpdate('language') as (value: string) => void} label={t('LabelLanguage')} />
+            <TextInput
+              value={details.language || ''}
+              onChange={handleFieldUpdate('language') as (value: string) => void}
+              label={t('LabelLanguage')}
+            />
           </div>
           <div className="mt-2 grow px-1 pt-6 md:mt-0">
             <div className="flex justify-center">

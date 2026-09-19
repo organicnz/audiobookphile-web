@@ -24,10 +24,17 @@ export default function Alert({ type = 'error', autoFocus = true, children, clas
     error: AlertCircle,
     warning: AlertTriangle,
     success: CheckCircle,
-    info: Info
+    info: Info,
   }[type]
 
-  const prefix = type === 'error' ? t('LabelError') : type === 'warning' ? t('LabelWarning') : type === 'success' ? t('LabelSuccess') : t('LabelInformation')
+  const prefix =
+    type === 'error'
+      ? t('LabelError')
+      : type === 'warning'
+        ? t('LabelWarning')
+        : type === 'success'
+          ? t('LabelSuccess')
+          : t('LabelInformation')
 
   const typeClasses =
     type === 'error'

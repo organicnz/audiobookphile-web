@@ -25,7 +25,7 @@ export function useMultiSelect<T = string>({
   onItemRemoved,
   onInputChange,
   onEditingPillIndexChange,
-  onEditDone
+  onEditDone,
 }: MultiSelectProps<T>) {
   const onMutate = (prev: T | null, text: string): T => {
     if (onMutateProp) {
@@ -109,7 +109,7 @@ export function useMultiSelect<T = string>({
   const dropdownItems: DropdownMenuItem[] = useMemo(() => {
     return itemsToShow.map((item) => ({
       text: item.content,
-      value: item.value
+      value: item.value,
     }))
   }, [itemsToShow])
 
@@ -146,7 +146,9 @@ export function useMultiSelect<T = string>({
   }
 
   const isDuplicateByText = (text: string, excludeIndex?: number) => {
-    return selectedItems.some((item, idx) => idx !== excludeIndex && getItemTextId(item.content).toLowerCase() === text.toLowerCase())
+    return selectedItems.some(
+      (item, idx) => idx !== excludeIndex && getItemTextId(item.content).toLowerCase() === text.toLowerCase()
+    )
   }
 
   // Remove item
@@ -274,7 +276,7 @@ export function useMultiSelect<T = string>({
           .split(';')
           .map((i) => i.trim())
           .filter((i) => i)
-      )
+      ),
     ]
     addPastedItems(pastedItems)
     e.preventDefault()
@@ -431,7 +433,7 @@ export function useMultiSelect<T = string>({
     ArrowLeft: handleArrowLeft,
     ArrowRight: handleArrowRight,
     Backspace: () => handlePillDeletion('Backspace'),
-    Delete: () => handlePillDeletion('Delete')
+    Delete: () => handlePillDeletion('Delete'),
   }
 
   // Keyboard navigation for dropdown menu
@@ -512,6 +514,6 @@ export function useMultiSelect<T = string>({
     onMutate,
     onValidate,
     setIsMenuOpen,
-    setFocusIndex
+    setFocusIndex,
   }
 }

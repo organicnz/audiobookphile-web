@@ -39,7 +39,11 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
   }
 
   if (isError || !stats) {
-    return <div className="text-foreground-muted flex w-full items-center justify-center p-12">Failed to load library stats.</div>
+    return (
+      <div className="text-foreground-muted flex w-full items-center justify-center p-12">
+        Failed to load library stats.
+      </div>
+    )
   }
 
   const topGenres = stats.genresWithCount
@@ -47,7 +51,7 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
     .slice(0, 5)
     .map((stat) => ({
       label: stat.genre,
-      percentage: Math.round((stat.count / Math.max(1, stats.totalItems)) * 100)
+      percentage: Math.round((stat.count / Math.max(1, stats.totalItems)) * 100),
     }))
 
   const topAuthors = stats.authorsWithCount
@@ -56,20 +60,20 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
     .map((stat) => ({
       id: stat.id,
       label: stat.name,
-      numBooks: stat.count
+      numBooks: stat.count,
     }))
 
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+      transition: { staggerChildren: 0.1 },
+    },
   }
 
   const itemAnim = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } }
+    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
   }
 
   return (
@@ -123,9 +127,17 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
       </motion.div>
 
       {/* Genres & Authors Section */}
-      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16"
+      >
         {/* Top Genres */}
-        <motion.div variants={itemAnim} className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+        <motion.div
+          variants={itemAnim}
+          className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md"
+        >
           <h2 className="mb-6 text-2xl font-semibold text-white/90">Top 5 Genres</h2>
           {topGenres.length === 0 && <p className="text-white/50">No genres found.</p>}
           {topGenres.map((stat, index) => (
@@ -147,13 +159,19 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
         </motion.div>
 
         {/* Top Authors */}
-        <motion.div variants={itemAnim} className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+        <motion.div
+          variants={itemAnim}
+          className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md"
+        >
           <h2 className="mb-6 text-2xl font-semibold text-white/90">Top 10 Authors</h2>
           {topAuthors.length === 0 && <p className="text-white/50">No authors found.</p>}
           {topAuthors.map((stat, index) => (
             <div key={index} className="mb-2 flex w-full items-center py-2">
               <span className="pr-2 text-sm text-white/50">{index + 1}.</span>
-              <Link href={`/library/${libraryId}/author/${stat.id}`} className="truncate pr-4 text-sm text-white/70 hover:text-white hover:underline">
+              <Link
+                href={`/library/${libraryId}/author/${stat.id}`}
+                className="truncate pr-4 text-sm text-white/70 hover:text-white hover:underline"
+              >
                 {stat.label}
               </Link>
               <div className="h-1 grow overflow-hidden rounded-full border-b border-dotted border-white/10" />
@@ -166,15 +184,26 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
       </motion.div>
 
       {/* Longest & Largest Items */}
-      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16"
+      >
         {/* Longest Items */}
-        <motion.div variants={itemAnim} className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+        <motion.div
+          variants={itemAnim}
+          className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md"
+        >
           <h2 className="mb-6 text-2xl font-semibold text-white/90">Longest Items</h2>
           {stats.longestItems.length === 0 && <p className="text-white/50">No items found.</p>}
           {stats.longestItems.map((stat, index) => (
             <div key={index} className="mb-2 flex w-full items-center justify-between py-2">
               <span className="pr-2 text-sm text-white/50">{index + 1}.</span>
-              <Link href={`/library/${libraryId}/book/${stat.id}`} className="w-3/4 truncate pr-4 text-sm text-white/70 hover:text-white hover:underline">
+              <Link
+                href={`/library/${libraryId}/book/${stat.id}`}
+                className="w-3/4 truncate pr-4 text-sm text-white/70 hover:text-white hover:underline"
+              >
                 {stat.title}
               </Link>
               <div className="w-1/4 shrink-0 text-right">
@@ -185,13 +214,19 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
         </motion.div>
 
         {/* Largest Items */}
-        <motion.div variants={itemAnim} className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+        <motion.div
+          variants={itemAnim}
+          className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md"
+        >
           <h2 className="mb-6 text-2xl font-semibold text-white/90">Largest Items</h2>
           {stats.largestItems.length === 0 && <p className="text-white/50">No items found.</p>}
           {stats.largestItems.map((stat, index) => (
             <div key={index} className="mb-2 flex w-full items-center justify-between py-2">
               <span className="pr-2 text-sm text-white/50">{index + 1}.</span>
-              <Link href={`/library/${libraryId}/book/${stat.id}`} className="w-3/4 truncate pr-4 text-sm text-white/70 hover:text-white hover:underline">
+              <Link
+                href={`/library/${libraryId}/book/${stat.id}`}
+                className="w-3/4 truncate pr-4 text-sm text-white/70 hover:text-white hover:underline"
+              >
                 {stat.title}
               </Link>
               <div className="w-1/4 shrink-0 text-right">

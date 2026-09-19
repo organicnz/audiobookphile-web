@@ -11,7 +11,9 @@ export default async function NarratorsPage({ params }: { params: Promise<{ libr
   // Fall back to empty array if the table doesn't exist
   let narrators: { id: string; name: string }[] = []
   try {
-    const { narrators: fetchedNarrators } = await apiRequest<{ narrators: { id: string; name: string }[] }>(`/api/libraries/${libraryId}/narrators`)
+    const { narrators: fetchedNarrators } = await apiRequest<{ narrators: { id: string; name: string }[] }>(
+      `/api/libraries/${libraryId}/narrators`
+    )
     narrators = fetchedNarrators ?? []
   } catch {
     narrators = []

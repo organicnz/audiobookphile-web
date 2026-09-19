@@ -26,13 +26,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
             refetchOnWindowFocus: false,
             refetchOnReconnect: true,
             // v5: route errors through ErrorBoundary instead of hanging suspense.
-            throwOnError: false
+            throwOnError: false,
           },
           mutations: {
             // No silent retries on writes — uploads/purchases must not double-fire.
-            retry: false
-          }
-        }
+            retry: false,
+          },
+        },
       })
   )
 
@@ -51,8 +51,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
             border: '1px solid rgba(255, 255, 255, 0.1)',
             color: '#fff',
             borderRadius: '12px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
-          }
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          },
         }}
       />
       {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}

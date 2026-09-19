@@ -13,7 +13,9 @@ export default function LoadingIndicator({ label, children, variant = 'overlay' 
   const displayLabel = t(label || 'LabelLoadingIndicator')
 
   const rootClass =
-    variant === 'inline' ? 'flex items-center justify-center' : 'absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]'
+    variant === 'inline'
+      ? 'flex items-center justify-center'
+      : 'absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]'
 
   return (
     <motion.div
@@ -32,7 +34,7 @@ export default function LoadingIndicator({ label, children, variant = 'overlay' 
             <motion.div
               animate={{
                 scale: [1, 1.5, 1],
-                opacity: [0.5, 0, 0.5]
+                opacity: [0.5, 0, 0.5],
               }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
               className="absolute inset-0 rounded-full border-2 border-yellow-500/50"
@@ -40,7 +42,7 @@ export default function LoadingIndicator({ label, children, variant = 'overlay' 
             <motion.div
               animate={{
                 scale: [1.2, 1.8, 1.2],
-                opacity: [0.3, 0, 0.3]
+                opacity: [0.3, 0, 0.3],
               }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
               className="absolute inset-0 rounded-full border-2 border-yellow-500/30"

@@ -27,7 +27,7 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
     timeFormat: 'h:mm a',
     userPermissions: user.permissions,
     ereaderDevices: [] as EReaderDevice[],
-    showSubtitles: false
+    showSubtitles: false,
   }
 
   // Selection handler
@@ -70,8 +70,11 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
   const [podcastRssFeedSkeletonDims, setPodcastRssFeedSkeletonDims] = useState<Dimensions | null>(null)
   const [podcastNumEpisodesCardDims, setPodcastNumEpisodesCardDims] = useState<Dimensions | null>(null)
   const [podcastNumEpisodesSkeletonDims, setPodcastNumEpisodesSkeletonDims] = useState<Dimensions | null>(null)
-  const [podcastNumEpisodesIncompleteCardDims, setPodcastNumEpisodesIncompleteCardDims] = useState<Dimensions | null>(null)
-  const [podcastNumEpisodesIncompleteSkeletonDims, setPodcastNumEpisodesIncompleteSkeletonDims] = useState<Dimensions | null>(null)
+  const [podcastNumEpisodesIncompleteCardDims, setPodcastNumEpisodesIncompleteCardDims] = useState<Dimensions | null>(
+    null
+  )
+  const [podcastNumEpisodesIncompleteSkeletonDims, setPodcastNumEpisodesIncompleteSkeletonDims] =
+    useState<Dimensions | null>(null)
 
   // Measure dimensions
   useDimensionMeasurement(
@@ -91,7 +94,7 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
       { ref: podcastNumEpisodesCardRef, setDims: setPodcastNumEpisodesCardDims },
       { ref: podcastNumEpisodesSkeletonRef, setDims: setPodcastNumEpisodesSkeletonDims },
       { ref: podcastNumEpisodesIncompleteCardRef, setDims: setPodcastNumEpisodesIncompleteCardDims },
-      { ref: podcastNumEpisodesIncompleteSkeletonRef, setDims: setPodcastNumEpisodesIncompleteSkeletonDims }
+      { ref: podcastNumEpisodesIncompleteSkeletonRef, setDims: setPodcastNumEpisodesIncompleteSkeletonDims },
     ],
     [selectedPodcast]
   )
@@ -103,9 +106,12 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
         description="Media card components for displaying podcasts in the bookshelf. PodcastMediaCard displays podcasts with podcast-specific badges. PodcastEpisodeCard displays a specific podcast episode. MediaCardSkeleton provides a loading state."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import PodcastMediaCard from &apos;@/shared/widgets/media-card/PodcastMediaCard&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import PodcastMediaCard from &apos;@/shared/widgets/media-card/PodcastMediaCard&apos;</Code>
           <br />
-          <Code overflow>import PodcastEpisodeCard from &apos;@/shared/widgets/media-card/PodcastEpisodeCard&apos;</Code>
+          <Code overflow>
+            import PodcastEpisodeCard from &apos;@/shared/widgets/media-card/PodcastEpisodeCard&apos;
+          </Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>
@@ -142,11 +148,18 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
             <div>
               <p className="mb-2 text-sm text-gray-400">Loading Skeleton</p>
               <div ref={podcastStandardSkeletonRef}>
-                <MediaCardSkeleton bookshelfView={defaultProps.bookshelfView} dateFormat={defaultProps.dateFormat} timeFormat={defaultProps.timeFormat} />
+                <MediaCardSkeleton
+                  bookshelfView={defaultProps.bookshelfView}
+                  dateFormat={defaultProps.dateFormat}
+                  timeFormat={defaultProps.timeFormat}
+                />
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={podcastStandardCardDims} skeletonDimensions={podcastStandardSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={podcastStandardCardDims}
+            skeletonDimensions={podcastStandardSkeletonDims}
+          />
         </Example>
 
         <Example title={`Detail View`}>
@@ -167,7 +180,11 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
             <div>
               <p className="mb-2 text-sm text-gray-400">Loading Skeleton</p>
               <div ref={podcastDetailSkeletonRef}>
-                <MediaCardSkeleton bookshelfView={BookshelfView.DETAIL} dateFormat={defaultProps.dateFormat} timeFormat={defaultProps.timeFormat} />
+                <MediaCardSkeleton
+                  bookshelfView={BookshelfView.DETAIL}
+                  dateFormat={defaultProps.dateFormat}
+                  timeFormat={defaultProps.timeFormat}
+                />
               </div>
             </div>
           </div>
@@ -194,11 +211,18 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
             <div>
               <p className="mb-2 text-sm text-gray-400">Loading Skeleton</p>
               <div ref={podcastDetailNoSubSkeletonRef}>
-                <MediaCardSkeleton bookshelfView={BookshelfView.DETAIL} dateFormat={defaultProps.dateFormat} timeFormat={defaultProps.timeFormat} />
+                <MediaCardSkeleton
+                  bookshelfView={BookshelfView.DETAIL}
+                  dateFormat={defaultProps.dateFormat}
+                  timeFormat={defaultProps.timeFormat}
+                />
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={podcastDetailNoSubCardDims} skeletonDimensions={podcastDetailNoSubSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={podcastDetailNoSubCardDims}
+            skeletonDimensions={podcastDetailNoSubSkeletonDims}
+          />
         </Example>
 
         <Example title={`Detail View Ordered by AddedAt`}>
@@ -229,7 +253,10 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={podcastDetailOrderByCardDims} skeletonDimensions={podcastDetailOrderBySkeletonDims} />
+          <DimensionComparison
+            cardDimensions={podcastDetailOrderByCardDims}
+            skeletonDimensions={podcastDetailOrderBySkeletonDims}
+          />
         </Example>
       </div>
 
@@ -254,8 +281,8 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
                         description: 'This is a recent episode',
                         chapters: [],
                         addedAt: Date.now(),
-                        updatedAt: Date.now()
-                      } as PodcastEpisode
+                        updatedAt: Date.now(),
+                      } as PodcastEpisode,
                     } as PodcastLibraryItem
                   }
                   bookshelfView={BookshelfView.DETAIL}
@@ -268,11 +295,18 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
             <div>
               <p className="mb-2 text-sm text-gray-400">Loading Skeleton</p>
               <div ref={podcastRecentEpisodeSkeletonRef}>
-                <MediaCardSkeleton bookshelfView={BookshelfView.DETAIL} dateFormat={defaultProps.dateFormat} timeFormat={defaultProps.timeFormat} />
+                <MediaCardSkeleton
+                  bookshelfView={BookshelfView.DETAIL}
+                  dateFormat={defaultProps.dateFormat}
+                  timeFormat={defaultProps.timeFormat}
+                />
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={podcastRecentEpisodeCardDims} skeletonDimensions={podcastRecentEpisodeSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={podcastRecentEpisodeCardDims}
+            skeletonDimensions={podcastRecentEpisodeSkeletonDims}
+          />
         </Example>
 
         <Example title={`Detail View with RSS Feed & Share`}>
@@ -307,10 +341,10 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
                           ownerName: null,
                           preventIndexing: false,
                           title: selectedPodcast.media.metadata.title,
-                          type: 'episodic'
+                          type: 'episodic',
                         },
                         createdAt: Date.now(),
-                        updatedAt: Date.now()
+                        updatedAt: Date.now(),
                       },
                       mediaItemShare: {
                         id: 'share-123',
@@ -320,8 +354,8 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
                         expiresAt: null,
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString(),
-                        isDownloadable: true
-                      }
+                        isDownloadable: true,
+                      },
                     } as PodcastLibraryItem
                   }
                   bookshelfView={BookshelfView.DETAIL}
@@ -334,11 +368,18 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
             <div>
               <p className="mb-2 text-sm text-gray-400">Loading Skeleton</p>
               <div ref={podcastRssFeedSkeletonRef}>
-                <MediaCardSkeleton bookshelfView={BookshelfView.DETAIL} dateFormat={defaultProps.dateFormat} timeFormat={defaultProps.timeFormat} />
+                <MediaCardSkeleton
+                  bookshelfView={BookshelfView.DETAIL}
+                  dateFormat={defaultProps.dateFormat}
+                  timeFormat={defaultProps.timeFormat}
+                />
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={podcastRssFeedCardDims} skeletonDimensions={podcastRssFeedSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={podcastRssFeedCardDims}
+            skeletonDimensions={podcastRssFeedSkeletonDims}
+          />
         </Example>
       </div>
 
@@ -355,8 +396,8 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
                       ...selectedPodcast,
                       media: {
                         ...selectedPodcast.media,
-                        numEpisodes: 42
-                      }
+                        numEpisodes: 42,
+                      },
                     } as PodcastLibraryItem
                   }
                   bookshelfView={BookshelfView.DETAIL}
@@ -369,11 +410,18 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
             <div>
               <p className="mb-2 text-sm text-gray-400">Loading Skeleton</p>
               <div ref={podcastNumEpisodesSkeletonRef}>
-                <MediaCardSkeleton bookshelfView={BookshelfView.DETAIL} dateFormat={defaultProps.dateFormat} timeFormat={defaultProps.timeFormat} />
+                <MediaCardSkeleton
+                  bookshelfView={BookshelfView.DETAIL}
+                  dateFormat={defaultProps.dateFormat}
+                  timeFormat={defaultProps.timeFormat}
+                />
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={podcastNumEpisodesCardDims} skeletonDimensions={podcastNumEpisodesSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={podcastNumEpisodesCardDims}
+            skeletonDimensions={podcastNumEpisodesSkeletonDims}
+          />
         </Example>
 
         <Example title={`With numEpisodesIncomplete`}>
@@ -386,7 +434,7 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
                   libraryItem={
                     {
                       ...selectedPodcast,
-                      numEpisodesIncomplete: 5
+                      numEpisodesIncomplete: 5,
                     } as PodcastLibraryItem
                   }
                   bookshelfView={BookshelfView.DETAIL}
@@ -399,11 +447,18 @@ export function PodcastMediaCardExamples({ selectedPodcast }: PodcastMediaCardEx
             <div>
               <p className="mb-2 text-sm text-gray-400">Loading Skeleton</p>
               <div ref={podcastNumEpisodesIncompleteSkeletonRef}>
-                <MediaCardSkeleton bookshelfView={BookshelfView.DETAIL} dateFormat={defaultProps.dateFormat} timeFormat={defaultProps.timeFormat} />
+                <MediaCardSkeleton
+                  bookshelfView={BookshelfView.DETAIL}
+                  dateFormat={defaultProps.dateFormat}
+                  timeFormat={defaultProps.timeFormat}
+                />
               </div>
             </div>
           </div>
-          <DimensionComparison cardDimensions={podcastNumEpisodesIncompleteCardDims} skeletonDimensions={podcastNumEpisodesIncompleteSkeletonDims} />
+          <DimensionComparison
+            cardDimensions={podcastNumEpisodesIncompleteCardDims}
+            skeletonDimensions={podcastNumEpisodesIncompleteSkeletonDims}
+          />
         </Example>
       </div>
 

@@ -23,23 +23,23 @@ export default async function SettingsPage() {
       href: '/settings/libraries',
       icon: Library,
       label: t('HeaderLibraries'),
-      desc: `${libraries.length} librar${libraries.length !== 1 ? 'ies' : 'y'}`
+      desc: `${libraries.length} librar${libraries.length !== 1 ? 'ies' : 'y'}`,
     },
     { href: '/settings/users', icon: Users, label: t('HeaderUsers'), desc: 'Manage user accounts' },
     {
       href: '/settings/item-metadata-utils',
       icon: SlidersHorizontal,
       label: t('HeaderItemMetadataUtils'),
-      desc: 'Genres, tags, providers'
+      desc: 'Genres, tags, providers',
     },
     {
       href: '/settings/listening-sessions',
       icon: Headphones,
       label: t('HeaderListeningSessions'),
-      desc: 'Playback history'
+      desc: 'Playback history',
     },
     { href: '/settings/backups', icon: DatabaseBackup, label: t('HeaderBackups'), desc: 'Database backups' },
-    { href: '/settings/api-keys', icon: Key, label: t('HeaderApiKeys'), desc: 'API access tokens' }
+    { href: '/settings/api-keys', icon: Key, label: t('HeaderApiKeys'), desc: 'API access tokens' },
   ]
 
   return (

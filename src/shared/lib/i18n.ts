@@ -29,6 +29,6 @@ export default getRequestConfig(async () => {
 
   return {
     locale,
-    messages
+    messages,
   }
 })

@@ -29,12 +29,18 @@ export default function AuthorCardSkeleton({ sizeMultiplier }: AuthorCardSkeleto
       tabIndex={0}
       aria-busy="true"
       aria-live="polite"
-      className={mergeClasses('relative z-10 rounded-xs', 'focus-visible:outline-foreground-muted focus-visible:outline-1 focus-visible:outline-offset-8')}
+      className={mergeClasses(
+        'relative z-10 rounded-xs',
+        'focus-visible:outline-foreground-muted focus-visible:outline-1 focus-visible:outline-offset-8'
+      )}
       style={{ minWidth: `${coverWidth}px`, maxWidth: `${coverWidth}px` }}
     >
       {/* Cover skeleton with author placeholder */}
       <div
-        className={mergeClasses('bg-primary box-shadow-book relative z-10 w-full overflow-hidden rounded-md', 'animate-pulse')}
+        className={mergeClasses(
+          'bg-primary box-shadow-book relative z-10 w-full overflow-hidden rounded-md',
+          'animate-pulse'
+        )}
         style={{ height: `${coverHeight}px` }}
         aria-hidden="true"
       >
@@ -43,7 +49,10 @@ export default function AuthorCardSkeleton({ sizeMultiplier }: AuthorCardSkeleto
           {/* Circle for head */}
           <div className="absolute rounded-full bg-gray-600" style={{ width: '35%', height: '28%', top: '15%' }} />
           {/* Body shape */}
-          <div className="absolute rounded-t-full bg-gray-600" style={{ width: '60%', height: '35%', bottom: '0', left: '20%' }} />
+          <div
+            className="absolute rounded-t-full bg-gray-600"
+            style={{ width: '60%', height: '35%', bottom: '0', left: '20%' }}
+          />
         </div>
 
         {/* Text overlay skeleton */}

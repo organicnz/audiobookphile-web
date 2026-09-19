@@ -50,7 +50,11 @@ export default function SideNavMobileDrawer({ serverVersion, installSource }: Si
           </IconBtn>
         </div>
         <div className="h-full max-h-[calc(100%-3rem)] w-full">
-          <SideNavContent handleItemClick={handleItemClick} serverVersion={serverVersion} installSource={installSource} />
+          <SideNavContent
+            handleItemClick={handleItemClick}
+            serverVersion={serverVersion}
+            installSource={installSource}
+          />
         </div>
       </div>
     </>

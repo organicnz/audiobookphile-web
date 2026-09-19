@@ -11,7 +11,7 @@ interface CommandPaletteContextType {
 const CommandPaletteContext = createContext<CommandPaletteContextType>({
   isOpen: false,
   setIsOpen: () => {},
-  toggle: () => {}
+  toggle: () => {},
 })
 
 export const useCommandPalette = () => useContext(CommandPaletteContext)
@@ -33,5 +33,7 @@ export const CommandPaletteProvider = ({ children }: { children: React.ReactNode
     return () => document.removeEventListener('keydown', down)
   }, [])
 
-  return <CommandPaletteContext.Provider value={{ isOpen, setIsOpen, toggle }}>{children}</CommandPaletteContext.Provider>
+  return (
+    <CommandPaletteContext.Provider value={{ isOpen, setIsOpen, toggle }}>{children}</CommandPaletteContext.Provider>
+  )
 }

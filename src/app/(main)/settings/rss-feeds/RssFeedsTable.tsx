@@ -53,7 +53,7 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
       id: selectedFeed.entityId,
       name: selectedFeed.meta.title,
       type,
-      feed: selectedFeed
+      feed: selectedFeed,
     }
   }, [selectedFeed])
 
@@ -114,7 +114,7 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
         </>
       ),
       headerClassName: 'min-w-16 w-16',
-      cellClassName: 'py-1 min-w-16 w-16'
+      cellClassName: 'py-1 min-w-16 w-16',
     },
     {
       label: t('LabelTitle'),
@@ -124,7 +124,7 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
             {rssFeed.meta.title}
           </p>
         </div>
-      )
+      ),
     },
     {
       label: t('LabelSlug'),
@@ -135,18 +135,18 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
           </p>
         </div>
       ),
-      hiddenBelow: 'lg'
+      hiddenBelow: 'lg',
     },
     {
       label: t('LabelType'),
       accessor: (rssFeed) => getEntityTypeLabel(rssFeed.entityType),
-      cellClassName: 'text-xs'
+      cellClassName: 'text-xs',
     },
     {
       label: t('HeaderEpisodes'),
       accessor: (rssFeed) => rssFeed.episodes?.length || 0,
       cellClassName: 'text-xs text-center',
-      headerClassName: 'text-center'
+      headerClassName: 'text-center',
     },
     {
       label: t('LabelPreventIndexingShort'),
@@ -157,18 +157,20 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
           </div>
         ),
       headerClassName: 'text-center',
-      hiddenBelow: 'md'
+      hiddenBelow: 'md',
     },
     {
       label: t('LabelLastUpdate'),
       accessor: (rssFeed) => {
         return (
           <Tooltip text={formatJsDatetime(new Date(rssFeed.entityUpdatedAt), dateFormat, timeFormat)} position="top">
-            <span className="text-xs whitespace-nowrap">{formatJsDate(new Date(rssFeed.entityUpdatedAt), dateFormat)}</span>
+            <span className="text-xs whitespace-nowrap">
+              {formatJsDate(new Date(rssFeed.entityUpdatedAt), dateFormat)}
+            </span>
           </Tooltip>
         )
       },
-      hiddenBelow: 'sm'
+      hiddenBelow: 'sm',
     },
     {
       label: '',
@@ -196,8 +198,8 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
             <X size={18} />
           </IconBtn>
         </div>
-      )
-    }
+      ),
+    },
   ]
 
   const handleRowClick = (rssFeed: RssFeed) => {
@@ -211,7 +213,12 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
 
   return (
     <>
-      <SimpleDataTable data={rssFeeds} columns={columns} getRowKey={(rssFeed) => rssFeed.id} onRowClick={handleRowClick} />
+      <SimpleDataTable
+        data={rssFeeds}
+        columns={columns}
+        getRowKey={(rssFeed) => rssFeed.id}
+        onRowClick={handleRowClick}
+      />
       <RssFeedOpenCloseModal isOpen={isModalOpen} onClose={handleCloseModal} entity={selectedEntity} viewMode />
       <ConfirmDialog
         isOpen={showConfirmDialog}

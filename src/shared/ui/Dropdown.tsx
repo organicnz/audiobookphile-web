@@ -51,7 +51,7 @@ export default function Dropdown({
   rightIcon,
   highlightSelected = false,
   displayText,
-  usePortal = false
+  usePortal = false,
 }: DropdownProps) {
   const [showMenu, setShowMenu] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
@@ -126,7 +126,7 @@ export default function Dropdown({
         if (typeof item === 'string' || typeof item === 'number') {
           return {
             text: String(item),
-            value: item
+            value: item,
           }
         }
         return item
@@ -154,7 +154,9 @@ export default function Dropdown({
     const currentItem = items[openSubmenuIndex]
     if (!currentItem?.subitems) return []
     if (!submenuFilterText) return currentItem.subitems
-    return currentItem.subitems.filter((subitem) => subitem.text.toLowerCase().startsWith(submenuFilterText.toLowerCase()))
+    return currentItem.subitems.filter((subitem) =>
+      subitem.text.toLowerCase().startsWith(submenuFilterText.toLowerCase())
+    )
   }, [items, openSubmenuIndex, submenuFilterText])
 
   const handleVerticalNavigation = (direction: 'up' | 'down') => {
@@ -347,8 +349,8 @@ export default function Dropdown({
     rightIcon: item.rightIcon,
     subitems: item.subitems?.map((sub) => ({
       text: sub.text,
-      value: sub.value
-    }))
+      value: sub.value,
+    })),
   }))
 
   const dropdownButtonId = `${dropdownId}-button`
@@ -390,12 +392,21 @@ export default function Dropdown({
         >
           <span className="flex min-w-0 flex-1 items-center gap-2">
             {leftIcon && <span className="flex-shrink-0">{leftIcon}</span>}
-            <span className={mergeClasses('block truncate font-sans font-medium', selectedSubtext ? 'opacity-90' : '')}>{selectedText}</span>
+            <span className={mergeClasses('block truncate font-sans font-medium', selectedSubtext ? 'opacity-90' : '')}>
+              {selectedText}
+            </span>
             {selectedSubtext && <span className="opacity-40">/</span>}
-            {selectedSubtext && <span className="block truncate font-sans text-xs font-normal opacity-60">{selectedSubtext}</span>}
+            {selectedSubtext && (
+              <span className="block truncate font-sans text-xs font-normal opacity-60">{selectedSubtext}</span>
+            )}
           </span>
           <span className="pointer-events-none ms-3 flex flex-shrink-0 items-center pe-1">
-            {rightIcon || <ChevronDown size={18} className={mergeClasses('transition-transform duration-200', showMenu ? 'rotate-180' : '')} />}
+            {rightIcon || (
+              <ChevronDown
+                size={18}
+                className={mergeClasses('transition-transform duration-200', showMenu ? 'rotate-180' : '')}
+              />
+            )}
           </span>
         </button>
       </InputWrapper>

@@ -59,7 +59,7 @@ function SeriesCard(props: SeriesCardProps) {
     isSelectionMode = false,
     selected = false,
     onSelect,
-    showSelectedButton = false
+    showSelectedButton = false,
   } = props
 
   const router = useRouter()
@@ -82,7 +82,8 @@ function SeriesCard(props: SeriesCardProps) {
   const labelFontSize = coverWidth < 160 ? 0.75 : 0.9
 
   // Display title with optional ignore prefix handling
-  const displayTitle = sortingIgnorePrefix && series.nameIgnorePrefix ? series.nameIgnorePrefix : series.name || '\u00A0'
+  const displayTitle =
+    sortingIgnorePrefix && series.nameIgnorePrefix ? series.nameIgnorePrefix : series.name || '\u00A0'
 
   // Calculate series progress from book progress
   const { seriesProgressPercent, isSeriesFinished } = useMemo(() => {
@@ -111,7 +112,7 @@ function SeriesCard(props: SeriesCardProps) {
 
     return {
       seriesProgressPercent: progressPercent,
-      isSeriesFinished: finishedCount === books.length
+      isSeriesFinished: finishedCount === books.length,
     }
   }, [series.books, mediaItemProgressMap])
 
@@ -179,7 +180,15 @@ function SeriesCard(props: SeriesCardProps) {
       onMouseLeave={() => setIsHovering(false)}
       cardId={cardId}
       cy-id="seriesCard"
-      cover={<SeriesGroupCover name={series.name || ''} books={books} width={coverWidth} height={coverHeight} bookCoverAspectRatio={coverAspect} />}
+      cover={
+        <SeriesGroupCover
+          name={series.name || ''}
+          books={books}
+          width={coverWidth}
+          height={coverHeight}
+          bookCoverAspectRatio={coverAspect}
+        />
+      }
       overlay={
         <>
           {/* Books count badge */}
@@ -187,7 +196,11 @@ function SeriesCard(props: SeriesCardProps) {
             cy-id="seriesLengthMarker"
             className="bg-primary/90 absolute end-2 top-2 z-20 rounded-lg border border-white/10 px-2 py-0.5 shadow-2xl backdrop-blur-md"
           >
-            <p className="text-[10px] font-black tracking-tighter text-white" role="status" aria-label={t('LabelNumberOfBooks')}>
+            <p
+              className="text-[10px] font-black tracking-tighter text-white"
+              role="status"
+              aria-label={t('LabelNumberOfBooks')}
+            >
               {books.length}
             </p>
           </div>
@@ -217,7 +230,9 @@ function SeriesCard(props: SeriesCardProps) {
             )}
           >
             <div className="p-4">
-              {hasValidCovers && isHovering && <p className="text-sm font-black tracking-wider text-white uppercase drop-shadow-lg">{displayTitle}</p>}
+              {hasValidCovers && isHovering && (
+                <p className="text-sm font-black tracking-wider text-white uppercase drop-shadow-lg">{displayTitle}</p>
+              )}
             </div>
 
             {/* Selection button */}
@@ -266,7 +281,10 @@ function SeriesCard(props: SeriesCardProps) {
       footer={
         isAlternativeBookshelfView ? (
           // Detail view footer
-          <div cy-id="detailBottomText" className="relative start-0 end-0 z-30 mx-auto rounded-md py-[0.25em] text-center">
+          <div
+            cy-id="detailBottomText"
+            className="relative start-0 end-0 z-30 mx-auto rounded-md py-[0.25em] text-center"
+          >
             <p cy-id="detailBottomDisplayTitle" className="truncate" style={{ fontSize: `${labelFontSize}em` }}>
               {displayTitle}
             </p>

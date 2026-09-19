@@ -22,7 +22,7 @@ export const MAX_LENGTHS = {
   EMAIL: 320,
   PASSWORD: 128,
   SEARCH_QUERY: 256,
-  URL: 2048
+  URL: 2048,
 } as const
 
 /**
@@ -54,7 +54,10 @@ export function sanitizeHTML(html: string): string {
 /**
  * Validate and sanitize user input.
  */
-export function validateInput<T>(schema: z.ZodSchema<T>, data: unknown): { success: true; data: T } | { success: false; errors: string[] } {
+export function validateInput<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown
+): { success: true; data: T } | { success: false; errors: string[] } {
   const result = schema.safeParse(data)
 
   if (!result.success) {
@@ -103,7 +106,7 @@ export const CommonSchemas = {
   uuid: z.string().uuid('Invalid ID format'),
 
   // URLs
-  url: z.string().url('Invalid URL').max(MAX_LENGTHS.URL)
+  url: z.string().url('Invalid URL').max(MAX_LENGTHS.URL),
 } as const
 
 /**
@@ -130,7 +133,10 @@ export function createValidator<T extends z.ZodSchema>(schema: T) {
 /**
  * Debounce validation for async validation.
  */
-export function debounceValidation<T>(validate: (value: T) => Promise<string | undefined>, delay: number): (value: T) => Promise<string | undefined> {
+export function debounceValidation<T>(
+  validate: (value: T) => Promise<string | undefined>,
+  delay: number
+): (value: T) => Promise<string | undefined> {
   let timeoutId: NodeJS.Timeout | null = null
 
   return (value: T) => {

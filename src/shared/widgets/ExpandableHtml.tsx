@@ -68,7 +68,7 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
         layout
         initial={false}
         animate={{
-          height: isExpanded ? 'auto' : 'auto' // Motion handles the layout change
+          height: isExpanded ? 'auto' : 'auto', // Motion handles the layout change
         }}
         className="relative"
       >
@@ -89,7 +89,7 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
             WebkitBoxOrient: 'vertical',
             WebkitLineClamp: isExpanded ? 'unset' : lineClamp,
             overflow: isExpanded ? 'visible' : 'hidden',
-            cursor: isClamped ? 'pointer' : 'auto'
+            cursor: isClamped ? 'pointer' : 'auto',
           }}
           onClick={handleContentClick}
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }} /* lefthook-ignore */
@@ -103,7 +103,10 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? t('ButtonReadLess') : t('ButtonReadMore')}
-          <ChevronDown size={14} className={`transition-transform duration-500 ease-out ${isExpanded ? 'rotate-180' : ''}`} />
+          <ChevronDown
+            size={14}
+            className={`transition-transform duration-500 ease-out ${isExpanded ? 'rotate-180' : ''}`}
+          />
         </button>
       )}
     </div>

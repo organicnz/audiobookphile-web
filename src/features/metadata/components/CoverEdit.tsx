@@ -3,9 +3,18 @@
 import { Eye, Image as ImageIcon, RefreshCw, Search, Trash2, Upload, X } from 'lucide-react'
 import React, { useEffect, useMemo, useState, useTransition } from 'react'
 import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
-import { removeCoverAction, setCoverFromLocalFileAction, updateCoverFromUrlAction, uploadCoverAction } from '@/features/metadata/actions/coverActions'
+import {
+  removeCoverAction,
+  setCoverFromLocalFileAction,
+  updateCoverFromUrlAction,
+  uploadCoverAction,
+} from '@/features/metadata/actions/coverActions'
 import PreviewCover from '@/features/metadata/components/PreviewCover'
-import { useBookCoverProviders, useMetadata, usePodcastCoverProviders } from '@/features/metadata/contexts/MetadataContext'
+import {
+  useBookCoverProviders,
+  useMetadata,
+  usePodcastCoverProviders,
+} from '@/features/metadata/contexts/MetadataContext'
 import { useCoverSearch } from '@/features/metadata/hooks/useCoverSearch'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useUser } from '@/shared/contexts/UserContext'
@@ -57,7 +66,8 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
     showToast(t('MessageCoverSearchFailed'), { type: 'error' })
   }
 
-  const { coversFound, searchInProgress, hasSearched, searchCovers, cancelSearch, resetSearch } = useCoverSearch(handleSearchError)
+  const { coversFound, searchInProgress, hasSearched, searchCovers, cancelSearch, resetSearch } =
+    useCoverSearch(handleSearchError)
 
   // State
   const [searchTitle, setSearchTitle] = useState('')
@@ -72,7 +82,9 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
   const media = libraryItem.media || {}
   const coverPath = media.coverPath
 
-  const coverUrl = !coverPath ? getPlaceholderCoverUrl() : getLibraryItemCoverUrl(libraryItem.id, libraryItem.updatedAt, true)
+  const coverUrl = !coverPath
+    ? getPlaceholderCoverUrl()
+    : getLibraryItemCoverUrl(libraryItem.id, libraryItem.updatedAt, true)
 
   // Keep useMemo for localCovers since it filters and maps an array
   const localCovers = useMemo(() => {
@@ -82,14 +94,18 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
       .map(
         (file): LocalCover => ({
           ...file,
-          localPath: getLibraryFileUrl(libraryItem.id, file.ino)
+          localPath: getLibraryFileUrl(libraryItem.id, file.ino),
         })
       )
   }, [libraryItem.libraryFiles, libraryItem.id])
 
   const userCanUpload = user.permissions?.upload || false
 
-  const searchTitleLabel = provider.startsWith('audible') ? t('LabelSearchTitleOrASIN') : provider === 'itunes' ? t('LabelSearchTerm') : t('LabelSearchTitle')
+  const searchTitleLabel = provider.startsWith('audible')
+    ? t('LabelSearchTitleOrASIN')
+    : provider === 'itunes'
+      ? t('LabelSearchTerm')
+      : t('LabelSearchTitle')
 
   // Initialize component - only run when library item ID changes
   useEffect(() => {
@@ -109,7 +125,8 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
     } else {
       // Migrate from 'all' to 'best' (only once)
       const migrationKey = 'book-cover-provider-migrated'
-      const currentProvider = localStorage.getItem('book-cover-provider') || localStorage.getItem('book-provider') || 'google'
+      const currentProvider =
+        localStorage.getItem('book-cover-provider') || localStorage.getItem('book-provider') || 'google'
 
       if (!localStorage.getItem(migrationKey) && currentProvider === 'all') {
         localStorage.setItem('book-cover-provider', 'best')
@@ -204,7 +221,7 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
       title: searchTitle,
       author: searchAuthor || '',
       provider: provider,
-      podcast: isPodcast
+      podcast: isPodcast,
     })
   }
 
@@ -275,15 +292,29 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
             {userCanUpload && (
               <div className="w-10 pe-2 md:w-40 md:min-w-32">
                 <FileInput onChange={fileUploadSelected}>
-                  <span className="hidden text-[11px] font-black tracking-widest uppercase md:inline-block">{t('ButtonUploadCover')}</span>
+                  <span className="hidden text-[11px] font-black tracking-widest uppercase md:inline-block">
+                    {t('ButtonUploadCover')}
+                  </span>
                   <Upload size={22} className="md:hidden" />
                 </FileInput>
               </div>
             )}
 
             <form onSubmit={submitForm} className="flex grow">
-              <TextInput value={imageUrl} onChange={setImageUrl} placeholder={t('LabelImageURLFromTheWeb')} className="h-9 w-full" disabled={isPendingUpdate} />
-              <Btn color="bg-success" type="submit" disabled={!imageUrl || isPendingUpdate} loading={isPendingUpdate} className="ms-2 h-9 w-24 px-4 sm:ms-3">
+              <TextInput
+                value={imageUrl}
+                onChange={setImageUrl}
+                placeholder={t('LabelImageURLFromTheWeb')}
+                className="h-9 w-full"
+                disabled={isPendingUpdate}
+              />
+              <Btn
+                color="bg-success"
+                type="submit"
+                disabled={!imageUrl || isPendingUpdate}
+                loading={isPendingUpdate}
+                className="ms-2 h-9 w-24 px-4 sm:ms-3"
+              >
                 {t('ButtonSubmit')}
               </Btn>
             </form>
@@ -320,7 +351,11 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
                       onClick={isPendingUpdate ? undefined : () => handleSetCover(localCoverFile)}
                     >
                       <div className="bg-primary h-24" style={{ width: 96 / bookCoverAspectRatio + 'px' }}>
-                        <PreviewCover src={localCoverFile.localPath || ''} width={96 / bookCoverAspectRatio} showResolution={false} />
+                        <PreviewCover
+                          src={localCoverFile.localPath || ''}
+                          width={96 / bookCoverAspectRatio}
+                          showResolution={false}
+                        />
                       </div>
                     </div>
                   ))}
@@ -354,7 +389,12 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
           </div>
           {provider !== 'itunes' && provider !== 'audiobookcovers' && (
             <div className="w-72 grow p-1">
-              <TextInput value={searchAuthor} onChange={setSearchAuthor} disabled={searchInProgress} label={t('LabelAuthor')} />
+              <TextInput
+                value={searchAuthor}
+                onChange={setSearchAuthor}
+                disabled={searchInProgress}
+                label={t('LabelAuthor')}
+              />
             </div>
           )}
           {!searchInProgress ? (
@@ -404,7 +444,11 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
       {previewUpload && (
         <div className="bg-primary/95 absolute top-0 left-0 z-20 flex h-full w-full flex-col items-center p-8 backdrop-blur-3xl">
           <p className="mb-8 text-xl font-black tracking-widest text-white/90 uppercase">{t('HeaderPreviewCover')}</p>
-          <button className="absolute top-6 right-6 text-white/40 transition-colors hover:text-white" onClick={resetCoverPreview} type="button">
+          <button
+            className="absolute top-6 right-6 text-white/40 transition-colors hover:text-white"
+            onClick={resetCoverPreview}
+            type="button"
+          >
             <X size={32} />
           </button>
           <div className="flex justify-center py-4">

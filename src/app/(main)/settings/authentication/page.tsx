@@ -13,7 +13,7 @@ export default async function AuthenticationPage() {
   const t = await getTypeSafeTranslations()
   const supabase = await createClient()
   const {
-    data: { user }
+    data: { user },
   } = await supabase.auth.getUser()
   let is2faEnabled = false
   if (user) {
@@ -37,14 +37,15 @@ export default async function AuthenticationPage() {
         <TwoFactorSettingsPanel initialEnabled={is2faEnabled} />
 
         <p className="text-foreground-muted text-sm">
-          Authentication is handled by Supabase Auth. Configure providers, email templates, and security settings in your dashboard.
+          Authentication is handled by Supabase Auth. Configure providers, email templates, and security settings in
+          your dashboard.
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           {[
             { label: 'Auth Providers', desc: 'Google, email, magic link', path: 'auth/providers' },
             { label: 'Email Templates', desc: 'Confirmation, reset password', path: 'auth/templates' },
             { label: 'URL Configuration', desc: 'Redirect URLs, site URL', path: 'auth/url-configuration' },
-            { label: 'Users', desc: 'View and manage users', path: 'auth/users' }
+            { label: 'Users', desc: 'View and manage users', path: 'auth/users' },
           ].map((item) => (
             <a
               key={item.path}

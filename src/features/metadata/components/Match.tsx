@@ -13,7 +13,14 @@ import TextInput from '@/shared/ui/TextInput'
 import BookMatchView from '@/shared/widgets/match/BookMatchView'
 import MatchCard from '@/shared/widgets/match/MatchCard'
 import PodcastMatchView from '@/shared/widgets/match/PodcastMatchView'
-import { BookLibraryItem, BookSearchResult, isBookMedia, isPodcastMedia, PodcastLibraryItem, PodcastSearchResult } from '@/types/api'
+import {
+  BookLibraryItem,
+  BookSearchResult,
+  isBookMedia,
+  isPodcastMedia,
+  PodcastLibraryItem,
+  PodcastSearchResult,
+} from '@/types/api'
 
 interface MatchProps {
   libraryItem: BookLibraryItem | PodcastLibraryItem
@@ -26,7 +33,13 @@ interface MatchProps {
 
 type MatchResult = BookSearchResult | PodcastSearchResult
 
-export default function Match({ libraryItem, availableNarrators = [], availableGenres = [], availableTags = [], availableSeries = [] }: MatchProps) {
+export default function Match({
+  libraryItem,
+  availableNarrators = [],
+  availableGenres = [],
+  availableTags = [],
+  availableSeries = [],
+}: MatchProps) {
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
 
@@ -177,11 +190,16 @@ export default function Match({ libraryItem, availableNarrators = [], availableG
                   itunesPageUrl: res.pageUrl || undefined,
                   itunesId: res.id || undefined,
                   author: res.artistName || res.author || undefined,
-                  explicit: res.explicit || false
+                  explicit: res.explicit || false,
                 }))
               setSearchResults(mappedResults)
             } else {
-              const results = await searchBooksAction(validProvider, searchTitle, searchAuthor || undefined, libraryItem.id)
+              const results = await searchBooksAction(
+                validProvider,
+                searchTitle,
+                searchAuthor || undefined,
+                libraryItem.id
+              )
               // Filter out results without titles
               const filteredResults = results.filter((res): res is BookSearchResult => !!res.title)
               setSearchResults(filteredResults)
@@ -228,11 +246,16 @@ export default function Match({ libraryItem, availableNarrators = [], availableG
                 itunesPageUrl: res.pageUrl || undefined,
                 itunesId: res.id || undefined,
                 author: res.artistName || res.author || undefined,
-                explicit: res.explicit || false
+                explicit: res.explicit || false,
               }))
             setSearchResults(mappedResults)
           } else {
-            const results = await searchBooksAction(validProvider, searchTitle, searchAuthor || undefined, libraryItem.id)
+            const results = await searchBooksAction(
+              validProvider,
+              searchTitle,
+              searchAuthor || undefined,
+              libraryItem.id
+            )
             // Filter out results without titles
             const filteredResults = results.filter((res): res is BookSearchResult => !!res.title)
             setSearchResults(filteredResults)
@@ -353,7 +376,12 @@ export default function Match({ libraryItem, availableNarrators = [], availableG
               </div>
               {validProvider !== 'itunes' && !isPodcast && (
                 <div className="w-60 px-1 md:w-72">
-                  <TextInput value={searchAuthor} onChange={setSearchAuthor} disabled={isPendingSearch} label={t('LabelAuthor')} />
+                  <TextInput
+                    value={searchAuthor}
+                    onChange={setSearchAuthor}
+                    disabled={isPendingSearch}
+                    label={t('LabelAuthor')}
+                  />
                 </div>
               )}
               <Btn className="mt-5 ml-1" type="submit" disabled={isPendingSearch} loading={isPendingSearch}>

@@ -7,11 +7,11 @@ export const dynamic = 'force-dynamic'
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
 
 export const metadata: Metadata = {
-  title: 'audiobookphile'
+  title: 'audiobookphile',
 }
 
 export default function PublicLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode
 }>) {

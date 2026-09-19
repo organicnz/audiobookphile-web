@@ -76,7 +76,7 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
           { label: '🕵️ Mystery & Thriller', query: 'Mystery Thriller' },
           { label: '💡 Self-Growth & Focus', query: 'Productivity' },
           { label: '⚔️ High Fantasy', query: 'Fantasy' },
-          { label: '🧠 Mind & Philosophy', query: 'Philosophy' }
+          { label: '🧠 Mind & Philosophy', query: 'Philosophy' },
         ].map((pill) => (
           <button
             key={pill.label}
@@ -98,7 +98,9 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
       {/* Results */}
       {initialQuery && (
         <p className="text-foreground-muted mb-4 text-sm">
-          {items.length === 0 ? `No results for "${initialQuery}"` : `${items.length} result${items.length !== 1 ? 's' : ''} for "${initialQuery}"`}
+          {items.length === 0
+            ? `No results for "${initialQuery}"`
+            : `${items.length} result${items.length !== 1 ? 's' : ''} for "${initialQuery}"`}
         </p>
       )}
 

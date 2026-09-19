@@ -1,6 +1,18 @@
 'use client'
 
-import { Check, Copy, Fingerprint, Key, Lock, QrCode, Shield, ShieldAlert, ShieldCheck, Smartphone, Trash2 } from 'lucide-react'
+import {
+  Check,
+  Copy,
+  Fingerprint,
+  Key,
+  Lock,
+  QrCode,
+  Shield,
+  ShieldAlert,
+  ShieldCheck,
+  Smartphone,
+  Trash2,
+} from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { performPasskeyRegistration, removePasskey, webAuthnErrorMessage } from '@/features/auth/lib/webauthn'
 import Btn from '@/shared/ui/Btn'
@@ -50,7 +62,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
       if (!token) return
 
       const res = await fetch('/api/auth/2fa/status', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       })
       if (res.ok) {
         const data: Auth2FAStatus = await res.json()
@@ -93,8 +105,8 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
       const res = await fetch('/api/auth/2fa/enroll', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       })
 
       const data = await res.json()
@@ -140,9 +152,9 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ code: verificationCode.trim() })
+          body: JSON.stringify({ code: verificationCode.trim() }),
         })
 
         const data = await res.json()
@@ -193,9 +205,9 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ pinCode: cleaned })
+          body: JSON.stringify({ pinCode: cleaned }),
         })
 
         const data = await res.json()
@@ -236,7 +248,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
       const existingIds = (status.passkeys || []).map((pk) => pk.credentialId)
       const result = await performPasskeyRegistration(token, {
         deviceName: 'Web Browser',
-        existingCredentialIds: existingIds
+        existingCredentialIds: existingIds,
       })
 
       if (!result.success) {
@@ -304,12 +316,12 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             code: disableCode.trim() || undefined,
-            pinCode: disablePin.trim() || undefined
-          })
+            pinCode: disablePin.trim() || undefined,
+          }),
         })
 
         const data = await res.json()
@@ -325,7 +337,7 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
           pinEnrolled: false,
           biometricEnrolled: false,
           methods: [],
-          passkeys: []
+          passkeys: [],
         })
         setMode('idle')
         setDisableCode('')
@@ -351,7 +363,9 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
           </div>
           <div>
             <h3 className="text-foreground text-lg font-bold tracking-tight">Multi-Factor Authentication (2FA)</h3>
-            <p className="text-foreground-muted text-xs">Secure your account with Authenticator Apps, PIN Codes, or Facial/Biometric passkeys.</p>
+            <p className="text-foreground-muted text-xs">
+              Secure your account with Authenticator Apps, PIN Codes, or Facial/Biometric passkeys.
+            </p>
           </div>
         </div>
 
@@ -370,14 +384,21 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
         </div>
       </div>
 
-      {error && <div className="my-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3.5 text-xs text-red-300">{error}</div>}
+      {error && (
+        <div className="my-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3.5 text-xs text-red-300">{error}</div>
+      )}
 
-      {success && <div className="my-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-xs text-emerald-300">{success}</div>}
+      {success && (
+        <div className="my-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-xs text-emerald-300">
+          {success}
+        </div>
+      )}
 
       {mode === 'idle' && (
         <div className="mt-5 space-y-6">
           <p className="text-foreground-muted text-sm leading-relaxed">
-            Choose one or more authentication methods below. Any enrolled method can be used during sign-in as a single source of truth verification.
+            Choose one or more authentication methods below. Any enrolled method can be used during sign-in as a single
+            source of truth verification.
           </p>
 
           <div className="grid gap-4 sm:grid-cols-3">
@@ -412,7 +433,9 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
                   <Lock className="text-accent h-5 w-5" />
                   <h4 className="text-foreground text-sm font-semibold">PIN Code Sign-In</h4>
                 </div>
-                <p className="text-foreground-muted mt-2 text-xs leading-relaxed">Set a secure 4 to 8 digit numerical PIN code as an authentication factor.</p>
+                <p className="text-foreground-muted mt-2 text-xs leading-relaxed">
+                  Set a secure 4 to 8 digit numerical PIN code as an authentication factor.
+                </p>
               </div>
               <div className="mt-4">
                 {status.pinEnrolled ? (
@@ -456,7 +479,9 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
                   <Fingerprint className="text-accent h-5 w-5" />
                   <h4 className="text-foreground text-sm font-semibold">Facial 2FA / Biometric</h4>
                 </div>
-                <p className="text-foreground-muted mt-2 text-xs leading-relaxed">Sign in instantly with Face ID, Touch ID, or hardware security keys.</p>
+                <p className="text-foreground-muted mt-2 text-xs leading-relaxed">
+                  Sign in instantly with Face ID, Touch ID, or hardware security keys.
+                </p>
               </div>
               <div className="mt-4">
                 {status.biometricEnrolled ? (
@@ -468,11 +493,18 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
                     ) : (
                       <ul className="space-y-2">
                         {status.passkeys!.map((passkey) => (
-                          <li key={passkey.id} className="border-border bg-bg/60 flex items-center justify-between gap-2 rounded-lg border px-3 py-2">
+                          <li
+                            key={passkey.id}
+                            className="border-border bg-bg/60 flex items-center justify-between gap-2 rounded-lg border px-3 py-2"
+                          >
                             <div className="min-w-0">
-                              <p className="text-foreground truncate text-xs font-medium">{passkey.deviceName || 'Passkey'}</p>
+                              <p className="text-foreground truncate text-xs font-medium">
+                                {passkey.deviceName || 'Passkey'}
+                              </p>
                               <p className="text-foreground-muted text-[10px]">
-                                {passkey.createdAt ? `Registered ${new Date(passkey.createdAt).toLocaleDateString()}` : 'Registered'}
+                                {passkey.createdAt
+                                  ? `Registered ${new Date(passkey.createdAt).toLocaleDateString()}`
+                                  : 'Registered'}
                               </p>
                             </div>
                             <button
@@ -594,12 +626,19 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
               Set Up PIN Code Authentication
             </h4>
             <p className="text-foreground-muted text-xs leading-relaxed">
-              Enter a 4 to 8 digit numerical PIN code. You can use this PIN as an alternative during two-factor authentication sign-in.
+              Enter a 4 to 8 digit numerical PIN code. You can use this PIN as an alternative during two-factor
+              authentication sign-in.
             </p>
           </div>
 
           <div className="max-w-xs">
-            <TextInput label="4-8 Digit PIN Code" value={pinInput} type="password" placeholder="••••••••" onChange={setPinInput} />
+            <TextInput
+              label="4-8 Digit PIN Code"
+              value={pinInput}
+              type="password"
+              placeholder="••••••••"
+              onChange={setPinInput}
+            />
           </div>
 
           <div className="flex items-center gap-3 pt-2">

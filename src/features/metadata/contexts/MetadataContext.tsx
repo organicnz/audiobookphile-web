@@ -37,7 +37,7 @@ export function MetadataProvider({ children }: MetadataProviderProps) {
     bookCoverProviders: [],
     podcastCoverProviders: [],
     providersLoaded: false,
-    isLoading: false
+    isLoading: false,
   })
 
   // Fetch all providers (internal method)
@@ -61,7 +61,7 @@ export function MetadataProvider({ children }: MetadataProviderProps) {
             // Use same as podcasts for podcast covers per Vue client pattern
             podcastCoverProviders: result.providers.podcasts || [],
             providersLoaded: true,
-            isLoading: false
+            isLoading: false,
           })
         }
       } catch (error) {
@@ -119,7 +119,7 @@ export function MetadataProvider({ children }: MetadataProviderProps) {
     () => ({
       ...state,
       ensureProvidersLoaded,
-      refreshProviders
+      refreshProviders,
     }),
     [state, ensureProvidersLoaded, refreshProviders]
   )

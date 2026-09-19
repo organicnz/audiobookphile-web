@@ -30,7 +30,7 @@ function MultiSelectMatchFieldEditor({
   label,
   currentValue,
   allowNew,
-  onReplaceAll
+  onReplaceAll,
 }: MultiSelectMatchFieldEditorProps) {
   const t = useTypeSafeTranslations()
 
@@ -52,14 +52,23 @@ function MultiSelectMatchFieldEditor({
   const currentValueDisplay = hasCurrentValue ? (
     <>
       {t('LabelCurrently')}{' '}
-      <a title={t('LabelClickToUseCurrentValue')} className="cursor-pointer hover:underline" onClick={handleUseCurrentValue}>
+      <a
+        title={t('LabelClickToUseCurrentValue')}
+        className="cursor-pointer hover:underline"
+        onClick={handleUseCurrentValue}
+      >
         {currentValue.join(', ')}
       </a>
     </>
   ) : null
 
   return (
-    <BaseMatchFieldEditor usageChecked={usageChecked} onUsageChange={onUsageChange} currentValueDisplay={currentValueDisplay} hasCurrentValue={hasCurrentValue}>
+    <BaseMatchFieldEditor
+      usageChecked={usageChecked}
+      onUsageChange={onUsageChange}
+      currentValueDisplay={currentValueDisplay}
+      hasCurrentValue={hasCurrentValue}
+    >
       <MultiSelect
         selectedItems={selectedItems}
         onItemAdded={onItemAdded}

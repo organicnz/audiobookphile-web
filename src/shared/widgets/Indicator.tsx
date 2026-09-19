@@ -17,7 +17,11 @@ const Indicator = ({ tooltipText, children, className, ariaLabel, role = 'note' 
     const Icon = children as any
     return (
       <Tooltip text={tooltipText} position="top">
-        <div className={mergeClasses('flex items-center justify-center', className)} role={role} aria-label={effectiveAriaLabel}>
+        <div
+          className={mergeClasses('flex items-center justify-center', className)}
+          role={role}
+          aria-label={effectiveAriaLabel}
+        >
           <Icon size={14} strokeWidth={2.5} />
         </div>
       </Tooltip>

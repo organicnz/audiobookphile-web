@@ -14,7 +14,12 @@ export type ModalSideNavigationProps = {
 /**
  * Left/right chevrons outside the modal panel (Vue EditModal-style).
  */
-export default function ModalSideNavigation({ canGoPrev, canGoNext, onPrevAction, onNextAction }: ModalSideNavigationProps) {
+export default function ModalSideNavigation({
+  canGoPrev,
+  canGoNext,
+  onPrevAction,
+  onNextAction,
+}: ModalSideNavigationProps) {
   const t = useTypeSafeTranslations()
 
   return (
@@ -40,7 +45,10 @@ export default function ModalSideNavigation({ canGoPrev, canGoNext, onPrevAction
               }}
               onMouseDown={(e) => e.preventDefault()}
             >
-              <ChevronLeft size={40} className="text-foreground/40 group-hover:text-primary drop-shadow-lg transition-colors duration-300" />
+              <ChevronLeft
+                size={40}
+                className="text-foreground/40 group-hover:text-primary drop-shadow-lg transition-colors duration-300"
+              />
             </motion.button>
           </motion.div>
         )}
@@ -67,7 +75,10 @@ export default function ModalSideNavigation({ canGoPrev, canGoNext, onPrevAction
               }}
               onMouseDown={(e) => e.preventDefault()}
             >
-              <ChevronRight size={40} className="text-foreground/40 group-hover:text-primary drop-shadow-lg transition-colors duration-300" />
+              <ChevronRight
+                size={40}
+                className="text-foreground/40 group-hover:text-primary drop-shadow-lg transition-colors duration-300"
+              />
             </motion.button>
           </motion.div>
         )}

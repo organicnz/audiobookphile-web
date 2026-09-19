@@ -7,17 +7,20 @@ import {
   AuthorUpdateResponse,
   GetFilesystemPathsResponse,
   GetNarratorsResponse,
-  UpdateAuthorPayload
+  UpdateAuthorPayload,
 } from '@/types/api'
 import { apiRequest } from '../client'
 
 /**
  * Quick match an author with an external provider
  */
-export async function quickMatchAuthor(authorId: string, payload: AuthorQuickMatchPayload): Promise<AuthorUpdateResponse> {
+export async function quickMatchAuthor(
+  authorId: string,
+  payload: AuthorQuickMatchPayload
+): Promise<AuthorUpdateResponse> {
   return apiRequest<AuthorUpdateResponse>(`/api/authors/${authorId}/match`, {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -27,7 +30,7 @@ export async function quickMatchAuthor(authorId: string, payload: AuthorQuickMat
 export async function updateAuthor(authorId: string, payload: UpdateAuthorPayload): Promise<AuthorUpdateResponse> {
   return apiRequest<AuthorUpdateResponse>(`/api/authors/${authorId}`, {
     method: 'PATCH',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -36,7 +39,7 @@ export async function updateAuthor(authorId: string, payload: UpdateAuthorPayloa
  */
 export async function deleteAuthor(authorId: string): Promise<void> {
   return apiRequest<void>(`/api/authors/${authorId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -53,7 +56,7 @@ export async function getFilesystemPaths(path: string, level: number): Promise<G
 export async function submitAuthorImage(authorId: string, payload: AuthorImagePayload): Promise<AuthorResponse> {
   return apiRequest<AuthorResponse>(`/api/authors/${authorId}/image`, {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -62,7 +65,7 @@ export async function submitAuthorImage(authorId: string, payload: AuthorImagePa
  */
 export async function removeAuthorImage(authorId: string): Promise<AuthorResponse> {
   return apiRequest<AuthorResponse>(`/api/authors/${authorId}/image`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -77,12 +80,12 @@ export const getNarrators = cache(async (libraryId: string) => {
 export async function updateNarrator(narratorId: string, payload: any): Promise<any> {
   return apiRequest<any>(`/api/narrators/${narratorId}`, {
     method: 'PATCH',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
 export async function deleteNarrator(narratorId: string): Promise<void> {
   return apiRequest<void>(`/api/narrators/${narratorId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }

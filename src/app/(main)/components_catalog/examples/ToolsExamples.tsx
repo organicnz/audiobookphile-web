@@ -11,9 +11,13 @@ interface ToolsExamplesProps {
 export function ToolsExamples({ selectedBook }: ToolsExamplesProps) {
   return (
     <ComponentExamples title="Tools">
-      <ComponentInfo component="Tools" description="Component for managing audiobook tools like M4B creation and metadata embedding.">
+      <ComponentInfo
+        component="Tools"
+        description="Component for managing audiobook tools like M4B creation and metadata embedding."
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Tools from &apos;@/shared/widgets/Tools&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import Tools from &apos;@/shared/widgets/Tools&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>
@@ -43,7 +47,9 @@ export function ToolsExamples({ selectedBook }: ToolsExamplesProps) {
         </Example>
       ) : (
         <div className="rounded-lg border-2 border-dashed border-gray-600 p-8">
-          <p className="text-gray-400">Select a book from the search box above to see the Tools component with real data.</p>
+          <p className="text-gray-400">
+            Select a book from the search box above to see the Tools component with real data.
+          </p>
         </div>
       )}
     </ComponentExamples>

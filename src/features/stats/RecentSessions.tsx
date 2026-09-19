@@ -35,10 +35,14 @@ export default function RecentSessions({ sessions }: RecentSessionsProps) {
                 <span className="text-foreground-muted w-7 shrink-0 text-sm tabular-nums">{index + 1}.</span>
                 <div className="max-w-[14rem] min-w-0">
                   <p className="text-foreground truncate text-sm">{item.display_title ?? 'Unknown title'}</p>
-                  <p className="text-foreground-subdued text-xs">{formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}</p>
+                  <p className="text-foreground-subdued text-xs">
+                    {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}
+                  </p>
                 </div>
               </div>
-              <p className="text-foreground w-[4.5rem] shrink-0 text-right text-sm font-semibold tabular-nums">{formatMinutes(item.time_listening)}</p>
+              <p className="text-foreground w-[4.5rem] shrink-0 text-right text-sm font-semibold tabular-nums">
+                {formatMinutes(item.time_listening)}
+              </p>
             </div>
           </li>
         ))}

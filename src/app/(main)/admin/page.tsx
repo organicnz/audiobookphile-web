@@ -58,7 +58,9 @@ export default async function AdminDashboardPage() {
       {/* Dashboard Title & Intro */}
       <div className="mb-8">
         <h1 className="text-foreground text-3xl font-extrabold tracking-tight md:text-4xl">Admin Dashboard</h1>
-        <p className="text-foreground-muted mt-2 text-base">Real-time server telemetry, active sessions, and user invite management.</p>
+        <p className="text-foreground-muted mt-2 text-base">
+          Real-time server telemetry, active sessions, and user invite management.
+        </p>
       </div>
 
       {/* Analytics Telemetry Grid (client-fetched) */}
@@ -70,7 +72,9 @@ export default async function AdminDashboardPage() {
       {/* User Management & Invitations */}
       <div className="border-border bg-primary/80 rounded-2xl border p-6 backdrop-blur-xl">
         <h2 className="text-foreground mb-1 text-xl font-bold tracking-tight">User Management</h2>
-        <p className="text-foreground-muted mb-6 text-sm">Invite new members to your server. Newly invited users will receive an enrollment token via email.</p>
+        <p className="text-foreground-muted mb-6 text-sm">
+          Invite new members to your server. Newly invited users will receive an enrollment token via email.
+        </p>
         <div className="max-w-xl">
           <AdminInvitePanel />
         </div>

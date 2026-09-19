@@ -33,7 +33,7 @@ export default function CollapsibleTable({
   tableHeaders,
   tableClassName,
   containerRef,
-  children
+  children,
 }: CollapsibleTableProps) {
   const t = useTypeSafeTranslations()
   const id = useId()
@@ -101,7 +101,11 @@ export default function CollapsibleTable({
         </div>
 
         {!keepOpen && (
-          <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 25 }} className="text-foreground/40">
+          <motion.div
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            className="text-foreground/40"
+          >
             <ChevronDown size={20} strokeWidth={3} />
           </motion.div>
         )}
@@ -125,7 +129,10 @@ export default function CollapsibleTable({
                       {tableHeaders.map((header, index) => (
                         <th
                           key={index}
-                          className={mergeClasses('text-foreground/30 py-3 text-start text-[10px] font-black tracking-widest uppercase', header.className)}
+                          className={mergeClasses(
+                            'text-foreground/30 py-3 text-start text-[10px] font-black tracking-widest uppercase',
+                            header.className
+                          )}
                           scope={header.scope ?? 'col'}
                         >
                           {header.label}

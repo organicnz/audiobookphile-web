@@ -35,7 +35,7 @@ export default function ToggleButtonGroup({
   className,
   label,
   ariaLabel,
-  ariaLabelledBy
+  ariaLabelledBy,
 }: ToggleButtonGroupProps) {
   const id = useId()
   const toggleGroupId = `${id}-toggle-group`
@@ -105,7 +105,11 @@ export default function ToggleButtonGroup({
 
   const getButtonClass = (isSelected: boolean) =>
     mergeClasses(
-      size === 'small' ? 'text-sm px-3 sm:px-4' : size === 'large' ? 'text-base sm:text-lg px-4 sm:px-6' : 'text-base px-3 sm:px-4',
+      size === 'small'
+        ? 'text-sm px-3 sm:px-4'
+        : size === 'large'
+          ? 'text-base sm:text-lg px-4 sm:px-6'
+          : 'text-base px-3 sm:px-4',
       isSelected ? 'text-foreground bg-button-selected-bg disabled:bg-button-selected-bg/80' : '',
       'rounded-none first:rounded-s-md last:rounded-e-md', // squared inside; wrapper provides outer rounding
       'focus-visible:outline-0' // focus ring is on the container

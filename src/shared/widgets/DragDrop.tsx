@@ -10,7 +10,12 @@ interface DragDropProps {
   dragActiveClassName?: string
 }
 
-export default function DragDrop({ onFilesDropped, children, className = '', dragActiveClassName = 'border-bg-hover bg-bg-hover' }: DragDropProps) {
+export default function DragDrop({
+  onFilesDropped,
+  children,
+  className = '',
+  dragActiveClassName = 'border-bg-hover bg-bg-hover',
+}: DragDropProps) {
   const [isDragActive, setIsDragActive] = useState(false)
   // drag counter is used to properly handle drag enter / leave events over child elements
   // without it, dragging over child elements would trigger drag leave on the parent (this comp) and the style would flicker
@@ -120,7 +125,11 @@ export default function DragDrop({ onFilesDropped, children, className = '', dra
       onDragEnter={handleDragIn}
       onDragLeave={handleDragOut}
       onDrop={handleDrop}
-      className={mergeClasses('border-border rounded-lg border-2 border-dashed p-8 transition-colors', isDragActive ? dragActiveClassName : '', className)}
+      className={mergeClasses(
+        'border-border rounded-lg border-2 border-dashed p-8 transition-colors',
+        isDragActive ? dragActiveClassName : '',
+        className
+      )}
       role="region"
       aria-label="File drop zone"
     >

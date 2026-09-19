@@ -22,7 +22,7 @@ export function SideBySideControlsExamples() {
   const [readIconBtnValue, setReadIconBtnValue] = useState(false)
   const [multiSelectValue, setMultiSelectValue] = useState<MultiSelectItem[]>([
     { content: 'Item 1', value: 'item1' },
-    { content: 'Item 2', value: 'item2' }
+    { content: 'Item 2', value: 'item2' },
   ])
   const [checkboxValue2, setCheckboxValue2] = useState(false)
 
@@ -36,23 +36,36 @@ export function SideBySideControlsExamples() {
             <Btn className="mt-6" onClick={() => showToast('Button clicked', { type: 'info', title: 'Button' })}>
               Button
             </Btn>
-            <IconBtn className="mt-6 shrink-0" onClick={() => showToast('IconBtn clicked', { type: 'info', title: 'IconBtn' })}>
+            <IconBtn
+              className="mt-6 shrink-0"
+              onClick={() => showToast('IconBtn clicked', { type: 'info', title: 'IconBtn' })}
+            >
               Edit
             </IconBtn>
             <TextInput label="Text Input" value={textInputValue} onChange={setTextInputValue} />
-            <Checkbox className="mt-6 shrink grow-0" labelClass="w-fit" label="Checkbox" value={checkboxValue} onChange={setCheckboxValue} />
+            <Checkbox
+              className="mt-6 shrink grow-0"
+              labelClass="w-fit"
+              label="Checkbox"
+              value={checkboxValue}
+              onChange={setCheckboxValue}
+            />
             <Dropdown
               label="Dropdown"
               items={[
                 { text: 'Item 1', value: 'item1' },
-                { text: 'Item 2', value: 'item2' }
+                { text: 'Item 2', value: 'item2' },
               ]}
               value={dropdownValue}
               onChange={setDropdownValue}
             />
             <FileInput className="mt-6 shrink-0">Select File</FileInput>
             <RangeInput label="Range Input" value={rangeValue} min={0} max={100} step={1} onChange={setRangeValue} />
-            <ReadIconBtn className="mt-6 shrink-0" isRead={readIconBtnValue} onClick={() => setReadIconBtnValue(!readIconBtnValue)} />
+            <ReadIconBtn
+              className="mt-6 shrink-0"
+              isRead={readIconBtnValue}
+              onClick={() => setReadIconBtnValue(!readIconBtnValue)}
+            />
             <MultiSelect
               label="Multi Select"
               items={[
@@ -64,7 +77,7 @@ export function SideBySideControlsExamples() {
                 { content: 'Item 6', value: 'item6' },
                 { content: 'Item 7', value: 'item7' },
                 { content: 'Item 8', value: 'item8' },
-                { content: 'Item 9', value: 'item9' }
+                { content: 'Item 9', value: 'item9' },
               ]}
               selectedItems={multiSelectValue}
               onItemAdded={(item) => setMultiSelectValue([...multiSelectValue, item])}
@@ -75,7 +88,12 @@ export function SideBySideControlsExamples() {
                 setMultiSelectValue(newItems)
               }}
             />
-            <Checkbox className="mt-6 shrink grow-0" labelClass="w-fit" value={checkboxValue2} onChange={setCheckboxValue2} />
+            <Checkbox
+              className="mt-6 shrink grow-0"
+              labelClass="w-fit"
+              value={checkboxValue2}
+              onChange={setCheckboxValue2}
+            />
           </div>
         </Example>
       </ExamplesBlock>

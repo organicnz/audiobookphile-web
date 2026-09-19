@@ -12,7 +12,7 @@ type LocaleThemeContextValue = {
 const LocaleThemeContext = createContext<LocaleThemeContextValue>({
   locale: 'en-us',
   theme: 'system',
-  mounted: false
+  mounted: false,
 })
 
 type LocaleThemeProviderProps = {
@@ -22,7 +22,12 @@ type LocaleThemeProviderProps = {
   initialMessages: Record<string, string>
 }
 
-export function LocaleThemeProvider({ children, initialLocale, initialTheme, initialMessages }: LocaleThemeProviderProps) {
+export function LocaleThemeProvider({
+  children,
+  initialLocale,
+  initialTheme,
+  initialMessages,
+}: LocaleThemeProviderProps) {
   const [locale, setLocale] = useState(initialLocale)
   const [theme, setTheme] = useState(initialTheme)
   const [mounted, setMounted] = useState(false)

@@ -26,7 +26,7 @@ export default function Menu({
   menuMaxHeight = '400px',
   usePortal = true,
   highlightSelected = false,
-  isItemSelected
+  isItemSelected,
 }: MenuProps) {
   const [showMenu, setShowMenu] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
@@ -86,7 +86,14 @@ export default function Menu({
 
   return (
     <div className={mergeClasses('relative w-fit', className)}>
-      <div ref={triggerRef} onClick={toggleMenu} onKeyDown={handleKeyDown} className="cursor-pointer" role="button" tabIndex={0}>
+      <div
+        ref={triggerRef}
+        onClick={toggleMenu}
+        onKeyDown={handleKeyDown}
+        className="cursor-pointer"
+        role="button"
+        tabIndex={0}
+      >
         {trigger(showMenu)}
       </div>
 

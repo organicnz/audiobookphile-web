@@ -5,7 +5,7 @@ import {
   fetchCollectionsAction,
   fetchLibraryItemsAction,
   fetchPlaylistsAction,
-  fetchSeriesAction
+  fetchSeriesAction,
 } from '@/features/library/actions/libraryActions'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { BookshelfEntity, EntityType, LibraryItem, MediaItemShare, RssFeed } from '@/types/api'
@@ -27,7 +27,7 @@ export function useInfiniteBookshelf({
   libraryId,
   entityType,
   query,
-  limit
+  limit,
 }: UseInfiniteBookshelfProps): UseInfiniteQueryResult<InfiniteData<BookshelfPage>, Error> {
   const queryClient = useQueryClient()
 
@@ -62,7 +62,7 @@ export function useInfiniteBookshelf({
     return {
       results,
       total,
-      nextPage: results.length === limit ? pageNum + 1 : undefined
+      nextPage: results.length === limit ? pageNum + 1 : undefined,
     }
   }
 
@@ -70,22 +70,25 @@ export function useInfiniteBookshelf({
     queryKey,
     queryFn,
     initialPageParam: 0,
-    getNextPageParam: (lastPage: BookshelfPage) => lastPage.nextPage
+    getNextPageParam: (lastPage: BookshelfPage) => lastPage.nextPage,
   })
 
   // Real-time updates via Socket.io
   const updateItemInCache = useCallback(
     (updater: (item: BookshelfEntity) => BookshelfEntity) => {
-      queryClient.setQueriesData({ queryKey: ['bookshelf', libraryId] }, (oldData: InfiniteData<BookshelfPage> | undefined) => {
-        if (!oldData) return oldData
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page: BookshelfPage) => ({
-            ...page,
-            results: page.results.map(updater)
-          }))
+      queryClient.setQueriesData(
+        { queryKey: ['bookshelf', libraryId] },
+        (oldData: InfiniteData<BookshelfPage> | undefined) => {
+          if (!oldData) return oldData
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: BookshelfPage) => ({
+              ...page,
+              results: page.results.map(updater),
+            })),
+          }
         }
-      })
+      )
     },
     [queryClient, libraryId]
   )

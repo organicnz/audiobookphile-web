@@ -13,7 +13,13 @@ interface EpisodesSortSelectProps {
   className?: string
 }
 
-export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disabled, className }: EpisodesSortSelectProps) {
+export default function EpisodesSortSelect({
+  sortBy,
+  sortDesc,
+  onChange,
+  disabled,
+  className,
+}: EpisodesSortSelectProps) {
   const t = useTypeSafeTranslations()
 
   const sortItems = useMemo<DropdownItem[]>(
@@ -22,7 +28,7 @@ export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disable
       { text: t('LabelTitle'), value: 'title' },
       { text: t('LabelSeason'), value: 'season' },
       { text: t('LabelEpisode'), value: 'episode' },
-      { text: t('LabelFilename'), value: 'audioFile.metadata.filename' }
+      { text: t('LabelFilename'), value: 'audioFile.metadata.filename' },
     ],
     [t]
   )
@@ -33,7 +39,13 @@ export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disable
         const Icon = sortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
         return {
           ...item,
-          rightIcon: <Icon size={16} className="text-primary opacity-80" aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')} />
+          rightIcon: (
+            <Icon
+              size={16}
+              className="text-primary opacity-80"
+              aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
+            />
+          ),
         }
       }
       return item
@@ -51,7 +63,13 @@ export default function EpisodesSortSelect({ sortBy, sortDesc, onChange, disable
   }
 
   const Icon = sortDesc ? ArrowDownWideNarrow : ArrowUpNarrowWide
-  const rightIcon = <Icon size={16} className="text-primary" aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')} />
+  const rightIcon = (
+    <Icon
+      size={16}
+      className="text-primary"
+      aria-label={sortDesc ? t('LabelSortDescending') : t('LabelSortAscending')}
+    />
+  )
 
   return (
     <div className={className}>

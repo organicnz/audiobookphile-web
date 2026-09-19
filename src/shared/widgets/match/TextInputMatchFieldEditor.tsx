@@ -28,7 +28,7 @@ function TextInputMatchFieldEditor({
   currentValue,
   type,
   readOnly,
-  className
+  className,
 }: TextInputMatchFieldEditorProps) {
   const t = useTypeSafeTranslations()
 
@@ -43,7 +43,11 @@ function TextInputMatchFieldEditor({
   const currentValueDisplay = hasCurrentValue ? (
     <>
       {t('LabelCurrently')}{' '}
-      <a title={t('LabelClickToUseCurrentValue')} className="cursor-pointer hover:underline" onClick={handleUseCurrentValue}>
+      <a
+        title={t('LabelClickToUseCurrentValue')}
+        className="cursor-pointer hover:underline"
+        onClick={handleUseCurrentValue}
+      >
         {String(currentValue)}
       </a>
     </>
@@ -57,7 +61,15 @@ function TextInputMatchFieldEditor({
       hasCurrentValue={hasCurrentValue}
       className={className}
     >
-      <TextInput value={value} onChange={onChange} disabled={disabled || !usageChecked} label={label} type={type} readOnly={readOnly} className={className} />
+      <TextInput
+        value={value}
+        onChange={onChange}
+        disabled={disabled || !usageChecked}
+        label={label}
+        type={type}
+        readOnly={readOnly}
+        className={className}
+      />
     </BaseMatchFieldEditor>
   )
 }

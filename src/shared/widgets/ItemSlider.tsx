@@ -92,7 +92,11 @@ export default function ItemSlider({ title, children, className = '' }: ItemSlid
         )}
       </div>
 
-      <div ref={sliderRef} className="no-scroll px-2e py-3e flex w-full overflow-x-auto overflow-y-hidden scroll-smooth" onScroll={checkScroll}>
+      <div
+        ref={sliderRef}
+        className="no-scroll px-2e py-3e flex w-full overflow-x-auto overflow-y-hidden scroll-smooth"
+        onScroll={checkScroll}
+      >
         {children}
       </div>
     </div>

@@ -87,7 +87,7 @@ export default function SeriesClient({ series, libraryItems }: SeriesClientProps
       id: series.id,
       name: series.name,
       type: 'series' as const,
-      feed: rssFeed
+      feed: rssFeed,
     }),
     [rssFeed, series.id, series.name]
   )

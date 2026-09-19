@@ -32,13 +32,18 @@ export default async function LibraryPage({ params }: { params: Promise<{ librar
     }
   }
 
-  const personalizedResult = await apiFetch<PersonalizedShelf[]>(`/api/libraries/${libraryId}/personalized?include=rssfeed,share`, {})
+  const personalizedResult = await apiFetch<PersonalizedShelf[]>(
+    `/api/libraries/${libraryId}/personalized?include=rssfeed,share`,
+    {}
+  )
 
   if (!personalizedResult.ok) {
     return (
       <div className="flex w-full flex-col items-center justify-center p-12 text-center">
         <p className="text-lg font-medium">Unable to load library</p>
-        <p className="mt-2 text-sm text-gray-500">There was a problem fetching your library data. Try refreshing the page.</p>
+        <p className="mt-2 text-sm text-gray-500">
+          There was a problem fetching your library data. Try refreshing the page.
+        </p>
       </div>
     )
   }

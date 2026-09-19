@@ -27,7 +27,11 @@ interface LibraryItemActionButtonsProps {
   rssFeed?: RssFeed | null
 }
 
-export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed = null }: LibraryItemActionButtonsProps) {
+export default function LibraryItemActionButtons({
+  libraryItem,
+  onEdit,
+  rssFeed = null,
+}: LibraryItemActionButtonsProps) {
   const { userCanUpdate, getMediaItemProgress, ereaderDevices } = useUser()
   const {
     playItem,
@@ -39,7 +43,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
     getIsMediaQueued,
     addItemToQueue,
     removeItemFromQueue,
-    playerHandler
+    playerHandler,
   } = useMediaContext()
   const t = useTypeSafeTranslations()
   const [matchModalOpen, setMatchModalOpen] = useState(false)
@@ -58,7 +62,8 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
   const podcastEpisodes = isPodcast ? (podcastMedia?.episodes ?? []) : []
   const ebookFile = isBook ? bookMedia?.ebookFile : undefined
 
-  const showPlayButton = !libraryItem.isMissing && !libraryItem.isInvalid && (isPodcast ? podcastEpisodes.length > 0 : tracks.length > 0)
+  const showPlayButton =
+    !libraryItem.isMissing && !libraryItem.isInvalid && (isPodcast ? podcastEpisodes.length > 0 : tracks.length > 0)
   const isStreaming = isStreamingFn(libraryItem.id, null)
   const isItemPlaying = isPlayingFn(libraryItem.id, null)
   const showQueueBtn = isBook && !!streamLibraryItem && !isStreamingFromDifferentLibrary(libraryItem.libraryId)
@@ -82,13 +87,15 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
     handleShareChange,
     handleReadEBook,
     handleMoreAction,
-    moreMenuItems
+    moreMenuItems,
   } = useMediaCardActions({
     libraryItem,
     media: libraryItem.media,
     title: libraryItem.media?.metadata?.title ?? '',
     author:
-      libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : null,
+      libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata
+        ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ')
+        : null,
     episodeForQueue: null,
     mediaProgress,
     itemIsFinished: isRead,
@@ -105,7 +112,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
       window.location.href = `/library/${libraryItem.libraryId}`
     },
     onOpenMatch: handleOpenMatch,
-    playerControls: playerHandler.controls
+    playerControls: playerHandler.controls,
   })
 
   const handlePlay = useCallback(() => {
@@ -116,7 +123,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
     void playItem({
       libraryItem,
       episodeId: null,
-      queueItems: []
+      queueItems: [],
     })
   }, [isStreaming, libraryItem, playItem, playerHandler.controls])
 
@@ -128,7 +135,9 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
 
     const title = libraryItem.media?.metadata?.title ?? ''
     const subtitle =
-      libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ') : ''
+      libraryItem.media?.metadata && 'authors' in libraryItem.media.metadata
+        ? (libraryItem.media.metadata.authors ?? []).map((a) => a.name).join(', ')
+        : ''
     addItemToQueue({
       libraryItemId: libraryItem.id,
       libraryId: libraryItem.libraryId,
@@ -137,7 +146,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
       subtitle,
       caption: '',
       duration: isBook ? (libraryItem.media?.duration ?? null) : null,
-      coverPath: libraryItem.media?.coverPath ?? null
+      coverPath: libraryItem.media?.coverPath ?? null,
     })
   }, [addItemToQueue, isBook, isQueued, libraryItem, removeItemFromQueue])
 
@@ -154,8 +163,8 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
         subitems: item.subitems?.map((subitem) => ({
           text: subitem.text,
           action: subitem.func,
-          data: subitem.data
-        }))
+          data: subitem.data,
+        })),
       }))
   }, [moreMenuItems])
 
@@ -179,7 +188,11 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
             size="small"
             className="shadow-success/20 flex h-10 items-center rounded-xl px-6 text-[11px] font-black tracking-widest uppercase shadow-lg"
           >
-            {isItemPlaying ? <Pause size={18} className="mr-2 fill-current" /> : <Play size={18} className="mr-2 fill-current" />}
+            {isItemPlaying ? (
+              <Pause size={18} className="mr-2 fill-current" />
+            ) : (
+              <Play size={18} className="mr-2 fill-current" />
+            )}
             {isItemPlaying ? t('ButtonPause') : t('ButtonPlay')}
           </Btn>
         )}
@@ -216,7 +229,10 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
                   ariaLabel={isQueued ? t('ButtonQueueRemoveItem') : t('ButtonQueueAddItem')}
                   onClick={handleQueueClick}
                   borderless
-                  className={mergeClasses('transition-all duration-300', isQueued ? 'text-success scale-110' : 'text-foreground/60 hover:text-white')}
+                  className={mergeClasses(
+                    'transition-all duration-300',
+                    isQueued ? 'text-success scale-110' : 'text-foreground/60 hover:text-white'
+                  )}
                   size="small"
                   icon={isQueued ? CheckSquare : ListPlus}
                 />
@@ -227,7 +243,14 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
           {userCanUpdate && (
             <Tooltip text={t('LabelEdit')} position="top">
               <span className="inline-flex">
-                <IconBtn ariaLabel={t('LabelEdit')} onClick={onEdit} borderless className="text-foreground/60 hover:text-white" size="small" icon={Edit} />
+                <IconBtn
+                  ariaLabel={t('LabelEdit')}
+                  onClick={onEdit}
+                  borderless
+                  className="text-foreground/60 hover:text-white"
+                  size="small"
+                  icon={Edit}
+                />
               </span>
             </Tooltip>
           )}
@@ -235,7 +258,13 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
           {!isPodcast && (
             <Tooltip text={isRead ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')} position="top">
               <span className="inline-flex">
-                <ReadIconBtn isRead={isRead} disabled={processing} onClick={handleToggleFinished} borderless size="small" />
+                <ReadIconBtn
+                  isRead={isRead}
+                  disabled={processing}
+                  onClick={handleToggleFinished}
+                  borderless
+                  size="small"
+                />
               </span>
             </Tooltip>
           )}
@@ -274,7 +303,7 @@ export default function LibraryItemActionButtons({ libraryItem, onEdit, rssFeed 
           name: libraryItem.media?.metadata?.title ?? '',
           type: 'item',
           feed: rssFeed ?? null,
-          hasEpisodesWithoutPubDate: isPodcast && podcastEpisodes.some((ep) => !ep.pubDate)
+          hasEpisodesWithoutPubDate: isPodcast && podcastEpisodes.some((ep) => !ep.pubDate),
         }}
       />
       <ShareModal

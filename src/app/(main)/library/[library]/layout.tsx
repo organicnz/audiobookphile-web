@@ -13,12 +13,12 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'audiobookphile',
-  description: 'audiobookphile'
+  description: 'audiobookphile',
 }
 
 export default async function LibraryLayout({
   children,
-  params
+  params,
 }: Readonly<{
   children: React.ReactNode
   params: Promise<{ library: string }>

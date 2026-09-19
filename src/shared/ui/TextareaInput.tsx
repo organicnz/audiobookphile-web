@@ -32,7 +32,7 @@ export default function TextareaInput({
   disabled = false,
   onChange,
   className,
-  fillHeight = false
+  fillHeight = false,
 }: TextareaInputProps) {
   const generatedId = useId()
   const textareaInputId = id || generatedId
@@ -43,7 +43,11 @@ export default function TextareaInput({
     onChange?.(e.target.value)
   }
 
-  const textareaClass = mergeClasses('w-full', fillHeight && (label ? 'h-full grid grid-rows-[auto_1fr]' : 'h-full flex flex-col'), className)
+  const textareaClass = mergeClasses(
+    'w-full',
+    fillHeight && (label ? 'h-full grid grid-rows-[auto_1fr]' : 'h-full flex flex-col'),
+    className
+  )
   const inputWrapperClass = mergeClasses('px-1 py-1', fillHeight && 'h-full flex flex-col min-h-0')
   const textareaClassNames = mergeClasses(
     'w-full bg-transparent py-1 px-1 outline-none border-none',
@@ -58,7 +62,13 @@ export default function TextareaInput({
           {label}
         </Label>
       )}
-      <InputWrapper disabled={disabled} readOnly={readOnly} inputRef={textareaRef} size="auto" className={inputWrapperClass}>
+      <InputWrapper
+        disabled={disabled}
+        readOnly={readOnly}
+        inputRef={textareaRef}
+        size="auto"
+        className={inputWrapperClass}
+      >
         <textarea
           id={textareaId}
           ref={textareaRef}

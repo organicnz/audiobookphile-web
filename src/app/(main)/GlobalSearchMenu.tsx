@@ -16,7 +16,7 @@ const HighlightMatch = ({ text, query }: { text: string; query: string }) => {
     const regex = new RegExp(`(${escapedQuery})`, 'gi')
     return text.split(regex).map((part) => ({
       text: part,
-      isMatch: part.toLowerCase() === query.toLowerCase()
+      isMatch: part.toLowerCase() === query.toLowerCase(),
     }))
   }, [text, query])
 
@@ -80,7 +80,7 @@ export default function GlobalSearchMenu({
   searchQuery,
   onItemSelect,
   usePortal = false,
-  triggerRef
+  triggerRef,
 }: GlobalSearchMenuProps) {
   const [menuPosition, setMenuPosition] = useState({ top: '0px', left: '0px', width: 'auto' })
 
@@ -89,13 +89,16 @@ export default function GlobalSearchMenu({
     menuRef: menuRef as React.RefObject<HTMLElement>,
     isOpen: true,
     onPositionChange: setMenuPosition,
-    disable: !usePortal
+    disable: !usePortal,
   })
 
   useScrollToFocused({
     containerRef: menuRef,
     focusedIndex,
-    getElement: useCallback((container, index) => container.querySelector(`[data-index="${index}"]`) as HTMLElement, [])
+    getElement: useCallback(
+      (container, index) => container.querySelector(`[data-index="${index}"]`) as HTMLElement,
+      []
+    ),
   })
 
   const menuContent = (
@@ -117,7 +120,7 @@ export default function GlobalSearchMenu({
                 top: menuPosition.top,
                 left: menuPosition.left,
                 width: menuPosition.width,
-                zIndex: 9999
+                zIndex: 9999,
               }
             : {}
         }
@@ -134,7 +137,10 @@ export default function GlobalSearchMenu({
 
           if (result.type === 'header') {
             return (
-              <div key={result.id} className="text-foreground/30 mt-3 mb-1 px-4 py-1 text-[10px] font-black tracking-[0.15em] uppercase">
+              <div
+                key={result.id}
+                className="text-foreground/30 mt-3 mb-1 px-4 py-1 text-[10px] font-black tracking-[0.15em] uppercase"
+              >
                 {result.title}
               </div>
             )
@@ -143,7 +149,8 @@ export default function GlobalSearchMenu({
           const isSelected = focusedIndex === index
           const isAuthor = result.type === 'author'
           const Icon = getLucideIcon(result.type)
-          const shouldHighlightSubtitle = result.type === 'book' || result.type === 'podcast' || result.type === 'episode'
+          const shouldHighlightSubtitle =
+            result.type === 'book' || result.type === 'podcast' || result.type === 'episode'
           const containerClass = isAuthor ? 'w-9 h-14' : 'w-11 h-11'
           const hasImage = !!result.imageSrc || isAuthor
 
@@ -175,7 +182,11 @@ export default function GlobalSearchMenu({
                 </div>
                 {result.subtitle && (
                   <div className="text-foreground/40 mt-0.5 truncate text-[10px] font-medium">
-                    {shouldHighlightSubtitle ? <HighlightMatch text={result.subtitle} query={searchQuery} /> : <span>{result.subtitle}</span>}
+                    {shouldHighlightSubtitle ? (
+                      <HighlightMatch text={result.subtitle} query={searchQuery} />
+                    ) : (
+                      <span>{result.subtitle}</span>
+                    )}
                   </div>
                 )}
                 {result.author && (
@@ -204,7 +215,7 @@ export default function GlobalSearchMenu({
               isSelected ? 'bg-white/10 shadow-sm' : ''
             ),
             role: 'option' as const,
-            'aria-selected': isSelected
+            'aria-selected': isSelected,
           }
 
           if (onItemSelect) {

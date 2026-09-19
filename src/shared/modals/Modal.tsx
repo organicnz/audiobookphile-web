@@ -33,7 +33,7 @@ export default function Modal({
   sideNavigation,
   onClose,
   className,
-  style
+  style,
 }: ModalProps) {
   const t = useTypeSafeTranslations()
 

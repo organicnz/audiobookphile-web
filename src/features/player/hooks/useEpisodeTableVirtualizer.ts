@@ -51,7 +51,8 @@ export function useEpisodeTableVirtualizer(totalItems: number, rowHeight: number
       if (!scrollContainer) return
 
       // Height of the viewport (scroll container)
-      const viewportHeight = scrollContainer === document.documentElement ? window.innerHeight : scrollContainer.clientHeight
+      const viewportHeight =
+        scrollContainer === document.documentElement ? window.innerHeight : scrollContainer.clientHeight
 
       // Top position of the list container relative to the scroll container
       let listTop = 0
@@ -100,7 +101,8 @@ export function useEpisodeTableVirtualizer(totalItems: number, rowHeight: number
       scrollContainerRef.current = scrollEl
     }
 
-    const getScrollTop = () => (scrollEl === document.documentElement ? window.scrollY : (scrollEl as HTMLElement).scrollTop)
+    const getScrollTop = () =>
+      scrollEl === document.documentElement ? window.scrollY : (scrollEl as HTMLElement).scrollTop
 
     const onScroll = () => computeRange(getScrollTop())
 
@@ -125,6 +127,6 @@ export function useEpisodeTableVirtualizer(totalItems: number, rowHeight: number
     visibleStart,
     visibleEnd,
     totalHeight,
-    listContainerRef
+    listContainerRef,
   }
 }

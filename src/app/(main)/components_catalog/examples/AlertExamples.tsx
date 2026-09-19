@@ -6,20 +6,26 @@ import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '
 export function AlertExamples() {
   return (
     <ComponentExamples title="Alert Components">
-      <ComponentInfo component="Alert" description="Display contextual feedback messages with different severity levels (error, warning, success, info).">
+      <ComponentInfo
+        component="Alert"
+        description="Display contextual feedback messages with different severity levels (error, warning, success, info)."
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Alert from &apos;@/shared/widgets/Alert&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import Alert from &apos;@/shared/widgets/Alert&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>type</Code> (optional: &apos;error&apos; | &apos;warning&apos; | &apos;success&apos; |
-          &apos;info&apos;, defaults to &apos;error&apos;), <Code>children</Code> (required), <Code>autoFocus</Code> (optional: boolean, defaults to true. If
-          true and type is &apos;error&apos; or &apos;warning&apos;, the alert will be focused when rendered), <Code>className</Code> (optional)
+          <span className="font-bold">Props:</span> <Code>type</Code> (optional: &apos;error&apos; | &apos;warning&apos;
+          | &apos;success&apos; | &apos;info&apos;, defaults to &apos;error&apos;), <Code>children</Code> (required),{' '}
+          <Code>autoFocus</Code> (optional: boolean, defaults to true. If true and type is &apos;error&apos; or
+          &apos;warning&apos;, the alert will be focused when rendered), <Code>className</Code> (optional)
         </p>
         <p className="mb-2">
           <span className="font-bold">Note:</span> Uses Material Symbols icons.
         </p>
         <p className="mb-2">
-          <span className="font-bold">Note:</span> <Code>autoFocus</Code> is always set to false in the examples, so as not to steal focus.
+          <span className="font-bold">Note:</span> <Code>autoFocus</Code> is always set to false in the examples, so as
+          not to steal focus.
         </p>
       </ComponentInfo>
 
@@ -28,7 +34,9 @@ export function AlertExamples() {
           <Alert type="error" autoFocus={false}>
             <div className="pr-4">
               <p className="font-medium">Something went wrong!</p>
-              <p className="mt-1 text-sm opacity-80">Unable to connect to the server. Please check your internet connection and try again.</p>
+              <p className="mt-1 text-sm opacity-80">
+                Unable to connect to the server. Please check your internet connection and try again.
+              </p>
             </div>
           </Alert>
         </Example>
@@ -37,7 +45,9 @@ export function AlertExamples() {
           <Alert type="warning" autoFocus={false}>
             <div className="pr-4">
               <p className="font-medium">Warning: Low disk space</p>
-              <p className="mt-1 text-sm opacity-80">Your storage is running low. Consider removing some files to free up space.</p>
+              <p className="mt-1 text-sm opacity-80">
+                Your storage is running low. Consider removing some files to free up space.
+              </p>
             </div>
           </Alert>
         </Example>
@@ -55,7 +65,9 @@ export function AlertExamples() {
           <Alert type="info" autoFocus={false}>
             <div className="pr-4">
               <p className="font-medium">Did you know?</p>
-              <p className="mt-1 text-sm opacity-80">You can organize your audiobooks into custom collections for better management.</p>
+              <p className="mt-1 text-sm opacity-80">
+                You can organize your audiobooks into custom collections for better management.
+              </p>
             </div>
           </Alert>
         </Example>
@@ -72,7 +84,9 @@ export function AlertExamples() {
           <Alert type="info" className="shadow-lg" autoFocus={false}>
             <div className="pr-4">
               <p className="font-medium">Custom styled alert</p>
-              <p className="mt-1 text-sm opacity-80">This alert has additional shadow styling applied via className prop.</p>
+              <p className="mt-1 text-sm opacity-80">
+                This alert has additional shadow styling applied via className prop.
+              </p>
             </div>
           </Alert>
         </Example>

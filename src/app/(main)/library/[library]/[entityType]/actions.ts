@@ -5,7 +5,7 @@ import {
   quickMatchAuthor as apiQuickMatchAuthor,
   removeAuthorImage as apiRemoveAuthorImage,
   submitAuthorImage as apiSubmitAuthorImage,
-  updateAuthor as apiUpdateAuthor
+  updateAuthor as apiUpdateAuthor,
 } from '@/shared/lib/api'
 import type { Author, AuthorQuickMatchPayload } from '@/types/api'
 
@@ -13,7 +13,10 @@ import type { Author, AuthorQuickMatchPayload } from '@/types/api'
  * Quick-match an author against Open Library / Google Books to fill in
  * description and fetch an author image.
  */
-export async function quickMatchAuthorAction(authorId: string, payload: AuthorQuickMatchPayload): Promise<{ updated: boolean; author: Author } | null> {
+export async function quickMatchAuthorAction(
+  authorId: string,
+  payload: AuthorQuickMatchPayload
+): Promise<{ updated: boolean; author: Author } | null> {
   try {
     return await apiQuickMatchAuthor(authorId, payload)
   } catch (err) {

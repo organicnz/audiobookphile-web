@@ -15,7 +15,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     if (data.tracks.length > 1) {
       return NextResponse.json(
         {
-          error: 'Downloading multi-file items as a ZIP is not supported in this version. Please download individual files from the tracks list.'
+          error:
+            'Downloading multi-file items as a ZIP is not supported in this version. Please download individual files from the tracks list.',
         },
         { status: 400 }
       )

@@ -154,7 +154,13 @@ export class LocalAudioPlayer extends PlayerEventEmitter {
     this.trackStartTime = trackStartTime
   }
 
-  set(libraryItem: LibraryItem | null, tracks: AudioTrack[], isHlsTranscode: boolean, startTime: number, playWhenReady = false): void {
+  set(
+    libraryItem: LibraryItem | null,
+    tracks: AudioTrack[],
+    isHlsTranscode: boolean,
+    startTime: number,
+    playWhenReady = false
+  ): void {
     this.cancelRecovery()
     this.retryCount = 0
     this.libraryItem = libraryItem

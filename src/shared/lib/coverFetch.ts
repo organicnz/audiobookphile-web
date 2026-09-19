@@ -46,7 +46,10 @@ function normalizeString(str: string): string {
     // 4. Replace dots, underscores, and dashes with spaces
     .replace(/[._-]/g, ' ')
     // 5. Remove common audiobook suffixes
-    .replace(/\b(audiobook|unabridged|abridged|collection|series|vol|volume|book|complete|part|chapter|of|v\d+)\b/gi, ' ')
+    .replace(
+      /\b(audiobook|unabridged|abridged|collection|series|vol|volume|book|complete|part|chapter|of|v\d+)\b/gi,
+      ' '
+    )
     // 6. Clean up extra whitespace
     .replace(/\s+/g, ' ')
     .trim()
@@ -124,9 +127,12 @@ export async function fetchBookMetadata(title: string, author?: string): Promise
 async function fetchFromITunes(title: string, author?: string): Promise<FetchResult | null> {
   try {
     const queryTerm = author ? `${title} ${author}` : title
-    const searchRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(queryTerm)}&media=audiobook&limit=1`, {
-      signal: AbortSignal.timeout(8000)
-    })
+    const searchRes = await fetch(
+      `https://itunes.apple.com/search?term=${encodeURIComponent(queryTerm)}&media=audiobook&limit=1`,
+      {
+        signal: AbortSignal.timeout(8000),
+      }
+    )
     if (!searchRes.ok) return null
 
     const data = await searchRes.json()
@@ -142,7 +148,7 @@ async function fetchFromITunes(title: string, author?: string): Promise<FetchRes
       author: item.artistName,
       description: item.description ? item.description.replace(/<[^>]*>/g, '') : undefined,
       publishedYear: item.releaseDate ? new Date(item.releaseDate).getFullYear().toString() : undefined,
-      genres: item.primaryGenreName ? [item.primaryGenreName] : []
+      genres: item.primaryGenreName ? [item.primaryGenreName] : [],
     }
 
     let cover: FetchedCover | null = null
@@ -170,7 +176,7 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
     const query = new URLSearchParams({ q: queryTerm, limit: '3' })
 
     const searchRes = await fetch(`https://openlibrary.org/search.json?${query.toString()}`, {
-      signal: AbortSignal.timeout(8000)
+      signal: AbortSignal.timeout(8000),
     })
     if (!searchRes.ok) return null
 
@@ -184,13 +190,13 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
       title: withCover.title || title,
       author: withCover.author_name?.[0],
       publishedYear: withCover.first_publish_year?.toString(),
-      genres: withCover.subject?.slice(0, 5)
+      genres: withCover.subject?.slice(0, 5),
     }
 
     let cover: FetchedCover | null = null
     if (withCover.cover_i) {
       const imgRes = await fetch(`https://covers.openlibrary.org/b/id/${withCover.cover_i}-L.jpg`, {
-        signal: AbortSignal.timeout(10000)
+        signal: AbortSignal.timeout(10000),
       })
       if (imgRes.ok) {
         const contentType = imgRes.headers.get('content-type') || 'image/jpeg'
@@ -212,9 +218,12 @@ async function fetchFromOpenLibrary(title: string, author?: string): Promise<Fet
 async function fetchFromGoogleBooks(title: string, author?: string): Promise<FetchResult | null> {
   try {
     const queryTerm = author ? `${title} ${author}` : title
-    const searchRes = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(queryTerm)}&maxResults=3&printType=books`, {
-      signal: AbortSignal.timeout(8000)
-    })
+    const searchRes = await fetch(
+      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(queryTerm)}&maxResults=3&printType=books`,
+      {
+        signal: AbortSignal.timeout(8000),
+      }
+    )
     if (!searchRes.ok) return null
 
     const data = await searchRes.json()
@@ -231,7 +240,7 @@ async function fetchFromGoogleBooks(title: string, author?: string): Promise<Fet
       publishedYear: info.publishedDate ? info.publishedDate.split('-')[0] : undefined,
       publisher: info.publisher,
       genres: info.categories,
-      language: info.language
+      language: info.language,
     }
 
     let cover: FetchedCover | null = null

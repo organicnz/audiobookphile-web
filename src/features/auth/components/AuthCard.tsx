@@ -1,10 +1,33 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { AlertCircle, AlertTriangle, Fingerprint, Key, Lock, Mail, MailCheck, Shield, ShieldAlert, Smartphone, User } from 'lucide-react'
+import {
+  AlertCircle,
+  AlertTriangle,
+  Fingerprint,
+  Key,
+  Lock,
+  Mail,
+  MailCheck,
+  Shield,
+  ShieldAlert,
+  Smartphone,
+  User,
+} from 'lucide-react'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 
-type IconName = 'mail' | 'lock' | 'user' | 'alert-circle' | 'smartphone' | 'fingerprint' | 'key' | 'shield' | 'alert-triangle' | 'shield-alert' | 'mail-check'
+type IconName =
+  | 'mail'
+  | 'lock'
+  | 'user'
+  | 'alert-circle'
+  | 'smartphone'
+  | 'fingerprint'
+  | 'key'
+  | 'shield'
+  | 'alert-triangle'
+  | 'shield-alert'
+  | 'mail-check'
 
 const iconMap: Record<IconName, React.ComponentType<{ size?: number; className?: string }>> = {
   mail: Mail,
@@ -17,7 +40,7 @@ const iconMap: Record<IconName, React.ComponentType<{ size?: number; className?:
   shield: Shield,
   'alert-triangle': AlertTriangle,
   'shield-alert': ShieldAlert,
-  'mail-check': MailCheck
+  'mail-check': MailCheck,
 }
 
 interface AuthCardProps {
@@ -54,7 +77,9 @@ export default function AuthCard({ title, subtitle, icon, onSubmit, children, cl
   const header = (
     <div className="relative z-10">
       {getIcon()}
-      <h1 className={mergeClasses('text-3xl font-black tracking-tight uppercase', subtitle ? 'mb-2' : 'mb-8')}>{title}</h1>
+      <h1 className={mergeClasses('text-3xl font-black tracking-tight uppercase', subtitle ? 'mb-2' : 'mb-8')}>
+        {title}
+      </h1>
       {subtitle && <p className="text-foreground/60 mb-8 text-sm leading-relaxed font-medium">{subtitle}</p>}
     </div>
   )

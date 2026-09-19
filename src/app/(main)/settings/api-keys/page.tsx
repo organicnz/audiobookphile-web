@@ -20,11 +20,14 @@ export default async function ApiKeysPage() {
   return (
     <SettingsContent title={t('HeaderAPIKeys' as any)}>
       <div className="space-y-4 p-6">
-        <p className="text-foreground-muted text-sm">API keys for this deployment are managed in your Supabase dashboard.</p>
+        <p className="text-foreground-muted text-sm">
+          API keys for this deployment are managed in your Supabase dashboard.
+        </p>
         <div className="bg-bg-light border-border space-y-3 rounded-lg border p-4">
           <h3 className="text-foreground font-medium">Supabase API Keys</h3>
           <p className="text-foreground-muted text-sm">
-            Use the Supabase dashboard to manage your project API keys, create service role keys, and configure Row Level Security policies.
+            Use the Supabase dashboard to manage your project API keys, create service role keys, and configure Row
+            Level Security policies.
           </p>
           <a
             href={dashboardHref}
@@ -39,7 +42,9 @@ export default async function ApiKeysPage() {
         {projectRef && (
           <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
             <h3 className="text-[11px] font-black tracking-widest text-white/40 uppercase">Project Reference</h3>
-            <code className="text-primary/80 block rounded-xl border border-white/5 bg-black/40 p-4 font-mono text-xs">{projectRef}</code>
+            <code className="text-primary/80 block rounded-xl border border-white/5 bg-black/40 p-4 font-mono text-xs">
+              {projectRef}
+            </code>
           </div>
         )}
       </div>

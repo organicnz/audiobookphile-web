@@ -22,8 +22,8 @@ export async function syncProgressToSupabase(payload: SupabaseProgressPayload) {
         episodeId: payload.episode_id || null,
         currentTime: payload.current_time_pos,
         duration: payload.duration,
-        isFinished: payload.is_finished
-      })
+        isFinished: payload.is_finished,
+      }),
     })
   } catch (error: any) {
     // Only log actual database errors, ignoring network transient issues if needed

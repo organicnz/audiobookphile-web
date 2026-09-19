@@ -94,7 +94,7 @@ export const validateCron = (expression: string): ValidationResult => {
     if (!isValidCronField(weekday, 0, 7)) {
       return {
         isValid: false,
-        error: 'Invalid weekday field. Must be 0-7 (0=Sunday), *, */n, or comma-separated values'
+        error: 'Invalid weekday field. Must be 0-7 (0=Sunday), *, */n, or comma-separated values',
       }
     }
 
@@ -130,7 +130,7 @@ export const getHumanReadableCronExpression = (cronExpr: string, locale: string)
       verbose: false,
       throwExceptionOnParseError: true,
       use24HourTimeFormat: false,
-      locale: toCronstrueLocale(locale)
+      locale: toCronstrueLocale(locale),
     })
   } catch {
     return 'Could not generate human-readable cron expression'
@@ -174,7 +174,14 @@ const matchesCronField = (value: number, field: string, min: number, max: number
 }
 
 // Helper function to check if a date matches a cron expression
-const matchesCronExpression = (date: Date, minute: string, hour: string, day: string, month: string, weekday: string): boolean => {
+const matchesCronExpression = (
+  date: Date,
+  minute: string,
+  hour: string,
+  day: string,
+  month: string,
+  weekday: string
+): boolean => {
   const dateMinute = date.getMinutes()
   const dateHour = date.getHours()
   const dateDay = date.getDate()
@@ -191,7 +198,11 @@ const matchesCronExpression = (date: Date, minute: string, hour: string, day: st
 }
 
 // Calculate next run date based on cron expression
-export const calculateNextRunDate = (cronExpr: string, options: FormatDateOptions = {}, clientTimeZone?: string | null): string => {
+export const calculateNextRunDate = (
+  cronExpr: string,
+  options: FormatDateOptions = {},
+  clientTimeZone?: string | null
+): string => {
   if (!cronExpr) return ''
 
   try {
@@ -223,10 +234,16 @@ export const calculateNextRunDate = (cronExpr: string, options: FormatDateOption
   return 'Unable to calculate next run'
 }
 
-export function getLocalizedServerTimeZone(clientTimeZone: string | null | undefined, serverTimeZone: string, language: string) {
+export function getLocalizedServerTimeZone(
+  clientTimeZone: string | null | undefined,
+  serverTimeZone: string,
+  language: string
+) {
   let timeZoneString = ''
   if (clientTimeZone && clientTimeZone !== serverTimeZone) {
-    const parts = new Intl.DateTimeFormat(language, { timeZone: serverTimeZone, timeZoneName: 'short' }).formatToParts(new Date())
+    const parts = new Intl.DateTimeFormat(language, { timeZone: serverTimeZone, timeZoneName: 'short' }).formatToParts(
+      new Date()
+    )
     const timeZoneStringIndex = parts.findIndex((part) => part.type === 'timeZoneName')
     if (timeZoneStringIndex !== -1) {
       timeZoneString = parts[timeZoneStringIndex].value

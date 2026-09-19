@@ -19,7 +19,7 @@ export function MatchExamples({
   availableNarrators = [],
   availableGenres = [],
   availableTags = [],
-  availableSeries = []
+  availableSeries = [],
 }: MatchExamplesProps) {
   return (
     <ComponentExamples title="Match">
@@ -28,7 +28,8 @@ export function MatchExamples({
         description="A comprehensive metadata matching component for library items. Allows users to search for metadata matches using various providers, select a match, and apply selected fields to update the library item. Supports both books and podcasts with provider-specific search options. Search results are displayed as cards with cover previews, and selected matches can be customized field-by-field before applying."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import Match from &apos;@/shared/widgets/Match&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import Match from &apos;@/shared/widgets/Match&apos;</Code>
         </p>
         <div>
           <span className="font-bold">Props:</span>
@@ -52,7 +53,8 @@ export function MatchExamples({
               <Code>availableSeries</Code>: Available series for selection (optional).
             </li>
             <li>
-              Cover previews use <Code>useBookCoverAspectRatio</Code> (from <Code>LibraryProvider</Code> / <Code>library.settings.coverAspectRatio</Code>).
+              Cover previews use <Code>useBookCoverAspectRatio</Code> (from <Code>LibraryProvider</Code> /{' '}
+              <Code>library.settings.coverAspectRatio</Code>).
             </li>
           </ul>
         </div>
@@ -74,7 +76,9 @@ export function MatchExamples({
         ) : (
           <div className="border-primary/20 rounded-lg border-2 border-dashed p-8 text-center">
             <p className="mb-2 text-gray-400">No library item selected</p>
-            <p className="text-sm text-gray-500">Use the search box above to select a library item and see the Match component in action with real data</p>
+            <p className="text-sm text-gray-500">
+              Use the search box above to select a library item and see the Match component in action with real data
+            </p>
           </div>
         )}
       </Example>

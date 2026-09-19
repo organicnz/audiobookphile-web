@@ -29,7 +29,7 @@ export function useScrollToFocused({ containerRef, focusedIndex, getElement, act
       if (focusedElement) {
         focusedElement.scrollIntoView({
           block: 'nearest',
-          behavior: 'smooth'
+          behavior: 'smooth',
         })
       }
     }

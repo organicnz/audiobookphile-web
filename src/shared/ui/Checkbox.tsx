@@ -32,7 +32,7 @@ export default function Checkbox({
   partial = false,
   ariaLabel = '',
   onChange,
-  className = ''
+  className = '',
 }: CheckboxProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const checkboxId = useId()
@@ -48,7 +48,12 @@ export default function Checkbox({
     sizeClass
   )
 
-  const labelSizeClass = size === 'small' ? 'text-xs sm:text-sm ps-2' : size === 'medium' ? 'text-sm sm:text-base ps-3' : 'text-base sm:text-lg ps-3'
+  const labelSizeClass =
+    size === 'small'
+      ? 'text-xs sm:text-sm ps-2'
+      : size === 'medium'
+        ? 'text-sm sm:text-base ps-3'
+        : 'text-base sm:text-lg ps-3'
   const checkboxLabelClassName = mergeClasses(
     labelSizeClass,
     'font-medium select-none transition-colors',
@@ -63,8 +68,17 @@ export default function Checkbox({
   }
 
   return (
-    <InputWrapper disabled={disabled} borderless size={size} className={mergeClasses('bg-transparent', className)} inputRef={inputRef}>
-      <div cy-id="checkbox-and-label-wrapper" className="group relative flex cursor-pointer items-center justify-start px-1 py-1.5">
+    <InputWrapper
+      disabled={disabled}
+      borderless
+      size={size}
+      className={mergeClasses('bg-transparent', className)}
+      inputRef={inputRef}
+    >
+      <div
+        cy-id="checkbox-and-label-wrapper"
+        className="group relative flex cursor-pointer items-center justify-start px-1 py-1.5"
+      >
         <div cy-id="checkbox-wrapper" className={checkboxWrapperClassName}>
           <AnimatePresence mode="wait">
             {partial ? (

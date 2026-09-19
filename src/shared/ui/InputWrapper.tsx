@@ -21,7 +21,7 @@ const InputWrapper = ({
   borderless = false,
   size = 'medium',
   className,
-  inputRef
+  inputRef,
 }: InputWrapperProps) => {
   const wrapperClass = mergeClasses(
     // Base styles
@@ -34,7 +34,13 @@ const InputWrapper = ({
     error ? 'border-error focus-within:outline-error' : 'border-border',
 
     // Background styles based on state
-    disabled ? 'bg-bg-disabled cursor-not-allowed border-bg-disabled' : readOnly ? 'bg-bg-read-only' : borderless ? 'bg-transparent' : 'bg-primary',
+    disabled
+      ? 'bg-bg-disabled cursor-not-allowed border-bg-disabled'
+      : readOnly
+        ? 'bg-bg-read-only'
+        : borderless
+          ? 'bg-transparent'
+          : 'bg-primary',
 
     // Borderless styles
     borderless ? 'border-0' : 'border',

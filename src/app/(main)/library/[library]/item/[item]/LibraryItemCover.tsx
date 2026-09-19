@@ -23,7 +23,13 @@ interface LibraryItemCoverProps {
   className?: string
 }
 
-export default function LibraryItemCover({ libraryItem, canUpdate = false, className, mediaProgress, onEdit }: LibraryItemCoverProps) {
+export default function LibraryItemCover({
+  libraryItem,
+  canUpdate = false,
+  className,
+  mediaProgress,
+  onEdit,
+}: LibraryItemCoverProps) {
   const coverAspectRatio = useBookCoverAspectRatio()
   const t = useTypeSafeTranslations()
   const [isHovering, setIsHovering] = useState(false)
@@ -108,7 +114,9 @@ export default function LibraryItemCover({ libraryItem, canUpdate = false, class
           <div
             className={mergeClasses(
               'absolute inset-0 z-10 bg-black/40 transition-opacity duration-200',
-              showOverlay ? 'opacity-100' : 'pointer-events-none opacity-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100'
+              showOverlay
+                ? 'opacity-100'
+                : 'pointer-events-none opacity-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100'
             )}
           >
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -144,7 +152,11 @@ export default function LibraryItemCover({ libraryItem, canUpdate = false, class
         }
       />
 
-      <RawCoverPreviewModal isOpen={showPreviewModal} onClose={() => setShowPreviewModal(false)} coverUrl={rawCoverUrl} />
+      <RawCoverPreviewModal
+        isOpen={showPreviewModal}
+        onClose={() => setShowPreviewModal(false)}
+        coverUrl={rawCoverUrl}
+      />
     </>
   )
 }

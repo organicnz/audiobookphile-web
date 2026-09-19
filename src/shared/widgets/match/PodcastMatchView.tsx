@@ -52,7 +52,7 @@ const defaultMatchUsage: PodcastMatchUsage = {
   itunesPageUrl: true,
   itunesId: true,
   feedUrl: true,
-  releaseDate: true
+  releaseDate: true,
 }
 
 export default function PodcastMatchView({
@@ -63,10 +63,12 @@ export default function PodcastMatchView({
   coverUrl,
   availableGenres,
   availableTags,
-  onDone
+  onDone,
 }: PodcastMatchViewProps) {
   const t = useTypeSafeTranslations()
-  const [selectedMatch, setSelectedMatch] = useState<PodcastSearchResult>(() => processPodcastMatchData(selectedMatchOrig))
+  const [selectedMatch, setSelectedMatch] = useState<PodcastSearchResult>(() =>
+    processPodcastMatchData(selectedMatchOrig)
+  )
 
   // Factory function for field value handlers
   const createFieldValueHandler = useCallback(
@@ -83,18 +85,29 @@ export default function PodcastMatchView({
   // Combined items for multi-selects
   const allGenres = useMemo(() => {
     const currentGenres = availableGenres.map((g) => g.value)
-    const matchGenres = selectedMatch?.genres ? (Array.isArray(selectedMatch.genres) ? selectedMatch.genres : [selectedMatch.genres]) : []
+    const matchGenres = selectedMatch?.genres
+      ? Array.isArray(selectedMatch.genres)
+        ? selectedMatch.genres
+        : [selectedMatch.genres]
+      : []
     return [...new Set([...currentGenres, ...matchGenres])].map((g) => ({ value: g, content: g }))
   }, [availableGenres, selectedMatch?.genres])
 
   const allTags = useMemo(() => {
     const currentTags = availableTags.map((t) => t.value)
-    const matchTags = selectedMatch?.tags ? (Array.isArray(selectedMatch.tags) ? selectedMatch.tags : [selectedMatch.tags]) : []
+    const matchTags = selectedMatch?.tags
+      ? Array.isArray(selectedMatch.tags)
+        ? selectedMatch.tags
+        : [selectedMatch.tags]
+      : []
     return [...new Set([...currentTags, ...matchTags])].map((t) => ({ value: t, content: t }))
   }, [availableTags, selectedMatch?.tags])
 
   // Helper functions to get match values with proper types
-  const getStringValue = useCallback((field: keyof PodcastSearchResult, fallback = '') => getMatchStringValue(selectedMatch, field, fallback), [selectedMatch])
+  const getStringValue = useCallback(
+    (field: keyof PodcastSearchResult, fallback = '') => getMatchStringValue(selectedMatch, field, fallback),
+    [selectedMatch]
+  )
 
   const getBooleanValue = useCallback(
     (field: keyof PodcastSearchResult, fallback = false) => getMatchBooleanValue(selectedMatch, field, fallback),
@@ -102,7 +115,10 @@ export default function PodcastMatchView({
   )
 
   const buildMatchUpdatePayload = useCallback(
-    (selectedMatchUsage: PodcastMatchUsage, selectedMatch: PodcastSearchResult): UpdateLibraryItemMediaPayload | null => {
+    (
+      selectedMatchUsage: PodcastMatchUsage,
+      selectedMatch: PodcastSearchResult
+    ): UpdateLibraryItemMediaPayload | null => {
       const updatePayload: UpdateLibraryItemMediaPayload = { metadata: {} }
 
       for (const key in selectedMatchUsage) {
@@ -112,16 +128,22 @@ export default function PodcastMatchView({
         if (value === undefined) continue
 
         if (key === 'genres') {
-          updatePayload.metadata!.genres = Array.isArray(value) ? value.filter((g): g is string => !!g) : [value].filter((g): g is string => !!g)
+          updatePayload.metadata!.genres = Array.isArray(value)
+            ? value.filter((g): g is string => !!g)
+            : [value].filter((g): g is string => !!g)
         } else if (key === 'tags') {
-          updatePayload.tags = Array.isArray(value) ? value.filter((t): t is string => !!t) : [value].filter((t): t is string => !!t)
+          updatePayload.tags = Array.isArray(value)
+            ? value.filter((t): t is string => !!t)
+            : [value].filter((t): t is string => !!t)
         } else if (key === 'itunesId') {
           updatePayload.metadata!.itunesId = String(value)
         } else if (key === 'cover') {
           updatePayload.url = value as string
         } else if (key === 'explicit') {
           updatePayload.metadata!.explicit = value as boolean
-        } else if (['title', 'description', 'language', 'feedUrl', 'itunesPageUrl', 'releaseDate', 'author'].includes(key)) {
+        } else if (
+          ['title', 'description', 'language', 'feedUrl', 'itunesPageUrl', 'releaseDate', 'author'].includes(key)
+        ) {
           updatePayload.metadata![key] = value as string | undefined
         }
       }

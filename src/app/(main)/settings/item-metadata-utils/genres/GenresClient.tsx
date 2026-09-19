@@ -15,7 +15,7 @@ export default function GenresClient({ genres }: { genres: string[] }) {
   const genresList = useMemo(() => {
     return genres.map((genre) => ({
       id: genre,
-      name: genre
+      name: genre,
     }))
   }, [genres])
 

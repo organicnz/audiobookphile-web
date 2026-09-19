@@ -42,7 +42,7 @@ export const LinkModal = memo(
     handleTextKeyDown,
     handleUrlKeyDown,
     isLinkActive,
-    isValidUrl
+    isValidUrl,
   }: LinkModalProps) => {
     return (
       <Modal isOpen={isOpen} onClose={closeModal} className="w-[400px]">
@@ -76,7 +76,11 @@ export const LinkModal = memo(
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Btn color="bg-button-selected-bg disabled:bg-button-selected-bg/80" onClick={handleLink} disabled={!isValidUrl}>
+              <Btn
+                color="bg-button-selected-bg disabled:bg-button-selected-bg/80"
+                onClick={handleLink}
+                disabled={!isValidUrl}
+              >
                 Link
               </Btn>
 

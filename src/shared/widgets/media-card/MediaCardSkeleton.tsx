@@ -26,7 +26,7 @@ export default function MediaCardSkeleton({
   showSubtitles = false,
   orderBy,
   dateFormat = 'MM/dd/yyyy',
-  timeFormat = 'h:mm a'
+  timeFormat = 'h:mm a',
 }: MediaCardSkeletonProps) {
   const cardId = useId()
   const { sizeMultiplier: contextSizeMultiplier } = useCardSize()
@@ -48,12 +48,12 @@ export default function MediaCardSkeleton({
         libraryId: 'skeleton',
         mediaType: 'book',
         media: {
-          metadata: orderBy === 'media.metadata.publishedYear' ? { publishedYear: '0000' } : {}
+          metadata: orderBy === 'media.metadata.publishedYear' ? { publishedYear: '0000' } : {},
         },
         mtimeMs: 0,
         birthtimeMs: 0,
         addedAt: 0,
-        size: 0
+        size: 0,
       }) as LibraryItem,
     [orderBy]
   )

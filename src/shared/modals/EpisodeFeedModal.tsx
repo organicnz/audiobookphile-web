@@ -42,7 +42,14 @@ const getCleanEpisodeUrl = (url: string) => {
   }
 }
 
-export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episodes, downloadQueue, episodesDownloading }: EpisodeFeedModalProps) {
+export default function EpisodeFeedModal({
+  isOpen,
+  onClose,
+  libraryItem,
+  episodes,
+  downloadQueue,
+  episodesDownloading,
+}: EpisodeFeedModalProps) {
   const t = useTypeSafeTranslations()
   const format = useFormatter()
   const { showToast } = useGlobalToast()
@@ -79,7 +86,10 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
   )
 
   // Merged once per render so getIsEpisodeDownloadingOrQueued doesn't allocate on every call
-  const episodesToCheck = useMemo(() => [...episodesDownloading, ...downloadQueue], [episodesDownloading, downloadQueue])
+  const episodesToCheck = useMemo(
+    () => [...episodesDownloading, ...downloadQueue],
+    [episodesDownloading, downloadQueue]
+  )
 
   const getIsEpisodeDownloadingOrQueued = useCallback(
     (episode: RssPodcastEpisode & { cleanUrl: string }) => {
@@ -100,7 +110,7 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
         return {
           ...extendedEp,
           isDownloading: getIsEpisodeDownloadingOrQueued(extendedEp),
-          isDownloaded: getIsEpisodeDownloaded(extendedEp)
+          isDownloaded: getIsEpisodeDownloaded(extendedEp),
         }
       })
       .sort((a, b) => {
@@ -172,19 +182,22 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
     [episodesList]
   )
 
-  const toggleSelectEpisode = useCallback((episode: RssPodcastEpisode & { cleanUrl: string; isDownloaded: boolean; isDownloading: boolean }) => {
-    if (episode.isDownloaded || episode.isDownloading) return
+  const toggleSelectEpisode = useCallback(
+    (episode: RssPodcastEpisode & { cleanUrl: string; isDownloaded: boolean; isDownloading: boolean }) => {
+      if (episode.isDownloaded || episode.isDownloading) return
 
-    setSelectedEpisodes((prev) => {
-      const next = new Set(prev)
-      if (next.has(episode.cleanUrl)) {
-        next.delete(episode.cleanUrl)
-      } else {
-        next.add(episode.cleanUrl)
-      }
-      return next
-    })
-  }, [])
+      setSelectedEpisodes((prev) => {
+        const next = new Set(prev)
+        if (next.has(episode.cleanUrl)) {
+          next.delete(episode.cleanUrl)
+        } else {
+          next.add(episode.cleanUrl)
+        }
+        return next
+      })
+    },
+    []
+  )
 
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
@@ -258,7 +271,10 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
                 className="mr-2 grow border-white/10 bg-white/5 text-sm md:text-base"
               />
             </form>
-            <Btn className="border-white/10 bg-white/5 px-4 hover:bg-white/10" onClick={() => setSortDescending(!sortDescending)}>
+            <Btn
+              className="border-white/10 bg-white/5 px-4 hover:bg-white/10"
+              onClick={() => setSortDescending(!sortDescending)}
+            >
               <span className="pr-4 text-[11px] font-black tracking-widest uppercase">{t('LabelSortPubDate')}</span>
               <span className="text-primary absolute inset-y-0 right-0 flex items-center pr-2">
                 {sortDescending ? <ChevronDown size={18} strokeWidth={3} /> : <ChevronUp size={18} strokeWidth={3} />}
@@ -282,7 +298,9 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
               bgClass = 'bg-success/10'
             }
 
-            const publishedString = episode.publishedAt ? format.relativeTime(new Date(episode.publishedAt), { now: new Date() }) : t('LabelUnknown')
+            const publishedString = episode.publishedAt
+              ? format.relativeTime(new Date(episode.publishedAt), { now: new Date() })
+              : t('LabelUnknown')
             const publishedLabel = t('LabelPublished', { 0: publishedString })
 
             return (
@@ -301,7 +319,10 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
               >
                 <div className="flex w-12 flex-none items-center justify-center p-3 sm:w-16">
                   {episode.isDownloaded ? (
-                    <CheckCircle size={20} className="text-success drop-shadow-[0_0_8px_rgba(var(--success-rgb),0.4)]" />
+                    <CheckCircle
+                      size={20}
+                      className="text-success drop-shadow-[0_0_8px_rgba(var(--success-rgb),0.4)]"
+                    />
                   ) : episode.isDownloading ? (
                     <Download size={20} className="text-primary animate-pulse" />
                   ) : (
@@ -333,11 +354,16 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
                   <div className={`mb-1 flex items-center gap-2 ${textClass}`}>
                     <div className="break-words">{episode.title}</div>
                     {episode.episodeType &&
-                      (episode.episodeType.toLowerCase() === 'trailer' || episode.episodeType.toLowerCase() === 'bonus' ? (
-                        <span className="bg-info rounded-full px-2 py-0.5 text-xs text-white capitalize">{episode.episodeType}</span>
+                      (episode.episodeType.toLowerCase() === 'trailer' ||
+                      episode.episodeType.toLowerCase() === 'bonus' ? (
+                        <span className="bg-info rounded-full px-2 py-0.5 text-xs text-white capitalize">
+                          {episode.episodeType}
+                        </span>
                       ) : null)}
                   </div>
-                  {episode.subtitle && <p className={`mb-1 line-clamp-2 text-sm ${subTextClass}`}>{episode.subtitle}</p>}
+                  {episode.subtitle && (
+                    <p className={`mb-1 line-clamp-2 text-sm ${subTextClass}`}>{episode.subtitle}</p>
+                  )}
 
                   <div className={`mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 ${subTextClass}`}>
                     <p className="w-40 text-xs">{publishedLabel}</p>
@@ -346,11 +372,13 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
                         {t('LabelDuration')}: {formatDuration(episode.durationSeconds, t)}
                       </p>
                     )}
-                    {episode.enclosure?.length && !isNaN(Number(episode.enclosure.length)) && Number(episode.enclosure.length) > 0 && (
-                      <p className="text-xs">
-                        {t('LabelSize')}: {bytesPretty(Number(episode.enclosure.length))}
-                      </p>
-                    )}
+                    {episode.enclosure?.length &&
+                      !isNaN(Number(episode.enclosure.length)) &&
+                      Number(episode.enclosure.length) > 0 && (
+                        <p className="text-xs">
+                          {t('LabelSize')}: {bytesPretty(Number(episode.enclosure.length))}
+                        </p>
+                      )}
                   </div>
                 </div>
               </div>
@@ -361,8 +389,19 @@ export default function EpisodeFeedModal({ isOpen, onClose, libraryItem, episode
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 py-4">
           {!allDownloaded ? (
             <>
-              <Checkbox value={selectAll} onChange={toggleSelectAll} label={selectAllLabel} size="small" labelClass="whitespace-nowrap" />
-              <Btn className="shrink-0 whitespace-nowrap" disabled={selectedEpisodes.size === 0 || isPending} onClick={handleSubmit} size="small">
+              <Checkbox
+                value={selectAll}
+                onChange={toggleSelectAll}
+                label={selectAllLabel}
+                size="small"
+                labelClass="whitespace-nowrap"
+              />
+              <Btn
+                className="shrink-0 whitespace-nowrap"
+                disabled={selectedEpisodes.size === 0 || isPending}
+                onClick={handleSubmit}
+                size="small"
+              >
                 {buttonText}
               </Btn>
             </>

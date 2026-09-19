@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server'
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
-import { type ApiResult, fetchAsResult, getClientBaseUrlFromRequest, getServerBaseUrl, parseApiResponseBody } from './base'
+import {
+  type ApiResult,
+  fetchAsResult,
+  getClientBaseUrlFromRequest,
+  getServerBaseUrl,
+  parseApiResponseBody,
+} from './base'
 
 /**
  * Send the browser to /login with an error hint and drop refresh cookie (session cannot continue).
@@ -72,8 +78,8 @@ export async function apiFetch<T = unknown>(endpoint: string, options: RequestIn
           type: 'unauthorized',
           status: 401,
           statusText: 'Unauthorized',
-          message: 'No authentication token found'
-        }
+          message: 'No authentication token found',
+        },
       }
     }
 
@@ -102,7 +108,13 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
     }
     throw new NetworkError(error.message, error.cause)
   } catch (error) {
-    if (error && typeof error === 'object' && 'digest' in error && typeof error.digest === 'string' && error.digest.includes('NEXT_REDIRECT')) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'digest' in error &&
+      typeof error.digest === 'string' &&
+      error.digest.includes('NEXT_REDIRECT')
+    ) {
       throw error
     }
     if (error instanceof UnauthorizedError || error instanceof ApiError) {

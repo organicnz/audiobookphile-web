@@ -68,7 +68,7 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
     mediaId: libraryItem.media?.id,
     isPodcast,
     onItemUpdated: handleItemSaved,
-    initialRssFeed: initialLibraryItem.rssFeed ?? null
+    initialRssFeed: initialLibraryItem.rssFeed ?? null,
   })
 
   const handleClearDownloadQueue = useCallback(async () => {
@@ -98,17 +98,28 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
           </div>
           <div className="flex-1">
             <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-semibold md:text-3xl">{metadata?.title ? sanitizeDisplayTitle(metadata.title) : ''}</h1>
+              <h1 className="text-2xl font-semibold md:text-3xl">
+                {metadata?.title ? sanitizeDisplayTitle(metadata.title) : ''}
+              </h1>
               {subtitle && <h2 className="text-foreground-muted text-xl font-medium md:text-2xl">{subtitle}</h2>}
-              {podcastAuthor && <h2 className="text-foreground text-lg font-medium md:text-xl">{t('LabelByAuthor', { 0: podcastAuthor })}</h2>}
+              {podcastAuthor && (
+                <h2 className="text-foreground text-lg font-medium md:text-xl">
+                  {t('LabelByAuthor', { 0: podcastAuthor })}
+                </h2>
+              )}
               {bookSeries.length > 0 && (
                 <div>
                   {bookSeries.map((series, index) => {
                     return (
                       <Fragment key={series.id}>
-                        <a href={`/library/${library.id}/series/${series.id}`} className="text-foreground-muted text-lg hover:underline">
+                        <a
+                          href={`/library/${library.id}/series/${series.id}`}
+                          className="text-foreground-muted text-lg hover:underline"
+                        >
                           {series.name}
-                          {series.sequence && <span className="text-foreground-muted text-lg"> #{series.sequence}</span>}
+                          {series.sequence && (
+                            <span className="text-foreground-muted text-lg"> #{series.sequence}</span>
+                          )}
                         </a>
                         {index < bookSeries.length - 1 && <span className="text-foreground-muted text-lg">, </span>}
                       </Fragment>
@@ -123,10 +134,15 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
                   {bookAuthors.map((author, index) => {
                     return (
                       <Fragment key={author.id}>
-                        <a href={`/library/${library.id}/authors/${author.id}`} className="text-foreground text-lg hover:underline md:text-xl">
+                        <a
+                          href={`/library/${library.id}/authors/${author.id}`}
+                          className="text-foreground text-lg hover:underline md:text-xl"
+                        >
                           {author.name}
                         </a>
-                        {index < bookAuthors.length - 1 && <span className="text-foreground text-lg md:text-xl">, </span>}
+                        {index < bookAuthors.length - 1 && (
+                          <span className="text-foreground text-lg md:text-xl">, </span>
+                        )}
                       </Fragment>
                     )
                   })}
@@ -136,7 +152,11 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
 
             <LibraryItemDetails libraryItem={libraryItem} />
 
-            <LibraryItemActionButtons libraryItem={libraryItem} onEdit={handleOpenEditModal} rssFeed={rssFeed ?? null} />
+            <LibraryItemActionButtons
+              libraryItem={libraryItem}
+              onEdit={handleOpenEditModal}
+              rssFeed={rssFeed ?? null}
+            />
 
             {/* Podcast episode downloads queue */}
             {episodeDownloadsQueued.length > 0 && (
@@ -144,7 +164,9 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Folder size={18} className="text-primary" />
-                    <p className="text-sm font-medium text-white/90">{t('MessageEpisodesQueuedForDownload', { count: episodeDownloadsQueued.length })}</p>
+                    <p className="text-sm font-medium text-white/90">
+                      {t('MessageEpisodesQueuedForDownload', { count: episodeDownloadsQueued.length })}
+                    </p>
                   </div>
                   {userIsAdminOrUp && (
                     <button
@@ -196,7 +218,9 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
               )}
 
               {/* library files table */}
-              {!isPodcast && (libraryItem.libraryFiles?.length ?? 0) > 0 && <LibraryFilesTable libraryItem={libraryItem} />}
+              {!isPodcast && (libraryItem.libraryFiles?.length ?? 0) > 0 && (
+                <LibraryFilesTable libraryItem={libraryItem} />
+              )}
             </div>
 
             {/* AI Recommendations Shelf */}
@@ -205,7 +229,12 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
         </div>
       </div>
 
-      <LibraryItemEditModal isOpen={isEditModalOpen} libraryItem={libraryItem} onClose={handleCloseEditModal} onSaved={handleItemSaved} />
+      <LibraryItemEditModal
+        isOpen={isEditModalOpen}
+        libraryItem={libraryItem}
+        onClose={handleCloseEditModal}
+        onSaved={handleItemSaved}
+      />
       <ConfirmDialog
         isOpen={isClearQueueDialogOpen}
         message="Are you sure you want to clear episode download queue?"

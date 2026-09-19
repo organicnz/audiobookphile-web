@@ -33,6 +33,6 @@ export function rateLimit(options?: RateLimitOptions) {
         }
 
         return resolve()
-      })
+      }),
   }
 }

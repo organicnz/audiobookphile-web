@@ -15,7 +15,11 @@ interface ChaptersTableProps {
   expanded?: boolean
 }
 
-export default function ChaptersTable({ libraryItem, keepOpen = false, expanded: expandedProp = false }: ChaptersTableProps) {
+export default function ChaptersTable({
+  libraryItem,
+  keepOpen = false,
+  expanded: expandedProp = false,
+}: ChaptersTableProps) {
   const t = useTypeSafeTranslations()
   const { userCanUpdate } = useUser()
   const [expanded, setExpanded] = useState(expandedProp)
@@ -42,7 +46,7 @@ export default function ChaptersTable({ libraryItem, keepOpen = false, expanded:
         label: t('LabelTitle'),
         accessor: 'title' as const,
         headerClassName: 'text-start px-4',
-        cellClassName: 'px-4'
+        cellClassName: 'px-4',
       },
       {
         label: t('LabelStart'),
@@ -68,15 +72,15 @@ export default function ChaptersTable({ libraryItem, keepOpen = false, expanded:
           >
             {secondsToTimestamp(row.start)}
           </div>
-        )
+        ),
       },
       {
         label: t('LabelDuration'),
         headerClassName: 'text-center px-2 w-16 md:w-24 min-w-16 md:min-w-24',
         cellClassName: 'text-center px-2 font-mono',
         accessor: (row: Chapter) => secondsToTimestamp(Math.max(0, row.end - row.start)),
-        hiddenBelow: 'md' as const
-      }
+        hiddenBelow: 'md' as const,
+      },
     ],
     [t, handleGoToTimestamp]
   )

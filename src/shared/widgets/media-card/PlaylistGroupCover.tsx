@@ -121,7 +121,7 @@ export default function PlaylistGroupCover({ items, width, height }: PlaylistGro
           return {
             id: `${item.id}-${index}`,
             coverUrl,
-            showCoverBg: await checkImageAspectRatio(coverUrl)
+            showCoverBg: await checkImageAspectRatio(coverUrl),
           }
         })
       )
@@ -156,7 +156,10 @@ export default function PlaylistGroupCover({ items, width, height }: PlaylistGro
       <div className="relative overflow-hidden rounded-xs" style={{ width: `${width}px`, height: `${height}px` }}>
         <div className="bg-primary relative flex h-full items-center justify-center rounded-xs">
           <div className="absolute top-0 left-0 h-full w-full bg-gray-400/5" />
-          <div className="relative z-10 flex items-center justify-center" style={{ width: `${cellWidth}px`, height: `${cellHeight}px` }}>
+          <div
+            className="relative z-10 flex items-center justify-center"
+            style={{ width: `${cellWidth}px`, height: `${cellHeight}px` }}
+          >
             {cover?.showCoverBg && (
               <div className="bg-primary absolute start-0 top-0 h-full w-full overflow-hidden rounded-xs">
                 <div className="cover-bg absolute" style={{ backgroundImage: `url("${cover.coverUrl}")` }} />
@@ -167,7 +170,10 @@ export default function PlaylistGroupCover({ items, width, height }: PlaylistGro
               src={getLibraryItemCoverSrc(libraryItemCovers[0], placeholderUrl)}
               alt=""
               aria-hidden="true"
-              className={mergeClasses('relative z-10', cover?.showCoverBg ? 'object-contain' : 'h-full w-full object-cover')}
+              className={mergeClasses(
+                'relative z-10',
+                cover?.showCoverBg ? 'object-contain' : 'h-full w-full object-cover'
+              )}
               style={cover?.showCoverBg ? { width: `${itemCoverWidth}px`, height: `${itemCoverHeight}px` } : undefined}
             />
           </div>
@@ -200,8 +206,13 @@ export default function PlaylistGroupCover({ items, width, height }: PlaylistGro
                 src={getLibraryItemCoverSrc(libraryItem, placeholderUrl)}
                 alt=""
                 aria-hidden="true"
-                className={mergeClasses('relative z-10', cover?.showCoverBg ? 'object-contain' : 'h-full w-full object-cover')}
-                style={cover?.showCoverBg ? { width: `${itemCoverWidth}px`, height: `${itemCoverHeight}px` } : undefined}
+                className={mergeClasses(
+                  'relative z-10',
+                  cover?.showCoverBg ? 'object-contain' : 'h-full w-full object-cover'
+                )}
+                style={
+                  cover?.showCoverBg ? { width: `${itemCoverWidth}px`, height: `${itemCoverHeight}px` } : undefined
+                }
               />
             </div>
           )

@@ -21,7 +21,7 @@ const defaultMetadataSources: MetadataSource[] = [
   { id: 'nfoFile', name: 'NFO file', include: true },
   { id: 'txtFiles', name: 'desc.txt & reader.txt files', include: true },
   { id: 'opfFile', name: 'OPF file', include: true },
-  { id: 'absMetadata', name: 'Audiobookphile metadata file', include: true }
+  { id: 'absMetadata', name: 'Audiobookphile metadata file', include: true },
 ]
 
 const defaultMetadataSourceMap = Object.fromEntries(defaultMetadataSources.map((s) => [s.id, s]))
@@ -32,9 +32,13 @@ const defaultMetadataSourceMap = Object.fromEntries(defaultMetadataSources.map((
  * Visual order is highest-to-lowest priority (reversed), with unused sources at the bottom.
  */
 function buildSourceList(metadataPrecedence: string[]): MetadataSource[] {
-  const activeSources = metadataPrecedence.filter((id) => defaultMetadataSourceMap[id]).map((id) => ({ ...defaultMetadataSourceMap[id], include: true }))
+  const activeSources = metadataPrecedence
+    .filter((id) => defaultMetadataSourceMap[id])
+    .map((id) => ({ ...defaultMetadataSourceMap[id], include: true }))
 
-  const unusedSources = defaultMetadataSources.filter((s) => !metadataPrecedence.includes(s.id)).map((s) => ({ ...s, include: false }))
+  const unusedSources = defaultMetadataSources
+    .filter((s) => !metadataPrecedence.includes(s.id))
+    .map((s) => ({ ...s, include: false }))
 
   const result = [...unusedSources, ...activeSources]
   result.reverse()
@@ -57,13 +61,15 @@ interface LibraryScannerTabProps {
 export default function LibraryScannerTab({ settings, onSettingsChange }: LibraryScannerTabProps) {
   const t = useTypeSafeTranslations()
 
-  const [sources, setSources] = useState<MetadataSource[]>(() => buildSourceList(settings.metadataPrecedence || defaultMetadataSources.map((s) => s.id)))
+  const [sources, setSources] = useState<MetadataSource[]>(() =>
+    buildSourceList(settings.metadataPrecedence || defaultMetadataSources.map((s) => s.id))
+  )
   const [listKey, setListKey] = useState(0)
 
   const emitChange = (newSources: MetadataSource[]) => {
     onSettingsChange((prev) => ({
       ...prev,
-      metadataPrecedence: deriveMetadataPrecedence(newSources)
+      metadataPrecedence: deriveMetadataPrecedence(newSources),
     }))
   }
 
@@ -86,7 +92,10 @@ export default function LibraryScannerTab({ settings, onSettingsChange }: Librar
   }
 
   const defaultPrecedenceKey = defaultMetadataSources.map((s) => s.id).join(',')
-  const isDefault = useMemo(() => deriveMetadataPrecedence(sources).join(',') === defaultPrecedenceKey, [sources, defaultPrecedenceKey])
+  const isDefault = useMemo(
+    () => deriveMetadataPrecedence(sources).join(',') === defaultPrecedenceKey,
+    [sources, defaultPrecedenceKey]
+  )
 
   const firstActiveIndex = useMemo(() => sources.findIndex((s) => s.include), [sources])
   const lastActiveIndex = useMemo(() => sources.findLastIndex((s) => s.include), [sources])
@@ -103,7 +112,9 @@ export default function LibraryScannerTab({ settings, onSettingsChange }: Librar
       <div className="drag-handle mr-2 cursor-grab rounded-lg p-2 transition-colors hover:bg-white/10 active:cursor-grabbing">
         <GripVertical size={18} className="opacity-30" />
       </div>
-      <div className="w-8 min-w-8 py-1 text-center text-xs font-black opacity-40">{source.include ? getSourcePriority(source.id) : ''}</div>
+      <div className="w-8 min-w-8 py-1 text-center text-xs font-black opacity-40">
+        {source.include ? getSourcePriority(source.id) : ''}
+      </div>
       <div className="inline-flex grow items-center justify-between px-2 py-4 text-sm font-bold tracking-wider uppercase">
         {source.name}
         {source.include && (index === firstActiveIndex || index === lastActiveIndex) && (

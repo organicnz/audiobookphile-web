@@ -7,7 +7,7 @@ interface ModalContextType {
 }
 
 const ModalContext = createContext<ModalContextType>({
-  modalRef: null
+  modalRef: null,
 })
 
 export const useModalRef = () => {

@@ -18,7 +18,7 @@ export function EditListExamples() {
     'Education',
     'Comedy & Humor',
     'Science & Engineering',
-    'Audio Theatre'
+    'Audio Theatre',
   ]
 
   // genres and tags don't have id's like narrators do
@@ -33,7 +33,7 @@ export function EditListExamples() {
     { id: 'Alejandro Ruiz', numBooks: 4, name: 'Alejandro Ruiz' },
     { id: 'William Dufris', numBooks: 2, name: 'William Dufris' },
     { id: 'Noah Michael Levine', numBooks: 1, name: 'Noah Michael Levine' },
-    { id: 'Elizabeth Evans', numBooks: 17, name: 'Elizabeth Evans' }
+    { id: 'Elizabeth Evans', numBooks: 17, name: 'Elizabeth Evans' },
   ].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
 
   const [genresWithIds, setGenresWithIds] = useState(initialGenresWithIds)
@@ -48,10 +48,14 @@ export function EditListExamples() {
         </p>
         <p className="mb-2">
           <span className="font-bold">Props:</span> <code className="rounded bg-gray-700 px-2 py-1">items</code>,{' '}
-          <code className="rounded bg-gray-700 px-2 py-1">onItemEditSaveClick</code>,<code className="rounded bg-gray-700 px-2 py-1">onItemDeleteClick</code>,{' '}
-          <code className="rounded bg-gray-700 px-2 py-1">listType</code>,<code className="rounded bg-gray-700 px-2 py-1">libraryId (optional)</code>,
+          <code className="rounded bg-gray-700 px-2 py-1">onItemEditSaveClick</code>,
+          <code className="rounded bg-gray-700 px-2 py-1">onItemDeleteClick</code>,{' '}
+          <code className="rounded bg-gray-700 px-2 py-1">listType</code>,
+          <code className="rounded bg-gray-700 px-2 py-1">libraryId (optional)</code>,
         </p>
-        <p className="mb-2 text-sm text-gray-400">Features: Automatically shows extra column for number of books for pages that support that info</p>
+        <p className="mb-2 text-sm text-gray-400">
+          Features: Automatically shows extra column for number of books for pages that support that info
+        </p>
       </ComponentInfo>
       <ExamplesBlock className="mb-4">
         <Example title="List Without Books Column" className="col-span-1 md:col-span-2 lg:col-span-3">
@@ -64,8 +68,8 @@ export function EditListExamples() {
                 setTimeout(() => {
                   showToast('2 items updated', { type: 'success', title: 'Success' })
                   setGenresWithIds((prev) =>
-                    [...prev.filter((genre) => genre.id !== genreToUpdate.id), { id: newValue, name: newValue }].sort((a, b) =>
-                      a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+                    [...prev.filter((genre) => genre.id !== genreToUpdate.id), { id: newValue, name: newValue }].sort(
+                      (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
                     )
                   )
                   res()

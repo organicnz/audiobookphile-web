@@ -46,7 +46,7 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
     placement: 'top',
     strategy: 'fixed',
     middleware,
-    whileElementsMounted: autoUpdate
+    whileElementsMounted: autoUpdate,
   })
 
   // Sync refs with Floating UI
@@ -158,7 +158,7 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
           style={{
             ...floatingStyles,
-            visibility: isPositioned ? 'visible' : 'hidden'
+            visibility: isPositioned ? 'visible' : 'hidden',
           }}
           className="z-[100] flex flex-col items-center"
           onMouseEnter={openPopover}
@@ -196,7 +196,7 @@ export default function VolumeControl({ playerHandler }: VolumeControlProps) {
                   width: 14,
                   height: 14,
                   bottom: filledHeight - 7,
-                  border: '2px solid rgb(245, 158, 11)'
+                  border: '2px solid rgb(245, 158, 11)',
                 }}
               />
             </div>

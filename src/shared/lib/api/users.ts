@@ -1,20 +1,31 @@
 import { redirect } from 'next/navigation'
 import { cache } from 'react'
-import { CreateApiKeyPayload, CreateUpdateApiKeyResponse, GetApiKeysResponse, GetUsersResponse, ServerStatus, User, UserLoginResponse } from '@/types/api'
+import {
+  CreateApiKeyPayload,
+  CreateUpdateApiKeyResponse,
+  GetApiKeysResponse,
+  GetUsersResponse,
+  ServerStatus,
+  User,
+  UserLoginResponse,
+} from '@/types/api'
 import { UnauthorizedError } from '../apiErrors'
 import { apiRequest } from './client'
 
 export async function createApiKey(payload: CreateApiKeyPayload): Promise<CreateUpdateApiKeyResponse> {
   return apiRequest<CreateUpdateApiKeyResponse>('/api/api-keys', {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
-export async function updateApiKey(apiKeyId: string, payload: CreateApiKeyPayload): Promise<CreateUpdateApiKeyResponse> {
+export async function updateApiKey(
+  apiKeyId: string,
+  payload: CreateApiKeyPayload
+): Promise<CreateUpdateApiKeyResponse> {
   return apiRequest<CreateUpdateApiKeyResponse>(`/api/api-keys/${apiKeyId}`, {
     method: 'PATCH',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 }
 
@@ -26,21 +37,23 @@ export async function updateApiKey(apiKeyId: string, payload: CreateApiKeyPayloa
  * const [user, libraries] = await getData(getCurrentUser(), getLibraries())
  * will correctly infer the type of 'user' and 'libraries'.
  */
-export const getData = cache(async <T extends Promise<unknown>[]>(...promises: T): Promise<{ [K in keyof T]: Awaited<T[K]> }> => {
-  try {
-    const responses = await Promise.all(promises)
-    return responses as { [K in keyof T]: Awaited<T[K]> }
-  } catch (error) {
-    // If any request is unauthorized, redirect to refresh token endpoint
-    if (error instanceof UnauthorizedError) {
-      const { headers } = await import('next/headers')
-      const currentPath = (await headers()).get('x-current-path')
-      return redirect(`/internal-api/refresh?redirect=${encodeURIComponent(currentPath || '')}`)
+export const getData = cache(
+  async <T extends Promise<unknown>[]>(...promises: T): Promise<{ [K in keyof T]: Awaited<T[K]> }> => {
+    try {
+      const responses = await Promise.all(promises)
+      return responses as { [K in keyof T]: Awaited<T[K]> }
+    } catch (error) {
+      // If any request is unauthorized, redirect to refresh token endpoint
+      if (error instanceof UnauthorizedError) {
+        const { headers } = await import('next/headers')
+        const currentPath = (await headers()).get('x-current-path')
+        return redirect(`/internal-api/refresh?redirect=${encodeURIComponent(currentPath || '')}`)
+      }
+      // Let other errors propagate (Next.js error boundaries will handle them)
+      throw error
     }
-    // Let other errors propagate (Next.js error boundaries will handle them)
-    throw error
   }
-})
+)
 
 /**
  * Current user response data
@@ -50,7 +63,7 @@ export const getData = cache(async <T extends Promise<unknown>[]>(...promises: T
 export const getCurrentUser = cache(async (): Promise<UserLoginResponse | null> => {
   try {
     const data = await apiRequest<UserLoginResponse>('/api/me', {
-      method: 'GET'
+      method: 'GET',
     })
     return data?.user ? data : null
   } catch (err) {
@@ -76,7 +89,7 @@ export const getUser = cache(async (userId: string): Promise<User> => {
 
 export const deleteUser = cache(async (userId: string): Promise<void> => {
   return apiRequest<void>(`/api/users/${userId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 })
 
@@ -86,6 +99,6 @@ export const getApiKeys = cache(async (): Promise<GetApiKeysResponse> => {
 
 export const deleteApiKey = cache(async (apiKeyId: string): Promise<void> => {
   return apiRequest<void>(`/api/api-keys/${apiKeyId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 })

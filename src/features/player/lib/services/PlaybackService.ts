@@ -40,8 +40,8 @@ export class PlaybackService {
             start_offset: 0,
             content_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
             mime_type: 'audio/mpeg',
-            is_missing: false
-          }
+            is_missing: false,
+          },
         ],
         audio_tracks: [
           {
@@ -56,8 +56,8 @@ export class PlaybackService {
             start_offset: 0,
             content_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
             mime_type: 'audio/mpeg',
-            is_missing: false
-          }
+            is_missing: false,
+          },
         ],
         chapters: [],
         currentTime: 0,
@@ -67,12 +67,12 @@ export class PlaybackService {
         startedAt: nowMs,
         started_at: nowMs,
         updatedAt: nowMs,
-        updated_at: nowMs
+        updated_at: nowMs,
       } as unknown as PlaybackSession
     }
     // Generate session via API
     const { data, error } = await this.supabase.functions.invoke('api/session-play', {
-      body: { itemId: libraryItemId, episodeId }
+      body: { itemId: libraryItemId, episodeId },
     })
 
     if (error) {

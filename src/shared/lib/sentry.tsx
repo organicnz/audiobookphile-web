@@ -24,7 +24,7 @@ export function setSentryUser(user: { id: string; email?: string; username?: str
   Sentry.setUser({
     id: user.id,
     email: user.email,
-    username: user.username
+    username: user.username,
   })
 }
 
@@ -44,7 +44,7 @@ export function addBreadcrumb(message: string, category: string, data?: Record<s
     message,
     level: 'info',
     data,
-    timestamp: Date.now() / 1000
+    timestamp: Date.now() / 1000,
   })
 }
 
@@ -70,7 +70,7 @@ export function trackApiCall(endpoint: string, method: string, status: number, d
     endpoint,
     method,
     status,
-    duration
+    duration,
   })
 }
 
@@ -109,7 +109,11 @@ export function captureError(
 /**
  * Track a custom performance metric.
  */
-export function trackPerformance(name: string, value: number, unit: 'millisecond' | 'second' | 'minute' = 'millisecond') {
+export function trackPerformance(
+  name: string,
+  value: number,
+  unit: 'millisecond' | 'second' | 'minute' = 'millisecond'
+) {
   Sentry.metrics.distribution(name, value, { unit })
 }
 
@@ -134,7 +138,10 @@ export async function measurePerformance<T>(name: string, operation: () => Promi
 /**
  * Higher-order component for automatic error tracking.
  */
-export function withSentryTracking<P extends object>(Component: React.ComponentType<P>, componentName: string): React.FC<P> {
+export function withSentryTracking<P extends object>(
+  Component: React.ComponentType<P>,
+  componentName: string
+): React.FC<P> {
   const TrackedComponent = (props: P) => {
     return (
       <ErrorBoundary componentName={componentName} context={{ componentName }}>
@@ -165,7 +172,7 @@ export function collectUserFeedback(error?: Error): void {
     subtitle: "Our team has been notified. If you'd like to help, tell us what happened.",
     labelComments: 'What happened?',
     labelClose: 'Close',
-    labelSubmit: 'Submit Feedback'
+    labelSubmit: 'Submit Feedback',
   })
 }
 
@@ -186,7 +193,7 @@ export async function checkSentryHealth(): Promise<{
       return {
         initialized: false,
         client: false,
-        error: 'Sentry client not initialized'
+        error: 'Sentry client not initialized',
       }
     }
 
@@ -196,13 +203,13 @@ export async function checkSentryHealth(): Promise<{
     return {
       initialized: true,
       client: true,
-      testEvent: eventId
+      testEvent: eventId,
     }
   } catch (error) {
     return {
       initialized: false,
       client: false,
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     }
   }
 }
@@ -217,8 +224,8 @@ export function startApiTrace(endpoint: string, method: string): () => void {
     op: 'http.client',
     attributes: {
       'http.url': endpoint,
-      'http.method': method
-    }
+      'http.method': method,
+    },
   })
 
   return () => {

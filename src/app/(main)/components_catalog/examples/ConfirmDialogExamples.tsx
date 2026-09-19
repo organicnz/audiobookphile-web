@@ -50,17 +50,19 @@ export function ConfirmDialogExamples() {
         description="Reusable confirmation dialog component for confirming destructive or important actions. Optionally includes a checkbox for 'don't ask again' or similar functionality."
       >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ConfirmDialog from &apos;@/shared/widgets/ConfirmDialog&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import ConfirmDialog from &apos;@/shared/widgets/ConfirmDialog&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>isOpen</Code> (required: boolean), <Code>message</Code> (required: string), <Code>checkboxLabel</Code>{' '}
-          (optional: string), <Code>yesButtonText</Code> (optional: string), <Code>yesButtonClassName</Code> (optional: string, defaults to
-          &apos;bg-success&apos;), <Code>onClose</Code> (required: function), <Code>onConfirm</Code> (required: function that accepts optional boolean for
-          checkbox value), <Code>className</Code> (optional: string)
+          <span className="font-bold">Props:</span> <Code>isOpen</Code> (required: boolean), <Code>message</Code>{' '}
+          (required: string), <Code>checkboxLabel</Code> (optional: string), <Code>yesButtonText</Code> (optional:
+          string), <Code>yesButtonClassName</Code> (optional: string, defaults to &apos;bg-success&apos;),{' '}
+          <Code>onClose</Code> (required: function), <Code>onConfirm</Code> (required: function that accepts optional
+          boolean for checkbox value), <Code>className</Code> (optional: string)
         </p>
         <p className="mb-2 text-sm text-gray-400">
-          Features: Built on top of Modal component, includes Cancel and Confirm buttons, optional checkbox for persistent choices, customizable button text and
-          styling
+          Features: Built on top of Modal component, includes Cancel and Confirm buttons, optional checkbox for
+          persistent choices, customizable button text and styling
         </p>
       </ComponentInfo>
 
@@ -81,7 +83,9 @@ export function ConfirmDialogExamples() {
 
         <Example title="With Checkbox">
           <div>
-            <p className="mb-4 text-sm text-gray-400">A confirmation dialog with an optional checkbox for &quot;don&apos;t ask again&quot; functionality.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              A confirmation dialog with an optional checkbox for &quot;don&apos;t ask again&quot; functionality.
+            </p>
             <Btn onClick={() => setWithCheckboxOpen(true)}>Open Dialog with Checkbox</Btn>
 
             <ConfirmDialog
@@ -111,7 +115,9 @@ export function ConfirmDialogExamples() {
 
         <Example title="Destructive Action">
           <div>
-            <p className="mb-4 text-sm text-gray-400">A confirmation dialog for destructive actions with a warning-style button.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              A confirmation dialog for destructive actions with a warning-style button.
+            </p>
             <Btn onClick={() => setDestructiveOpen(true)}>Open Destructive Dialog</Btn>
 
             <ConfirmDialog
@@ -127,7 +133,9 @@ export function ConfirmDialogExamples() {
 
         <Example title="Long Message">
           <div>
-            <p className="mb-4 text-sm text-gray-400">A confirmation dialog with a longer message that demonstrates text wrapping.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              A confirmation dialog with a longer message that demonstrates text wrapping.
+            </p>
             <Btn onClick={() => setLongMessageOpen(true)}>Open Long Message Dialog</Btn>
 
             <ConfirmDialog
@@ -143,7 +151,9 @@ export function ConfirmDialogExamples() {
 
         <Example title="With Checkbox and Custom Button">
           <div>
-            <p className="mb-4 text-sm text-gray-400">A confirmation dialog combining checkbox and custom button styling.</p>
+            <p className="mb-4 text-sm text-gray-400">
+              A confirmation dialog combining checkbox and custom button styling.
+            </p>
             <Btn onClick={() => setCombinedDialogOpen(true)}>Open Combined Dialog</Btn>
 
             <ConfirmDialog

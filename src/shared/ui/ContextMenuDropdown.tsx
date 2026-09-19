@@ -54,7 +54,7 @@ export default function ContextMenuDropdown<T = string>({
   size = 'medium',
   borderless = false,
   className,
-  usePortal = false
+  usePortal = false,
 }: ContextMenuDropdownProps<T>) {
   const t = useTypeSafeTranslations()
   const [showMenu, setShowMenu] = useState(false)
@@ -302,8 +302,8 @@ export default function ContextMenuDropdown<T = string>({
     subitems: item.subitems?.map((subitem) => ({
       text: subitem.text,
       action: subitem.action,
-      data: subitem.data as Record<string, T>
-    }))
+      data: subitem.data as Record<string, T>,
+    })),
   }))
 
   const buttonClass = mergeClasses(size === 'small' ? 'w-9' : size === 'large' ? 'w-11' : 'w-10', className)

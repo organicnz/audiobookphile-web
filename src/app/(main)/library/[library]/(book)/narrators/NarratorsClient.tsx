@@ -41,7 +41,13 @@ export default function NarratorsClient({ libraryId, narrators }: { libraryId: s
 
   return (
     <div>
-      <EditList libraryId={libraryId} items={narrators} onItemEditSaveClick={handleSave} onItemDeleteClick={handleDelete} listType="Narrator" />
+      <EditList
+        libraryId={libraryId}
+        items={narrators}
+        onItemEditSaveClick={handleSave}
+        onItemDeleteClick={handleDelete}
+        listType="Narrator"
+      />
     </div>
   )
 }

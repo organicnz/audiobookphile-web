@@ -13,7 +13,14 @@ interface ReadIconBtnProps {
   className?: string
 }
 
-export default function ReadIconBtn({ isRead, size = 'medium', disabled = false, borderless = false, onClick, className }: ReadIconBtnProps) {
+export default function ReadIconBtn({
+  isRead,
+  size = 'medium',
+  disabled = false,
+  borderless = false,
+  onClick,
+  className,
+}: ReadIconBtnProps) {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.stopPropagation()
     if (disabled) {

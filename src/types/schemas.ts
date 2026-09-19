@@ -26,7 +26,7 @@ export const AudioMetadataSchema = z.object({
   mtimeMs: z.number().nullish(),
   ctimeMs: z.number().nullish(),
   birthtimeMs: z.number().nullish(),
-  duration: z.number().nullish()
+  duration: z.number().nullish(),
 })
 
 export const AudioFileSchema = z.object({
@@ -43,7 +43,7 @@ export const AudioFileSchema = z.object({
   updatedAt: z.number().nullish(),
   timeBase: z.string().nullish(),
   channels: z.number().nullish(),
-  channelLayout: z.string().nullish()
+  channelLayout: z.string().nullish(),
 })
 
 export const AudioTrackSchema = z.object({
@@ -62,14 +62,14 @@ export const AudioTrackSchema = z.object({
   updatedAt: z.number().nullish(),
   timeBase: z.string().nullish(),
   channels: z.number().nullish(),
-  channelLayout: z.string().nullish()
+  channelLayout: z.string().nullish(),
 })
 
 export const ChapterSchema = z.object({
   id: z.number(),
   title: z.string(),
   start: z.number(),
-  end: z.number()
+  end: z.number(),
 })
 
 export const FileMetadataSchema = z.object({
@@ -80,7 +80,7 @@ export const FileMetadataSchema = z.object({
   size: z.number().nullish(),
   mtimeMs: z.number().nullish(),
   ctimeMs: z.number().nullish(),
-  birthtimeMs: z.number().nullish()
+  birthtimeMs: z.number().nullish(),
 })
 
 export const LibraryFileSchema = z.object({
@@ -90,7 +90,7 @@ export const LibraryFileSchema = z.object({
   isSupplementary: z.boolean().nullish(),
   fileType: z.string().nullish(),
   addedAt: z.number().nullish(),
-  updatedAt: z.number().nullish()
+  updatedAt: z.number().nullish(),
 })
 
 export const EbookFileSchema = z.object({
@@ -98,7 +98,7 @@ export const EbookFileSchema = z.object({
   metadata: FileMetadataSchema,
   ebookFormat: z.string(),
   addedAt: z.number().nullish(),
-  updatedAt: z.number().nullish()
+  updatedAt: z.number().nullish(),
 })
 
 /**
@@ -128,7 +128,7 @@ export const BookMetadataSchema = z.object({
   asin: z.string().nullish(),
   language: z.string().nullish(),
   explicit: z.boolean(),
-  abridged: z.boolean().nullish()
+  abridged: z.boolean().nullish(),
 })
 
 export const BookMediaSchema = z.object({
@@ -143,7 +143,7 @@ export const BookMediaSchema = z.object({
   tracks: z.array(AudioTrackSchema).nullish(),
   numTracks: z.number().optional(),
   ebookFile: EbookFileSchema.nullish(),
-  ebookFormat: z.string().nullish()
+  ebookFormat: z.string().nullish(),
 })
 
 export const MediaProgressSchema = z.object({
@@ -157,7 +157,7 @@ export const MediaProgressSchema = z.object({
   hideFromContinueListening: z.boolean().nullish(),
   lastUpdate: z.number(),
   startedAt: z.number().nullish(),
-  finishedAt: z.number().nullish()
+  finishedAt: z.number().nullish(),
 })
 
 export const MobileBookSchema = z.object({
@@ -178,14 +178,14 @@ export const MobileBookSchema = z.object({
   mediaType: z.string().optional(),
   libraryFiles: z.array(LibraryFileSchema).nullish(),
   media: BookMediaSchema,
-  userMediaProgress: MediaProgressSchema.nullish()
+  userMediaProgress: MediaProgressSchema.nullish(),
 })
 
 export const LibraryFolderSchema = z.object({
   id: z.string(),
   fullPath: z.string().nullish(),
   libraryId: z.string().nullish(),
-  addedAt: z.number().nullish()
+  addedAt: z.number().nullish(),
 })
 
 export const LibrarySettingsSchema = z.object({
@@ -193,7 +193,7 @@ export const LibrarySettingsSchema = z.object({
   disableWatcher: z.boolean().nullish(),
   skipMatchingMediaWithAsin: z.boolean().nullish(),
   skipMatchingMediaWithIsbn: z.boolean().nullish(),
-  autoScanCronExpression: z.string().nullish()
+  autoScanCronExpression: z.string().nullish(),
 })
 
 export const MobileLibrarySchema = z.object({
@@ -207,7 +207,7 @@ export const MobileLibrarySchema = z.object({
   settings: LibrarySettingsSchema.nullish(),
   createdAt: z.number().nullish(),
   updatedAt: z.number().nullish(),
-  lastUpdate: z.number().nullish()
+  lastUpdate: z.number().nullish(),
 })
 
 export type AudioMetadataModel = z.infer<typeof AudioMetadataSchema>

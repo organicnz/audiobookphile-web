@@ -18,7 +18,15 @@ interface MatchCardProps {
   onArrowKey?: (direction: 'up' | 'down', index: number) => void
 }
 
-export default function MatchCard({ book, isPodcast = false, currentBookDuration = 0, onSelect, isFocused = false, cardIndex, onArrowKey }: MatchCardProps) {
+export default function MatchCard({
+  book,
+  isPodcast = false,
+  currentBookDuration = 0,
+  onSelect,
+  isFocused = false,
+  cardIndex,
+  onArrowKey,
+}: MatchCardProps) {
   const t = useTypeSafeTranslations()
   const [selectedCover, setSelectedCover] = useState<string | null>(null)
   const cardRef = React.useRef<HTMLDivElement>(null)
@@ -125,7 +133,12 @@ export default function MatchCard({ book, isPodcast = false, currentBookDuration
       role="option"
       aria-selected={isFocused}
       aria-label={`Select ${book.title}`}
-      className={mergeClasses('hover:bg-bg-hover/50 w-full cursor-pointer rounded border p-3', 'border-border', 'focus:border-foreground', 'outline-none')}
+      className={mergeClasses(
+        'hover:bg-bg-hover/50 w-full cursor-pointer rounded border p-3',
+        'border-border',
+        'focus:border-foreground',
+        'outline-none'
+      )}
       onClick={handleSelect}
       onKeyDown={handleKeyDown}
     >
@@ -146,7 +159,9 @@ export default function MatchCard({ book, isPodcast = false, currentBookDuration
           </div>
           {/* Mobile: published year and confidence right-aligned on the card */}
           <div className="flex flex-col items-end justify-start gap-1 px-2 md:hidden">
-            {'publishedYear' in book && book.publishedYear && <p className="text-right text-sm font-medium">{book.publishedYear}</p>}
+            {'publishedYear' in book && book.publishedYear && (
+              <p className="text-right text-sm font-medium">{book.publishedYear}</p>
+            )}
             {matchConfidencePercentage && (
               <div
                 className={mergeClasses(
@@ -165,12 +180,16 @@ export default function MatchCard({ book, isPodcast = false, currentBookDuration
               <h1 className="text-sm md:text-base">{book.title}</h1>
               <div className="grow" />
               {/* Desktop: published year */}
-              {'publishedYear' in book && book.publishedYear && <p className="hidden text-sm md:block md:text-base">{book.publishedYear}</p>}
+              {'publishedYear' in book && book.publishedYear && (
+                <p className="hidden text-sm md:block md:text-base">{book.publishedYear}</p>
+              )}
             </div>
 
             <div className="flex items-center">
               <div>
-                {book.author && <p className="text-foreground-muted text-xs md:text-sm">{t('LabelByAuthor', { 0: book.author })}</p>}
+                {book.author && (
+                  <p className="text-foreground-muted text-xs md:text-sm">{t('LabelByAuthor', { 0: book.author })}</p>
+                )}
                 {narratorText && (
                   <p className="text-foreground-subdued text-xs">
                     {t('LabelNarrators')}: {narratorText}
@@ -222,7 +241,11 @@ export default function MatchCard({ book, isPodcast = false, currentBookDuration
                 {book.explicit && <AlertTriangle size={14} className="text-error" />}
               </div>
             </h1>
-            {book.author && <p className="text-foreground-muted truncate text-base whitespace-nowrap">{t('LabelByAuthor', { 0: book.author })}</p>}
+            {book.author && (
+              <p className="text-foreground-muted truncate text-base whitespace-nowrap">
+                {t('LabelByAuthor', { 0: book.author })}
+              </p>
+            )}
             {genresText && <p className="text-foreground-subdued text-xs leading-5">{genresText}</p>}
             {'trackCount' in book && book.trackCount !== undefined && (
               <p className="text-foreground-subdued text-xs leading-5">

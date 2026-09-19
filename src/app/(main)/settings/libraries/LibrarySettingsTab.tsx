@@ -22,14 +22,18 @@ export default function LibrarySettingsTab({ settings, mediaType, onSettingsChan
   }
 
   const markAsFinishedMode: MarkAsFinishedMode =
-    settings.markAsFinishedPercentComplete != null && settings.markAsFinishedPercentComplete > 0 ? 'percent-complete' : 'time-remaining'
+    settings.markAsFinishedPercentComplete != null && settings.markAsFinishedPercentComplete > 0
+      ? 'percent-complete'
+      : 'time-remaining'
 
   const markAsFinishedValue =
-    markAsFinishedMode === 'percent-complete' ? (settings.markAsFinishedPercentComplete ?? 95) : (settings.markAsFinishedTimeRemaining ?? 30)
+    markAsFinishedMode === 'percent-complete'
+      ? (settings.markAsFinishedPercentComplete ?? 95)
+      : (settings.markAsFinishedTimeRemaining ?? 30)
 
   const markAsFinishedItems: DropdownItem[] = [
     { text: t('LabelSettingsLibraryMarkAsFinishedTimeRemaining'), value: 'time-remaining' },
-    { text: t('LabelSettingsLibraryMarkAsFinishedPercentComplete'), value: 'percent-complete' }
+    { text: t('LabelSettingsLibraryMarkAsFinishedPercentComplete'), value: 'percent-complete' },
   ]
 
   const handleMarkAsFinishedModeChange = (value: string | number) => {
@@ -38,13 +42,13 @@ export default function LibrarySettingsTab({ settings, mediaType, onSettingsChan
       onSettingsChange((prev) => ({
         ...prev,
         markAsFinishedTimeRemaining: prev.markAsFinishedTimeRemaining ?? 30,
-        markAsFinishedPercentComplete: null
+        markAsFinishedPercentComplete: null,
       }))
     } else {
       onSettingsChange((prev) => ({
         ...prev,
         markAsFinishedPercentComplete: prev.markAsFinishedPercentComplete ?? 95,
-        markAsFinishedTimeRemaining: null
+        markAsFinishedTimeRemaining: null,
       }))
     }
   }
@@ -149,7 +153,10 @@ export default function LibrarySettingsTab({ settings, mediaType, onSettingsChan
             customInputClass="no-spinner"
           />
           {markAsFinishedMode === 'percent-complete' && (
-            <span className="text-foreground-muted absolute end-0 top-0 flex h-full items-center justify-center px-2 text-sm" aria-hidden="true">
+            <span
+              className="text-foreground-muted absolute end-0 top-0 flex h-full items-center justify-center px-2 text-sm"
+              aria-hidden="true"
+            >
               %
             </span>
           )}

@@ -14,18 +14,18 @@ const mockPosthog = {
   },
   capture: mock((event: string, properties?: Record<string, unknown>) => ({ event, properties })),
   identify: mock((id: string) => id),
-  reset: mock(() => {})
+  reset: mock(() => {}),
 }
 
 mock.module('posthog-js', () => ({
   default: mockPosthog,
-  __esModule: true
+  __esModule: true,
 }))
 
 mock.module('posthog-js/react', () => ({
   usePostHog: () => mockPosthog,
   PostHogProvider: ({ children }: { children: unknown }) => children,
-  __esModule: true
+  __esModule: true,
 }))
 
 describe('analytics with PostHog enabled', () => {

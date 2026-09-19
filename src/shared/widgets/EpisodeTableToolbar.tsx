@@ -28,7 +28,7 @@ export default function EpisodeTableToolbar({
   sortDesc,
   onSortChange,
   contextMenuItems,
-  onContextMenuAction
+  onContextMenuAction,
 }: EpisodeTableToolbarProps) {
   const t = useTypeSafeTranslations()
 
@@ -39,12 +39,24 @@ export default function EpisodeTableToolbar({
         isSelectionMode ? 'pointer-events-none opacity-50' : ''
       )}
     >
-      <TextInput value={search} onChange={onSearchChange} type="search" placeholder={t('PlaceholderSearchEpisode')} className="w-full md:w-auto md:grow" />
+      <TextInput
+        value={search}
+        onChange={onSearchChange}
+        type="search"
+        placeholder={t('PlaceholderSearchEpisode')}
+        className="w-full md:w-auto md:grow"
+      />
 
       <EpisodesFilterSelect value={filterKey} onChange={onFilterChange} className="w-32" />
       <EpisodesSortSelect sortBy={sortKey} sortDesc={sortDesc} onChange={onSortChange} className="w-38" />
 
-      <ContextMenuDropdown size="small" items={contextMenuItems} onAction={({ action }) => onContextMenuAction(action)} autoWidth className="ms-auto md:ms-0" />
+      <ContextMenuDropdown
+        size="small"
+        items={contextMenuItems}
+        onAction={({ action }) => onContextMenuAction(action)}
+        autoWidth
+        className="ms-auto md:ms-0"
+      />
     </div>
   )
 }

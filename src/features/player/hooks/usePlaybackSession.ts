@@ -1,5 +1,9 @@
 import { useCallback, useRef } from 'react'
-import { closePlaybackSession, startPlaybackSession, syncPlaybackSession } from '@/features/player/actions/playbackActions'
+import {
+  closePlaybackSession,
+  startPlaybackSession,
+  syncPlaybackSession,
+} from '@/features/player/actions/playbackActions'
 import { AudioTrack } from '@/features/player/lib/AudioTrack'
 import { FIRST_SYNC_DELAY, SUBSEQUENT_SYNC_INTERVAL } from '@/features/player/lib/constants'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
@@ -31,7 +35,12 @@ interface UsePlaybackSessionOptions {
 
 interface UsePlaybackSessionReturn {
   /** Start a new playback session */
-  startSession: (libraryItem: LibraryItem, supportedMimeTypes: string[], episodeId?: string, startTimeOverride?: number) => Promise<PlaybackSession | null>
+  startSession: (
+    libraryItem: LibraryItem,
+    supportedMimeTypes: string[],
+    episodeId?: string,
+    startTimeOverride?: number
+  ) => Promise<PlaybackSession | null>
   /** Sync progress to server */
   syncProgress: (currentTime: number) => void
   /** Close the current session */
@@ -77,17 +86,22 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
    * Start a new playback session
    */
   const startSession = useCallback(
-    async (libraryItem: LibraryItem, supportedMimeTypes: string[], episodeId?: string, startTimeOverride?: number): Promise<PlaybackSession | null> => {
+    async (
+      libraryItem: LibraryItem,
+      supportedMimeTypes: string[],
+      episodeId?: string,
+      startTimeOverride?: number
+    ): Promise<PlaybackSession | null> => {
       try {
         const payload: StartSessionPayload = {
           deviceInfo: {
             clientName: 'Audiobookphile Web (React)',
-            deviceId: getDeviceId()
+            deviceId: getDeviceId(),
           },
           supportedMimeTypes,
           mediaPlayer: 'html5',
           forceTranscode: false,
-          forceDirectPlay: false
+          forceDirectPlay: false,
         }
 
         const session = await startPlaybackSession(libraryItem.id, payload, episodeId)
@@ -115,7 +129,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
         onSessionReady?.(
           {
             ...session,
-            currentTime: startTime
+            currentTime: startTime,
           },
           audioTracks,
           isHlsTranscode
@@ -153,7 +167,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
           duration,
           timeListened,
           libraryItemId: session.libraryItemId,
-          episodeId: session.episodeId
+          episodeId: session.episodeId,
         })
 
         failedSyncsRef.current = 0
@@ -168,7 +182,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
             duration: 0,
             onDismiss: () => {
               syncFailureToastIdRef.current = null
-            }
+            },
           })
         }
       }
@@ -239,7 +253,7 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
               duration: getDuration?.() || undefined,
               timeListened: Math.max(0, Math.floor(listeningTimeSinceSync.current)),
               libraryItemId: session.libraryItemId,
-              episodeId: session.episodeId
+              episodeId: session.episodeId,
             }
           : null
 
@@ -262,6 +276,6 @@ export function usePlaybackSession(options: UsePlaybackSessionOptions = {}): Use
     closeSession,
     startSyncInterval,
     stopSyncInterval,
-    getSessionId
+    getSessionId,
   }
 }

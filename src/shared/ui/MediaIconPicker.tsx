@@ -23,7 +23,14 @@ interface MediaIconPickerProps {
  * A component that allows users to pick from available library icons.
  * Migrated from Vue component to React TypeScript.
  */
-export default function MediaIconPicker({ value, disabled = false, label, onChange, className = '', align = 'left' }: MediaIconPickerProps) {
+export default function MediaIconPicker({
+  value,
+  disabled = false,
+  label,
+  onChange,
+  className = '',
+  align = 'left',
+}: MediaIconPickerProps) {
   const t = useTypeSafeTranslations()
   const [showMenu, setShowMenu] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
@@ -203,7 +210,10 @@ export default function MediaIconPicker({ value, disabled = false, label, onChan
     return icon.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
   }, [])
 
-  const validSelectedIconReadableName = useMemo(() => getIconReadableName(validSelectedIcon), [validSelectedIcon, getIconReadableName])
+  const validSelectedIconReadableName = useMemo(
+    () => getIconReadableName(validSelectedIcon),
+    [validSelectedIcon, getIconReadableName]
+  )
 
   const ariaLabel = useMemo(
     () => (defaultLabel ? `${defaultLabel}: ${validSelectedIconReadableName}` : validSelectedIconReadableName),
@@ -253,7 +263,9 @@ export default function MediaIconPicker({ value, disabled = false, label, onChan
                   key={icon}
                   id={`${mediaIconPickerId}-option-${index}`}
                   className={`cursor-pointer rounded p-2 ${
-                    focusedIndex === index ? 'text-foreground/100 hover:text-foreground/75' : 'text-foreground/50 hover:text-foreground/75'
+                    focusedIndex === index
+                      ? 'text-foreground/100 hover:text-foreground/75'
+                      : 'text-foreground/50 hover:text-foreground/75'
                   }`}
                   role="option"
                   aria-selected={icon === validSelectedIcon}
@@ -265,7 +277,11 @@ export default function MediaIconPicker({ value, disabled = false, label, onChan
                   <LibraryIcon
                     icon={icon}
                     decorative={false}
-                    className={focusedIndex === index ? 'text-foreground/100 hover:text-foreground/75' : 'text-foreground/50 hover:text-foreground/75'}
+                    className={
+                      focusedIndex === index
+                        ? 'text-foreground/100 hover:text-foreground/75'
+                        : 'text-foreground/50 hover:text-foreground/75'
+                    }
                   />
                 </div>
               ))}

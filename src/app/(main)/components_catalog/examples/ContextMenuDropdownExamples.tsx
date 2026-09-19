@@ -17,8 +17,8 @@ export function ContextMenuDropdownExamples() {
       subitems: [
         { text: 'Copy', action: 'copy' },
         { text: 'Move', action: 'move' },
-        { text: 'Share', action: 'share' }
-      ]
+        { text: 'Share', action: 'share' },
+      ],
     },
     {
       text: 'More Options 2',
@@ -26,9 +26,9 @@ export function ContextMenuDropdownExamples() {
       subitems: [
         { text: 'Copy 2', action: 'copy2' },
         { text: 'Move 2', action: 'move2' },
-        { text: 'Share 2', action: 'share2' }
-      ]
-    }
+        { text: 'Share 2', action: 'share2' },
+      ],
+    },
   ]
 
   const contextMenuItemsWithData: ContextMenuDropdownItem<number>[] = [
@@ -39,26 +39,31 @@ export function ContextMenuDropdownExamples() {
       action: 'advanced',
       subitems: [
         { text: 'Duplicate', action: 'duplicate', data: { id: 1 } },
-        { text: 'Archive', action: 'archive', data: { id: 1 } }
-      ]
-    }
+        { text: 'Archive', action: 'archive', data: { id: 1 } },
+      ],
+    },
   ]
 
   const contextMenuItemsWithEmptySubitems: ContextMenuDropdownItem[] = [
     { text: 'Edit Item', action: 'edit' },
     { text: 'Delete Item', action: 'delete' },
-    { text: 'Empty', action: 'empty', subitems: [] }
+    { text: 'Empty', action: 'empty', subitems: [] },
   ]
 
   return (
     <ComponentExamples title="Context Menu Button">
-      <ComponentInfo component="ContextMenuDropdown" description="Context menu triggered by a button with submenus, loading states, and custom triggers">
+      <ComponentInfo
+        component="ContextMenuDropdown"
+        description="Context menu triggered by a button with submenus, loading states, and custom triggers"
+      >
         <p className="mb-2">
-          <span className="font-bold">Import:</span> <Code overflow>import ContextMenuDropdown from &apos;@/shared/ui/ContextMenuDropdown&apos;</Code>
+          <span className="font-bold">Import:</span>{' '}
+          <Code overflow>import ContextMenuDropdown from &apos;@/shared/ui/ContextMenuDropdown&apos;</Code>
         </p>
         <p className="mb-2">
-          <span className="font-bold">Props:</span> <Code>items</Code> (ContextMenuItem[]), <Code>disabled</Code>, <Code>processing</Code>,{' '}
-          <Code>iconClass</Code>, <Code>menuWidth</Code>, <Code>onAction</Code>, <Code>children</Code> (ReactNode or function)
+          <span className="font-bold">Props:</span> <Code>items</Code> (ContextMenuItem[]), <Code>disabled</Code>,{' '}
+          <Code>processing</Code>, <Code>iconClass</Code>, <Code>menuWidth</Code>, <Code>onAction</Code>,{' '}
+          <Code>children</Code> (ReactNode or function)
         </p>
       </ComponentInfo>
 
@@ -67,7 +72,9 @@ export function ContextMenuDropdownExamples() {
           <div className="flex items-center gap-4">
             <ContextMenuDropdown
               items={contextMenuItems}
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
             <span className="text-sm text-gray-400">Click to see menu</span>
           </div>
@@ -78,7 +85,9 @@ export function ContextMenuDropdownExamples() {
             <ContextMenuDropdown
               items={contextMenuItems}
               size="large"
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
             <span className="text-sm text-gray-400">Click to see menu</span>
           </div>
@@ -89,7 +98,9 @@ export function ContextMenuDropdownExamples() {
             <ContextMenuDropdown
               items={contextMenuItems}
               size="small"
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
             <span className="text-sm text-gray-400">Click to see menu</span>
           </div>
@@ -100,7 +111,9 @@ export function ContextMenuDropdownExamples() {
             <ContextMenuDropdown
               items={contextMenuItems}
               menuAlign="left"
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
             <span className="text-sm text-gray-400">Click to see menu</span>
           </div>
@@ -113,7 +126,7 @@ export function ContextMenuDropdownExamples() {
               onAction={(action) =>
                 showToast(`Action: ${action.action} ${action.data ? `, Data: ${JSON.stringify(action.data)}` : ''}`, {
                   type: 'info',
-                  title: 'Context Menu Action'
+                  title: 'Context Menu Action',
                 })
               }
             />
@@ -126,7 +139,9 @@ export function ContextMenuDropdownExamples() {
             <ContextMenuDropdown
               items={contextMenuItems}
               disabled={true}
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
             <span className="text-sm text-gray-400">Disabled state</span>
           </div>
@@ -137,7 +152,9 @@ export function ContextMenuDropdownExamples() {
             <ContextMenuDropdown
               items={contextMenuItems}
               processing={true}
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
             <span className="text-sm text-gray-400">Loading state</span>
           </div>
@@ -148,7 +165,9 @@ export function ContextMenuDropdownExamples() {
             <ContextMenuDropdown
               items={contextMenuItems}
               iconClass="text-blue-400"
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
             <span className="text-sm text-gray-400">Custom icon color</span>
           </div>
@@ -160,7 +179,9 @@ export function ContextMenuDropdownExamples() {
               items={contextMenuItems}
               menuWidth={250}
               menuAlign="left"
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
             <span className="text-sm text-gray-400">Wider menu</span>
           </div>
@@ -170,7 +191,9 @@ export function ContextMenuDropdownExamples() {
           <div className="flex items-center gap-4">
             <ContextMenuDropdown
               items={contextMenuItemsWithEmptySubitems}
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
           </div>
         </Example>
@@ -180,7 +203,9 @@ export function ContextMenuDropdownExamples() {
             <ContextMenuDropdown
               items={contextMenuItems}
               borderless={true}
-              onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+              onAction={(action) =>
+                showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+              }
             />
             <span className="text-sm text-gray-400">Borderless state</span>
           </div>
@@ -193,7 +218,9 @@ export function ContextMenuDropdownExamples() {
               <ContextMenuDropdown
                 items={contextMenuItems}
                 usePortal={true}
-                onAction={(action) => showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })}
+                onAction={(action) =>
+                  showToast(`Action: ${action.action}`, { type: 'info', title: 'Context Menu Action' })
+                }
               />
               <span className="text-xs text-gray-400">Menu inside scrollable container</span>
             </div>

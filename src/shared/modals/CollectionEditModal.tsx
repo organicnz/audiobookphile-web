@@ -46,7 +46,7 @@ export default function CollectionEditModal({ isOpen, collection, onClose, onSav
       try {
         const updated = await updateCollectionAction(collection.id, {
           name: name.trim(),
-          description: description.trim() || undefined
+          description: description.trim() || undefined,
         })
         showToast(t('ToastCollectionUpdateSuccess'), { type: 'success' })
         onSaved?.(updated)
@@ -68,7 +68,12 @@ export default function CollectionEditModal({ isOpen, collection, onClose, onSav
     <Modal isOpen={isOpen} onClose={onClose} processing={isPending} outerContent={outerContent}>
       <div className="flex max-h-[90vh] flex-col">
         <div className="space-y-4 overflow-y-auto px-4 py-6 sm:px-6">
-          <TextInput label={t('LabelName')} value={name} placeholder={t('PlaceholderNewCollection')} onChange={setName} />
+          <TextInput
+            label={t('LabelName')}
+            value={name}
+            placeholder={t('PlaceholderNewCollection')}
+            onChange={setName}
+          />
           <TextareaInput label={t('LabelDescription')} value={description} rows={4} onChange={setDescription} />
         </div>
         <div className="border-border flex justify-end gap-2 border-t px-4 py-4 sm:px-6">

@@ -22,7 +22,7 @@ export async function uploadCover(libraryItemId: string, file: File): Promise<Up
 
   return apiRequest<UploadCoverResponse>(`/api/items/${libraryItemId}/cover`, {
     method: 'POST',
-    body: formData
+    body: formData,
   })
 }
 
@@ -32,7 +32,7 @@ export async function uploadCover(libraryItemId: string, file: File): Promise<Up
  */
 export async function removeCover(libraryItemId: string): Promise<void> {
   return apiRequest<void>(`/api/items/${libraryItemId}/cover`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -42,7 +42,7 @@ export async function removeCover(libraryItemId: string): Promise<void> {
  */
 export async function deleteLibraryFile(libraryItemId: string, fileIno: string): Promise<void> {
   return apiRequest<void>(`/api/items/${libraryItemId}/file/${fileIno}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   })
 }
 
@@ -53,7 +53,7 @@ export async function deleteLibraryFile(libraryItemId: string, fileIno: string):
 export async function updateCoverFromUrl(libraryItemId: string, coverUrl: string): Promise<UploadCoverResponse> {
   return apiRequest<UploadCoverResponse>(`/api/items/${libraryItemId}/cover`, {
     method: 'POST',
-    body: JSON.stringify({ url: coverUrl })
+    body: JSON.stringify({ url: coverUrl }),
   })
 }
 
@@ -64,7 +64,7 @@ export async function updateCoverFromUrl(libraryItemId: string, coverUrl: string
 export async function setCoverFromLocalFile(libraryItemId: string, filePath: string): Promise<UploadCoverResponse> {
   return apiRequest<UploadCoverResponse>(`/api/items/${libraryItemId}/cover`, {
     method: 'POST',
-    body: JSON.stringify({ path: filePath })
+    body: JSON.stringify({ path: filePath }),
   })
 }
 
@@ -73,6 +73,6 @@ export async function setCoverFromLocalFile(libraryItemId: string, filePath: str
  */
 export async function embedMetadataQuick(libraryItemId: string): Promise<void> {
   return apiRequest<void>(`/api/items/${libraryItemId}/embed-metadata`, {
-    method: 'POST'
+    method: 'POST',
   })
 }

@@ -15,11 +15,17 @@ function ErrorFallback({ title }: { title: string }, { error, retry }: ErrorInfo
       <h2 className="text-2xl font-bold">{title || t('title')}</h2>
       <p className="text-muted-foreground max-w-md">{errorMessage}</p>
       <div className="flex gap-2">
-        <button onClick={() => retry()} className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-2 rounded-lg px-4 py-2">
+        <button
+          onClick={() => retry()}
+          className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-2 rounded-lg px-4 py-2"
+        >
           <RefreshCw className="h-4 w-4" aria-hidden="true" />
           {t('retry')}
         </button>
-        <Link href="/" className="border-input bg-background text-foreground hover:bg-accent inline-flex items-center gap-2 rounded-lg border px-4 py-2">
+        <Link
+          href="/"
+          className="border-input bg-background text-foreground hover:bg-accent inline-flex items-center gap-2 rounded-lg border px-4 py-2"
+        >
           <Home className="h-4 w-4" aria-hidden="true" />
           {t('goHome')}
         </Link>

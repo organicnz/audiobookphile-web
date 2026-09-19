@@ -22,7 +22,14 @@ interface GlobalSearchInputProps {
   usePortal?: boolean
 }
 
-export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onItemSelect, onClear, usePortal = false }: GlobalSearchInputProps = {}) {
+export default function GlobalSearchInput({
+  libraryId,
+  autoFocus,
+  onSubmit,
+  onItemSelect,
+  onClear,
+  usePortal = false,
+}: GlobalSearchInputProps = {}) {
   const searchOptions = useMemo(() => ({ autoSelectFirst: false, libraryId }), [libraryId])
   const {
     searchQuery,
@@ -34,7 +41,7 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
     searchError,
     clearSelection,
     useSemanticSearch,
-    setUseSemanticSearch
+    setUseSemanticSearch,
   } = useLibrarySearch(searchOptions)
   const t = useTypeSafeTranslations()
   const router = useRouter()
@@ -83,7 +90,7 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
     isSearching,
     isTyping,
     searchError,
-    selectedLibraryId
+    selectedLibraryId,
   })
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -91,7 +98,10 @@ export default function GlobalSearchInput({ libraryId, autoFocus, onSubmit, onIt
       e.preventDefault()
       // Skip headers
       let nextIndex = focusedIndex + 1
-      while (nextIndex < flatResults.length && (flatResults[nextIndex].type === 'header' || flatResults[nextIndex].isPlaceholder)) {
+      while (
+        nextIndex < flatResults.length &&
+        (flatResults[nextIndex].type === 'header' || flatResults[nextIndex].isPlaceholder)
+      ) {
         nextIndex++
       }
       if (nextIndex < flatResults.length) {

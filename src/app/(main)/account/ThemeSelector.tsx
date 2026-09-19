@@ -21,9 +21,9 @@ export default function ThemeSelector({ value, label }: ThemeSelectorProps) {
       const res = await fetch('/internal-api/set-theme', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ theme: newTheme })
+        body: JSON.stringify({ theme: newTheme }),
       })
 
       if (!res.ok) {

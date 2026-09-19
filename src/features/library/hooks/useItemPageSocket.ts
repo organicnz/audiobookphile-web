@@ -19,7 +19,11 @@ interface UseItemPageSocketReturn {
   episodeDownloadsQueued: PodcastEpisodeDownload[]
 }
 
-export function useItemPageSocket({ libraryItemId, onItemUpdated, initialRssFeed = null }: UseItemPageSocketOptions): UseItemPageSocketReturn {
+export function useItemPageSocket({
+  libraryItemId,
+  onItemUpdated,
+  initialRssFeed = null,
+}: UseItemPageSocketOptions): UseItemPageSocketReturn {
   const [rssFeed] = useState<RssFeed | null>(initialRssFeed)
 
   useEffect(() => {
@@ -34,7 +38,7 @@ export function useItemPageSocket({ libraryItemId, onItemUpdated, initialRssFeed
           event: 'UPDATE',
           schema: 'public',
           table: 'library_items',
-          filter: `id=eq.${libraryItemId}`
+          filter: `id=eq.${libraryItemId}`,
         },
         (payload) => {
           console.log('[Supabase Realtime] Dynamic library_item updated:', payload.new)
@@ -54,6 +58,6 @@ export function useItemPageSocket({ libraryItemId, onItemUpdated, initialRssFeed
     rssFeed,
     mediaItemShare: null,
     episodesDownloading: [],
-    episodeDownloadsQueued: []
+    episodeDownloadsQueued: [],
   }
 }
