@@ -228,7 +228,8 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
   const handleSetCover = (coverFile: LocalCover) => {
     startUpdateTransition(async () => {
       try {
-        await setCoverFromLocalFileAction(libraryItem.id, coverFile.metadata.path)
+        const filePath = coverFile.metadata?.path || coverFile.ino
+        await setCoverFromLocalFileAction(libraryItem.id, filePath)
       } catch (error) {
         console.error('Error setting cover:', error)
         showToast(error instanceof Error ? error.message : t('ToastCoverUpdateFailed'), { type: 'error' })
