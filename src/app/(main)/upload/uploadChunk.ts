@@ -34,32 +34,59 @@ export async function uploadMultipart(params: MultipartUploadParams): Promise<{ 
     const start = i * partSize
     const end = Math.min(start + partSize, file.size)
     const chunk = file.slice(start, end)
+    const MAX_PART_RETRIES = 3
+    let attempt = 0
+
     await new Promise<void>((res, rej) => {
-      const xhr = new XMLHttpRequest()
-      xhr.open('PUT', partUrls[i], true)
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable && onProgress) {
-          const loaded = uploadedBytes + partUploadedBytes + event.loaded
-          onProgress({
-            percent: Math.round((loaded / totalSize) * 100),
-            loaded,
-            total: totalSize,
-          })
+      const sendPart = (): void => {
+        attempt++
+        const xhr = new XMLHttpRequest()
+        xhr.open('PUT', partUrls[i], true)
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable && onProgress) {
+            const loaded = uploadedBytes + partUploadedBytes + event.loaded
+            onProgress({
+              percent: Math.round((loaded / totalSize) * 100),
+              loaded,
+              total: totalSize,
+            })
+          }
         }
-      }
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          const etag = xhr.getResponseHeader('ETag') || `"${partNumber}"`
-          parts.push({ PartNumber: partNumber, ETag: etag })
-          partUploadedBytes += chunk.size
-          res()
-        } else {
-          rej(new Error(`Part ${partNumber} failed: HTTP ${xhr.status}`))
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const etag = xhr.getResponseHeader('ETag') || `"${partNumber}"`
+            parts.push({ PartNumber: partNumber, ETag: etag })
+            partUploadedBytes += chunk.size
+            res()
+          } else if (attempt < MAX_PART_RETRIES && (xhr.status >= 500 || xhr.status === 429)) {
+            console.warn(
+              `[Multipart] Part ${partNumber} failed with HTTP ${xhr.status}, retrying (${attempt}/${MAX_PART_RETRIES})...`
+            )
+            setTimeout(sendPart, 1500 * attempt)
+          } else {
+            rej(new Error(`Part ${partNumber} failed: HTTP ${xhr.status}`))
+          }
         }
+        xhr.onerror = () => {
+          if (attempt < MAX_PART_RETRIES) {
+            console.warn(`[Multipart] Part ${partNumber} network error, retrying (${attempt}/${MAX_PART_RETRIES})...`)
+            setTimeout(sendPart, 1500 * attempt)
+          } else {
+            rej(new Error(`Part ${partNumber} network error`))
+          }
+        }
+        xhr.ontimeout = () => {
+          if (attempt < MAX_PART_RETRIES) {
+            console.warn(`[Multipart] Part ${partNumber} timed out, retrying (${attempt}/${MAX_PART_RETRIES})...`)
+            setTimeout(sendPart, 1500 * attempt)
+          } else {
+            rej(new Error(`Part ${partNumber} upload timed out`))
+          }
+        }
+        xhr.timeout = 3600000
+        xhr.send(chunk)
       }
-      xhr.onerror = () => rej(new Error(`Part ${partNumber} network error`))
-      xhr.timeout = 3600000
-      xhr.send(chunk)
+      sendPart()
     })
   }
 
