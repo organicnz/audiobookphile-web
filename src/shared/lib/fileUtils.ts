@@ -1,5 +1,3 @@
-import path from 'path'
-
 export const SupportedFileTypes = {
   image: ['png', 'jpg', 'jpeg', 'webp', 'avif', 'gif', 'svg'],
   audio: [
@@ -43,15 +41,23 @@ export const SupportedFileTypes = {
   metadata: ['opf', 'abs', 'xml', 'json', 'cue', 'lrc'],
 }
 
+/**
+ * Returns the extension of a filename including the leading dot,
+ * or empty string if no extension or if file is a dotfile (.hidden).
+ */
+function getFileExtension(filename: string): string {
+  const lastDotIndex = filename.lastIndexOf('.')
+  if (lastDotIndex <= 0) return ''
+  return filename.slice(lastDotIndex)
+}
+
 export const sanitizeFileName = (filename: string, colonReplacement = ' - '): string => {
   if (typeof filename !== 'string') {
     return ''
   }
 
   // Most file systems use number of bytes for max filename
-  //   to support most filesystems we will use max of 255 bytes in utf-16
-  //   Ref: https://doc.owncloud.com/server/next/admin_manual/troubleshooting/path_filename_length.html
-  //   Issue: https://github.com/advplyr/audiobookphile/issues/1261
+  // to support most filesystems we will use max of 255 bytes in utf-16
   const MAX_FILENAME_BYTES = 255
   const replacement = ''
   const illegalRe = /[/?<>\\:*|"]/g
@@ -72,22 +78,23 @@ export const sanitizeFileName = (filename: string, colonReplacement = ' - '): st
     .replace(/\s+/g, ' ') // Replace consecutive spaces with a single space
 
   // Check if basename is too many bytes
-  const ext = path.extname(sanitized) // separate out file extension
-  const basename = path.basename(sanitized, ext)
+  const ext = getFileExtension(sanitized)
+  const basename = ext ? sanitized.slice(0, -ext.length) : sanitized
+
   // Use Blob instead of Node.js Buffer for browser compatibility
   const getByteLength = (str: string) => new Blob([str]).size
   const extByteLength = getByteLength(ext)
   const basenameByteLength = getByteLength(basename)
 
   if (basenameByteLength + extByteLength > MAX_FILENAME_BYTES) {
-    const MaxBytesForBasename = MAX_FILENAME_BYTES - extByteLength
+    const maxBytesForBasename = MAX_FILENAME_BYTES - extByteLength
     let totalBytes = 0
     let trimmedBasename = ''
 
     // Add chars until max bytes is reached
     for (const char of basename) {
       totalBytes += getByteLength(char)
-      if (totalBytes > MaxBytesForBasename) break
+      if (totalBytes > maxBytesForBasename) break
       else trimmedBasename += char
     }
 
