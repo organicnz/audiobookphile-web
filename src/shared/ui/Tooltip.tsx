@@ -1,10 +1,10 @@
 'use client'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useModalRef } from '@/shared/contexts/ModalContext'
-import { mergeClasses } from '@/shared/lib/merge-classes'
-import { type Placement, arrow as arrowMw, autoUpdate, flip, offset, shift, size, useFloating } from '@floating-ui/react-dom'
+import { arrow as arrowMw, autoUpdate, flip, offset, type Placement, shift, size, useFloating } from '@floating-ui/react-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useModalRef } from '@/shared/contexts/ModalContext'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface TooltipProps {
   text: string

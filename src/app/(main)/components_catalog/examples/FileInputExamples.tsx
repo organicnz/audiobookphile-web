@@ -1,6 +1,6 @@
 'use client'
-import FileInput from '@/shared/ui/FileInput'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import FileInput from '@/shared/ui/FileInput'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // FileInput Examples

@@ -1,8 +1,8 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { Edit2, X, Check } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Check, Edit2, X } from 'lucide-react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 interface PillProps<T> {
   item: T

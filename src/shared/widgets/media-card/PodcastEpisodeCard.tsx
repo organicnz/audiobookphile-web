@@ -1,8 +1,8 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import type { PodcastEpisode } from '@/types/api'
-import { useMemo } from 'react'
 import MediaCard, { type MediaCardProps } from './MediaCard'
 
 export type PodcastEpisodeCardProps = Omit<MediaCardProps, 'shelfEntities' | 'entityIndex'>

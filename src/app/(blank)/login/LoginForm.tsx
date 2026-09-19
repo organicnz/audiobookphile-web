@@ -1,16 +1,16 @@
 'use client'
 
-import { signInWithGoogle, signInWithMagicLink } from '@/features/auth/actions/authActions'
-import AuthCard from '@/features/auth/components/AuthCard'
-import { performPasskeyLogin, webAuthnErrorMessage } from '@/features/auth/lib/webauthn'
-import Btn from '@/shared/ui/Btn'
-import TextInput from '@/shared/ui/TextInput'
-import { createClient } from '@/shared/utils/supabase/client'
-import { useFeatureFlag } from '@/shared/lib/analytics'
 import { Fingerprint, Lock, Smartphone } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+import { signInWithGoogle, signInWithMagicLink } from '@/features/auth/actions/authActions'
+import AuthCard from '@/features/auth/components/AuthCard'
+import { performPasskeyLogin, webAuthnErrorMessage } from '@/features/auth/lib/webauthn'
+import { useFeatureFlag } from '@/shared/lib/analytics'
+import Btn from '@/shared/ui/Btn'
+import TextInput from '@/shared/ui/TextInput'
+import { createClient } from '@/shared/utils/supabase/client'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -267,7 +267,16 @@ export default function LoginForm() {
 
   const hasEnrolledMethods = Boolean(enrolledMethods.totp || enrolledMethods.pin || enrolledMethods.biometric)
   const methodTabs = [
-    ...(passkey2FAEnabled ? [{ key: 'biometric' as const, label: 'Biometric', icon: Fingerprint, enrolled: enrolledMethods.biometric === true }] : []),
+    ...(passkey2FAEnabled
+      ? [
+          {
+            key: 'biometric' as const,
+            label: 'Biometric',
+            icon: Fingerprint,
+            enrolled: enrolledMethods.biometric === true
+          }
+        ]
+      : []),
     { key: 'pin' as const, label: 'PIN Code', icon: Lock, enrolled: enrolledMethods.pin === true },
     { key: 'totp' as const, label: 'TOTP', icon: Smartphone, enrolled: enrolledMethods.totp === true }
   ]

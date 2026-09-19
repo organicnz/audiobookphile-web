@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
-import { Shield, ShieldAlert, ShieldCheck, Copy, Check, Key, QrCode, Lock, Fingerprint, Smartphone, Trash2 } from 'lucide-react'
+import { Check, Copy, Fingerprint, Key, Lock, QrCode, Shield, ShieldAlert, ShieldCheck, Smartphone, Trash2 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { performPasskeyRegistration, removePasskey, webAuthnErrorMessage } from '@/features/auth/lib/webauthn'
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
 import { createClient } from '@/shared/utils/supabase/client'
-import { performPasskeyRegistration, removePasskey, webAuthnErrorMessage } from '@/features/auth/lib/webauthn'
 
 interface TwoFactorSettingsPanelProps {
   initialEnabled?: boolean
@@ -319,7 +319,14 @@ export default function TwoFactorSettingsPanel({ initialEnabled = false }: TwoFa
           return
         }
 
-        setStatus({ enabled: false, totpEnrolled: false, pinEnrolled: false, biometricEnrolled: false, methods: [], passkeys: [] })
+        setStatus({
+          enabled: false,
+          totpEnrolled: false,
+          pinEnrolled: false,
+          biometricEnrolled: false,
+          methods: [],
+          passkeys: []
+        })
         setMode('idle')
         setDisableCode('')
         setDisablePin('')

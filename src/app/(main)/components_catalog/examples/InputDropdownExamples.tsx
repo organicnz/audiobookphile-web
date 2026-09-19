@@ -1,7 +1,7 @@
 'use client'
-import InputDropdown from '@/shared/ui/InputDropdown'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import InputDropdown from '@/shared/ui/InputDropdown'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // InputDropdown Examples

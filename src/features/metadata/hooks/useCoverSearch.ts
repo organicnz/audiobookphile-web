@@ -1,5 +1,5 @@
-import { useSocket, useSocketEmit, useSocketEvent } from '@/shared/contexts/SocketContext'
 import { useCallback, useState } from 'react'
+import { useSocket, useSocketEmit, useSocketEvent } from '@/shared/contexts/SocketContext'
 
 interface CoverSearchResultData {
   requestId: string

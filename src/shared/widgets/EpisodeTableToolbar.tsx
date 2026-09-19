@@ -1,9 +1,9 @@
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import ContextMenuDropdown from '@/shared/ui/ContextMenuDropdown'
 import TextInput from '@/shared/ui/TextInput'
 import EpisodesFilterSelect from '@/shared/widgets/EpisodesFilterSelect'
 import EpisodesSortSelect from '@/shared/widgets/EpisodesSortSelect'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface EpisodeTableToolbarProps {
   isSelectionMode: boolean

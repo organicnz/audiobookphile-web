@@ -1,11 +1,11 @@
 'use client'
 
+import { autoUpdate, flip, offset, type Placement, shift, useFloating } from '@floating-ui/react-dom'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useModalRef } from '@/shared/contexts/ModalContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { type Placement, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react-dom'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 
 export interface ContextMenuSubitem<T = string> {
   text: string

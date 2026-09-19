@@ -1,8 +1,8 @@
 'use client'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import React, { forwardRef } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 const MotionLink = motion.create(Link)
 

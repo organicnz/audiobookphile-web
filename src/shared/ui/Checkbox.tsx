@@ -1,8 +1,8 @@
 'use client'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Minus } from 'lucide-react'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import React, { useId, useRef } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import InputWrapper from './InputWrapper'
 
 interface CheckboxProps {

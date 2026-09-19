@@ -1,6 +1,6 @@
 'use client'
 
-import { isValidIcon, ABS_TO_LUCIDE_MAP } from '@/shared/lib/absicons'
+import { ABS_TO_LUCIDE_MAP, isValidIcon } from '@/shared/lib/absicons'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface LibraryIconProps {

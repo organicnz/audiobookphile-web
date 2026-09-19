@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useUser } from '@/shared/contexts/UserContext'
 import { BookLibraryItem, BookshelfView, PodcastLibraryItem } from '@/types/api'
 import BookShelfRow from '../../features/library/components/BookShelfRow'
 import BookMediaCard from './media-card/BookMediaCard'
 import PodcastMediaCard from './media-card/PodcastMediaCard'
-import { useUser } from '@/shared/contexts/UserContext'
 
 interface SimilarBooksShelfProps {
   libraryItem: BookLibraryItem | PodcastLibraryItem

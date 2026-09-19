@@ -1,8 +1,8 @@
 'use client'
 
-import ThemeDropdown from '@/shared/widgets/ThemeDropdown'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import ThemeDropdown from '@/shared/widgets/ThemeDropdown'
 
 interface ThemeSelectorProps {
   value: string

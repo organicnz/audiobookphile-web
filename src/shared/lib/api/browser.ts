@@ -1,5 +1,5 @@
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
-import { getServerBaseUrl, fetchAsResult, type ApiResult } from './base'
+import { type ApiResult, fetchAsResult, getServerBaseUrl } from './base'
 
 /**
  * Browser-only authenticated API request — non-throwing (P2.2): returns

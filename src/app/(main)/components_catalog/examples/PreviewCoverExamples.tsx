@@ -1,10 +1,10 @@
 'use client'
 
-import PreviewCover from '@/features/metadata/components/PreviewCover'
-import CoverPreviewModal from '@/shared/modals/CoverPreviewModal'
-import { getLibraryItemCoverUrl } from '@/shared/lib/coverUtils'
-import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
 import { useCallback, useState } from 'react'
+import PreviewCover from '@/features/metadata/components/PreviewCover'
+import { getLibraryItemCoverUrl } from '@/shared/lib/coverUtils'
+import CoverPreviewModal from '@/shared/modals/CoverPreviewModal'
+import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 interface PreviewCoverExamplesProps {

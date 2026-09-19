@@ -1,7 +1,7 @@
 'use client'
 
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { useId, useRef } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import InputWrapper from './InputWrapper'
 import Label from './Label'
 

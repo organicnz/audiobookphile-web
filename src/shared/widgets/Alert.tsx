@@ -1,10 +1,10 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { motion } from 'framer-motion'
 import { AlertCircle, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import React, { useEffect, useRef } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 export interface AlertProps {
   type?: 'error' | 'warning' | 'success' | 'info'

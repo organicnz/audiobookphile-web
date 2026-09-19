@@ -1,12 +1,12 @@
-import Btn from '@/shared/ui/Btn'
+import { motion } from 'framer-motion'
+import { FolderSearch, Library as LibraryIcon, PlusCircle, Podcast } from 'lucide-react'
+import { useMemo, useTransition } from 'react'
 import { useTasks } from '@/shared/contexts/TasksContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { Library } from '@/types/api'
-import { useMemo, useTransition } from 'react'
-import { requestScanLibrary } from '../../settings/libraries/actions'
-import { motion } from 'framer-motion'
-import { Library as LibraryIcon, Podcast, FolderSearch, PlusCircle } from 'lucide-react'
 import { mergeClasses } from '@/shared/lib/merge-classes'
+import Btn from '@/shared/ui/Btn'
+import { Library } from '@/types/api'
+import { requestScanLibrary } from '../../settings/libraries/actions'
 
 interface LibraryEmptyStateProps {
   library: Library

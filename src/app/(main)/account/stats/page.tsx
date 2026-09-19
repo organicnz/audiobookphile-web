@@ -1,8 +1,8 @@
 import DailyListeningChart from '@/features/stats/DailyListeningChart'
 import ListeningHeatmap from '@/features/stats/ListeningHeatmap'
 import RecentSessions from '@/features/stats/RecentSessions'
-import { buildDaysListeningMap, buildStatsSummary } from '@/features/stats/statsModel'
 import StatsSummaryRow from '@/features/stats/StatsSummary'
+import { buildDaysListeningMap, buildStatsSummary } from '@/features/stats/statsModel'
 import { getCurrentUser } from '@/shared/lib/api'
 import { getUserStatsData } from '@/shared/lib/api/stats'
 

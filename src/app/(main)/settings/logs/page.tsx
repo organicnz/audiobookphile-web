@@ -1,5 +1,5 @@
-import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { ExternalLink, Terminal } from 'lucide-react'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import SettingsContent from '../SettingsContent'
 
 export const dynamic = 'force-dynamic'

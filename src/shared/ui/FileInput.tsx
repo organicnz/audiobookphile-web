@@ -1,7 +1,7 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import React, { useId, useRef, useState } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Btn from './Btn'
 import IconBtn from './IconBtn'
 

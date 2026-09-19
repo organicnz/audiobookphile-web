@@ -1,12 +1,12 @@
 'use client'
-import { useMultiSelect } from './multi-select/useMultiSelect'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { DropdownMenuItem } from './DropdownMenu'
 import DropdownMenu from './DropdownMenu'
 import InputWrapper from './InputWrapper'
 import Label from './Label'
+import { useMultiSelect } from './multi-select/useMultiSelect'
 import Pill from './Pill'
 
 export interface MultiSelectItem<T = string> {

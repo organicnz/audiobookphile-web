@@ -1,12 +1,12 @@
 'use client'
 
-import type { UsePlayerHandlerReturn } from '@/features/player/hooks/usePlayerHandler'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { VolumeX, Volume1, Volume2 } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Volume1, Volume2, VolumeX } from 'lucide-react'
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import type { UsePlayerHandlerReturn } from '@/features/player/hooks/usePlayerHandler'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 
 interface VolumeControlProps {
   playerHandler: UsePlayerHandlerReturn

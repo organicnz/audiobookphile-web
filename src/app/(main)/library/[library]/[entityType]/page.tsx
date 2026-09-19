@@ -1,8 +1,7 @@
-import { EntityType } from '@/types/api'
 import { Suspense } from 'react'
-
-import BookshelfClient from './BookshelfClient'
 import { getLibraryAuthors, getLibraryCollections, getLibraryItems, getLibraryPlaylists, getLibrarySeries } from '@/shared/lib/api'
+import { EntityType } from '@/types/api'
+import BookshelfClient from './BookshelfClient'
 
 export const dynamic = 'force-dynamic'
 

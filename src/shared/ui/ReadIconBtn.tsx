@@ -1,7 +1,7 @@
 'use client'
 
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import React from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import IconBtn from './IconBtn'
 
 interface ReadIconBtnProps {

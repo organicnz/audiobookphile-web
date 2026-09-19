@@ -1,14 +1,14 @@
 'use client'
 
-import Btn from '@/shared/ui/Btn'
+import { AlertCircle, CheckCircle2, Clock } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
 import { useSocketEmit } from '@/shared/contexts/SocketContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { formatDuration } from '@/shared/lib/formatDuration'
+import Btn from '@/shared/ui/Btn'
 import { Task } from '@/types/api'
 import { TranslationKey } from '@/types/translations'
-import { CheckCircle2, AlertCircle, Clock } from 'lucide-react'
-import { useCallback, useMemo, useState } from 'react'
 import LoadingSpinner from './LoadingSpinner'
 
 interface ItemTaskRunningCardProps {

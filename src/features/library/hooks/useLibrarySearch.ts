@@ -1,10 +1,10 @@
 'use client'
 
-import { getCollectionsAction, getPlaylistsAction, searchLibraryAction } from '@/features/library/actions/searchActions'
-import { createClient } from '@/shared/utils/supabase/client'
-import { useSocketEvent } from '@/shared/contexts/SocketContext'
-import { Author, BookLibraryItem, Collection, LibraryItem, Playlist, PodcastLibraryItem, SearchLibraryResponse, Series } from '@/types/api'
 import { useCallback, useEffect, useState } from 'react'
+import { getCollectionsAction, getPlaylistsAction, searchLibraryAction } from '@/features/library/actions/searchActions'
+import { useSocketEvent } from '@/shared/contexts/SocketContext'
+import { createClient } from '@/shared/utils/supabase/client'
+import { Author, BookLibraryItem, Collection, LibraryItem, Playlist, PodcastLibraryItem, SearchLibraryResponse, Series } from '@/types/api'
 
 export interface UseLibrarySearchOptions {
   autoSelectFirst?: boolean

@@ -1,8 +1,8 @@
 'use client'
 
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { motion } from 'framer-motion'
-import { Mail, Lock, User, AlertCircle, Smartphone, Fingerprint, Key, Shield, AlertTriangle, ShieldAlert, MailCheck } from 'lucide-react'
+import { AlertCircle, AlertTriangle, Fingerprint, Key, Lock, Mail, MailCheck, Shield, ShieldAlert, Smartphone, User } from 'lucide-react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 type IconName = 'mail' | 'lock' | 'user' | 'alert-circle' | 'smartphone' | 'fingerprint' | 'key' | 'shield' | 'alert-triangle' | 'shield-alert' | 'mail-check'
 

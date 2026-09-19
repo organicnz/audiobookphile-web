@@ -1,11 +1,11 @@
 'use client'
 
-import Tooltip from '@/shared/ui/Tooltip'
-import ExplicitIndicator from '@/shared/widgets/ExplicitIndicator'
+import { useId } from 'react'
 import { useTruncation } from '@/shared/hooks/useTruncation'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import Tooltip from '@/shared/ui/Tooltip'
+import ExplicitIndicator from '@/shared/widgets/ExplicitIndicator'
 import type { LibraryItem } from '@/types/api'
-import { useId } from 'react'
 import { formatSortLine } from './formatSortLine'
 
 interface MediaCardDetailViewProps {

@@ -1,7 +1,7 @@
 'use client'
 
-import type { BookMedia } from '@/types/api'
 import { useMemo } from 'react'
+import type { BookMedia } from '@/types/api'
 import MediaCard, { type MediaCardProps } from './MediaCard'
 
 export type BookMediaCardProps = MediaCardProps

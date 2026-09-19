@@ -1,9 +1,9 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { LucideIcon } from 'lucide-react'
 import React, { memo } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import ButtonBase from './ButtonBase'
 
 interface IconBtnProps {

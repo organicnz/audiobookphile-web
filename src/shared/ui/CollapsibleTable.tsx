@@ -1,8 +1,8 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
+import { KeyboardEvent, ReactNode, useCallback, useId, useMemo } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { KeyboardEvent, ReactNode, useCallback, useId, useMemo } from 'react'
 
 interface TableHeader {
   label: ReactNode

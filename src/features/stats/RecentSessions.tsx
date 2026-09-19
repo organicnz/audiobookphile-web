@@ -1,5 +1,5 @@
-import type { PlaybackSessionRow } from '@/shared/lib/api/stats'
 import { formatDistanceToNow } from 'date-fns'
+import type { PlaybackSessionRow } from '@/shared/lib/api/stats'
 
 interface RecentSessionsProps {
   sessions: PlaybackSessionRow[]

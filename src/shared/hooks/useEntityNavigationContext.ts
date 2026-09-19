@@ -1,5 +1,5 @@
-import type { EntityNavigationContext } from '@/shared/lib/bookshelfNavigationContext'
 import { useCallback, useLayoutEffect, useState } from 'react'
+import type { EntityNavigationContext } from '@/shared/lib/bookshelfNavigationContext'
 
 /**
  * Tracks index into `navigation.entityIds` for modal prev/next; resets when the modal opens.

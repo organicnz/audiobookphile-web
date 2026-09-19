@@ -1,8 +1,8 @@
 'use client'
 
+import { useCallback, useState } from 'react'
 import Btn from '@/shared/ui/Btn'
 import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
-import { useCallback, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function ConfirmDialogExamples() {

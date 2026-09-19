@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 const APP_DEEP_LINK_SCHEME = 'audiobookphile://'
 

@@ -1,12 +1,12 @@
 'use client'
 
-import CoverSizeWidget from '@/shared/widgets/CoverSizeWidget'
+import { usePathname } from 'next/navigation'
+import { useEffect } from 'react'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useMediaContext } from '@/features/player/contexts/MediaContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+import CoverSizeWidget from '@/shared/widgets/CoverSizeWidget'
 import SideRail from '../../SideRail'
 import Toolbar from './Toolbar'
 

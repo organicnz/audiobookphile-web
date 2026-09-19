@@ -1,12 +1,12 @@
 'use client'
 
-import { ContextMenuDropdownItem } from '@/shared/ui/ContextMenuDropdown'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useFilterData } from '@/features/library/hooks/useFilterData'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { useUser } from '@/shared/contexts/UserContext'
-import { useFilterData } from '@/features/library/hooks/useFilterData'
 import { getCoverAspectRatio } from '@/shared/lib/coverUtils'
+import { ContextMenuDropdownItem } from '@/shared/ui/ContextMenuDropdown'
 import { BookshelfView, Library, LibraryFilterData, LibraryItem } from '@/types/api'
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 // Per-library settings (stored separately for each library)
 interface PerLibrarySettings {

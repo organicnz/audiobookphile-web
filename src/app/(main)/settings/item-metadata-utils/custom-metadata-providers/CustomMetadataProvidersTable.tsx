@@ -1,13 +1,13 @@
 'use client'
 
-import IconBtn from '@/shared/ui/IconBtn'
-import SimpleDataTable, { DataTableColumn } from '@/shared/ui/SimpleDataTable'
-import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
+import { useMemo, useRef, useState } from 'react'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
+import IconBtn from '@/shared/ui/IconBtn'
+import SimpleDataTable, { DataTableColumn } from '@/shared/ui/SimpleDataTable'
+import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
 import { CustomMetadataProvider } from '@/types/api'
-import { useMemo, useRef, useState } from 'react'
 
 interface CustomMetadataProvidersTableProps {
   providers: CustomMetadataProvider[]

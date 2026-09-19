@@ -1,13 +1,13 @@
 'use server'
 
-import {
-  getListeningSessions as apiGetListeningSessions,
-  getOpenListeningSessions as apiGetOpenListeningSessions,
-  batchDeleteListeningSessions as apiBatchDeleteListeningSessions,
-  deleteListeningSession as apiDeleteListeningSession,
-  closeListeningSession as apiCloseListeningSession
-} from '@/shared/lib/api'
 import { revalidatePath } from 'next/cache'
+import {
+  batchDeleteListeningSessions as apiBatchDeleteListeningSessions,
+  closeListeningSession as apiCloseListeningSession,
+  deleteListeningSession as apiDeleteListeningSession,
+  getListeningSessions as apiGetListeningSessions,
+  getOpenListeningSessions as apiGetOpenListeningSessions
+} from '@/shared/lib/api'
 import { GetListeningSessionsResponse, GetOpenListeningSessionsResponse } from '@/types/api'
 
 export interface ListeningSessionsQueryParams {

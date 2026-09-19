@@ -1,6 +1,6 @@
 'use client'
-import MediaIconPicker from '@/shared/ui/MediaIconPicker'
 import { useState } from 'react'
+import MediaIconPicker from '@/shared/ui/MediaIconPicker'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // MediaIconPicker Examples

@@ -1,12 +1,12 @@
 'use client'
 
+import type { ReactNode } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import Modal from '@/shared/modals/Modal'
 import Btn from '@/shared/ui/Btn'
 import Checkbox from '@/shared/ui/Checkbox'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/shared/lib/merge-classes'
-import type { ReactNode } from 'react'
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
 
 interface ConfirmDialogProps {
   isOpen: boolean

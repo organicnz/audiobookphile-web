@@ -1,9 +1,9 @@
 'use client'
 
+import { useRef, useState } from 'react'
 import AuthorCard from '@/shared/widgets/media-card/AuthorCard'
 import AuthorCardSkeleton from '@/shared/widgets/media-card/AuthorCardSkeleton'
 import { Author } from '@/types/api'
-import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
 import { DimensionComparison, Dimensions, useDimensionMeasurement } from './mediaCardExamplesUtils'
 

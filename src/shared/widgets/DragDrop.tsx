@@ -1,7 +1,7 @@
 'use client'
 
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { useRef, useState } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface DragDropProps {
   onFilesDropped: (files: File[]) => void | Promise<void>

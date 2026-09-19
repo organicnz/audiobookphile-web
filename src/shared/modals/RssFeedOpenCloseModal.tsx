@@ -1,15 +1,15 @@
 'use client'
 
+import { useCallback, useEffect, useState } from 'react'
 import { closeRssFeed, openEntityRssFeed } from '@/features/tools/actions/rssFeedActions'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useUser } from '@/shared/contexts/UserContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Modal from '@/shared/modals/Modal'
 import Btn from '@/shared/ui/Btn'
 import Checkbox from '@/shared/ui/Checkbox'
 import TextInput from '@/shared/ui/TextInput'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useUser } from '@/shared/contexts/UserContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { RssFeed } from '@/types/api'
-import { useCallback, useEffect, useState } from 'react'
 
 function sanitizeSlug(slug: string): string {
   return slug

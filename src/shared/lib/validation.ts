@@ -8,8 +8,8 @@
  * - Type-safe validation with Zod
  */
 
-import { z } from 'zod'
 import DOMPurify from 'isomorphic-dompurify'
+import { z } from 'zod'
 
 /**
  * Maximum lengths for common fields (matches backend validation).

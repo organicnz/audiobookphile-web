@@ -1,6 +1,6 @@
-import { updateSession } from '@/shared/utils/supabase/middleware'
 import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
+import { updateSession } from '@/shared/utils/supabase/middleware'
 
 /**
  * Next.js 16 Proxy (formerly Middleware)

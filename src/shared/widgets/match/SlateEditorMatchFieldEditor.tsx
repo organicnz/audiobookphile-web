@@ -1,8 +1,8 @@
 'use client'
 
-import SlateEditor from '@/shared/ui/SlateEditor'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { memo, useCallback } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import SlateEditor from '@/shared/ui/SlateEditor'
 import { BaseMatchFieldEditor } from './BaseMatchFieldEditor'
 
 interface SlateEditorMatchFieldEditorProps {

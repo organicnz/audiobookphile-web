@@ -1,7 +1,7 @@
 'use server'
 
-import { fetchBookCover } from '@/shared/lib/coverFetch'
 import { uploadCover } from '@/shared/lib/api'
+import { fetchBookCover } from '@/shared/lib/coverFetch'
 
 /**
  * Automatically fetch a cover image from metadata providers and save it

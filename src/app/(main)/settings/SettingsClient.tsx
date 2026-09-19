@@ -1,18 +1,18 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { useMemo, useState, useTransition } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { formatJsDate } from '@/shared/lib/datefns'
 import Btn from '@/shared/ui/Btn'
 import Dropdown from '@/shared/ui/Dropdown'
 import { MultiSelect, MultiSelectItem } from '@/shared/ui/MultiSelect'
 import LanguageDropdown from '@/shared/widgets/LanguageDropdown'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { formatJsDate } from '@/shared/lib/datefns'
 import { BookshelfView, ServerSettings } from '@/types/api'
-import { useRouter } from 'next/navigation'
-import { useMemo, useState, useTransition } from 'react'
 import type { UpdateServerSettingsApiResponse, UpdateSortingPrefixesApiResponse } from './actions'
-import { dateFormats, timeFormats } from './settingsConstants'
 import SettingsToggleSwitch from './SettingsToggleSwitch'
+import { dateFormats, timeFormats } from './settingsConstants'
 
 interface SettingsClientProps {
   serverSettings: ServerSettings

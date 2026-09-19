@@ -1,8 +1,8 @@
 'use client'
 
+import { createContext, ReactNode, useContext } from 'react'
 import { useUser } from '@/shared/contexts/UserContext'
 import { Library, User } from '@/types/api'
-import { createContext, ReactNode, useContext } from 'react'
 
 interface ComponentsCatalogContextType {
   user: User

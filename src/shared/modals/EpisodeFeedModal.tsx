@@ -1,16 +1,16 @@
+import { CheckCircle, ChevronDown, ChevronUp, Download, Search } from 'lucide-react'
+import { useFormatter } from 'next-intl'
+import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import { downloadPodcastEpisodesAction } from '@/features/player/actions/mediaActions'
-import Modal from '@/shared/modals/Modal'
-import Btn from '@/shared/ui/Btn'
-import Checkbox from '@/shared/ui/Checkbox'
-import TextInput from '@/shared/ui/TextInput'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { formatDuration } from '@/shared/lib/formatDuration'
 import { bytesPretty } from '@/shared/lib/string'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
+import Checkbox from '@/shared/ui/Checkbox'
+import TextInput from '@/shared/ui/TextInput'
 import { PodcastEpisodeDownload, PodcastLibraryItem, RssPodcastEpisode } from '@/types/api'
-import { Search, ChevronDown, ChevronUp, CheckCircle, Download } from 'lucide-react'
-import { useFormatter } from 'next-intl'
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 
 export interface EpisodeFeedModalProps {
   isOpen: boolean

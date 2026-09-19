@@ -1,18 +1,18 @@
 'use client'
 
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { getAudioFileFFProbeDataAction } from '@/features/player/actions/audioFileActions'
-import Modal from '@/shared/modals/Modal'
-import Btn from '@/shared/ui/Btn'
-import TextInput from '@/shared/ui/TextInput'
-import TextareaInput from '@/shared/ui/TextareaInput'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { copyToClipboard } from '@/shared/lib/clipboard'
 import { secondsToTimestamp } from '@/shared/lib/datefns'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import { bytesPretty } from '@/shared/lib/string'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
+import TextareaInput from '@/shared/ui/TextareaInput'
+import TextInput from '@/shared/ui/TextInput'
 import { AudioFile, FFProbeData } from '@/types/api'
-import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import IconBtn from '../ui/IconBtn'
 
 interface AudioFileDataModalProps {

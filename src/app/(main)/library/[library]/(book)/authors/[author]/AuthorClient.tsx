@@ -1,23 +1,21 @@
 'use client'
 
 import Link from 'next/link'
-
-import AuthorImage from '@/features/metadata/components/AuthorImage'
-import IconBtn from '@/shared/ui/IconBtn'
-import ExpandableHtml from '@/shared/widgets/ExpandableHtml'
-import ItemSlider from '@/shared/widgets/ItemSlider'
-import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
+import AuthorImage from '@/features/metadata/components/AuthorImage'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { filterEncode } from '@/shared/lib/filterUtils'
-import { Author, BookshelfView } from '@/types/api'
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
-
 import AuthorEditModal from '@/shared/modals/AuthorEditModal'
+import IconBtn from '@/shared/ui/IconBtn'
+import ExpandableHtml from '@/shared/widgets/ExpandableHtml'
+import ItemSlider from '@/shared/widgets/ItemSlider'
+import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
+import { Author, BookshelfView } from '@/types/api'
 
 interface AuthorClientProps {
   author: Author

@@ -1,6 +1,6 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { mergeClasses } from '@/shared/lib/merge-classes'
+import { AnimatePresence, motion } from 'framer-motion'
 import React, { ReactNode } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import Modal from './Modal'
 
 export interface Tab {

@@ -1,6 +1,6 @@
+import { Descendant, Text } from 'slate'
 import { escapeHtml } from '@/shared/lib/html-utils'
 import { CustomText, DOMNode } from '@/types/slate'
-import { Descendant, Text } from 'slate'
 
 // Type for text nodes with intentional break marker
 type TextWithMarker = CustomText & { isIntentionalBreak?: boolean }

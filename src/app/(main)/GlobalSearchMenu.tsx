@@ -1,13 +1,13 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { Tag, Layers, Bookmark, Music, Mic, Book, Radio, ChevronRight, User as UserIcon, Search } from 'lucide-react'
-import AuthorImage from '@/features/metadata/components/AuthorImage'
-import { FlatResultItem, SearchResultType } from '@/features/library/hooks/useGlobalSearchTransformer'
-import { useMenuPosition } from '@/shared/hooks/useMenuPosition'
-import { useScrollToFocused } from '@/shared/hooks/useScrollToFocused'
-import { mergeClasses } from '@/shared/lib/merge-classes'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Book, Bookmark, ChevronRight, Layers, Mic, Music, Radio, Search, Tag, User as UserIcon } from 'lucide-react'
 import Link from 'next/link'
 import React, { useCallback, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { FlatResultItem, SearchResultType } from '@/features/library/hooks/useGlobalSearchTransformer'
+import AuthorImage from '@/features/metadata/components/AuthorImage'
+import { useMenuPosition } from '@/shared/hooks/useMenuPosition'
+import { useScrollToFocused } from '@/shared/hooks/useScrollToFocused'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 const HighlightMatch = ({ text, query }: { text: string; query: string }) => {
   const parts = useMemo(() => {

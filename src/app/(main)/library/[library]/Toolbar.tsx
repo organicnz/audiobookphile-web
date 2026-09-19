@@ -1,9 +1,9 @@
 'use client'
 
-import ContextMenuDropdown from '@/shared/ui/ContextMenuDropdown'
+import { usePathname } from 'next/navigation'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { usePathname } from 'next/navigation'
+import ContextMenuDropdown from '@/shared/ui/ContextMenuDropdown'
 
 // Pages that should show item count and toolbar extras
 const BOOKSHELF_PAGE_PATTERNS = ['/items', '/series', '/collections', '/playlists', '/authors']

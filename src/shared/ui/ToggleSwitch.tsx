@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import React, { useId, useRef } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import InputWrapper from './InputWrapper'
 
 interface ToggleSwitchProps {

@@ -1,8 +1,8 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { mergeClasses } from '@/shared/lib/merge-classes'
+import { AnimatePresence, motion } from 'framer-motion'
 import React, { memo } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import ButtonBase from './ButtonBase'
 
 interface BtnProps {

@@ -1,5 +1,5 @@
-import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { getLibraries, getLibraryFilterData } from '@/shared/lib/api'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import SettingsContent from '../../SettingsContent'
 import TagsClient from './TagsClient'
 

@@ -1,19 +1,19 @@
 'use client'
 
-import RawCoverPreviewModal from '@/shared/modals/RawCoverPreviewModal'
-import IconBtn from '@/shared/ui/IconBtn'
-import MediaCardCover from '@/shared/widgets/media-card/MediaCardCover'
-import MediaCardFrame from '@/shared/widgets/media-card/MediaCardFrame'
-import MediaOverlayIconBtn from '@/shared/widgets/media-card/MediaOverlayIconBtn'
+import { Pencil, Play } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
 import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { getLibraryItemCoverUrl, getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import { computeProgress } from '@/shared/lib/mediaProgress'
 import { mergeClasses } from '@/shared/lib/merge-classes'
+import RawCoverPreviewModal from '@/shared/modals/RawCoverPreviewModal'
+import IconBtn from '@/shared/ui/IconBtn'
+import MediaCardCover from '@/shared/widgets/media-card/MediaCardCover'
+import MediaCardFrame from '@/shared/widgets/media-card/MediaCardFrame'
+import MediaOverlayIconBtn from '@/shared/widgets/media-card/MediaOverlayIconBtn'
 import type { BookLibraryItem, BookMetadata, LibraryItem, MediaProgress, PodcastLibraryItem } from '@/types/api'
 import { isPodcastLibraryItem } from '@/types/api'
-import { useCallback, useMemo, useState } from 'react'
-import { Play, Pencil } from 'lucide-react'
 
 interface LibraryItemCoverProps {
   libraryItem: BookLibraryItem | PodcastLibraryItem

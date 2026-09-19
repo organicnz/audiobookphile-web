@@ -1,11 +1,11 @@
 'use client'
 
+import { useState } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Checkbox from '@/shared/ui/Checkbox'
 import CronExpressionBuilder from '@/shared/widgets/CronExpressionBuilder'
 import CronExpressionPreview from '@/shared/widgets/CronExpressionPreview'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { LibrarySettings } from '@/types/api'
-import { useState } from 'react'
 
 const DEFAULT_CRON = '0 0 * * 1'
 

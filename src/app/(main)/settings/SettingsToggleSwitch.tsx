@@ -1,6 +1,6 @@
+import { Info } from 'lucide-react'
 import ToggleSwitch from '@/shared/ui/ToggleSwitch'
 import Tooltip from '@/shared/ui/Tooltip'
-import { Info } from 'lucide-react'
 
 interface SettingsToggleSwitchProps {
   label: string

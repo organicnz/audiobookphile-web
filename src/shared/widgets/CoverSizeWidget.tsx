@@ -1,10 +1,10 @@
 'use client'
 
-import IconBtn from '@/shared/ui/IconBtn'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import IconBtn from '@/shared/ui/IconBtn'
 
 /** Available cover sizes in pixels */
 export const AVAILABLE_COVER_SIZES = [60, 80, 100, 120, 140, 160, 180, 200, 220]

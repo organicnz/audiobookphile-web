@@ -1,18 +1,17 @@
 'use client'
 
-import { useLibraryOptional } from '@/features/library/contexts/LibraryContext'
-import { useUser } from '@/shared/contexts/UserContext'
-
-import { useCommandPalette } from '@/shared/contexts/CommandPaletteContext'
-import { useLibrarySearch } from '@/features/library/hooks/useLibrarySearch'
-import { getLibraryItemCoverUrl } from '@/shared/lib/coverUtils'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Search, Settings, Book, Headphones, X } from 'lucide-react'
+import { Book, Headphones, Search, Settings, X } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { useLibraryOptional } from '@/features/library/contexts/LibraryContext'
+import { useLibrarySearch } from '@/features/library/hooks/useLibrarySearch'
+import { useCommandPalette } from '@/shared/contexts/CommandPaletteContext'
+import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { getLibraryItemCoverUrl } from '@/shared/lib/coverUtils'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 export default function CommandPalette() {
   const { isOpen, setIsOpen } = useCommandPalette()

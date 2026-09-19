@@ -1,10 +1,10 @@
 'use client'
 
+import { useCallback, useId, useMemo, useRef, useState } from 'react'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { AVAILABLE_ICONS, type AvailableIcon } from '@/shared/lib/absicons'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { useCallback, useId, useMemo, useRef, useState } from 'react'
 import ButtonBase from './ButtonBase'
 import Label from './Label'
 import LibraryIcon from './LibraryIcon'

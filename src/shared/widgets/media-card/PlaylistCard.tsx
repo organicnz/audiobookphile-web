@@ -1,5 +1,12 @@
 'use client'
 
+import { CheckCircle2, Circle, Edit2 } from 'lucide-react'
+import { useParams, useRouter } from 'next/navigation'
+import { memo, useCallback, useId, useMemo, useState } from 'react'
+import { useCardSize } from '@/features/library/contexts/CardSizeContext'
+import { useUser } from '@/shared/contexts/UserContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
 import MediaCardFrame from '@/shared/widgets/media-card/MediaCardFrame'
 import MediaCardMoreMenu from '@/shared/widgets/media-card/MediaCardMoreMenu'
@@ -8,16 +15,9 @@ import MediaCardStandardFooter from '@/shared/widgets/media-card/MediaCardStanda
 import MediaOverlayIconBtn from '@/shared/widgets/media-card/MediaOverlayIconBtn'
 import PlaylistGroupCover from '@/shared/widgets/media-card/PlaylistGroupCover'
 import { usePlaylistCardActions } from '@/shared/widgets/media-card/usePlaylistCardActions'
-import { useCardSize } from '@/features/library/contexts/CardSizeContext'
-import { useUser } from '@/shared/contexts/UserContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { Playlist } from '@/types/api'
 import { BookshelfView } from '@/types/api'
-import { useParams, useRouter } from 'next/navigation'
-import { memo, useCallback, useId, useMemo, useState } from 'react'
 import LoadingSpinner from '../LoadingSpinner'
-import { Edit2, CheckCircle2, Circle } from 'lucide-react'
 
 export interface PlaylistCardProps {
   /** The playlist to display */

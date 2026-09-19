@@ -1,6 +1,6 @@
 'use client'
-import TextareaInput from '@/shared/ui/TextareaInput'
 import { useState } from 'react'
+import TextareaInput from '@/shared/ui/TextareaInput'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // TextareaInput Examples

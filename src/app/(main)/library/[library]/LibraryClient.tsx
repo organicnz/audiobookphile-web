@@ -1,5 +1,7 @@
 'use client'
 
+import { LayoutGrid, List } from 'lucide-react'
+import { useCallback, useEffect, useState, useTransition } from 'react'
 import BookShelfGrid from '@/features/library/components/BookShelfGrid'
 import BookShelfRow from '@/features/library/components/BookShelfRow'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
@@ -27,8 +29,6 @@ import {
   RssFeed,
   Series
 } from '@/types/api'
-import { LayoutGrid, List } from 'lucide-react'
-import { useCallback, useEffect, useState, useTransition } from 'react'
 import { requestScanLibrary } from '../../settings/libraries/actions'
 import LibraryEmptyState from './LibraryEmptyState'
 

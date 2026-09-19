@@ -1,10 +1,10 @@
 'use client'
 
-import type { EditListItem } from '@/shared/ui/EditList'
-import EditList from '@/shared/ui/EditList'
+import { useMemo, useTransition } from 'react'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { useMemo, useTransition } from 'react'
+import type { EditListItem } from '@/shared/ui/EditList'
+import EditList from '@/shared/ui/EditList'
 import { removeTag, renameTag } from './actions'
 
 export default function TagsClient({ tags }: { tags: string[] }) {

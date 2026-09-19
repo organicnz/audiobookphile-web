@@ -1,7 +1,7 @@
 'use client'
 
-import AuthCard from '@/features/auth/components/AuthCard'
 import Link from 'next/link'
+import AuthCard from '@/features/auth/components/AuthCard'
 
 export default function SignupForm() {
   return (

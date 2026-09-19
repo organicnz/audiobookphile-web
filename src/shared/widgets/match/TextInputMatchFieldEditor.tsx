@@ -1,8 +1,8 @@
 'use client'
 
-import TextInput from '@/shared/ui/TextInput'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { memo, useCallback } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import TextInput from '@/shared/ui/TextInput'
 import { BaseMatchFieldEditor } from './BaseMatchFieldEditor'
 
 interface TextInputMatchFieldEditorProps {

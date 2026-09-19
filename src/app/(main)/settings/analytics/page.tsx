@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-import { getCurrentUser } from '@/shared/lib/api/users'
 import AdminAnalyticsWidget from '@/features/admin/components/AdminAnalyticsWidget'
+import { getCurrentUser } from '@/shared/lib/api/users'
 
 export const dynamic = 'force-dynamic'
 

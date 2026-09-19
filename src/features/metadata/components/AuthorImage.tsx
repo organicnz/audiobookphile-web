@@ -1,9 +1,9 @@
 'use client'
 
+import { User } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { Author } from '@/types/api'
-import { useEffect, useState } from 'react'
-import { User } from 'lucide-react'
 
 interface AuthorImageProps {
   author: Author

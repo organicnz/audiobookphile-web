@@ -1,11 +1,11 @@
 'use client'
 
+import { Fragment } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { filterEncode } from '@/shared/lib/filterUtils'
 import { formatDuration } from '@/shared/lib/formatDuration'
 import { bytesPretty } from '@/shared/lib/string'
 import { BookLibraryItem, BookMetadata, PodcastLibraryItem, PodcastMetadata } from '@/types/api'
-import { Fragment } from 'react'
 
 interface LibraryItemDetailsProps {
   libraryItem: BookLibraryItem | PodcastLibraryItem

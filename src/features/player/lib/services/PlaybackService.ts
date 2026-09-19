@@ -1,6 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js'
-import type { PlaybackSession, PlayMethod } from '@/types/api'
 import crypto from 'crypto'
+import type { PlaybackSession, PlayMethod } from '@/types/api'
 
 export class PlaybackService {
   constructor(private supabase: SupabaseClient) {}

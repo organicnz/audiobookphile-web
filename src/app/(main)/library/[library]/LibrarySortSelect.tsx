@@ -1,11 +1,11 @@
 'use client'
 
-import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
-import { useLibrary, LibrarySettingKey } from '@/features/library/contexts/LibraryContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { EntityType } from '@/types/api'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react'
 import { useCallback, useEffect, useMemo } from 'react'
+import { LibrarySettingKey, useLibrary } from '@/features/library/contexts/LibraryContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
+import { EntityType } from '@/types/api'
 
 interface LibrarySortSelectProps {
   entityType?: EntityType

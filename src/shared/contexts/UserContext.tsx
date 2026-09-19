@@ -1,10 +1,10 @@
 'use client'
 
-import type { EReaderDevice, MediaProgress, AudioBookmark } from '@/types/api'
-import type { Profile } from '@/types/index'
-import { createClient } from '@/shared/utils/supabase/client'
-import { identifyUser, resetAnalytics } from '@/shared/lib/analytics'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { identifyUser, resetAnalytics } from '@/shared/lib/analytics'
+import { createClient } from '@/shared/utils/supabase/client'
+import type { AudioBookmark, EReaderDevice, MediaProgress } from '@/types/api'
+import type { Profile } from '@/types/index'
 
 // ---------------------------------------------------------------------------
 // Shape of the user data passed from the server (layout.tsx)

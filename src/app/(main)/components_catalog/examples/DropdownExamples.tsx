@@ -1,6 +1,6 @@
 'use client'
-import Dropdown, { type DropdownItem } from '@/shared/ui/Dropdown'
 import { useState } from 'react'
+import Dropdown, { type DropdownItem } from '@/shared/ui/Dropdown'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // Dropdown Examples

@@ -1,11 +1,11 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { useCallback, useState } from 'react'
 import { resetPassword } from '@/features/auth/actions/authActions'
 import AuthCard from '@/features/auth/components/AuthCard'
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
-import { useRouter } from 'next/navigation'
-import { useCallback, useState } from 'react'
 
 export default function ResetPasswordForm() {
   const router = useRouter()

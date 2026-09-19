@@ -1,6 +1,6 @@
-import { VOLUME_HOTKEY_STEP } from '@/features/player/lib/constants'
-import type { PlayerHandlerControls, PlayerHandlerState } from '@/features/player/hooks/usePlayerHandler'
 import { useEffect } from 'react'
+import type { PlayerHandlerControls, PlayerHandlerState } from '@/features/player/hooks/usePlayerHandler'
+import { VOLUME_HOTKEY_STEP } from '@/features/player/lib/constants'
 
 /**
  * Registers keyboard hotkeys for the audio player.

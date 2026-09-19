@@ -1,12 +1,12 @@
 'use client'
 
+import { AlertTriangle, ExternalLink } from 'lucide-react'
+import Image from 'next/image'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { formatDuration } from '@/shared/lib/formatDuration'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import { MatchResult } from '@/types/api'
-import { AlertTriangle, ExternalLink } from 'lucide-react'
-import Image from 'next/image'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 interface MatchCardProps {
   book: MatchResult

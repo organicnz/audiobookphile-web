@@ -1,7 +1,7 @@
-import Modal from '@/shared/modals/Modal'
-import Btn from '@/shared/ui/Btn'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { formatJsDatetime } from '@/shared/lib/datefns'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
 import { Backup } from '@/types/api'
 
 interface RestoreBackupModalProps {

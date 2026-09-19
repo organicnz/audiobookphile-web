@@ -1,9 +1,9 @@
 'use client'
 
+import { useRef, useState } from 'react'
 import CollectionCard from '@/shared/widgets/media-card/CollectionCard'
 import CollectionCardSkeleton from '@/shared/widgets/media-card/CollectionCardSkeleton'
 import { BookshelfView, Collection } from '@/types/api'
-import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
 import { DimensionComparison, Dimensions, useDimensionMeasurement } from './mediaCardExamplesUtils'
 

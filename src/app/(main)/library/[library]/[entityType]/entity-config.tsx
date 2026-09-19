@@ -1,5 +1,8 @@
+import React, { type MouseEvent, type ReactNode } from 'react'
 import LibraryFilterSelect from '@/app/(main)/library/[library]/LibraryFilterSelect'
 import LibrarySortSelect from '@/app/(main)/library/[library]/LibrarySortSelect'
+import { UpdateSettingFn } from '@/features/library/contexts/LibraryContext'
+import { useUser } from '@/shared/contexts/UserContext'
 import AuthorCard from '@/shared/widgets/media-card/AuthorCard'
 import AuthorCardSkeleton from '@/shared/widgets/media-card/AuthorCardSkeleton'
 import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
@@ -12,11 +15,8 @@ import PlaylistCardSkeleton from '@/shared/widgets/media-card/PlaylistCardSkelet
 import PodcastMediaCard from '@/shared/widgets/media-card/PodcastMediaCard'
 import SeriesCard from '@/shared/widgets/media-card/SeriesCard'
 import SeriesCardSkeleton from '@/shared/widgets/media-card/SeriesCardSkeleton'
-import { UpdateSettingFn } from '@/features/library/contexts/LibraryContext'
-import { useUser } from '@/shared/contexts/UserContext'
 import { Author, BookshelfEntity, BookshelfView, Collection, EntityType, Library, LibraryItem, MediaProgress, Playlist, Series, User } from '@/types/api'
 import { TranslationKey } from '@/types/translations'
-import React, { type MouseEvent, type ReactNode } from 'react'
 
 /** Selection is unused on the bookshelf; stable identity so memo(MediaCard) can skip unchanged cards. */
 

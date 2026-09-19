@@ -1,12 +1,12 @@
 'use client'
 
-import Modal from '@/shared/modals/Modal'
+import { memo, useCallback, useEffect, useRef } from 'react'
 import type { UsePlayerHandlerReturn } from '@/features/player/hooks/usePlayerHandler'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { secondsToTimestamp } from '@/shared/lib/datefns'
 import { mergeClasses } from '@/shared/lib/merge-classes'
+import Modal from '@/shared/modals/Modal'
 import type { Chapter } from '@/types/api'
-import { memo, useCallback, useEffect, useRef } from 'react'
 
 interface ChaptersModalProps {
   isOpen: boolean

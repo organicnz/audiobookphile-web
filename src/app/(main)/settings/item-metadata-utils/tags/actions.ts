@@ -1,8 +1,8 @@
 'use server'
 
-import { removeTag as apiRemoveTag, renameTag as apiRenameTag } from '@/shared/lib/api/misc'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { removeTag as apiRemoveTag, renameTag as apiRenameTag } from '@/shared/lib/api/misc'
 
 export type RemoveTagApiResponse = {
   numItemsUpdated: number

@@ -1,18 +1,19 @@
 'use client'
 
-import { useMediaContext } from '@/features/player/contexts/MediaContext'
+import { Eye, Folder, Image as ImageIcon, Info, RefreshCw, Search, Upload, X } from 'lucide-react'
+import { startTransition, useEffect, useMemo, useState } from 'react'
 import { useBookProviders, useMetadata } from '@/features/metadata/contexts/MetadataContext'
+import { useMediaContext } from '@/features/player/contexts/MediaContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { startTransition, useEffect, useMemo, useState } from 'react'
-
+import { SupportedFileTypes, sanitizeFileName } from '@/shared/lib/fileUtils'
+import { bytesPretty } from '@/shared/lib/string'
 import Btn from '@/shared/ui/Btn'
 import CollapsibleTable from '@/shared/ui/CollapsibleTable'
 import Dropdown from '@/shared/ui/Dropdown'
 import IconBtn from '@/shared/ui/IconBtn'
 import LoadingIndicator from '@/shared/ui/LoadingIndicator'
 import ProgressIndicator from '@/shared/ui/ProgressIndicator'
-import { Search, Info, X, Folder, Upload, RefreshCw, Eye, Image as ImageIcon } from 'lucide-react'
 import TableRow from '@/shared/ui/TableRow'
 import TextInput from '@/shared/ui/TextInput'
 import ToggleSwitch from '@/shared/ui/ToggleSwitch'
@@ -20,19 +21,15 @@ import Tooltip from '@/shared/ui/Tooltip'
 import Alert from '@/shared/widgets/Alert'
 import DragDrop from '@/shared/widgets/DragDrop'
 import FilePicker from '@/shared/widgets/FilePicker'
-import { sanitizeFileName, SupportedFileTypes } from '@/shared/lib/fileUtils'
-import { bytesPretty } from '@/shared/lib/string'
 import { Library } from '@/types/api'
-
-import { CleanedItem, FileWithMetadata, getItemsFromFilelist, upload, UploadProgressInfo } from './UploadHelper'
 import { fetchBookMetadata, fetchPodcastMetadata, getCookie } from './actions'
+import { CleanedItem, FileWithMetadata, getItemsFromFilelist, UploadProgressInfo, upload } from './UploadHelper'
 
 interface LibraryClientProps {
   libraries: Library[]
 }
 
-import { useUploader } from './useUploader'
-import { ItemToUpload } from './useUploader'
+import { ItemToUpload, useUploader } from './useUploader'
 
 export default function UploadClient({ libraries }: LibraryClientProps) {
   const {

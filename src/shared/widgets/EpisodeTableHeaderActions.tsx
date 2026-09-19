@@ -1,14 +1,14 @@
+import { AnimatePresence, motion } from 'framer-motion'
+import { Podcast, Trash2, X } from 'lucide-react'
+import { useState, useTransition } from 'react'
 import { batchUpdateMediaFinishedAction, deleteLibraryItemMediaEpisodeAction } from '@/features/player/actions/mediaActions'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Btn from '@/shared/ui/Btn'
 import IconBtn from '@/shared/ui/IconBtn'
 import ReadIconBtn from '@/shared/ui/ReadIconBtn'
 import Tooltip from '@/shared/ui/Tooltip'
 import ConfirmDialog, { type ConfirmState } from '@/shared/widgets/ConfirmDialog'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { Trash2, X, Podcast } from 'lucide-react'
-import { useState, useTransition } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 interface EpisodeTableHeaderActionsProps {
   isSelectionMode: boolean

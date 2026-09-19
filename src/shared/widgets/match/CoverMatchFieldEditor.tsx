@@ -1,10 +1,10 @@
 'use client'
 
+import { useMemo } from 'react'
 import PreviewCover from '@/features/metadata/components/PreviewCover'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Checkbox from '@/shared/ui/Checkbox'
 import TextInput from '@/shared/ui/TextInput'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { useMemo } from 'react'
 
 interface CoverMatchFieldEditorProps {
   usageChecked: boolean

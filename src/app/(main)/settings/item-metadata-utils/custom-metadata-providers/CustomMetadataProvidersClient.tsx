@@ -1,11 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { CustomMetadataProvider } from '@/types/api'
-import { useState } from 'react'
 import SettingsContent from '../../SettingsContent'
-import { createCustomMetadataProvider, deleteCustomMetadataProvider } from './actions'
 import AddCustomMetadataProviderModal from './AddCustomMetadataProviderModal'
+import { createCustomMetadataProvider, deleteCustomMetadataProvider } from './actions'
 import CustomMetadataProvidersTable from './CustomMetadataProvidersTable'
 
 interface CustomMetadataProvidersClientProps {

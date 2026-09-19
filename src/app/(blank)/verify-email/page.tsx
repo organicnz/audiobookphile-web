@@ -1,5 +1,5 @@
-import AuthCard from '@/features/auth/components/AuthCard'
 import Link from 'next/link'
+import AuthCard from '@/features/auth/components/AuthCard'
 
 export const dynamic = 'force-dynamic'
 

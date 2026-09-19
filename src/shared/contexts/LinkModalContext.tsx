@@ -1,8 +1,8 @@
 'use client'
 
-import { useLinkModal } from '@/shared/hooks/useLinkModal'
 import React, { createContext, ReactNode, useContext } from 'react'
 import { Editor } from 'slate'
+import { useLinkModal } from '@/shared/hooks/useLinkModal'
 
 interface LinkModalContextType {
   isOpen: boolean

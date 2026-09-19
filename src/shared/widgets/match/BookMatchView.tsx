@@ -1,5 +1,9 @@
 'use client'
 
+import { useCallback, useMemo, useState } from 'react'
+import { useMultiSelectMatchField } from '@/features/metadata/hooks/useMultiSelectMatchField'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { getMatchBooleanValue, getMatchStringValue, processBookMatchData } from '@/shared/lib/matchUtils'
 import { MultiSelectItem } from '@/shared/ui/MultiSelect'
 import BaseMatchView from '@/shared/widgets/match/BaseMatchView'
 import CheckboxMatchFieldEditor from '@/shared/widgets/match/CheckboxMatchFieldEditor'
@@ -8,11 +12,7 @@ import MultiSelectMatchFieldEditor from '@/shared/widgets/match/MultiSelectMatch
 import SlateEditorMatchFieldEditor from '@/shared/widgets/match/SlateEditorMatchFieldEditor'
 import TextInputMatchFieldEditor from '@/shared/widgets/match/TextInputMatchFieldEditor'
 import TwoStageMultiSelectMatchFieldEditor from '@/shared/widgets/match/TwoStageMultiSelectMatchFieldEditor'
-import { useMultiSelectMatchField } from '@/features/metadata/hooks/useMultiSelectMatchField'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { getMatchBooleanValue, getMatchStringValue, processBookMatchData } from '@/shared/lib/matchUtils'
 import { BookLibraryItem, BookSearchResult, isBookMedia, UpdateLibraryItemMediaPayload } from '@/types/api'
-import { useCallback, useMemo, useState } from 'react'
 
 interface BookMatchUsage {
   title: boolean

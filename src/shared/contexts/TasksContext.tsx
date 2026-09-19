@@ -1,8 +1,8 @@
 'use client'
 
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { getTasksAction } from '@/features/tools/actions/toolsActions'
 import { MetadataEmbedQueueUpdate, Task, TaskProgressPayload, TrackFinishedPayload, TrackProgressPayload, TrackStartedPayload } from '@/types/api'
-import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useSocketEvent } from './SocketContext'
 
 interface TasksState {

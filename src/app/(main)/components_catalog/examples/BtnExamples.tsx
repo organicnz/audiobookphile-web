@@ -1,6 +1,6 @@
 'use client'
-import Btn from '@/shared/ui/Btn'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import Btn from '@/shared/ui/Btn'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // Button Examples

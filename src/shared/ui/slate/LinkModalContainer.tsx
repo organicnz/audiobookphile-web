@@ -1,7 +1,7 @@
 'use client'
 
-import { useLinkModalContext } from '@/shared/contexts/LinkModalContext'
 import { memo } from 'react'
+import { useLinkModalContext } from '@/shared/contexts/LinkModalContext'
 import { LinkModal } from './LinkModal'
 
 export const LinkModalContainer = memo(() => {

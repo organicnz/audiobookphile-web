@@ -1,11 +1,11 @@
 'use client'
 
-import Label from '@/shared/ui/Label'
-import { slateElementStyles } from '@/shared/ui/slate/constants'
-import SlateEditor from '@/shared/ui/SlateEditor'
-import TextareaInput from '@/shared/ui/TextareaInput'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { useState } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
+import Label from '@/shared/ui/Label'
+import SlateEditor from '@/shared/ui/SlateEditor'
+import { slateElementStyles } from '@/shared/ui/slate/constants'
+import TextareaInput from '@/shared/ui/TextareaInput'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function SlateEditorExamples() {

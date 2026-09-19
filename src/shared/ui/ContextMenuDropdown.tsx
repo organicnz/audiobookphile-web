@@ -1,10 +1,10 @@
 'use client'
 
-import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
+import { useCallback, useId, useRef, useState } from 'react'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { useCallback, useId, useRef, useState } from 'react'
+import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
 import ContextMenu, { ContextMenuItem } from './ContextMenu'
 import IconBtn from './IconBtn'
 

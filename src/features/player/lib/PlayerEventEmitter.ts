@@ -1,4 +1,4 @@
-import { PlayerEventMap, PlayerEventCallback } from './types'
+import { PlayerEventCallback, PlayerEventMap } from './types'
 
 type EventListeners = {
   [K in keyof PlayerEventMap]?: Set<PlayerEventCallback<K>>

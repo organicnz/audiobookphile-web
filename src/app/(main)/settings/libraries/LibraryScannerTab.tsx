@@ -1,12 +1,12 @@
 'use client'
 
+import { GripVertical } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Btn from '@/shared/ui/Btn'
 import ToggleSwitch from '@/shared/ui/ToggleSwitch'
 import SortableList from '@/shared/widgets/SortableList'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { LibrarySettings } from '@/types/api'
-import { useMemo, useState } from 'react'
-import { GripVertical } from 'lucide-react'
 import SettingsMoreInfoIcon from '../SettingsMoreInfoIcon'
 
 interface MetadataSource {

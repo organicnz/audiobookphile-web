@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import {
   Author,
   AuthorImagePayload,
@@ -55,7 +56,6 @@ import {
   UserLoginResponse
 } from '@/types/api'
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
-import { cache } from 'react'
 import { apiRequest } from './client'
 
 export async function changePassword(newPassword: string): Promise<void> {

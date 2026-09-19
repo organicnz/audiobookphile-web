@@ -1,11 +1,11 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { useState, useTransition } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
 
 interface ChangePasswordClientProps {
   changePassword: (oldPassword: string, newPassword: string) => Promise<void>

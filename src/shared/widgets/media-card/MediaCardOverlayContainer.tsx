@@ -1,5 +1,5 @@
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { memo, type ReactNode } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface MediaCardOverlayContainerProps {
   /** Content to render inside the overlay */

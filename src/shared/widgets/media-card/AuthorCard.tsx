@@ -1,20 +1,20 @@
 'use client'
 
+import { CheckCircle2, Circle, Edit2, Search } from 'lucide-react'
+import { useParams, useRouter } from 'next/navigation'
+import { memo, useCallback, useId, useState } from 'react'
+import { useCardSize } from '@/features/library/contexts/CardSizeContext'
+import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import AuthorImage from '@/features/metadata/components/AuthorImage'
+import { useAuthorActions } from '@/features/metadata/hooks/useAuthorActions'
+import { useUser } from '@/shared/contexts/UserContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import AuthorEditModal from '@/shared/modals/AuthorEditModal'
 import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
 import MediaCardFrame from '@/shared/widgets/media-card/MediaCardFrame'
 import MediaCardOverlayContainer from '@/shared/widgets/media-card/MediaCardOverlayContainer'
 import MediaOverlayIconBtn from '@/shared/widgets/media-card/MediaOverlayIconBtn'
-import { useCardSize } from '@/features/library/contexts/CardSizeContext'
-import { useLibrary } from '@/features/library/contexts/LibraryContext'
-import { useUser } from '@/shared/contexts/UserContext'
-import { useAuthorActions } from '@/features/metadata/hooks/useAuthorActions'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import type { Author } from '@/types/api'
-import { useParams, useRouter } from 'next/navigation'
-import { memo, useCallback, useId, useState } from 'react'
-import { Search, Edit2, CheckCircle2, Circle } from 'lucide-react'
 
 export interface AuthorCardProps {
   /** The author to display */

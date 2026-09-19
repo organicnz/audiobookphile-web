@@ -1,11 +1,11 @@
 'use client'
 
+import { useEffect, useMemo, useState } from 'react'
+import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
 import PreviewCover from '@/features/metadata/components/PreviewCover'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Modal from '@/shared/modals/Modal'
 import Btn from '@/shared/ui/Btn'
-import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { useEffect, useMemo, useState } from 'react'
 
 // Constants for layout calculations to avoid magic numbers in the component.
 const MODAL_VERTICAL_MARGIN = 32

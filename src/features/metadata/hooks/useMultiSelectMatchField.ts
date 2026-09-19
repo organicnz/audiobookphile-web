@@ -1,5 +1,5 @@
-import { MultiSelectItem } from '@/shared/ui/MultiSelect'
 import { useCallback, useMemo } from 'react'
+import { MultiSelectItem } from '@/shared/ui/MultiSelect'
 
 /**
  * Generic hook for managing multi-select fields in match views

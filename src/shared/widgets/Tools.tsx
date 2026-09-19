@@ -1,16 +1,16 @@
 'use client'
 
+import { ExternalLink } from 'lucide-react'
+import { useCallback, useId, useMemo, useState, useTransition } from 'react'
 import { embedMetadataQuickAction } from '@/features/tools/actions/toolsActions'
-import Btn from '@/shared/ui/Btn'
-import Alert from '@/shared/widgets/Alert'
-import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
 import { useTasks } from '@/shared/contexts/TasksContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { LibraryItem, isBookLibraryItem } from '@/types/api'
+import Btn from '@/shared/ui/Btn'
+import Alert from '@/shared/widgets/Alert'
+import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
+import { isBookLibraryItem, LibraryItem } from '@/types/api'
 import { TranslationKey } from '@/types/translations'
-import { ExternalLink } from 'lucide-react'
-import { useCallback, useId, useMemo, useState, useTransition } from 'react'
 
 interface ToolsProps {
   libraryItem: LibraryItem

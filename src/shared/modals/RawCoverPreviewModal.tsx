@@ -1,8 +1,8 @@
 'use client'
 
-import Modal from '@/shared/modals/Modal'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Image from 'next/image'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import Modal from '@/shared/modals/Modal'
 
 interface RawCoverPreviewModalProps {
   isOpen: boolean

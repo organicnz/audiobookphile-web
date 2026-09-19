@@ -1,8 +1,8 @@
 'use client'
 
-import { Suspense, use } from 'react'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
+import { Suspense, use } from 'react'
 
 async function LocaleContent({ children }: { children: React.ReactNode }) {
   const locale = await getLocale()

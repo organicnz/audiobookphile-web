@@ -1,8 +1,8 @@
 'use client'
 
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { TranslationKey } from '@/types/translations'
-import { Fragment, useEffect, useRef, useState } from 'react'
 import Modal from '../modals/Modal'
 import Btn from './Btn'
 import IconBtn from './IconBtn'

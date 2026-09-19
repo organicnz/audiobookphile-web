@@ -1,10 +1,10 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+import DOMPurify from 'isomorphic-dompurify'
 import { ChevronDown } from 'lucide-react'
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
-import DOMPurify from 'isomorphic-dompurify'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 
 interface ExpandableHtmlProps {
   html: string

@@ -1,11 +1,11 @@
 'use client'
 
+import { useCallback, useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { ApiKey, User } from '@/types/api'
-import { useCallback, useState } from 'react'
 import SettingsContent from '../SettingsContent'
-import { createApiKey, updateApiKey } from './actions'
 import ApiKeysTable from './ApiKeysTable'
+import { createApiKey, updateApiKey } from './actions'
 import EditApiKeyModal, { ApiKeyFormData } from './EditApiKeyModal'
 import NewApiKeyModal from './NewApiKeyModal'
 

@@ -1,9 +1,9 @@
 'use client'
 
-import SimpleDataTable, { DataTableColumn } from '@/shared/ui/SimpleDataTable'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { MediaProgress, User } from '@/types/api'
 import { formatDistanceToNow } from 'date-fns'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import SimpleDataTable, { DataTableColumn } from '@/shared/ui/SimpleDataTable'
+import { MediaProgress, User } from '@/types/api'
 
 export default function UserClient({ user }: { user: User }) {
   const t = useTypeSafeTranslations()

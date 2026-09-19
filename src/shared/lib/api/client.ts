@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { ApiError, NetworkError, UnauthorizedError } from '../apiErrors'
-import { getServerBaseUrl, getClientBaseUrlFromRequest, parseApiResponseBody, fetchAsResult, type ApiResult } from './base'
+import { type ApiResult, fetchAsResult, getClientBaseUrlFromRequest, getServerBaseUrl, parseApiResponseBody } from './base'
 
 /**
  * Send the browser to /login with an error hint and drop refresh cookie (session cannot continue).

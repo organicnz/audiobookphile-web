@@ -1,9 +1,9 @@
 'use client'
 
-import MediaPlayerContainer from '@/features/player/components/MediaPlayerContainer'
-import { usePlayerHandler, type PlayerHandlerControls, type PlayerHandlerState } from '@/features/player/hooks/usePlayerHandler'
-import { LibraryItem, PlayerState } from '@/types/api'
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import MediaPlayerContainer from '@/features/player/components/MediaPlayerContainer'
+import { type PlayerHandlerControls, type PlayerHandlerState, usePlayerHandler } from '@/features/player/hooks/usePlayerHandler'
+import { LibraryItem, PlayerState } from '@/types/api'
 
 export interface PlayerQueueItem {
   libraryItemId: string

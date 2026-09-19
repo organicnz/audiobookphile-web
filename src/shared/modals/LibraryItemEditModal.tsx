@@ -1,17 +1,17 @@
 'use client'
 
+import { type TransitionStartFunction, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { updateLibraryItemMediaAction } from '@/features/player/actions/mediaActions'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import LibraryItemModal, { useLibraryItemModal, type LibraryItemModalItemSource } from '@/shared/modals/LibraryItemModal'
+import LibraryItemModal, { type LibraryItemModalItemSource, useLibraryItemModal } from '@/shared/modals/LibraryItemModal'
 import Btn from '@/shared/ui/Btn'
 import LoadingIndicator from '@/shared/ui/LoadingIndicator'
 import BookDetailsEdit, { BookDetailsEditRef, BookUpdatePayload } from '@/shared/widgets/BookDetailsEdit'
 import PodcastDetailsEdit, { PodcastDetailsEditRef, PodcastUpdatePayload } from '@/shared/widgets/PodcastDetailsEdit'
 import type { BookMedia, BookMetadata, PodcastMedia, PodcastMetadata } from '@/types/api'
 import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition, type TransitionStartFunction } from 'react'
 
 function createPlaceholderBookLibraryItem(id: string, libraryId: string): BookLibraryItem {
   const metadata: BookMetadata = {

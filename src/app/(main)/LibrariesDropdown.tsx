@@ -1,10 +1,10 @@
 'use client'
 
-import Dropdown from '@/shared/ui/Dropdown'
-import { getLibrarySlug } from '@/shared/lib/library-slugs'
-import { Library } from '@/types/api'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTransition } from 'react'
+import { getLibrarySlug } from '@/shared/lib/library-slugs'
+import Dropdown from '@/shared/ui/Dropdown'
+import { Library } from '@/types/api'
 
 interface LibrariesDropdownProps {
   libraries: Library[]

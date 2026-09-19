@@ -1,9 +1,8 @@
 'use server'
 
-import { getLibraryItem } from '@/shared/lib/api'
-import type { UpdateLibraryItemMediaPayload } from '@/types/api'
-import { apiRequest } from '@/shared/lib/api'
 import { revalidatePath } from 'next/cache'
+import { apiRequest, getLibraryItem } from '@/shared/lib/api'
+import type { UpdateLibraryItemMediaPayload } from '@/types/api'
 
 export async function toggleFinishedAction(libraryItemId: string, params: { isFinished: boolean; episodeId?: string }) {
   return await apiRequest(`/api/me/progress/${libraryItemId}`, {

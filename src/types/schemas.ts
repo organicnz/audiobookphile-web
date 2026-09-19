@@ -13,8 +13,9 @@
  * pinned to `BookMetadataFlat` (from `@/types/api/models`) so that schema /
  * interface drift is caught at compile time.
  */
-import type { BookMetadataFlat } from '@/types/api/models'
+
 import { z } from 'zod'
+import type { BookMetadataFlat } from '@/types/api/models'
 
 export const AudioMetadataSchema = z.object({
   filename: z.string().nullish(),

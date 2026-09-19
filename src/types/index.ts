@@ -7,8 +7,8 @@
  * Requirements: 13.2, 13.3, 13.4
  */
 
-import type { Tables } from './supabase'
 import type { AudioFileModel, ChapterModel } from './schemas'
+import type { Tables } from './supabase'
 
 // ---------------------------------------------------------------------------
 // Base table aliases

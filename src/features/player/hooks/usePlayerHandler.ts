@@ -1,12 +1,12 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePlaybackSession } from '@/features/player/hooks/usePlaybackSession'
-import { usePlayerSettings, type PlayerSettings, type UsePlayerSettingsReturn } from '@/features/player/hooks/usePlayerSettings'
+import { type PlayerSettings, type UsePlayerSettingsReturn, usePlayerSettings } from '@/features/player/hooks/usePlayerSettings'
 import { AudioTrack } from '@/features/player/lib/AudioTrack'
 import { LocalAudioPlayer } from '@/features/player/lib/LocalAudioPlayer'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import type { Chapter, LibraryItem, PlaybackSession, PlayMethod } from '@/types/api'
 import { PlayerState } from '@/types/api'
-import { useCallback, useEffect, useRef, useState } from 'react'
 
 export interface PlayerHandlerState {
   /** Current player state */

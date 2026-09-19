@@ -1,8 +1,8 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { motion } from 'framer-motion'
 
 interface BookShelfGridProps {
   title: string

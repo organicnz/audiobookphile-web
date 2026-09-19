@@ -1,9 +1,9 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { getLibraryItemCoverSrc, getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import type { LibraryItem } from '@/types/api'
-import { useMemo } from 'react'
 
 interface CollectionGroupCoverProps {
   /** Books in the collection */

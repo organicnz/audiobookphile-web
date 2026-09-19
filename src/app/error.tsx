@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
 import * as Sentry from '@sentry/nextjs'
+import { useEffect } from 'react'
 import Btn from '@/shared/ui/Btn'
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {

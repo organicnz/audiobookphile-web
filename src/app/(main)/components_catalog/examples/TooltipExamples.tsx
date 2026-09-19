@@ -1,13 +1,13 @@
 'use client'
 
+import { Settings } from 'lucide-react'
+import { useState } from 'react'
 import Modal from '@/shared/modals/Modal'
 import Btn from '@/shared/ui/Btn'
 import IconBtn from '@/shared/ui/IconBtn'
 import TextInput from '@/shared/ui/TextInput'
 import Tooltip from '@/shared/ui/Tooltip'
-import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
-import { Settings } from 'lucide-react'
 
 export function TooltipExamples() {
   const [isTooltipModalOpen, setIsTooltipModalOpen] = useState(false)

@@ -1,12 +1,12 @@
-import LoadingIndicator from '@/shared/ui/LoadingIndicator'
+import { AnimatePresence, motion } from 'framer-motion'
+import { X } from 'lucide-react'
+import React, { ReactNode, useCallback, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { ModalProvider } from '@/shared/contexts/ModalContext'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { X } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import React, { ReactNode, useCallback, useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
+import LoadingIndicator from '@/shared/ui/LoadingIndicator'
 
 export interface ModalProps {
   isOpen: boolean

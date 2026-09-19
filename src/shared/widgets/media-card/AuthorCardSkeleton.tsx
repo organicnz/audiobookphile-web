@@ -1,8 +1,8 @@
 'use client'
 
+import { useId, useMemo } from 'react'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { useId, useMemo } from 'react'
 
 interface AuthorCardSkeletonProps {
   sizeMultiplier?: number

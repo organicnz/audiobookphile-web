@@ -1,8 +1,8 @@
 'use client'
 
-import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { useMemo } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
 
 interface EpisodesFilterSelectProps {
   value: string

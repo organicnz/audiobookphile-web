@@ -1,7 +1,7 @@
 'use client'
-import TextInput from '@/shared/ui/TextInput'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import TextInput from '@/shared/ui/TextInput'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // TextInput Examples

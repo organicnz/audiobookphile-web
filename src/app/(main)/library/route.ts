@@ -1,7 +1,7 @@
+import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/shared/lib/api'
 import { getLibraries } from '@/shared/lib/api/libraries'
 import { getLibrarySlug } from '@/shared/lib/library-slugs'
-import { redirect } from 'next/navigation'
 
 /**
  * GET /library

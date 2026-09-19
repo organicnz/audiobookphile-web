@@ -1,11 +1,20 @@
 'use client'
 
+import { useCallback, useMemo, useState, useTransition } from 'react'
+import { useLibraryFileActions } from '@/features/library/hooks/useLibraryFileActions'
 import {
   batchUpdateMediaFinishedAction,
   deleteLibraryItemMediaEpisodeAction,
   fetchPodcastFeedAction,
   toggleFinishedAction
 } from '@/features/player/actions/mediaActions'
+import { useMediaContext } from '@/features/player/contexts/MediaContext'
+import { useEpisodeFilterAndSort } from '@/features/player/hooks/useEpisodeFilterAndSort'
+import { useEpisodeTableVirtualizer } from '@/features/player/hooks/useEpisodeTableVirtualizer'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useUser } from '@/shared/contexts/UserContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { buildPodcastEpisodeProgressMap } from '@/shared/lib/mediaProgress'
 import AudioFileDataModal from '@/shared/modals/AudioFileDataModal'
 import EpisodeFeedModal from '@/shared/modals/EpisodeFeedModal'
 import ViewEpisodeModal from '@/shared/modals/ViewEpisodeModal'
@@ -13,16 +22,7 @@ import EpisodeRow, { EPISODE_ROW_HEIGHT_PX } from '@/shared/widgets/EpisodeRow'
 import EpisodeTableHeaderActions from '@/shared/widgets/EpisodeTableHeaderActions'
 import EpisodeTableToolbar from '@/shared/widgets/EpisodeTableToolbar'
 import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
-import { useMediaContext } from '@/features/player/contexts/MediaContext'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useUser } from '@/shared/contexts/UserContext'
-import { useEpisodeFilterAndSort } from '@/features/player/hooks/useEpisodeFilterAndSort'
-import { useEpisodeTableVirtualizer } from '@/features/player/hooks/useEpisodeTableVirtualizer'
-import { useLibraryFileActions } from '@/features/library/hooks/useLibraryFileActions'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { buildPodcastEpisodeProgressMap } from '@/shared/lib/mediaProgress'
 import { PodcastEpisode, PodcastEpisodeDownload, PodcastLibraryItem, RssPodcastEpisode } from '@/types/api'
-import { useCallback, useMemo, useState, useTransition } from 'react'
 
 interface EpisodeTableProps {
   libraryItem: PodcastLibraryItem

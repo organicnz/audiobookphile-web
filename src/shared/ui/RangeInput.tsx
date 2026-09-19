@@ -1,8 +1,8 @@
 'use client'
 
+import React, { useId } from 'react'
 import { useMergedRef } from '@/shared/hooks/useMergedRef'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import React, { useId } from 'react'
 import InputWrapper from './InputWrapper'
 import Label from './Label'
 

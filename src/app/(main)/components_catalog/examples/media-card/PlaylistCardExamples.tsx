@@ -1,9 +1,9 @@
 'use client'
 
+import { useRef, useState } from 'react'
 import PlaylistCard from '@/shared/widgets/media-card/PlaylistCard'
 import PlaylistCardSkeleton from '@/shared/widgets/media-card/PlaylistCardSkeleton'
 import { BookshelfView, Playlist } from '@/types/api'
-import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
 import { DimensionComparison, Dimensions, useDimensionMeasurement } from './mediaCardExamplesUtils'
 

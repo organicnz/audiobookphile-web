@@ -1,11 +1,11 @@
 'use client'
 
+import { useRef, useState } from 'react'
+import { useComponentsCatalog } from '@/shared/contexts/ComponentsCatalogContext'
 import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
 import CollapsedSeriesCard from '@/shared/widgets/media-card/CollapsedSeriesCard'
 import MediaCardSkeleton from '@/shared/widgets/media-card/MediaCardSkeleton'
-import { useComponentsCatalog } from '@/shared/contexts/ComponentsCatalogContext'
 import { BookLibraryItem, BookshelfView, EReaderDevice, MediaProgress } from '@/types/api'
-import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
 import { DimensionComparison, Dimensions, useDimensionMeasurement } from './mediaCardExamplesUtils'
 

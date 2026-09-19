@@ -1,9 +1,9 @@
 'use client'
 
+import { AlertCircle, Home, RefreshCw } from 'lucide-react'
 import { catchError, type ErrorInfo } from 'next/error'
-import { AlertCircle, RefreshCw, Home } from 'lucide-react'
-import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 function ErrorFallback({ title }: { title: string }, { error, retry }: ErrorInfo) {
   const t = useTranslations('ErrorBoundary')

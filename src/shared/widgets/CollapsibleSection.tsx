@@ -1,7 +1,7 @@
-import IconBtn from '@/shared/ui/IconBtn'
+import { KeyboardEvent, MouseEvent, ReactNode, useCallback, useId, useMemo, useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { KeyboardEvent, MouseEvent, ReactNode, useCallback, useId, useMemo, useState } from 'react'
+import IconBtn from '@/shared/ui/IconBtn'
 
 interface CollapsibleSectionProps {
   /** Title displayed in the header */

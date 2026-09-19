@@ -1,6 +1,6 @@
 'use client'
-import DurationPicker from '@/features/player/components/DurationPicker'
 import { useState } from 'react'
+import DurationPicker from '@/features/player/components/DurationPicker'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // DurationPicker Examples

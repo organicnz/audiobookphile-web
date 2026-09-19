@@ -1,8 +1,8 @@
 'use client'
 
-import Modal from '@/shared/modals/Modal'
-import { Sparkles, CheckCircle2, AlertTriangle, Loader2, BookOpen } from 'lucide-react'
+import { AlertTriangle, BookOpen, CheckCircle2, Loader2, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import Modal from '@/shared/modals/Modal'
 
 export interface ChapterAIModalProps {
   isOpen: boolean

@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState, type RefObject } from 'react'
+import { type RefObject, useCallback, useLayoutEffect, useRef, useState } from 'react'
 
 /**
  * Custom hook to detect if text content is truncated using ResizeObserver.

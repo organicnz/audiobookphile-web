@@ -1,13 +1,13 @@
 'use client'
 
+import { arrow as arrowMw, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react-dom'
+import { Minus, Plus } from 'lucide-react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { UsePlayerHandlerReturn } from '@/features/player/hooks/usePlayerHandler'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { arrow as arrowMw, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react-dom'
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import IconBtn from '../../../shared/ui/IconBtn'
-import { Plus, Minus } from 'lucide-react'
 
 interface PlaybackRateWidgetProps {
   playerHandler: UsePlayerHandlerReturn

@@ -1,8 +1,8 @@
 'use server'
 
-import type { Library } from '@/types/api'
-import { deleteUser as apiDeleteUser, getLibraries } from '@/shared/lib/api'
 import { revalidatePath } from 'next/cache'
+import { deleteUser as apiDeleteUser, getLibraries } from '@/shared/lib/api'
+import type { Library } from '@/types/api'
 
 export async function deleteUser(userId: string): Promise<void> {
   try {

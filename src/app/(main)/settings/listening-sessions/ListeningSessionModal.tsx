@@ -1,15 +1,15 @@
 'use client'
 
-import Modal from '@/shared/modals/Modal'
-import Btn from '@/shared/ui/Btn'
-import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
+import { useMemo, useState } from 'react'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { formatJsDatetime, secondsToTimestamp } from '@/shared/lib/datefns'
 import { formatDuration } from '@/shared/lib/formatDuration'
+import Modal from '@/shared/modals/Modal'
+import Btn from '@/shared/ui/Btn'
+import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
 import { PlaybackSession, PlayMethod } from '@/types/api'
-import { useMemo, useState } from 'react'
 import { closeListeningSession, deleteListeningSession } from './actions'
 
 interface ListeningSessionModalProps {

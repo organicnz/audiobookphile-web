@@ -1,5 +1,5 @@
-import { createClient } from '@/shared/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import { createClient } from '@/shared/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 

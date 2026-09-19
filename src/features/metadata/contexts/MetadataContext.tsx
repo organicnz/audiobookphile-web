@@ -1,8 +1,8 @@
 'use client'
 
+import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { getMetadataProvidersAction } from '@/features/metadata/actions/providerActions'
 import { MetadataProvider as MetadataProviderType } from '@/types/api'
-import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { useSocketEvent } from '../../../shared/contexts/SocketContext'
 
 interface MetadataState {

@@ -1,7 +1,7 @@
 'use server'
 
-import { updateNarrator as apiUpdateNarrator, deleteNarrator as apiDeleteNarrator } from '@/shared/lib/api'
 import { revalidatePath } from 'next/cache'
+import { deleteNarrator as apiDeleteNarrator, updateNarrator as apiUpdateNarrator } from '@/shared/lib/api'
 
 export type SaveNarratorApiResponse = {
   updated: number

@@ -1,7 +1,7 @@
 'use client'
 
-import RangeInput from '@/shared/ui/RangeInput'
 import { useState } from 'react'
+import RangeInput from '@/shared/ui/RangeInput'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function RangeInputExamples() {

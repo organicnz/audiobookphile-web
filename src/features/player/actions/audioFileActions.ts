@@ -1,7 +1,7 @@
 'use server'
 
-import type { FFProbeData } from '@/types/api'
 import { apiRequest } from '@/shared/lib/api/client'
+import type { FFProbeData } from '@/types/api'
 
 /**
  * FFProbe data is not available — audio metadata isn't extracted during upload.

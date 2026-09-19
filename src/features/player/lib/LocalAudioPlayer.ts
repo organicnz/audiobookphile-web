@@ -3,9 +3,9 @@ import { PlayerState } from '@/types/api'
 import type { AudioTrack } from './AudioTrack'
 import { AUDIO_MIME_TYPES } from './constants'
 import { PlayerEventEmitter } from './PlayerEventEmitter'
-import type { IAudioProvider } from './types'
-import { NativeAudioProvider } from './providers/NativeAudioProvider'
 import { HlsAudioProvider } from './providers/HlsAudioProvider'
+import { NativeAudioProvider } from './providers/NativeAudioProvider'
+import type { IAudioProvider } from './types'
 
 export class LocalAudioPlayer extends PlayerEventEmitter {
   private player: HTMLAudioElement | null = null

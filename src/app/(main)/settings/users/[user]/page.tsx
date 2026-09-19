@@ -1,7 +1,7 @@
-import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
-import { getUsers } from '@/shared/lib/api'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { getUsers } from '@/shared/lib/api'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import UserClient from './UserClient'
 
 export const dynamic = 'force-dynamic'

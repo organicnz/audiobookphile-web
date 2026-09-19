@@ -1,5 +1,5 @@
-import type { MediaProgressRow, PlaybackSessionRow } from '@/shared/lib/api/stats'
 import { differenceInCalendarDays, format, startOfDay, subDays } from 'date-fns'
+import type { MediaProgressRow, PlaybackSessionRow } from '@/shared/lib/api/stats'
 
 // ─── Summary ──────────────────────────────────────────────────────────────────
 

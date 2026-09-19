@@ -1,10 +1,10 @@
 'use client'
 
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { getLibraryItemCoverSrc, getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { LibraryItem } from '@/types/api'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface SeriesGroupCoverProps {
   /** Series name (used as fallback when no covers available) */

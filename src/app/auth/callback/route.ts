@@ -1,6 +1,6 @@
+import type { EmailOtpType } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/shared/utils/supabase/server'
-import type { EmailOtpType } from '@supabase/supabase-js'
 
 const APP_DEEP_LINK_SCHEME = 'audiobookphile://'
 

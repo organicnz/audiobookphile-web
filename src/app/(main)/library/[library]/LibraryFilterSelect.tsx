@@ -1,12 +1,12 @@
 'use client'
 
-import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
+import { Filter, X } from 'lucide-react'
+import { useCallback, useMemo } from 'react'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { filterDecode, filterEncode } from '@/shared/lib/filterUtils'
+import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
 import { EntityType, User } from '@/types/api'
-import { X, Filter } from 'lucide-react'
-import { useCallback, useMemo } from 'react'
 
 interface LibraryFilterSelectProps {
   entityType?: EntityType

@@ -1,11 +1,11 @@
 'use client'
 
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
 import { getLibraryItemCoverSrc, getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { PlaylistItem } from '@/types/api'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface PlaylistGroupCoverProps {
   /** Items in the playlist */

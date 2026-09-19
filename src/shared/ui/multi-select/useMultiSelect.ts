@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import type { MultiSelectItem, MultiSelectProps } from '../MultiSelect'
 import type { DropdownMenuItem } from '../DropdownMenu'
+import type { MultiSelectItem, MultiSelectProps } from '../MultiSelect'
 
 export function useMultiSelect<T = string>({
   value,

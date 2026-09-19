@@ -1,9 +1,9 @@
 'use client'
 
-import Checkbox from '@/shared/ui/Checkbox'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { TranslationKey } from '@/types/translations'
 import { memo } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import Checkbox from '@/shared/ui/Checkbox'
+import { TranslationKey } from '@/types/translations'
 import { BaseMatchFieldEditor } from './BaseMatchFieldEditor'
 
 interface CheckboxMatchFieldEditorProps {

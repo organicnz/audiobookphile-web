@@ -1,10 +1,10 @@
 'use client'
 
+import type { PlayerSettings } from '@/features/player/hooks/usePlayerSettings'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Modal from '@/shared/modals/Modal'
 import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
 import ToggleSwitch from '@/shared/ui/ToggleSwitch'
-import type { PlayerSettings } from '@/features/player/hooks/usePlayerSettings'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 
 interface PlayerSettingsModalProps {
   isOpen: boolean

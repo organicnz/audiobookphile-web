@@ -3,9 +3,8 @@
 import React, { memo, useCallback, useMemo } from 'react'
 import { Editor } from 'slate'
 import { useSlate } from 'slate-react'
-
-import IconBtn from '@/shared/ui/IconBtn'
 import { mergeClasses } from '@/shared/lib/merge-classes'
+import IconBtn from '@/shared/ui/IconBtn'
 import { CustomText } from '@/types/slate'
 import { buttonClassBase } from './constants'
 

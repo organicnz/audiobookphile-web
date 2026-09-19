@@ -1,8 +1,8 @@
 'use client'
 
+import { useCallback, useId, useRef, useState } from 'react'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { useCallback, useId, useRef, useState } from 'react'
 import DropdownMenu, { DropdownMenuItem, DropdownMenuSubitem } from './DropdownMenu'
 
 interface MenuProps {

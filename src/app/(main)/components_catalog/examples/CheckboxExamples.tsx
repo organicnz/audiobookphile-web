@@ -1,6 +1,6 @@
 'use client'
-import Checkbox from '@/shared/ui/Checkbox'
 import { useState } from 'react'
+import Checkbox from '@/shared/ui/Checkbox'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // Checkbox Examples

@@ -1,6 +1,6 @@
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { motion } from 'framer-motion'
 import { type ReactNode } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface MediaCardFrameProps {
   width: number | string

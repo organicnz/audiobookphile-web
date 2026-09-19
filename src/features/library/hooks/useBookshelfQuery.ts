@@ -1,7 +1,7 @@
-import { LibrarySettingKey, useLibrary } from '@/features/library/contexts/LibraryContext'
-import { EntityType } from '@/types/api'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef } from 'react'
+import { LibrarySettingKey, useLibrary } from '@/features/library/contexts/LibraryContext'
+import { EntityType } from '@/types/api'
 
 export function useBookshelfQuery(entityType: EntityType) {
   const {

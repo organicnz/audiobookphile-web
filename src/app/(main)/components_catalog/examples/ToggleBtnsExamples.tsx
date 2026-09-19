@@ -1,6 +1,6 @@
 'use client'
-import ToggleButtonGroup from '@/shared/ui/ToggleButtonGroup'
 import { useState } from 'react'
+import ToggleButtonGroup from '@/shared/ui/ToggleButtonGroup'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // Toggle Button Examples

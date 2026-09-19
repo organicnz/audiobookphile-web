@@ -1,10 +1,10 @@
 'use client'
 
+import { memo, useCallback } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { MultiSelectItem } from '@/shared/ui/MultiSelect'
 import TwoStageMultiSelect from '@/shared/ui/TwoStageMultiSelect'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { Series } from '@/types/api'
-import { memo, useCallback } from 'react'
 import { BaseMatchFieldEditor } from './BaseMatchFieldEditor'
 
 interface TwoStageMultiSelectMatchFieldEditorProps {

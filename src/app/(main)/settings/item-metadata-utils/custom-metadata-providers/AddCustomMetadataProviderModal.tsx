@@ -1,12 +1,12 @@
 'use client'
 
+import { useState } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Modal from '@/shared/modals/Modal'
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { CreateCustomMetadataProviderPayload } from '@/types/api'
-import { useState } from 'react'
 
 interface AddCustomMetadataProviderModalProps {
   isOpen: boolean

@@ -1,14 +1,14 @@
 'use client'
 
+import { useCallback, useEffect, useState, useTransition } from 'react'
 import { updateCollectionAction } from '@/features/library/actions/collectionActions'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Modal from '@/shared/modals/Modal'
 import Btn from '@/shared/ui/Btn'
 import TextareaInput from '@/shared/ui/TextareaInput'
 import TextInput from '@/shared/ui/TextInput'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import type { Collection } from '@/types/api'
-import { useCallback, useEffect, useState, useTransition } from 'react'
 
 interface CollectionEditModalProps {
   isOpen: boolean

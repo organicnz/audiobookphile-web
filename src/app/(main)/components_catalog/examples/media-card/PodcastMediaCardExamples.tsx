@@ -1,11 +1,11 @@
 'use client'
 
+import { useRef, useState } from 'react'
+import { useComponentsCatalog } from '@/shared/contexts/ComponentsCatalogContext'
 import MediaCardSkeleton from '@/shared/widgets/media-card/MediaCardSkeleton'
 import PodcastEpisodeCard from '@/shared/widgets/media-card/PodcastEpisodeCard'
 import PodcastMediaCard from '@/shared/widgets/media-card/PodcastMediaCard'
-import { useComponentsCatalog } from '@/shared/contexts/ComponentsCatalogContext'
 import { BookshelfView, EReaderDevice, PodcastEpisode, PodcastLibraryItem } from '@/types/api'
-import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
 import { DimensionComparison, Dimensions, useDimensionMeasurement } from './mediaCardExamplesUtils'
 

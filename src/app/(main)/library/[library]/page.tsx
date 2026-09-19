@@ -1,6 +1,6 @@
+import { redirect } from 'next/navigation'
 import { apiFetch } from '@/shared/lib/api/client'
 import { getLibrarySlug, resolveLibraryFromParam } from '@/shared/lib/library-slugs'
-import { redirect } from 'next/navigation'
 import type { GetLibrariesResponse, PersonalizedShelf } from '@/types/api'
 import LibraryClient from './LibraryClient'
 

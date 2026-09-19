@@ -1,9 +1,9 @@
 // Imported only from client modules — omitting "use client" avoids Next TS 71007 on hook option types (not suppressible via eslint-disable).
 
-import { useSocketEvent } from '@/shared/contexts/SocketContext'
-import { getVisibleBookshelfPageRange, type VisibleBookshelfPageRangeInput } from '@/features/library/hooks/useBookshelfVirtualizer'
-import { Author, AuthorRemovedPayload, BookshelfEntity, EntityType, LibraryItem, LibraryItemRemovedPayload } from '@/types/api'
 import { type RefObject, useCallback, useLayoutEffect, useRef } from 'react'
+import { getVisibleBookshelfPageRange, type VisibleBookshelfPageRangeInput } from '@/features/library/hooks/useBookshelfVirtualizer'
+import { useSocketEvent } from '@/shared/contexts/SocketContext'
+import { Author, AuthorRemovedPayload, BookshelfEntity, EntityType, LibraryItem, LibraryItemRemovedPayload } from '@/types/api'
 
 /** Like refs from `useRef` with a writable `current` (avoids deprecated `MutableRefObject` in newer `@types/react`). */
 type RefBox<T> = { current: T }

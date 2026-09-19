@@ -1,10 +1,10 @@
 'use client'
 
+import { useId, useMemo, useRef, useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { useUpdateEffect } from '@/shared/hooks/useUpdateEffect'
 import { formatDuration } from '@/shared/lib/formatDuration'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import { useId, useMemo, useRef, useState } from 'react'
 import InputWrapper from '../../../shared/ui/InputWrapper'
 
 export interface DurationPickerProps {

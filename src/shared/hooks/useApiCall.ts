@@ -9,8 +9,8 @@
  * - Request cancellation
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react'
 import * as Sentry from '@sentry/nextjs'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export interface ApiCallState<T> {
   data: T | null

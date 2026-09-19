@@ -1,11 +1,11 @@
 'use client'
 
+import Link from 'next/link'
+import { useCallback, useState } from 'react'
 import { forgotPassword } from '@/features/auth/actions/authActions'
 import AuthCard from '@/features/auth/components/AuthCard'
 import Btn from '@/shared/ui/Btn'
 import TextInput from '@/shared/ui/TextInput'
-import Link from 'next/link'
-import { useCallback, useState } from 'react'
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState('')

@@ -1,8 +1,8 @@
 'use client'
 
-import EditList from '@/shared/ui/EditList'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useState } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import EditList from '@/shared/ui/EditList'
 import { ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function EditListExamples() {

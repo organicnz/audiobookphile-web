@@ -1,14 +1,14 @@
-import { useInfiniteQuery, useQueryClient, UseInfiniteQueryResult, InfiniteData } from '@tanstack/react-query'
-import {
-  fetchLibraryItemsAction,
-  fetchAuthorsAction,
-  fetchSeriesAction,
-  fetchCollectionsAction,
-  fetchPlaylistsAction
-} from '@/features/library/actions/libraryActions'
-import { EntityType, BookshelfEntity, LibraryItem, MediaItemShare, RssFeed } from '@/types/api'
-import { useSocketEvent } from '@/shared/contexts/SocketContext'
+import { InfiniteData, UseInfiniteQueryResult, useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import {
+  fetchAuthorsAction,
+  fetchCollectionsAction,
+  fetchLibraryItemsAction,
+  fetchPlaylistsAction,
+  fetchSeriesAction
+} from '@/features/library/actions/libraryActions'
+import { useSocketEvent } from '@/shared/contexts/SocketContext'
+import { BookshelfEntity, EntityType, LibraryItem, MediaItemShare, RssFeed } from '@/types/api'
 
 interface UseInfiniteBookshelfProps {
   libraryId: string

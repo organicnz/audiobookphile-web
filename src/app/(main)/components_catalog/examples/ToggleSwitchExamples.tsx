@@ -1,6 +1,6 @@
 'use client'
-import ToggleSwitch from '@/shared/ui/ToggleSwitch'
 import { useState } from 'react'
+import ToggleSwitch from '@/shared/ui/ToggleSwitch'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 // Toggle Switch Examples

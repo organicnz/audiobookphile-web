@@ -12,9 +12,9 @@
 // download_completed, search_performed, auth_failed, ...
 // ---------------------------------------------------------------------------
 
-import { useEffect, useState } from 'react'
-import { usePostHog } from 'posthog-js/react'
 import posthog from 'posthog-js'
+import { usePostHog } from 'posthog-js/react'
+import { useEffect, useState } from 'react'
 
 /** Whether PostHog is configured for this build (evaluated at module load). */
 export const posthogEnabled = Boolean(

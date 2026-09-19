@@ -1,7 +1,7 @@
-import IconBtn from '@/shared/ui/IconBtn'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { LucideIcon } from 'lucide-react'
 import React from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
+import IconBtn from '@/shared/ui/IconBtn'
 
 export interface MediaOverlayIconBtnProps {
   icon: LucideIcon

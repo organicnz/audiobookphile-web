@@ -1,13 +1,13 @@
 'use client'
 
-import Btn from '@/shared/ui/Btn'
-import IconBtn from '@/shared/ui/IconBtn'
-import Menu from '@/shared/ui/Menu'
-import { DropdownMenuItem } from '@/shared/ui/DropdownMenu'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { User, Menu as MenuIcon, Settings, Upload, BarChart2, LayoutGrid, LogOut, Activity } from 'lucide-react'
+import { Activity, BarChart2, LayoutGrid, LogOut, Menu as MenuIcon, Settings, Upload, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import Btn from '@/shared/ui/Btn'
+import { DropdownMenuItem } from '@/shared/ui/DropdownMenu'
+import IconBtn from '@/shared/ui/IconBtn'
+import Menu from '@/shared/ui/Menu'
 
 interface AppBarNavProps {
   userCanUpload: boolean

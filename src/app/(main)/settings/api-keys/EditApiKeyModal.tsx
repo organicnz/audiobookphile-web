@@ -1,13 +1,13 @@
 'use client'
 
+import { useEffect, useMemo, useState } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Modal from '@/shared/modals/Modal'
 import Btn from '@/shared/ui/Btn'
 import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
 import TextInput from '@/shared/ui/TextInput'
 import ToggleSwitch from '@/shared/ui/ToggleSwitch'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { ApiKey, User } from '@/types/api'
-import { useEffect, useMemo, useState } from 'react'
 
 interface ApiKeyFormData {
   name: string

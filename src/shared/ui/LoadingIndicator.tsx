@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { TranslationKey } from '@/types/translations'
 

@@ -1,11 +1,11 @@
 'use client'
 
-import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
-import TextInput from '@/shared/ui/TextInput'
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { useSocketEmit, useSocketEvent } from '@/shared/contexts/SocketContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
+import TextInput from '@/shared/ui/TextInput'
 import { LoggerDataLog, LogLevel, ServerSettings } from '@/types/api'
-import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import type { UpdateServerSettingsApiResponse } from '../actions'
 
 const MAX_LOGS = 5000

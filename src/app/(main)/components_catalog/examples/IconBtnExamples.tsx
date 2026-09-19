@@ -1,7 +1,7 @@
 'use client'
+import { Edit2, Heart, Settings, X } from 'lucide-react'
 import IconBtn from '@/shared/ui/IconBtn'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
-import { Edit2, Settings, Heart, X } from 'lucide-react'
 
 // IconBtn Examples
 export function IconBtnExamples() {

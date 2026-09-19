@@ -1,13 +1,13 @@
 'use client'
 
-import Btn from '@/shared/ui/Btn'
-import SimpleDataTable from '@/shared/ui/SimpleDataTable'
-import CollapsibleSection from '@/shared/widgets/CollapsibleSection'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { secondsToTimestamp } from '@/shared/lib/datefns'
+import Btn from '@/shared/ui/Btn'
+import SimpleDataTable from '@/shared/ui/SimpleDataTable'
+import CollapsibleSection from '@/shared/widgets/CollapsibleSection'
 import { BookLibraryItem, Chapter } from '@/types/api'
-import { useCallback, useEffect, useMemo, useState } from 'react'
 
 interface ChaptersTableProps {
   libraryItem: BookLibraryItem

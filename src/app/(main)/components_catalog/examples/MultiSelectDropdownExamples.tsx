@@ -1,9 +1,9 @@
 'use client'
 
+import { useState } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { MultiSelectItem } from '@/shared/ui/MultiSelect'
 import MultiSelectDropdown from '@/shared/ui/MultiSelectDropdown'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function MultiSelectDropdownExamples() {

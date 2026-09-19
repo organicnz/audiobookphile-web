@@ -6,8 +6,8 @@ import { MultiSelectDropdownExamples } from '../examples/MultiSelectDropdownExam
 import { MultiSelectExamples } from '../examples/MultiSelectExamples'
 import { RangeInputExamples } from '../examples/RangeInputExamples'
 import { SlateEditorExamples } from '../examples/SlateEditorExamples'
-import { TextInputExamples } from '../examples/TextInputExamples'
 import { TextareaInputExamples } from '../examples/TextareaInputExamples'
+import { TextInputExamples } from '../examples/TextInputExamples'
 import { TwoStageMultiSelectExamples } from '../examples/TwoStageMultiSelectExamples'
 
 export const dynamic = 'force-dynamic'

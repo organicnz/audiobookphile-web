@@ -1,6 +1,6 @@
+import Link from 'next/link'
 import AuthCard from '@/features/auth/components/AuthCard'
 import Btn from '@/shared/ui/Btn'
-import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 

@@ -1,13 +1,13 @@
+import DOMPurify from 'isomorphic-dompurify'
+import React, { useCallback, useMemo } from 'react'
 import PreviewCover from '@/features/metadata/components/PreviewCover'
-import Modal from '@/shared/modals/Modal'
 import { useMediaContext } from '@/features/player/contexts/MediaContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { getLibraryItemCoverUrl } from '@/shared/lib/coverUtils'
 import { formatDuration } from '@/shared/lib/formatDuration'
 import { bytesPretty } from '@/shared/lib/string'
+import Modal from '@/shared/modals/Modal'
 import { PodcastEpisode, PodcastLibraryItem } from '@/types/api'
-import React, { useCallback, useMemo } from 'react'
-import DOMPurify from 'isomorphic-dompurify'
 
 export interface ViewEpisodeModalProps {
   isOpen: boolean

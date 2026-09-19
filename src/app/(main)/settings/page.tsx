@@ -1,8 +1,8 @@
-import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
-import { apiFetch } from '@/shared/lib/api/client'
-import type { GetLibrariesResponse } from '@/types/api'
-import { Settings, Library, Users, SlidersHorizontal, Headphones, DatabaseBackup, Key } from 'lucide-react'
+import { DatabaseBackup, Headphones, Key, Library, Settings, SlidersHorizontal, Users } from 'lucide-react'
 import Link from 'next/link'
+import { apiFetch } from '@/shared/lib/api/client'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
+import type { GetLibrariesResponse } from '@/types/api'
 import SettingsContent from './SettingsContent'
 import SettingsFooter from './SettingsFooter'
 

@@ -1,9 +1,9 @@
 'use client'
 
+import { useRef, useState } from 'react'
 import SeriesCard from '@/shared/widgets/media-card/SeriesCard'
 import SeriesCardSkeleton from '@/shared/widgets/media-card/SeriesCardSkeleton'
 import { BookLibraryItem, BookshelfView, LibraryItem, MediaProgress, Series } from '@/types/api'
-import { useRef, useState } from 'react'
 import { Code, ComponentExamples, ComponentInfo, Example } from '../../ComponentExamples'
 import { DimensionComparison, Dimensions, useDimensionMeasurement } from './mediaCardExamplesUtils'
 

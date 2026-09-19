@@ -1,10 +1,10 @@
 'use client'
 
-import Btn from '@/shared/ui/Btn'
+import { useMemo } from 'react'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import Btn from '@/shared/ui/Btn'
 import { BookLibraryItem, Chapter } from '@/types/api'
-import { useMemo } from 'react'
 import ChaptersTable from '../../features/player/components/ChaptersTable'
 
 interface ChaptersProps {

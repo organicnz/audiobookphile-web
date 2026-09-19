@@ -7,8 +7,8 @@
  * file from client components or expose the key to the browser.
  */
 
-import type { Database } from '@/types/supabase'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/supabase'
 
 /**
  * Returns a Supabase client that uses the service role key.

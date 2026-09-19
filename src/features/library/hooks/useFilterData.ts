@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { fetchLibraryFilterDataAction } from '@/features/library/actions/libraryActions'
-import { isBookLibraryItem, isPodcastLibraryItem, LibraryFilterData, LibraryItem } from '@/types/api'
 import { useCallback, useMemo } from 'react'
+import { fetchLibraryFilterDataAction } from '@/features/library/actions/libraryActions'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
+import { isBookLibraryItem, isPodcastLibraryItem, LibraryFilterData, LibraryItem } from '@/types/api'
 
 /**
  * Add unique strings to an array and sort alphabetically.

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { apiFetch } from '@/shared/lib/api/browser'
-import { AdminAnalyticsGrid, type AdminAnalyticsData } from './AdminAnalyticsGrid'
+import { type AdminAnalyticsData, AdminAnalyticsGrid } from './AdminAnalyticsGrid'
 import { AdminAnalyticsSkeleton } from './AdminAnalyticsSkeleton'
 
 const EMPTY: AdminAnalyticsData = {

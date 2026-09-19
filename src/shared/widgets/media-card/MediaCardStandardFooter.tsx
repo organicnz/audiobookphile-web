@@ -1,5 +1,5 @@
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { memo } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface MediaCardStandardFooterProps {
   /** Text to display */

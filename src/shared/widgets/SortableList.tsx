@@ -1,9 +1,9 @@
 'use client'
 
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { DragendEvent, DragstartEvent } from '@formkit/drag-and-drop'
 import { useDragAndDrop } from '@formkit/drag-and-drop/react'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface SortableItem {
   id: string | number

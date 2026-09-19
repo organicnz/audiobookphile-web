@@ -1,8 +1,8 @@
 'use server'
 
-import { removeGenre as apiRemoveGenre, renameGenre as apiRenameGenre } from '@/shared/lib/api/misc'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { removeGenre as apiRemoveGenre, renameGenre as apiRenameGenre } from '@/shared/lib/api/misc'
 
 export type RemoveGenreApiResponse = {
   numItemsUpdated: number

@@ -1,8 +1,8 @@
 'use client'
 
-import IconBtn from '@/shared/ui/IconBtn'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
+import IconBtn from '@/shared/ui/IconBtn'
 
 interface ItemSliderProps {
   title: React.ReactNode

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, Variants } from 'framer-motion'
-import { Users, Activity, Book, Database } from 'lucide-react'
+import { Activity, Book, Database, Users } from 'lucide-react'
 
 export interface AdminAnalyticsData {
   totalUsers: number | null

@@ -1,9 +1,9 @@
 'use client'
 
-import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react'
 import { useMemo } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
 
 interface EpisodesSortSelectProps {
   sortBy: string

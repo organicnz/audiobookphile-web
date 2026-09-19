@@ -1,8 +1,8 @@
 'use client'
 
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Dropdown, { DropdownItem } from '@/shared/ui/Dropdown'
 import TextInput from '@/shared/ui/TextInput'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { LibrarySettings } from '@/types/api'
 import SettingsToggleSwitch from '../SettingsToggleSwitch'
 

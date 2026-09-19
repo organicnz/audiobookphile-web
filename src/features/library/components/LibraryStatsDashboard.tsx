@@ -1,9 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { BookOpen, CalendarDays, Clock, HardDrive, Layers, Users, Music } from 'lucide-react'
-import { useLibraryStats } from '../hooks/useLibraryStats'
+import { BookOpen, CalendarDays, Clock, HardDrive, Layers, Music, Users } from 'lucide-react'
 import Link from 'next/link'
+import { useLibraryStats } from '../hooks/useLibraryStats'
 
 // Utility for formatting bytes
 function formatBytes(bytes: number, decimals = 2) {

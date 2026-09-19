@@ -1,8 +1,8 @@
-import { mergeClasses } from '@/shared/lib/merge-classes'
+import { ArrowLeft, BarChart3, Bell, Database, FileText, Headphones, Key, Library, Mail, Rss, Settings, Shield, ShieldCheck, Users, Wrench } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ArrowLeft, BarChart3, Bell, Database, FileText, Headphones, Key, Library, Mail, Rss, Settings, ShieldCheck, Users, Wrench, Shield } from 'lucide-react'
 import { useUser } from '@/shared/contexts/UserContext'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 interface SideNavContentProps {
   handleItemClick?: () => void

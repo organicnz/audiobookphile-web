@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import {
   Author,
   AuthorImagePayload,
@@ -8,7 +9,6 @@ import {
   GetNarratorsResponse,
   UpdateAuthorPayload
 } from '@/types/api'
-import { cache } from 'react'
 import { apiRequest } from '../client'
 
 /**

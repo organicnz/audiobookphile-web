@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import Btn from '@/shared/ui/Btn'
 import Checkbox from '@/shared/ui/Checkbox'
 import Dropdown from '@/shared/ui/Dropdown'
@@ -9,8 +11,6 @@ import MultiSelect, { MultiSelectItem } from '@/shared/ui/MultiSelect'
 import RangeInput from '@/shared/ui/RangeInput'
 import ReadIconBtn from '@/shared/ui/ReadIconBtn'
 import TextInput from '@/shared/ui/TextInput'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useState } from 'react'
 import { ComponentExamples, ComponentInfo, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function SideBySideControlsExamples() {

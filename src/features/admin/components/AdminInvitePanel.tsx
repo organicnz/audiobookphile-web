@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useActionState } from 'react'
-import { motion, AnimatePresence, Variants } from 'framer-motion'
-import { Mail, UserPlus, Shield, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { AnimatePresence, motion, Variants } from 'framer-motion'
+import { AlertCircle, CheckCircle, Loader2, Mail, Shield, UserPlus } from 'lucide-react'
+import { useActionState, useState } from 'react'
 import { inviteUserByEmail } from '@/features/auth/actions/authActions'
 
 type InviteState = {

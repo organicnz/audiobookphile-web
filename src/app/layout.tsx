@@ -1,14 +1,13 @@
 import '@/assets/globals.css'
 import type { Metadata } from 'next'
 import { getLocale, getMessages } from 'next-intl/server'
-
+import ErrorBoundary from '@/shared/components/ErrorBoundary'
+import { LocaleThemeProvider } from '@/shared/components/LocaleThemeProvider'
+import { ErrorBoundary as SentryErrorBoundary } from '@/shared/ErrorBoundary'
 import { Providers } from '@/shared/Providers'
 import { CardSizeProvider } from '../features/library/contexts/CardSizeContext'
 import { ToastProvider } from '../shared/contexts/ToastContext'
 import { getTheme } from '../shared/lib/theme'
-import ErrorBoundary from '@/shared/components/ErrorBoundary'
-import { ErrorBoundary as SentryErrorBoundary } from '@/shared/ErrorBoundary'
-import { LocaleThemeProvider } from '@/shared/components/LocaleThemeProvider'
 
 export const viewport = {
   width: 'device-width',

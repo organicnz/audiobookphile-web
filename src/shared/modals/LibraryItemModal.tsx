@@ -1,16 +1,16 @@
 'use client'
 
+import { motion } from 'framer-motion'
+import { createContext, type ReactNode, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { getExpandedLibraryItemAction } from '@/features/player/actions/mediaActions'
-import type { ModalProps } from '@/shared/modals/Modal'
-import Modal from '@/shared/modals/Modal'
-import ModalSideNavigation from '@/shared/modals/ModalSideNavigation'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useEntityNavigationContext } from '@/shared/hooks/useEntityNavigationContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import type { EntityNavigationContext } from '@/shared/lib/bookshelfNavigationContext'
+import type { ModalProps } from '@/shared/modals/Modal'
+import Modal from '@/shared/modals/Modal'
+import ModalSideNavigation from '@/shared/modals/ModalSideNavigation'
 import type { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
-import { motion } from 'framer-motion'
-import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState, useTransition, type ReactNode } from 'react'
 
 export type LibraryItemModalContextValue = {
   resolvedItem: BookLibraryItem | PodcastLibraryItem | null

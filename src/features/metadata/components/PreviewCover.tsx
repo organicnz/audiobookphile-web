@@ -1,10 +1,10 @@
 'use client'
 
+import Image from 'next/image'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
-import Image from 'next/image'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface PreviewCoverProps {
   src: string

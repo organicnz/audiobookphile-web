@@ -1,7 +1,7 @@
 'use server'
 
-import type { BookSearchResult, PodcastSearchResult } from '@/types/api'
 import { z } from 'zod'
+import type { BookSearchResult, PodcastSearchResult } from '@/types/api'
 
 const FetchBookMetadataSchema = z.object({
   title: z.string().max(256),

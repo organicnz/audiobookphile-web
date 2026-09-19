@@ -1,9 +1,9 @@
 'use client'
 
+import React, { useCallback, useMemo } from 'react'
 import { DetailsEditRef, UpdatePayload, useDetailsEdit } from '@/features/metadata/hooks/useDetailsEdit'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { Author, BookLibraryItem, BookMetadata, Series } from '@/types/api'
-import React, { useCallback, useMemo } from 'react'
 import Checkbox from '../ui/Checkbox'
 import MultiSelect, { MultiSelectItem } from '../ui/MultiSelect'
 import SlateEditor from '../ui/SlateEditor'

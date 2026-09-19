@@ -1,10 +1,10 @@
 'use client'
 
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { UsePlayerHandlerReturn } from '@/features/player/hooks/usePlayerHandler'
 import { secondsToTimestamp } from '@/shared/lib/datefns'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import { PlayerState } from '@/types/api'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface PlayerTrackBarProps {
   playerHandler: UsePlayerHandlerReturn

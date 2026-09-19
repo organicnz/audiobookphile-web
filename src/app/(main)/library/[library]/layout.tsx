@@ -1,8 +1,8 @@
+import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { LibraryProvider } from '@/features/library/contexts/LibraryContext'
 import { getLibraries } from '@/shared/lib/api'
 import { resolveLibraryFromParam } from '@/shared/lib/library-slugs'
-import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import AppBar from '../../AppBar'
 import LibraryLayoutWrapper from './LibraryLayoutWrapper'
 

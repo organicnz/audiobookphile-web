@@ -1,8 +1,8 @@
 'use client'
 
-import Tooltip from '@/shared/ui/Tooltip'
 import { useTruncation } from '@/shared/hooks/useTruncation'
 import { mergeClasses } from '@/shared/lib/merge-classes'
+import Tooltip from '@/shared/ui/Tooltip'
 
 interface TruncatingTooltipTextProps {
   text: string

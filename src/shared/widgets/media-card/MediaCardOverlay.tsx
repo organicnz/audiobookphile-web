@@ -1,15 +1,15 @@
+import { AnimatePresence, motion } from 'framer-motion'
+import { AlertCircle, BookOpen, CheckCircle2, Circle, Edit2, Globe, Pause, Play, Rss } from 'lucide-react'
+import { type ReactNode, useCallback, useMemo } from 'react'
+import { useUser } from '@/shared/contexts/UserContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import IconBtn from '@/shared/ui/IconBtn'
 import Tooltip from '@/shared/ui/Tooltip'
 import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
 import MediaCardMoreMenu, { MediaCardMoreMenuItem } from '@/shared/widgets/media-card/MediaCardMoreMenu'
 import MediaOverlayIconBtn from '@/shared/widgets/media-card/MediaOverlayIconBtn'
-import { useUser } from '@/shared/contexts/UserContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { MediaItemShare, RssFeed } from '@/types/api'
-import { Pause, Play, BookOpen, CheckCircle2, Circle, Edit2, AlertCircle, Rss, Globe } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useCallback, useMemo, type ReactNode } from 'react'
 
 /**
  * Safely renders a render function with error boundary handling.

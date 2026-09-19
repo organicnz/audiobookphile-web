@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export function useImageColor(src?: string | null) {
   const [color, setColor] = useState<string | null>(null)

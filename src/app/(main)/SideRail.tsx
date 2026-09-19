@@ -1,28 +1,28 @@
 'use client'
 
-import { useLibrary } from '@/features/library/contexts/LibraryContext'
-import { getLibrarySlug } from '@/shared/lib/library-slugs'
-import { useUser } from '@/shared/contexts/UserContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/shared/lib/merge-classes'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
-  Home,
-  Clock,
-  Library as LibraryIcon,
-  Layers,
-  FolderHeart,
-  ListMusic,
-  Users,
-  Mic2,
-  BarChart2,
-  Plus,
-  Download,
   AlertTriangle,
-  Upload
+  BarChart2,
+  Clock,
+  Download,
+  FolderHeart,
+  Home,
+  Layers,
+  Library as LibraryIcon,
+  ListMusic,
+  Mic2,
+  Plus,
+  Upload,
+  Users
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useLibrary } from '@/features/library/contexts/LibraryContext'
+import { useUser } from '@/shared/contexts/UserContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { getLibrarySlug } from '@/shared/lib/library-slugs'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 
 export default function SideRail({ serverVersion, installSource }: { serverVersion: string; installSource: string }) {
   const pathname = usePathname()

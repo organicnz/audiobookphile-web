@@ -1,10 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getLibraryItemCoverSrc } from '@/shared/lib/coverUtils'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import type { LibraryItem } from '@/types/api'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface MediaCardCoverProps {
   libraryItem: LibraryItem

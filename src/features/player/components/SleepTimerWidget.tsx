@@ -1,12 +1,12 @@
 'use client'
 
-import type { UsePlayerHandlerReturn } from '@/features/player/hooks/usePlayerHandler'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { arrow as arrowMw, autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react-dom'
 import { Moon } from 'lucide-react'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import type { UsePlayerHandlerReturn } from '@/features/player/hooks/usePlayerHandler'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { mergeClasses } from '@/shared/lib/merge-classes'
 import IconBtn from '../../../shared/ui/IconBtn'
 
 interface SleepTimerWidgetProps {

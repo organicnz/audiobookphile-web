@@ -1,9 +1,9 @@
+import { useEffect, useState } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Modal from '@/shared/modals/Modal'
 import Btn from '@/shared/ui/Btn'
 import CronExpressionBuilder from '@/shared/widgets/CronExpressionBuilder'
 import CronExpressionPreview from '@/shared/widgets/CronExpressionPreview'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { useEffect, useState } from 'react'
 
 interface BackupScheduleModalProps {
   isOpen: boolean

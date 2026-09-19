@@ -1,14 +1,14 @@
 'use client'
 
-import RssFeedOpenCloseModal from '@/shared/modals/RssFeedOpenCloseModal'
-import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import RssFeedOpenCloseModal from '@/shared/modals/RssFeedOpenCloseModal'
+import BookMediaCard from '@/shared/widgets/media-card/BookMediaCard'
 import { BookshelfView, GetLibraryItemsResponse, RssFeed, Series } from '@/types/api'
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 interface SeriesClientProps {
   series: Series

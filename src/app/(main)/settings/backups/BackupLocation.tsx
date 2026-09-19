@@ -1,10 +1,10 @@
+import { Edit3, Folder } from 'lucide-react'
+import { useState, useTransition } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Btn from '@/shared/ui/Btn'
 import IconBtn from '@/shared/ui/IconBtn'
 import TextInput from '@/shared/ui/TextInput'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { useState, useTransition } from 'react'
-import { Folder, Edit3 } from 'lucide-react'
 import { updateBackupPath } from './actions'
 
 interface BackupLocationProps {

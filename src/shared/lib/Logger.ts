@@ -1,5 +1,5 @@
-import { LogLevel } from '@/types/api'
 import { format } from 'date-fns'
+import { LogLevel } from '@/types/api'
 
 class Logger {
   private logLevel: LogLevel

@@ -1,12 +1,12 @@
+import { useCallback, useRef } from 'react'
 import { closePlaybackSession, startPlaybackSession, syncPlaybackSession } from '@/features/player/actions/playbackActions'
+import { AudioTrack } from '@/features/player/lib/AudioTrack'
+import { FIRST_SYNC_DELAY, SUBSEQUENT_SYNC_INTERVAL } from '@/features/player/lib/constants'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { generateUUID } from '@/shared/lib/cryptoUtils'
-import { AudioTrack } from '@/features/player/lib/AudioTrack'
-import { FIRST_SYNC_DELAY, SUBSEQUENT_SYNC_INTERVAL } from '@/features/player/lib/constants'
 import type { LibraryItem, PlaybackSession, StartSessionPayload } from '@/types/api'
 import { PlayMethod } from '@/types/api'
-import { useCallback, useRef } from 'react'
 
 // Generate or retrieve a persistent device ID
 function getDeviceId(): string {

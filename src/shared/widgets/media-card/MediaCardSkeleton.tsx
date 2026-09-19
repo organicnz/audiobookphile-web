@@ -1,11 +1,11 @@
 'use client'
 
-import MediaCardDetailView from '@/shared/widgets/media-card/MediaCardDetailView'
+import { useId, useMemo } from 'react'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
+import MediaCardDetailView from '@/shared/widgets/media-card/MediaCardDetailView'
 import type { LibraryItem } from '@/types/api'
 import { BookshelfView } from '@/types/api'
-import { useId, useMemo } from 'react'
 
 interface MediaCardSkeletonProps {
   bookshelfView: BookshelfView

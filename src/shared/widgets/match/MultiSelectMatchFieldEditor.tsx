@@ -1,8 +1,8 @@
 'use client'
 
-import MultiSelect, { MultiSelectItem } from '@/shared/ui/MultiSelect'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { memo, useCallback } from 'react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import MultiSelect, { MultiSelectItem } from '@/shared/ui/MultiSelect'
 import { BaseMatchFieldEditor } from './BaseMatchFieldEditor'
 
 interface MultiSelectMatchFieldEditorProps {

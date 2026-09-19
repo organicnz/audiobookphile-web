@@ -1,14 +1,13 @@
 'use client'
-import { Search, X, Sparkles } from 'lucide-react'
-import InputWrapper from '@/shared/ui/InputWrapper'
-import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
-import { useClickOutside } from '@/shared/hooks/useClickOutside'
-import { useLibrarySearch } from '@/features/library/hooks/useLibrarySearch'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-
-import { FlatResultItem, useGlobalSearchTransformer } from '@/features/library/hooks/useGlobalSearchTransformer'
+import { Search, Sparkles, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { FlatResultItem, useGlobalSearchTransformer } from '@/features/library/hooks/useGlobalSearchTransformer'
+import { useLibrarySearch } from '@/features/library/hooks/useLibrarySearch'
+import { useClickOutside } from '@/shared/hooks/useClickOutside'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import InputWrapper from '@/shared/ui/InputWrapper'
+import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
 import GlobalSearchMenu from './GlobalSearchMenu'
 
 interface GlobalSearchInputProps {

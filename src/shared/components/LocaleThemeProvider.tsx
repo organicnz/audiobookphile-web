@@ -1,7 +1,7 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
 import { NextIntlClientProvider } from 'next-intl'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 type LocaleThemeContextValue = {
   locale: string

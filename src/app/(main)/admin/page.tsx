@@ -1,9 +1,9 @@
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { ArrowLeft, Settings, ShieldAlert, Sparkles } from 'lucide-react'
-import { getCurrentUser } from '@/shared/lib/api'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import AdminAnalyticsWidget from '@/features/admin/components/AdminAnalyticsWidget'
 import { AdminInvitePanel } from '@/features/admin/components/AdminInvitePanel'
+import { getCurrentUser } from '@/shared/lib/api'
 
 export const dynamic = 'force-dynamic'
 

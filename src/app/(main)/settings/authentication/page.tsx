@@ -1,8 +1,8 @@
-import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { ExternalLink } from 'lucide-react'
-import SettingsContent from '../SettingsContent'
 import TwoFactorSettingsPanel from '@/features/auth/components/TwoFactorSettingsPanel'
+import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import { createClient } from '@/shared/utils/supabase/server'
+import SettingsContent from '../SettingsContent'
 
 export const dynamic = 'force-dynamic'
 

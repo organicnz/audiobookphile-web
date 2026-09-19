@@ -1,5 +1,5 @@
-import { getLibraries } from '@/shared/lib/api'
 import type { Metadata } from 'next'
+import { getLibraries } from '@/shared/lib/api'
 import '../../../assets/globals.css'
 import { ComponentsCatalogProvider } from '../../../shared/contexts/ComponentsCatalogContext'
 import AppBar from '../AppBar'

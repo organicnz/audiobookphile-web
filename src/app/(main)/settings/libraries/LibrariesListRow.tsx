@@ -1,17 +1,17 @@
 'use client'
 
+import { GripVertical } from 'lucide-react'
+import Link from 'next/link'
+import { useCallback, useMemo } from 'react'
+import { useTasks } from '@/shared/contexts/TasksContext'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { escapeHtml } from '@/shared/lib/escape'
 import Btn from '@/shared/ui/Btn'
 import ContextMenuDropdown, { ContextMenuDropdownItem } from '@/shared/ui/ContextMenuDropdown'
 import LibraryIcon from '@/shared/ui/LibraryIcon'
 import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
-import { useTasks } from '@/shared/contexts/TasksContext'
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { Library } from '@/types/api'
-import Link from 'next/link'
-import { useCallback, useMemo } from 'react'
-import { GripVertical } from 'lucide-react'
 import { matchAll, requestScanLibrary } from './actions'
-import { escapeHtml } from '@/shared/lib/escape'
 
 interface LibrariesListRowProps {
   item: Library

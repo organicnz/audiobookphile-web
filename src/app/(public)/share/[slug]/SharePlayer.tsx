@@ -1,17 +1,17 @@
 'use client'
 
+import { AlertCircle, Download, Pause, Play, RotateCcw, RotateCw, Volume1, Volume2, VolumeX } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { usePlayerSettings } from '@/features/player/hooks/usePlayerSettings'
+import { AudioTrack } from '@/features/player/lib/AudioTrack'
+import { LocalAudioPlayer } from '@/features/player/lib/LocalAudioPlayer'
+import { getCoverAspectRatio } from '@/shared/lib/coverUtils'
+import { secondsToTimestamp } from '@/shared/lib/datefns'
 import IconBtn from '@/shared/ui/IconBtn'
 import Tooltip from '@/shared/ui/Tooltip'
 import LoadingSpinner from '@/shared/widgets/LoadingSpinner'
-import { usePlayerSettings } from '@/features/player/hooks/usePlayerSettings'
-import { getCoverAspectRatio } from '@/shared/lib/coverUtils'
-import { secondsToTimestamp } from '@/shared/lib/datefns'
-import { AudioTrack } from '@/features/player/lib/AudioTrack'
-import { LocalAudioPlayer } from '@/features/player/lib/LocalAudioPlayer'
 import type { AudioTrackData, Chapter, MediaItemShareResponse } from '@/types/api'
 import { PlayerState } from '@/types/api'
-import { Volume2, Volume1, VolumeX, RotateCcw, RotateCw, Play, Pause, Download, AlertCircle } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface SharePlayerProps {
   slug: string

@@ -1,8 +1,8 @@
 'use client'
 
-import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 
 export type ModalSideNavigationProps = {
   canGoPrev: boolean

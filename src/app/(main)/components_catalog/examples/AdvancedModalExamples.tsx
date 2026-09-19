@@ -1,11 +1,11 @@
 'use client'
 
+import { useState } from 'react'
+import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import Modal from '@/shared/modals/Modal'
 import TabbedModal from '@/shared/modals/TabbedModal'
 import Btn from '@/shared/ui/Btn'
 import MultiSelect, { MultiSelectItem } from '@/shared/ui/MultiSelect'
-import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useState } from 'react'
 import { ComponentExamples, Example, ExamplesBlock } from '../ComponentExamples'
 
 export function AdvancedModalExamples() {

@@ -1,8 +1,8 @@
 'use client'
 
+import Match from '@/features/metadata/components/Match'
 import LibraryItemModal, { type LibraryItemModalItemSource, useLibraryItemModal } from '@/shared/modals/LibraryItemModal'
 import LoadingIndicator from '@/shared/ui/LoadingIndicator'
-import Match from '@/features/metadata/components/Match'
 
 export type MatchModalProps = {
   isOpen: boolean

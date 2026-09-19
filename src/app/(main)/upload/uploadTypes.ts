@@ -1,6 +1,6 @@
-import { sanitizeFileName, SupportedFileTypes } from '@/shared/lib/fileUtils'
-import type { Library } from '@/types/api'
 import path from 'path'
+import { SupportedFileTypes, sanitizeFileName } from '@/shared/lib/fileUtils'
+import type { Library } from '@/types/api'
 
 export interface FileWithMetadata extends File {
   filetype?: string | false

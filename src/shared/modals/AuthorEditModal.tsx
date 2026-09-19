@@ -1,16 +1,16 @@
+import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useAuthorActions } from '@/features/metadata/hooks/useAuthorActions'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
-import { useAuthorActions } from '@/features/metadata/hooks/useAuthorActions'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { Author, User } from '@/types/api'
-import { useEffect, useMemo, useState, useTransition } from 'react'
 import AuthorImage from '../../features/metadata/components/AuthorImage'
-import Modal from './Modal'
 import Btn from '../ui/Btn'
 import IconBtn from '../ui/IconBtn'
 import SlateEditor from '../ui/SlateEditor'
 import TextInput from '../ui/TextInput'
 import ConfirmDialog from '../widgets/ConfirmDialog'
+import Modal from './Modal'
 
 interface AuthorEditModalProps {
   isOpen: boolean

@@ -1,14 +1,13 @@
 'use client'
 
-import { Task } from '@/types/api'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Bell } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useMemo, useRef, useState } from 'react'
-
-import { Bell } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useTasks } from '@/shared/contexts/TasksContext'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { Task } from '@/types/api'
 import Tooltip from '../ui/Tooltip'
 import ItemTaskRunningCard from './ItemTaskRunningCard'
 import LoadingSpinner from './LoadingSpinner'

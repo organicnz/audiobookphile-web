@@ -1,8 +1,8 @@
 'use client'
 
-import Checkbox from '@/shared/ui/Checkbox'
-import { mergeClasses } from '@/shared/lib/merge-classes'
 import { ReactNode } from 'react'
+import { mergeClasses } from '@/shared/lib/merge-classes'
+import Checkbox from '@/shared/ui/Checkbox'
 
 interface BaseMatchFieldEditorProps {
   usageChecked: boolean

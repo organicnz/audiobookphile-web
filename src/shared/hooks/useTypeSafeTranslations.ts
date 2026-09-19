@@ -1,7 +1,7 @@
 'use client'
 
-import type { TypeSafeTranslations } from '@/types/translations'
 import { useTranslations } from 'next-intl'
+import type { TypeSafeTranslations } from '@/types/translations'
 
 /**
  * Type-safe wrapper for useTranslations that provides compile-time checking
