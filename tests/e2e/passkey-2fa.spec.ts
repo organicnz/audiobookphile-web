@@ -239,4 +239,5 @@ test('passkey enrollment + passkey sign-in round trip', async ({ page, request }
   await page.getByRole('button', { name: /Authenticate with Facial 2FA/ }).click()
   await page.waitForURL((url) => url.pathname.startsWith('/library'), { timeout: 30000 })
 })
-test.skip(test.info().project.name !== 'chromium', 'Passkeys use CDP — Chromium only')
+// NOTE: passkey specs are Chromium-only via the `chromium-stateful` project's
+// testMatch (CDP virtual authenticator); no per-test skip needed here.

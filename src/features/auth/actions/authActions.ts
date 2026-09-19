@@ -1,8 +1,8 @@
 'use server'
 
-import { createClient } from '@/shared/utils/supabase/server'
 import { createClient as createSupabaseJsClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
+import { createClient } from '@/shared/utils/supabase/server'
 
 /**
  * Resolves the canonical site URL at request time.
@@ -17,7 +17,7 @@ function getSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL
   if (explicit) return explicit
 
-  // VERCEL_PROJECT_PRODUCTION_URL is the primary production domain (e.g. audiobookphile.vercel.app)
+  // VERCEL_PROJECT_PRODUCTION_URL is the primary production domain (e.g. audiobookphile.app)
   const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
   if (productionUrl) return `https://${productionUrl}`
 

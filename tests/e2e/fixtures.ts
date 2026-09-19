@@ -1,6 +1,16 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import path from 'node:path'
+
 import { test as base, expect, Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+import dotenv from 'dotenv'
+
+// Playwright workers are plain node — Next.js .env.local auto-loading does
+// not apply. Load repo env explicitly so NEXT_PUBLIC_SUPABASE_URL (and the
+// PLAYWRIGHT_* creds) resolve without manual exports. Explicit process env
+// wins over files; .env.local wins over .env.
+dotenv.config({ path: path.resolve(__dirname, '../../.env.local') })
+dotenv.config({ path: path.resolve(__dirname, '../../.env') })
 
 const adminEmail = process.env.PLAYWRIGHT_ADMIN_EMAIL
 const adminPassword = process.env.PLAYWRIGHT_ADMIN_PASSWORD
