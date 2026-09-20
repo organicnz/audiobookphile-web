@@ -77,7 +77,13 @@
     rgb(var(--tc-library-item-accent-rgb) / 0.022) 76%,
     rgb(var(--tc-library-item-accent-rgb) / 0) 90%
   );
-  --tc-library-item-accent-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0.72) 32%, rgb(0 0 0 / 0.28) 68%, rgb(0 0 0 / 0) 100%);
+  --tc-library-item-accent-mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 1) 0%,
+    rgb(0 0 0 / 0.72) 32%,
+    rgb(0 0 0 / 0.28) 68%,
+    rgb(0 0 0 / 0) 100%
+  );
 }
 
 /* Light theme */
