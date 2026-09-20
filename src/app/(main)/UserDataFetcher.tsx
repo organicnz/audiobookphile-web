@@ -5,10 +5,10 @@ import { MediaProvider } from '@/features/player/contexts/MediaContext'
 import { CommandPaletteProvider } from '@/shared/contexts/CommandPaletteContext'
 import { TasksProvider } from '@/shared/contexts/TasksContext'
 import { UserProvider } from '@/shared/contexts/UserContext'
-import type { Profile } from '@/types/index'
 import { getCurrentUser } from '@/shared/lib/api'
 import CommandPalette from '@/shared/modals/CommandPalette'
 import { InstallPrompt } from '@/shared/ui/InstallPrompt'
+import type { Profile } from '@/types/index'
 
 interface UserPayload {
   user: {
