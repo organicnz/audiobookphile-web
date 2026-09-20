@@ -17,13 +17,13 @@ Sentry.init({
   integrations: [
     Sentry.replayIntegration({
       maskAllText: false,
-      blockAllMedia: false
+      blockAllMedia: false,
     }),
     Sentry.browserTracingIntegration(),
     Sentry.extraErrorDataIntegration(),
     Sentry.reportingObserverIntegration(),
     Sentry.httpClientIntegration(),
-    Sentry.browserProfilingIntegration()
+    Sentry.browserProfilingIntegration(),
   ],
   // GitHub integration for issue creation
   attachStacktrace: true,
@@ -31,7 +31,7 @@ Sentry.init({
   normalizeDepth: 10,
   sendDefaultPii: false,
   // Spotlight for local development — top-level option (replaces deprecated _experiments)
-  spotlight: process.env.NODE_ENV === 'development'
+  spotlight: process.env.NODE_ENV === 'development',
 })
 
 /**
@@ -44,14 +44,14 @@ export function reportWebVitals(metrics: { name: string; value: number; id: stri
 
   Sentry.metrics.distribution(`web_vitals.${name.toLowerCase()}`, value, {
     attributes: { metric_id: id },
-    unit: name === 'CLS' ? 'none' : 'millisecond'
+    unit: name === 'CLS' ? 'none' : 'millisecond',
   })
 
   Sentry.addBreadcrumb({
     category: 'web-vitals',
     message: `${name}: ${value.toFixed(2)}`,
     level: 'info',
-    data: { metricId: id }
+    data: { metricId: id },
   })
 }
 
@@ -64,7 +64,9 @@ export function sentryHealthCheck(): { healthy: boolean; message: string } {
     return { healthy: false, message: 'Sentry client not initialized' }
   }
   const eventId = Sentry.captureMessage('Sentry health check', 'debug')
-  return eventId ? { healthy: true, message: `Health check event sent: ${eventId}` } : { healthy: false, message: 'Failed to capture health check event' }
+  return eventId
+    ? { healthy: true, message: `Health check event sent: ${eventId}` }
+    : { healthy: false, message: 'Failed to capture health check event' }
 }
 
 /**
@@ -83,6 +85,6 @@ export function showUserFeedbackDialog(): void {
     subtitle: "Our team has been notified. If you'd like to help, tell us what happened.",
     labelComments: 'What happened?',
     labelClose: 'Close',
-    labelSubmit: 'Submit Feedback'
+    labelSubmit: 'Submit Feedback',
   })
 }

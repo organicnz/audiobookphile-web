@@ -12,32 +12,32 @@ export default defineConfig({
   reporter: 'html',
   use: {
     baseURL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000', // dev-only fallback
-    trace: 'on-first-retry'
+    trace: 'on-first-retry',
   },
 
   projects: [
     {
       name: 'chromium',
       testIgnore: /passkey|twofa/i,
-      use: { ...devices['Desktop Chrome'] }
+      use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'webkit',
       testIgnore: /passkey|twofa/i,
-      use: { ...devices['Desktop Safari'] }
+      use: { ...devices['Desktop Safari'] },
     },
     {
       name: 'Mobile Chrome',
       testIgnore: /passkey|twofa/i,
-      use: { ...devices['Pixel 7'] }
+      use: { ...devices['Pixel 7'] },
     },
     {
       name: 'chromium-stateful',
       testMatch: /passkey|twofa/i,
       fullyParallel: false,
       workers: 1,
-      use: { ...devices['Desktop Chrome'] }
-    }
+      use: { ...devices['Desktop Chrome'] },
+    },
   ],
 
   webServer: {
@@ -47,6 +47,6 @@ export default defineConfig({
     // the remote site answers.
     url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000', // dev-only fallback
     reuseExistingServer: true,
-    timeout: 120_000
-  }
+    timeout: 120_000,
+  },
 })

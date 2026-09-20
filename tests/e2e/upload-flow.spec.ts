@@ -23,7 +23,11 @@ const uploadName = `E2E Upload ${Date.now()}`
 const uploadFile = join(SRC, `${uploadName}.mp3`)
 let ffmpegAvailable = true
 try {
-  execFileSync('ffmpeg', ['-f', 'lavfi', '-i', 'sine=frequency=440:duration=2', '-c:a', 'libmp3lame', '-y', uploadFile], { stdio: 'ignore' })
+  execFileSync(
+    'ffmpeg',
+    ['-f', 'lavfi', '-i', 'sine=frequency=440:duration=2', '-c:a', 'libmp3lame', '-y', uploadFile],
+    { stdio: 'ignore' }
+  )
 } catch {
   ffmpegAvailable = false
 }
@@ -118,7 +122,9 @@ test.describe('upload pipeline (seeded credentials required)', () => {
     await expect(memberPage.getByText('1 items')).toBeVisible({ timeout: 15_000 })
     await memberPage.getByRole('button', { name: 'Upload' }).click()
 
-    await expect(memberPage.getByText('Successfully Uploaded!').or(memberPage.getByText('Failed to upload'))).toBeVisible({ timeout: 120_000 })
+    await expect(
+      memberPage.getByText('Successfully Uploaded!').or(memberPage.getByText('Failed to upload'))
+    ).toBeVisible({ timeout: 120_000 })
 
     const { data: after } = await supabase.from('library_items').select('id').eq('title', uploadName)
     expect(after?.length).toBeLessThanOrEqual(2)

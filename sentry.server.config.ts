@@ -24,7 +24,7 @@ Sentry.init({
     Sentry.onUnhandledRejectionIntegration(),
     Sentry.extraErrorDataIntegration(),
     // Spotlight for local development debugging
-    ...(process.env.NODE_ENV === 'development' ? [Sentry.spotlightIntegration()] : [])
+    ...(process.env.NODE_ENV === 'development' ? [Sentry.spotlightIntegration()] : []),
   ],
   // Enable GitHub integration for issue creation and PR tracking
   attachStacktrace: true,
@@ -32,5 +32,5 @@ Sentry.init({
   normalizeDepth: 10,
   sendDefaultPii: false,
   // Spotlight for local development — top-level option (replaces deprecated _experiments.spotlight)
-  spotlight: process.env.NODE_ENV === 'development'
+  spotlight: process.env.NODE_ENV === 'development',
 })

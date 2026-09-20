@@ -18,7 +18,7 @@ const reactCompilerRulesOff = {
   'react-hooks/set-state-in-render': 'off',
   'react-hooks/unsupported-syntax': 'off',
   'react-hooks/config': 'off',
-  'react-hooks/gating': 'off'
+  'react-hooks/gating': 'off',
 }
 
 module.exports = [
@@ -38,8 +38,8 @@ module.exports = [
       '.vercel/',
       '.trunk/',
       'supabase/functions/',
-      '.github/'
-    ]
+      '.github/',
+    ],
   },
   ...nextConfig,
   ...nextCoreWebVitals,
@@ -49,13 +49,13 @@ module.exports = [
     languageOptions: {
       parserOptions: {
         project: './tsconfig.json',
-        tsconfigRootDir: __dirname
-      }
-    }
+        tsconfigRootDir: __dirname,
+      },
+    },
   },
   // Disable React Compiler rules introduced in eslint-config-next@16
   {
-    rules: reactCompilerRulesOff
+    rules: reactCompilerRulesOff,
   },
   {
     files: ['**/*.{ts,tsx}'],
@@ -66,35 +66,35 @@ module.exports = [
           allowExpressions: true,
           allowTypedFunctionExpressions: true,
           allowHigherOrderFunctions: true,
-          allowDirectConstAssertionInArrowFunctions: true
-        }
+          allowDirectConstAssertionInArrowFunctions: true,
+        },
       ],
       '@typescript-eslint/naming-convention': [
         'warn',
         {
           selector: 'default',
           format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-          leadingUnderscore: 'allow'
+          leadingUnderscore: 'allow',
         },
         {
           selector: 'variable',
           format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-          leadingUnderscore: 'allow'
+          leadingUnderscore: 'allow',
         },
         {
           selector: 'typeLike',
-          format: ['PascalCase']
+          format: ['PascalCase'],
         },
         {
           selector: 'property',
-          format: null // Often properties come from APIs and we can't control their case
+          format: null, // Often properties come from APIs and we can't control their case
         },
         {
           selector: 'parameter',
           format: ['camelCase', 'PascalCase'],
-          leadingUnderscore: 'allow'
-        }
-      ]
-    }
-  }
+          leadingUnderscore: 'allow',
+        },
+      ],
+    },
+  },
 ]

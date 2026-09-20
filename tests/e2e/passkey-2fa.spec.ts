@@ -94,7 +94,11 @@ interface LoginResponse {
   tempToken?: string
 }
 
-async function apiLogin(request: import('@playwright/test').APIRequestContext, email: string, password: string): Promise<LoginResponse> {
+async function apiLogin(
+  request: import('@playwright/test').APIRequestContext,
+  email: string,
+  password: string
+): Promise<LoginResponse> {
   const res = await request.post('/api/login', { data: { username: email, password } })
   const body = await res.json()
   expect(res.ok(), `api login failed: ${JSON.stringify(body)}`).toBeTruthy()
@@ -105,7 +109,11 @@ async function apiLogin(request: import('@playwright/test').APIRequestContext, e
  * Returns a live session token, completing the TOTP challenge if the account
  * already has 2FA enabled (idempotent across test runs).
  */
-async function getSessionToken(request: import('@playwright/test').APIRequestContext, email: string, password: string): Promise<string> {
+async function getSessionToken(
+  request: import('@playwright/test').APIRequestContext,
+  email: string,
+  password: string
+): Promise<string> {
   const login = await apiLogin(request, email, password)
   if (login.user?.token) return login.user.token
 
@@ -116,7 +124,7 @@ async function getSessionToken(request: import('@playwright/test').APIRequestCon
   const codes = await totpCodes(secret!)
   for (const code of codes) {
     const res = await request.post('/api/auth/2fa/verify-login', {
-      data: { userId: login.userId, tempToken: login.tempToken, code, method: 'totp' }
+      data: { userId: login.userId, tempToken: login.tempToken, code, method: 'totp' },
     })
     const body = await res.json()
     if (res.ok() && body.user?.token) return body.user.token
@@ -140,7 +148,7 @@ test('passkey enrollment + passkey sign-in round trip', async ({ page, request }
   for (const passkey of status.passkeys || []) {
     const removeRes = await request.post('/api/auth/2fa/webauthn/passkeys/remove', {
       headers: authHeaders,
-      data: { credentialId: passkey.credentialId }
+      data: { credentialId: passkey.credentialId },
     })
     expect(removeRes.ok(), `passkey removal failed: ${await removeRes.text()}`).toBeTruthy()
   }
@@ -156,7 +164,7 @@ test('passkey enrollment + passkey sign-in round trip', async ({ page, request }
     for (const code of codes) {
       const verifyRes = await request.post('/api/auth/2fa/verify', {
         headers: authHeaders,
-        data: { code }
+        data: { code },
       })
       const verify = await verifyRes.json()
       if (verify.success) {
@@ -178,8 +186,8 @@ test('passkey enrollment + passkey sign-in round trip', async ({ page, request }
       hasResidentKey: true,
       hasUserVerification: true,
       isUserVerified: true,
-      automaticPresenceSimulation: true
-    }
+      automaticPresenceSimulation: true,
+    },
   })
 
   // Log in through the UI to reach settings, completing the TOTP challenge
@@ -210,13 +218,13 @@ test('passkey enrollment + passkey sign-in round trip', async ({ page, request }
 
   await page.getByRole('button', { name: 'Enable Facial 2FA' }).click()
   await expect(page.getByText('Facial 2FA / Biometric passkey has been successfully enabled')).toBeVisible({
-    timeout: 30000
+    timeout: 30000,
   })
   await expect(page.getByRole('button', { name: 'Add Another Passkey' })).toBeVisible()
 
   // The status API must now report the passkey
   const passkeyStatusRes = await request.get('/api/auth/2fa/status', {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` },
   })
   const passkeyStatus = await passkeyStatusRes.json()
   expect(passkeyStatus.biometricEnrolled).toBeTruthy()

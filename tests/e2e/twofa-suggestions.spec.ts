@@ -26,7 +26,10 @@ function loadEnvFile(filePath: string): Record<string, string> {
     const idx = trimmed.indexOf('=')
     if (idx === -1) continue
     let value = trimmed.slice(idx + 1)
-    if (value.length >= 2 && ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'")))) {
+    if (
+      value.length >= 2 &&
+      ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'")))
+    ) {
       value = value.slice(1, -1)
     }
     env[trimmed.slice(0, idx)] = value
@@ -39,7 +42,9 @@ function supabaseAdminEnv(): { url: string; serviceKey: string } {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || fromFile.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey = process.env.SUPABASE_SERVICE_KEY || fromFile.SUPABASE_SERVICE_KEY
   if (!url || !serviceKey) {
-    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_KEY (.env.local). Cannot create the E2E test user.')
+    throw new Error(
+      'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_KEY (.env.local). Cannot create the E2E test user.'
+    )
   }
   return { url, serviceKey }
 }
@@ -49,14 +54,17 @@ async function createTestUser(request: APIRequestContext, email: string): Promis
   const headers = {
     apikey: serviceKey,
     Authorization: `Bearer ${serviceKey}`,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   }
   const res = await request.post(`${url}/auth/v1/admin/users`, {
     headers,
-    data: { email, password: PASSWORD, email_confirm: true }
+    data: { email, password: PASSWORD, email_confirm: true },
   })
   const body = await res.json().catch(() => ({}))
-  expect(res.ok(), `GoTrue user creation failed: status=${res.status()} body=${JSON.stringify(body).slice(0, 200)}`).toBeTruthy()
+  expect(
+    res.ok(),
+    `GoTrue user creation failed: status=${res.status()} body=${JSON.stringify(body).slice(0, 200)}`
+  ).toBeTruthy()
   expect(body.id, 'GoTrue did not return a user id').toBeTruthy()
   return { id: body.id, email: body.email }
 }
@@ -68,13 +76,16 @@ async function seedProfile(request: APIRequestContext, userId: string, patch: Re
     apikey: serviceKey,
     Authorization: `Bearer ${serviceKey}`,
     'Content-Type': 'application/json',
-    Prefer: 'resolution=merge-duplicates'
+    Prefer: 'resolution=merge-duplicates',
   }
   const res = await request.post(`${url}/rest/v1/profiles?on_conflict=id`, {
     headers,
-    data: { id: userId, ...patch }
+    data: { id: userId, ...patch },
   })
-  expect(res.ok(), `profile seeding failed: status=${res.status()} body=${(await res.text()).slice(0, 200)}`).toBeTruthy()
+  expect(
+    res.ok(),
+    `profile seeding failed: status=${res.status()} body=${(await res.text()).slice(0, 200)}`
+  ).toBeTruthy()
 }
 
 async function deleteTestUser(request: APIRequestContext, userId: string): Promise<void> {
@@ -82,7 +93,7 @@ async function deleteTestUser(request: APIRequestContext, userId: string): Promi
   const headers = {
     apikey: serviceKey,
     Authorization: `Bearer ${serviceKey}`,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   }
   await request.delete(`${url}/rest/v1/webauthn_credentials?user_id=eq.${userId}`, { headers })
   await request.delete(`${url}/rest/v1/webauthn_challenges?user_id=eq.${userId}`, { headers })
@@ -106,7 +117,7 @@ test('TOTP-only user: defaults to TOTP and suggests PIN + biometric (not set up)
   try {
     await seedProfile(request, userId, {
       is_2fa_enabled: true,
-      totp_secret: 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP' // fixed base32 secret (never completed)
+      totp_secret: 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP', // fixed base32 secret (never completed)
     })
 
     await reach2FAScreen(page, email)
@@ -151,7 +162,7 @@ test('TOTP + biometric user: defaults to TOTP and never auto-triggers the passke
     await seedProfile(request, userId, {
       is_2fa_enabled: true,
       totp_secret: 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP',
-      biometric_enrolled: true
+      biometric_enrolled: true,
     })
 
     // A passkey row is required for the backend to report biometric as enrolled.
@@ -159,15 +170,15 @@ test('TOTP + biometric user: defaults to TOTP and never auto-triggers the passke
     const headers = {
       apikey: serviceKey,
       Authorization: `Bearer ${serviceKey}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     }
     const cred = await request.post(`${url}/rest/v1/webauthn_credentials`, {
       headers,
       data: {
         user_id: userId,
         credential_id: `cred-${randomBytes(16).toString('hex')}`,
-        public_key: randomBytes(64).toString('base64')
-      }
+        public_key: randomBytes(64).toString('base64'),
+      },
     })
     expect(cred.ok(), `passkey seeding failed: ${cred.status()} ${(await cred.text()).slice(0, 200)}`).toBeTruthy()
 

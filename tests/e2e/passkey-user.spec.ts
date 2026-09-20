@@ -24,7 +24,10 @@ function loadEnvFile(filePath: string): Record<string, string> {
     const idx = trimmed.indexOf('=')
     if (idx === -1) continue
     let value = trimmed.slice(idx + 1)
-    if (value.length >= 2 && ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'")))) {
+    if (
+      value.length >= 2 &&
+      ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'")))
+    ) {
       value = value.slice(1, -1)
     }
     env[trimmed.slice(0, idx)] = value
@@ -37,7 +40,9 @@ function supabaseAdminEnv(): { url: string; serviceKey: string } {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || fromFile.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey = process.env.SUPABASE_SERVICE_KEY || fromFile.SUPABASE_SERVICE_KEY
   if (!url || !serviceKey) {
-    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_KEY (.env.local). Cannot create the E2E test user.')
+    throw new Error(
+      'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_KEY (.env.local). Cannot create the E2E test user.'
+    )
   }
   return { url, serviceKey }
 }
@@ -52,14 +57,17 @@ async function createTestUser(request: APIRequestContext, email: string): Promis
   const headers = {
     apikey: serviceKey,
     Authorization: `Bearer ${serviceKey}`,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   }
   const res = await request.post(`${url}/auth/v1/admin/users`, {
     headers,
-    data: { email, password: PASSWORD, email_confirm: true }
+    data: { email, password: PASSWORD, email_confirm: true },
   })
   const body = await res.json().catch(() => ({}))
-  expect(res.ok(), `GoTrue user creation failed: url=${res.url()} status=${res.status()} body=${JSON.stringify(body).slice(0, 200)}`).toBeTruthy()
+  expect(
+    res.ok(),
+    `GoTrue user creation failed: url=${res.url()} status=${res.status()} body=${JSON.stringify(body).slice(0, 200)}`
+  ).toBeTruthy()
   expect(body.id, 'GoTrue did not return a user id').toBeTruthy()
   return { id: body.id, email: body.email }
 }
@@ -69,7 +77,7 @@ async function deleteTestUser(request: APIRequestContext, userId: string): Promi
   const headers = {
     apikey: serviceKey,
     Authorization: `Bearer ${serviceKey}`,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   }
   // Also purge any passkeys/challenges via the REST API (service role bypasses RLS)
   await request.delete(`${url}/rest/v1/webauthn_credentials?user_id=eq.${userId}`, { headers })
@@ -79,7 +87,10 @@ async function deleteTestUser(request: APIRequestContext, userId: string): Promi
   await request.delete(`${url}/auth/v1/admin/users/${userId}`, { headers })
 }
 
-test('regular user can enroll a passkey from the security dashboard but cannot open admin settings', async ({ page, request }) => {
+test('regular user can enroll a passkey from the security dashboard but cannot open admin settings', async ({
+  page,
+  request,
+}) => {
   test.slow()
 
   const email = `e2e-user-${Date.now()}@audiobookphile.test`
@@ -115,8 +126,8 @@ test('regular user can enroll a passkey from the security dashboard but cannot o
         hasResidentKey: true,
         hasUserVerification: true,
         isUserVerified: true,
-        automaticPresenceSimulation: true
-      }
+        automaticPresenceSimulation: true,
+      },
     })
 
     await page.goto('/settings/authentication')
@@ -130,7 +141,7 @@ test('regular user can enroll a passkey from the security dashboard but cannot o
 
     await page.getByRole('button', { name: 'Enable Facial 2FA' }).click()
     await expect(page.getByText('Facial 2FA / Biometric passkey has been successfully enabled')).toBeVisible({
-      timeout: 30000
+      timeout: 30000,
     })
     await expect(page.getByRole('button', { name: 'Add Another Passkey' })).toBeVisible()
 

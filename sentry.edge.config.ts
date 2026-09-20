@@ -11,5 +11,5 @@ Sentry.init({
   integrations: [Sentry.extraErrorDataIntegration()],
   attachStacktrace: true,
   maxValueLength: 8192,
-  normalizeDepth: 10
+  normalizeDepth: 10,
 })

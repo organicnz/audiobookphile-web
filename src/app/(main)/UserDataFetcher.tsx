@@ -5,6 +5,7 @@ import { MediaProvider } from '@/features/player/contexts/MediaContext'
 import { CommandPaletteProvider } from '@/shared/contexts/CommandPaletteContext'
 import { TasksProvider } from '@/shared/contexts/TasksContext'
 import { UserProvider } from '@/shared/contexts/UserContext'
+import type { Profile } from '@/types/index'
 import { getCurrentUser } from '@/shared/lib/api'
 import CommandPalette from '@/shared/modals/CommandPalette'
 import { InstallPrompt } from '@/shared/ui/InstallPrompt'
@@ -58,9 +59,9 @@ export async function UserDataFetcher({ children }: { children: React.ReactNode 
           updated_at: null,
           language: null,
           theme: null,
-          is_2fa_enabled: null,
+          is_2fa_enabled: false,
           totp_secret: null,
-        },
+        } as unknown as Profile,
       }}
     >
       <TasksProvider>

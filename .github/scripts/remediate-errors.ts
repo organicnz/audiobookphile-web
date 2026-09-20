@@ -47,13 +47,13 @@ function exec(cmd: string[]): { code: number; stdout: string; stderr: string } {
       args: cmd.slice(1),
       stdout: 'piped',
       stderr: 'piped',
-      env: { GITHUB_TOKEN, ...Deno.env.toObject() }
+      env: { GITHUB_TOKEN, ...Deno.env.toObject() },
     })
     const output = process.outputSync()
     return {
       code: output.code,
       stdout: new TextDecoder().decode(output.stdout),
-      stderr: new TextDecoder().decode(output.stderr)
+      stderr: new TextDecoder().decode(output.stderr),
     }
   } catch (err) {
     return { code: 1, stdout: '', stderr: String(err) }
@@ -65,8 +65,8 @@ async function sentryGet(path: string): Promise<unknown> {
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${SENTRY_AUTH_TOKEN}`,
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   })
   if (!res.ok) {
     warn(`Sentry GET ${path} failed: ${res.status} ${res.statusText}`)
@@ -98,12 +98,14 @@ async function ensureGitHubIssue(issue: Record<string, unknown>): Promise<void> 
     '--limit',
     '50',
     '--json',
-    'title,body'
+    'title,body',
   ])
 
   const existing: Array<{ title: string; body: string }> = ghList.code === 0 ? JSON.parse(ghList.stdout || '[]') : []
 
-  const exists = existing.some((i) => i.title.includes(shortId) || i.body.includes(permalink) || i.body.includes(`Sentry ID: \`${id}\``))
+  const exists = existing.some(
+    (i) => i.title.includes(shortId) || i.body.includes(permalink) || i.body.includes(`Sentry ID: \`${id}\``)
+  )
 
   if (exists) {
     log(`GitHub Issue for Sentry ${shortId} already exists.`)
@@ -137,7 +139,7 @@ async function ensureGitHubIssue(issue: Record<string, unknown>): Promise<void> 
     '--body',
     body,
     '--label',
-    'bug,sentry,auto-generated'
+    'bug,sentry,auto-generated',
   ])
 
   if (create.code === 0) {
@@ -154,9 +156,9 @@ async function main(): Promise<void> {
   }
 
   log(`Fetching unresolved issues for ${ORG}/${PROJECT}...`)
-  const issues = (await sentryGet(`/organizations/${ORG}/issues/?query=is:unresolved&sort=date&statsPeriod=14d&project=${PROJECT}`)) as Array<
-    Record<string, unknown>
-  > | null
+  const issues = (await sentryGet(
+    `/organizations/${ORG}/issues/?query=is:unresolved&sort=date&statsPeriod=14d&project=${PROJECT}`
+  )) as Array<Record<string, unknown>> | null
 
   if (!issues || issues.length === 0) {
     log('No unresolved Sentry issues found for web.')

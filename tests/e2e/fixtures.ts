@@ -81,8 +81,8 @@ export const test = base.extend<MyFixtures>({
       const accessibilityScanResults = await makeAxeBuilder().analyze()
       expect(accessibilityScanResults.violations).toEqual([])
     },
-    { auto: true }
-  ] // auto: true means it runs for every test that requires it, or we can just make it auto for all?
+    { auto: true },
+  ], // auto: true means it runs for every test that requires it, or we can just make it auto for all?
 })
 
 export { expect }

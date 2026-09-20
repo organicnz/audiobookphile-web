@@ -1,21 +1,19 @@
 /**
- * ⚠️  COPY — DO NOT EDIT DIRECTLY
+ * ⚠️  SOURCE OF TRUTH
  *
- * The canonical source of truth for these schemas lives at:
- *   audiobookphile-backend/src/types/schemas.ts
+ * This file is the canonical definition of all Zod schemas shared between
+ * the backend edge functions and the web application.
  *
- * To update:
- *   1. Edit the backend copy above.
- *   2. Copy it here.
+ * The web application keeps a copy at:
+ *   audiobookphile-web/src/types/schemas.ts
+ *
+ * After editing this file:
+ *   1. Run `pnpm generate-types` (or `npm run generate-types`) in the backend
+ *      workspace to regenerate supabase.ts from the live database.
+ *   2. Copy this file to the web location above.
  *   3. Commit both changes together so the copies stay in sync.
- *
- * The web layer adds one web-only augmentation below: `BookMetadataModel` is
- * pinned to `BookMetadataFlat` (from `@/types/api/models`) so that schema /
- * interface drift is caught at compile time.
  */
-
 import { z } from 'zod'
-import type { BookMetadataFlat } from '@/types/api/models'
 
 export const AudioMetadataSchema = z.object({
   filename: z.string().nullish(),
@@ -132,6 +130,7 @@ export const BookMetadataSchema = z.object({
 })
 
 export const BookMediaSchema = z.object({
+  id: z.string().nullish(),
   libraryFiles: z.array(LibraryFileSchema).nullish(),
   chapters: z.array(ChapterSchema).nullish(),
   duration: z.number().nullish(),
@@ -228,6 +227,25 @@ export type EbookFileModel = z.infer<typeof EbookFileSchema>
  * BookMetadataModel is pinned to BookMetadataFlat.
  * This ensures the schema stays in sync with the web interface.
  */
+export type BookMetadataFlat = {
+  title: string
+  subtitle?: string | null
+  authorName?: string | null
+  authorNameLF?: string | null
+  narratorName?: string | null
+  seriesName?: string | null
+  genres: string[]
+  publishedYear?: string | null
+  publishedDate?: string | null
+  publisher?: string | null
+  description?: string | null
+  isbn?: string | null
+  asin?: string | null
+  language?: string | null
+  explicit: boolean
+  abridged?: boolean | null
+}
+
 export type BookMetadataModel = BookMetadataFlat
 export type BookMediaModel = z.infer<typeof BookMediaSchema>
 export type MediaProgressModel = z.infer<typeof MediaProgressSchema>
