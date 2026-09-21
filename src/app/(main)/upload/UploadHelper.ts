@@ -1,6 +1,7 @@
-import { sanitizeFileName } from '@/shared/lib/fileUtils'
 import type { Library } from '@/types/api'
 import { uploadBackupArchive, uploadMultipart, uploadSinglePart } from './uploadChunk'
+import { probeItemDurations } from './uploadDurationProbe'
+import { buildStorageKey, commonDirPrefix } from './uploadKeys'
 import {
   CleanedItem,
   checkFileType,
@@ -38,8 +39,14 @@ export async function upload(
   // 1. Upload each file (single-part or multipart based on presign response)
   const uploadedPaths: string[] = []
 
+  // Preserve folder structure in storage keys (relative to the item's own
+  // directory): the backend finalize gate and folder-aware playback read each
+  // file's folder chain from its key. Flat selections collapse to the legacy
+  // `bookId/basename` shape automatically.
+  const commonPrefix = commonDirPrefix(item.itemFiles.map((f) => f.filepath))
+
   for (const file of item.itemFiles) {
-    const storagePath = `${bookId}/${sanitizeFileName(file.name)}`
+    const storagePath = buildStorageKey(bookId, file.filepath, file.name, commonPrefix)
 
     let uploadUrl = ''
     let providerPrefix = ''
@@ -129,7 +136,10 @@ export async function upload(
     }
   }
 
-  // 2. Call /api/upload/finalize with metadata only (no files — tiny payload)
+  // 2. Probe real audio durations client-side (the edge runtime cannot run
+  // music-metadata inside its memory cap) and call /api/upload/finalize with
+  // metadata only (no files — tiny payload). Probing never fails the upload.
+  const durations = await probeItemDurations(item.itemFiles)
   const body = JSON.stringify({
     bookId,
     title: item.title,
@@ -138,12 +148,16 @@ export async function upload(
     library: libraryId,
     mediaType: mediaType || 'book',
     uploadedPaths,
-    files: item.itemFiles.map((f, i) => ({
-      name: f.name,
-      size: f.size,
-      type: f.type || f.mime_type || getMimeType(f.name) || 'audio/mp4',
-      storagePath: uploadedPaths[i],
-    })),
+    files: item.itemFiles.map((f, i) => {
+      const probed = durations.get(f)
+      return {
+        name: f.name,
+        size: f.size,
+        type: f.type || f.mime_type || getMimeType(f.name) || 'audio/mp4',
+        storagePath: uploadedPaths[i],
+        ...(probed !== undefined ? { duration: probed } : {}),
+      }
+    }),
     overwrite: item.overwrite,
   })
 
