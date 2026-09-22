@@ -175,10 +175,22 @@ export function usePlayerHandler(): UsePlayerHandlerReturn {
     []
   )
 
-  const handleSessionError = useCallback((error: Error) => {
-    console.error('[usePlayerHandler] Session error:', error)
-    setPlayerState(PlayerState.ERROR)
-  }, [])
+  const handleSessionError = useCallback(
+    (error: Error) => {
+      console.error('[usePlayerHandler] Session error:', error)
+      setPlayerState(PlayerState.ERROR)
+      // Previously silent: the player sat in ERROR with no explanation, so a
+      // failed session looked like "press play, nothing happens". Surface the
+      // backend's reason (missing files, auth, bad payload) as a toast — it is
+      // also the fastest route to the true root cause from a bug report.
+      const detail = error?.message?.trim()
+      showToast(detail ? `${t('ToastPlaybackFailed')}: ${detail}` : t('ToastPlaybackFailed'), {
+        type: 'error',
+        duration: 8000,
+      })
+    },
+    [showToast, t]
+  )
 
   const { startSession, closeSession, startSyncInterval, stopSyncInterval } = usePlaybackSession({
     onSessionReady: handleSessionReady,
