@@ -76,9 +76,15 @@ export async function removeFromContinueListeningAction(progressId: string) {
 
 /**
  * Delete a library item and its associated book, audio files from storage.
+ *
+ * hardDelete=true ("Delete from file system" checkbox) also removes the B2
+ * audio objects and the cover key; otherwise the DB row (plus its dependent
+ * rows) is removed and files stay on disk. The backend route rejects
+ * non-admins and answers 404 for already-gone items, so this never throws
+ * the app error boundary — failures surface as toasts at the call site.
  */
-export async function deleteLibraryItemAction(libraryItemId: string, _hardDelete: boolean) {
-  await apiRequest(`/api/items/${libraryItemId}`, { method: 'DELETE' })
+export async function deleteLibraryItemAction(libraryItemId: string, hardDelete: boolean) {
+  await apiRequest(`/api/items/${libraryItemId}${hardDelete ? '?hardDelete=1' : ''}`, { method: 'DELETE' })
   revalidatePath('/library')
   return null
 }
