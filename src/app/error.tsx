@@ -8,9 +8,19 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   useEffect(() => {
     Sentry.captureException(error, {
       tags: { digest: error?.digest ?? 'none' },
+      contexts: {
+        crash: {
+          route: typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : 'unknown',
+        },
+      },
     })
     console.error('Application Error:', error)
   }, [error])
+
+  // Production-safe one-liner: the message (never the stack) is shown so a
+  // crash report from a user actually names the failure instead of just a
+  // digest hash. Backend ApiErrors carry the server reason in .message.
+  const shortMessage = `${error?.name ?? 'Error'}: ${error?.message ?? 'unknown'}`.slice(0, 300)
 
   const buildDiagnostics = () => {
     return [
@@ -43,6 +53,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         <p className="text-foreground-muted mx-auto max-w-md">
           An unexpected error occurred. We&apos;ve been notified and are looking into it.
         </p>
+        <p className="text-foreground-subdued mx-auto mt-3 max-w-md font-mono text-xs break-words">{shortMessage}</p>
         {error?.digest && <p className="text-foreground-subdued mt-4 font-mono text-xs">digest: {error.digest}</p>}
         {typeof window !== 'undefined' && (
           <div className="mt-4 flex items-center justify-center gap-2">

@@ -193,7 +193,7 @@ export function useMediaCardActions({
     [episodeForQueue, itemIsFinished, libraryItem.id, showToast, t, title, userProgressPercent]
   )
 
-  const handleMoreAction = useCallback(
+  const dispatchMoreAction = useCallback(
     (action: string, data?: Record<string, string>) => {
       if (action === 'addToQueue') {
         const queueItem = {
@@ -341,6 +341,22 @@ export function useMediaCardActions({
       onDeleteSuccess,
       onOpenMatch,
     ]
+  )
+
+  const handleMoreAction = useCallback(
+    (action: string, data?: Record<string, string>) => {
+      // Belt & braces: every branch of dispatchMoreAction handles its own
+      // async errors, but a synchronous throw here would escape to the app
+      // error boundary ("Something went wrong" + dropped page). Catch-all
+      // keeps menu actions on the toast path no matter what.
+      try {
+        dispatchMoreAction(action, data)
+      } catch (error) {
+        console.error(`Failed to handle menu action "${action}"`, error)
+        showToast(t('ToastFailedToUpdate'), { type: 'error' })
+      }
+    },
+    [dispatchMoreAction, showToast, t]
   )
 
   const moreMenuItems = useMemo<MediaCardMoreMenuItem[]>(() => {
