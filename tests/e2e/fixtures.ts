@@ -51,7 +51,7 @@ async function performLogin(page: Page, email?: string, password?: string) {
 export const test = base.extend<MyFixtures>({
   adminPage: async ({ page }, use) => {
     if (!adminEmail || !adminPassword) {
-      base.skip(!adminEmail || !adminPassword, 'PLAYWRIGHT_ADMIN_EMAIL/PASSWORD env not set')
+      throw new Error('PLAYWRIGHT_ADMIN_EMAIL/PASSWORD env not set')
     }
     await performLogin(page, adminEmail, adminPassword)
     await use(page)

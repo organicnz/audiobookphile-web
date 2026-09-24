@@ -7,7 +7,7 @@
  * - Client-side resilience when filter/bookshelf APIs return malformed payloads
  * - Error-boundary recovery actions when a forced client failure occurs
  *
- * Requires PLAYWRIGHT_ADMIN_* (or MEMBER_*) creds; skipped when absent.
+ * Requires PLAYWRIGHT_ADMIN_* credentials; the fixture fails closed when absent.
  */
 import { expect, test } from './fixtures'
 
@@ -173,12 +173,6 @@ test.describe('library resilience', () => {
 
   test('admin edit pen exposes delete with confirm and cancel is non-destructive', async ({ adminPage }) => {
     test.setTimeout(90_000)
-    const deleteRequests: string[] = []
-    adminPage.on('request', (request) => {
-      if (request.method() === 'DELETE' && request.url().includes('/api/items/')) {
-        deleteRequests.push(request.url())
-      }
-    })
 
     await gotoStable(adminPage, '/library/books/items')
     await expectNoErrorBoundary(adminPage)
@@ -186,6 +180,13 @@ test.describe('library resilience', () => {
     const firstCard = adminPage.locator('[cy-id="MediaCard"]').first()
     await expect(firstCard).toBeVisible({ timeout: 20_000 })
     await firstCard.hover()
+
+    const deleteRequests: string[] = []
+    adminPage.on('request', (request) => {
+      if (request.method() === 'DELETE' && request.url().includes('/api/items/')) {
+        deleteRequests.push(request.url())
+      }
+    })
 
     const editButton = adminPage.getByRole('button', { name: 'Edit', exact: true }).first()
     await expect(editButton).toBeVisible({ timeout: 15_000 })

@@ -1,5 +1,6 @@
 import {
   BookSearchResult,
+  DeleteLibraryItemResponse,
   PodcastSearchResult,
   SearchLibraryResponse,
   UpdateLibraryItemMediaPayload,
@@ -145,8 +146,11 @@ export async function removeFromContinueListening(progressId: string): Promise<v
  * Delete a library item.
  * Backend reads `hardDelete=1` (not `hard`) — keep in sync with deleteLibraryItemAction.
  */
-export async function deleteLibraryItem(libraryItemId: string, hardDelete: boolean): Promise<void> {
-  return apiRequest<void>(`/api/items/${libraryItemId}${hardDelete ? '?hardDelete=1' : ''}`, {
+export async function deleteLibraryItem(
+  libraryItemId: string,
+  hardDelete: boolean
+): Promise<DeleteLibraryItemResponse> {
+  return apiRequest<DeleteLibraryItemResponse>(`/api/items/${libraryItemId}${hardDelete ? '?hardDelete=1' : ''}`, {
     method: 'DELETE',
   })
 }
