@@ -299,20 +299,15 @@ export function useMediaCardActions({
             setConfirmState(null)
             const hardDelete = !!hardDeleteChecked
 
-            // SSR-safe localStorage access
-            if (typeof window !== 'undefined') {
-              try {
-                localStorage.setItem('softDeleteDefault', hardDelete ? '0' : '1')
-              } catch (error) {
-                console.warn('Failed to save delete preference to localStorage', error)
-              }
-            }
-
             startTransition(async () => {
               try {
                 setProcessing(true)
-                await deleteLibraryItemAction(libraryItem.id, hardDelete)
-                showToast(t('ToastItemDeletedSuccess'), { type: 'success' })
+                const result = await deleteLibraryItemAction(libraryItem.id, hardDelete)
+                if (result.storageCleanup === 'pending') {
+                  showToast(t('ToastItemDeletedFilesPending'), { type: 'warning' })
+                } else {
+                  showToast(t('ToastItemDeletedSuccess'), { type: 'success' })
+                }
                 onDeleteSuccess?.()
               } catch (error) {
                 console.error('Failed to delete item', error)

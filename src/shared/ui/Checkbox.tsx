@@ -117,7 +117,7 @@ export default function Checkbox({
           type="checkbox"
           checked={value}
           disabled={disabled}
-          aria-label={ariaLabel}
+          aria-label={ariaLabel || label}
           onChange={handleChange}
           className="focus-visible:ring-primary focus-visible:ring-offset-background absolute inset-0 h-full w-full cursor-pointer rounded-md opacity-0 focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none"
         />

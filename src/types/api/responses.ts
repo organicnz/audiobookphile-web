@@ -134,6 +134,15 @@ export interface MetadataProvidersResponse {
   }
 }
 
+export interface DeleteLibraryItemResponse {
+  success: true
+  deletedId: string
+  removedFiles: number
+  filesRetained: number
+  storageCleanup: 'not_requested' | 'pending' | 'complete'
+  warnings: string[]
+}
+
 export interface UpdateLibraryItemMediaResponse {
   updated: boolean
   libraryItem?: LibraryItem

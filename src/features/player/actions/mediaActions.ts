@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { apiRequest, getLibraryItem } from '@/shared/lib/api'
-import type { UpdateLibraryItemMediaPayload } from '@/types/api'
+import type { DeleteLibraryItemResponse, UpdateLibraryItemMediaPayload } from '@/types/api'
 
 export async function toggleFinishedAction(libraryItemId: string, params: { isFinished: boolean; episodeId?: string }) {
   return await apiRequest(`/api/me/progress/${libraryItemId}`, {
@@ -77,16 +77,20 @@ export async function removeFromContinueListeningAction(progressId: string) {
 /**
  * Delete a library item and its associated book, audio files from storage.
  *
- * hardDelete=true ("Delete from file system" checkbox) also removes the B2
- * audio objects and the cover key; otherwise the DB row (plus its dependent
- * rows) is removed and files stay on disk. The backend route rejects
- * non-admins and answers 404 for already-gone items, so this never throws
- * the app error boundary — failures surface as toasts at the call site.
+ * hardDelete=true ("Delete from file system" checkbox) also requests B2
+ * audio and cover cleanup. The backend performs the database delete first
+ * and reports any storage cleanup that remains pending.
  */
-export async function deleteLibraryItemAction(libraryItemId: string, hardDelete: boolean) {
-  await apiRequest(`/api/items/${libraryItemId}${hardDelete ? '?hardDelete=1' : ''}`, { method: 'DELETE' })
-  revalidatePath('/library')
-  return null
+export async function deleteLibraryItemAction(
+  libraryItemId: string,
+  hardDelete: boolean
+): Promise<DeleteLibraryItemResponse> {
+  const result = await apiRequest<DeleteLibraryItemResponse>(
+    `/api/items/${libraryItemId}${hardDelete ? '?hardDelete=1' : ''}`,
+    { method: 'DELETE' }
+  )
+  revalidatePath('/library/[library]', 'page')
+  return result
 }
 
 export async function getExpandedLibraryItemAction(libraryItemId: string) {

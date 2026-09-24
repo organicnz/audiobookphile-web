@@ -170,4 +170,35 @@ test.describe('library resilience', () => {
     await expectNoErrorBoundary(adminPage)
     expect(adminPage.url()).not.toContain('definitely-not-a-library-xyz')
   })
+
+  test('admin edit pen exposes delete with confirm and cancel is non-destructive', async ({ adminPage }) => {
+    test.setTimeout(90_000)
+    const deleteRequests: string[] = []
+    adminPage.on('request', (request) => {
+      if (request.method() === 'DELETE' && request.url().includes('/api/items/')) {
+        deleteRequests.push(request.url())
+      }
+    })
+
+    await gotoStable(adminPage, '/library/books/items')
+    await expectNoErrorBoundary(adminPage)
+
+    const firstCard = adminPage.locator('[cy-id="MediaCard"]').first()
+    await expect(firstCard).toBeVisible({ timeout: 20_000 })
+    await firstCard.hover()
+
+    const editButton = adminPage.getByRole('button', { name: 'Edit', exact: true }).first()
+    await expect(editButton).toBeVisible({ timeout: 15_000 })
+    await editButton.click()
+
+    const deleteButton = adminPage.getByRole('button', { name: 'Delete', exact: true }).first()
+    await expect(deleteButton).toBeVisible({ timeout: 15_000 })
+    await deleteButton.click()
+
+    await expect(adminPage.getByText('Also delete from the file system')).toBeVisible({ timeout: 10_000 })
+    await adminPage.getByRole('button', { name: 'Cancel', exact: true }).click()
+
+    await expect(deleteButton).toBeVisible()
+    expect(deleteRequests).toEqual([])
+  })
 })

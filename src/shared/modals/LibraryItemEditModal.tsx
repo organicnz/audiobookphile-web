@@ -11,8 +11,9 @@ import {
   useTransition,
 } from 'react'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
-import { updateLibraryItemMediaAction } from '@/features/player/actions/mediaActions'
+import { deleteLibraryItemAction, updateLibraryItemMediaAction } from '@/features/player/actions/mediaActions'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
+import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import LibraryItemModal, {
   type LibraryItemModalItemSource,
@@ -21,6 +22,7 @@ import LibraryItemModal, {
 import Btn from '@/shared/ui/Btn'
 import LoadingIndicator from '@/shared/ui/LoadingIndicator'
 import BookDetailsEdit, { BookDetailsEditRef, BookUpdatePayload } from '@/shared/widgets/BookDetailsEdit'
+import ConfirmDialog from '@/shared/widgets/ConfirmDialog'
 import PodcastDetailsEdit, { PodcastDetailsEditRef, PodcastUpdatePayload } from '@/shared/widgets/PodcastDetailsEdit'
 import type { BookMedia, BookMetadata, PodcastMedia, PodcastMetadata } from '@/types/api'
 import { BookLibraryItem, PodcastLibraryItem } from '@/types/api'
@@ -84,6 +86,8 @@ export type LibraryItemEditModalProps = {
   isOpen: boolean
   onClose: () => void
   onSaved?: (libraryItem: BookLibraryItem | PodcastLibraryItem) => void
+  /** Fires after a successful backend delete (before close) so hosts can refresh/navigate. */
+  onDeleted?: (libraryItemId: string) => void
 } & LibraryItemModalItemSource
 
 type LibraryItemEditModalContentProps = {
@@ -92,6 +96,7 @@ type LibraryItemEditModalContentProps = {
   isSavePending: boolean
   onClose: () => void
   onSaved?: (libraryItem: BookLibraryItem | PodcastLibraryItem) => void
+  onDeleted?: (libraryItemId: string) => void
   /** When true (navCtx), body height stays fixed so prev/next does not resize the panel. */
   stableBodyHeight: boolean
 }
@@ -102,13 +107,16 @@ function LibraryItemEditModalContent({
   isSavePending,
   onClose,
   onSaved,
+  onDeleted,
   stableBodyHeight,
 }: LibraryItemEditModalContentProps) {
   const { resolvedItem, fetchPending, pendingEntityId, syncResolvedItem } = useLibraryItemModal()
   const t = useTypeSafeTranslations()
   const { showToast } = useGlobalToast()
   const { filterData, library } = useLibrary()
+  const { userCanDelete } = useUser()
   const [hasChanges, setHasChanges] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const saveAndCloseRef = useRef(false)
 
   const bookDetailsRef = useRef<BookDetailsEditRef>(null)
@@ -228,8 +236,39 @@ function LibraryItemEditModalContent({
     }
   }
 
+  const handleRequestDelete = useCallback(() => {
+    if (!userCanDelete || !resolvedItem?.id) return
+    setShowDeleteConfirm(true)
+  }, [resolvedItem?.id, userCanDelete])
+
+  const handleConfirmDelete = useCallback(
+    (hardDeleteChecked?: boolean) => {
+      setShowDeleteConfirm(false)
+      const itemId = resolvedItem?.id
+      if (!itemId) return
+
+      startSaveTransition(async () => {
+        try {
+          const result = await deleteLibraryItemAction(itemId, !!hardDeleteChecked)
+          if (result.storageCleanup === 'pending') {
+            showToast(t('ToastItemDeletedFilesPending'), { type: 'warning' })
+          } else {
+            showToast(t('ToastItemDeletedSuccess'), { type: 'success' })
+          }
+          onDeleted?.(itemId)
+          onClose()
+        } catch (error) {
+          console.error('Failed to delete library item:', error)
+          showToast(t('ToastItemDeletedFailed'), { type: 'error' })
+        }
+      })
+    },
+    [onClose, onDeleted, resolvedItem?.id, showToast, startSaveTransition, t]
+  )
+
   const isPodcast = resolvedItem?.mediaType === 'podcast'
   const saveDisabled = !hasChanges || isSavePending || !resolvedItem || fetchPending
+  const showDelete = userCanDelete && !!resolvedItem?.id
 
   const libraryId = library.id
   const showPlaceholderShell = fetchPending && !resolvedItem && pendingEntityId !== null
@@ -308,29 +347,55 @@ function LibraryItemEditModalContent({
     ) : null
 
   return (
-    <div
-      className={
-        stableBodyHeight
-          ? /* Slightly above empty book placeholder; extra content scrolls in the inner region. */
-            'flex h-[min(50rem,85vh)] max-h-[85vh] w-full flex-col rounded-lg'
-          : 'flex max-h-[85vh] w-full flex-col rounded-lg'
-      }
-    >
-      <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
-        {formInner}
+    <>
+      <div
+        className={
+          stableBodyHeight
+            ? /* Slightly above empty book placeholder; extra content scrolls in the inner region. */
+              'flex h-[min(50rem,85vh)] max-h-[85vh] w-full flex-col rounded-lg'
+            : 'flex max-h-[85vh] w-full flex-col rounded-lg'
+        }
+      >
+        <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
+          {formInner}
+        </div>
+
+        <div
+          className={`bg-bg border-border flex shrink-0 items-center justify-between gap-3 border-t px-4 py-3 transition-shadow duration-200 ${footerShadow ? 'box-shadow-md-up' : ''}`}
+        >
+          <div>
+            {showDelete && (
+              <Btn
+                color="bg-error"
+                onClick={handleRequestDelete}
+                disabled={isSavePending || fetchPending}
+                ariaLabel={t('ButtonDelete')}
+              >
+                {t('ButtonDelete')}
+              </Btn>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Btn onClick={() => handleSave(false)} disabled={saveDisabled}>
+              {t('ButtonSave')}
+            </Btn>
+            <Btn onClick={() => handleSave(true)} disabled={saveDisabled}>
+              {t('ButtonSaveAndClose')}
+            </Btn>
+          </div>
+        </div>
       </div>
 
-      <div
-        className={`bg-bg border-border flex shrink-0 justify-end gap-3 border-t px-4 py-3 transition-shadow duration-200 ${footerShadow ? 'box-shadow-md-up' : ''}`}
-      >
-        <Btn onClick={() => handleSave(false)} disabled={saveDisabled}>
-          {t('ButtonSave')}
-        </Btn>
-        <Btn onClick={() => handleSave(true)} disabled={saveDisabled}>
-          {t('ButtonSaveAndClose')}
-        </Btn>
-      </div>
-    </div>
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        message={t('MessageConfirmDeleteLibraryItem')}
+        checkboxLabel={t('LabelDeleteFromFileSystemCheckbox')}
+        yesButtonText={t('ButtonDelete')}
+        yesButtonClassName="bg-error"
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleConfirmDelete}
+      />
+    </>
   )
 }
 
@@ -341,7 +406,7 @@ function LibraryItemEditModalContent({
  * Pass `navCtx` to load expanded items and enable prev/next like MatchModal.
  */
 export default function LibraryItemEditModal(props: LibraryItemEditModalProps) {
-  const { isOpen, onClose, onSaved } = props
+  const { isOpen, onClose, onSaved, onDeleted } = props
   const navCtxMode = 'navCtx' in props
   const { filterDataLoading } = useLibrary()
   const [isSavePending, startSaveTransition] = useTransition()
@@ -360,6 +425,7 @@ export default function LibraryItemEditModal(props: LibraryItemEditModalProps) {
         isSavePending={isSavePending}
         onClose={onClose}
         onSaved={onSaved}
+        onDeleted={onDeleted}
         stableBodyHeight={navCtxMode}
       />
     </LibraryItemModal>

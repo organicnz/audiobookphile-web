@@ -41,8 +41,9 @@ export default function Modal({
   const contentRef = useRef<HTMLDivElement>(null)
 
   const clickClose = useCallback(() => {
+    if (processing || persistent) return
     onClose?.()
-  }, [onClose])
+  }, [onClose, persistent, processing])
 
   const handleClickOutside = useCallback(
     (e: MouseEvent) => {

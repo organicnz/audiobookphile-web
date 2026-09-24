@@ -140,9 +140,18 @@ function MediaCard(props: MediaCardProps) {
   const handleOpenEdit = useCallback(() => {
     const navCtx = getMediaCardModalNavigationContext(libraryItem.id, shelfEntities, entityIndex)
     setBoundModal(
-      <LibraryItemEditModal key="library-item-edit-modal" isOpen navCtx={navCtx} onClose={clearBoundModal} />
+      <LibraryItemEditModal
+        key="library-item-edit-modal"
+        isOpen
+        navCtx={navCtx}
+        onClose={clearBoundModal}
+        onDeleted={() => {
+          clearBoundModal()
+          router.refresh()
+        }}
+      />
     )
-  }, [clearBoundModal, libraryItem.id, shelfEntities, entityIndex, setBoundModal])
+  }, [clearBoundModal, libraryItem.id, shelfEntities, entityIndex, setBoundModal, router])
 
   const handleMoreMenuOpenChange = (isOpen: boolean) => {
     setIsMoreMenuOpen(isOpen)
@@ -299,6 +308,10 @@ function MediaCard(props: MediaCardProps) {
     isStreamingFromDifferentLib,
     isQueued,
     initialShare: libraryItem.mediaItemShare ?? null,
+    onDeleteSuccess: () => {
+      clearBoundModal()
+      router.refresh()
+    },
     onOpenMatch: handleOpenMatch,
     playerControls: playerHandler.controls,
   })

@@ -142,11 +142,11 @@ export async function removeFromContinueListening(progressId: string): Promise<v
 }
 
 /**
- * Delete a library item
+ * Delete a library item.
+ * Backend reads `hardDelete=1` (not `hard`) — keep in sync with deleteLibraryItemAction.
  */
 export async function deleteLibraryItem(libraryItemId: string, hardDelete: boolean): Promise<void> {
-  const hard = hardDelete ? '1' : '0'
-  return apiRequest<void>(`/api/items/${libraryItemId}?hard=${hard}`, {
+  return apiRequest<void>(`/api/items/${libraryItemId}${hardDelete ? '?hardDelete=1' : ''}`, {
     method: 'DELETE',
   })
 }

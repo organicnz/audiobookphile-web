@@ -1,6 +1,7 @@
 'use client'
 
 import { Folder, X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import LibraryFilesTable from '@/features/library/components/LibraryFilesTable'
 import { useLibrary } from '@/features/library/contexts/LibraryContext'
@@ -29,6 +30,7 @@ interface LibraryItemClientProps {
 
 export default function LibraryItemClient({ libraryItem: initialLibraryItem }: LibraryItemClientProps) {
   const { library } = useLibrary()
+  const router = useRouter()
   const { serverSettings, getMediaItemProgress, userCanUpdate, userIsAdminOrUp } = useUser()
   const { showToast } = useGlobalToast()
   const t = useTypeSafeTranslations()
@@ -63,6 +65,11 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
     setLibraryItem(updatedItem)
   }
 
+  const handleItemDeleted = useCallback(() => {
+    setIsEditModalOpen(false)
+    router.push(`/library/${library.id}`)
+  }, [library.id, router])
+
   const { rssFeed, episodesDownloading, episodeDownloadsQueued } = useItemPageSocket({
     libraryItemId: libraryItem.id,
     mediaId: libraryItem.media?.id,
@@ -91,9 +98,7 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
               libraryItem={libraryItem}
               canUpdate={userCanUpdate}
               mediaProgress={userProgress}
-              onEdit={() => {
-                console.log('edit cover')
-              }}
+              onEdit={handleOpenEditModal}
             />
           </div>
           <div className="flex-1">
@@ -234,6 +239,7 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
         libraryItem={libraryItem}
         onClose={handleCloseEditModal}
         onSaved={handleItemSaved}
+        onDeleted={handleItemDeleted}
       />
       <ConfirmDialog
         isOpen={isClearQueueDialogOpen}
