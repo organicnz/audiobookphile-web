@@ -21,7 +21,8 @@ export default function SeriesClient({ series, libraryItems }: SeriesClientProps
   const { user, serverSettings, ereaderDevices, getMediaItemProgress, userIsAdminOrUp } = useUser()
   const { setItemCount, setDetailToolbarTitle, setContextMenuItems, setContextMenuActionHandler } = useLibrary()
 
-  const bookTotal = libraryItems.total ?? libraryItems.results.length
+  const results = Array.isArray(libraryItems?.results) ? libraryItems.results : []
+  const bookTotal = libraryItems?.total ?? results.length
 
   const [rssFeed, setRssFeed] = useState<RssFeed | null>(series.rssFeed ?? null)
   const [rssFeedModalOpen, setRssFeedModalOpen] = useState(false)
@@ -95,7 +96,7 @@ export default function SeriesClient({ series, libraryItems }: SeriesClientProps
   return (
     <div>
       <div className="flex flex-wrap gap-4">
-        {libraryItems.results.map((libraryItem) => {
+        {results.map((libraryItem) => {
           const entityProgress = libraryItem.media?.id ? getMediaItemProgress(libraryItem.media.id) : undefined
           return (
             <BookMediaCard

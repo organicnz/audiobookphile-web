@@ -1,11 +1,13 @@
 import { Suspense } from 'react'
 import {
+  getLibraries,
   getLibraryAuthors,
   getLibraryCollections,
   getLibraryItems,
   getLibraryPlaylists,
   getLibrarySeries,
 } from '@/shared/lib/api'
+import { resolveLibraryFromParam } from '@/shared/lib/library-slugs'
 import { EntityType } from '@/types/api'
 import BookshelfClient from './BookshelfClient'
 
@@ -68,11 +70,25 @@ export default async function EntityPage({
   params: Promise<{ library: string; entityType: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const { library, entityType: entityTypeString } = await params
+  const { library: libraryParam, entityType: entityTypeString } = await params
   const resolvedSearchParams = await searchParams
   const entityType = entityTypeString as EntityType
 
-  const initialData = await fetchInitialData(entityType, library, resolvedSearchParams)
+  let libraryId = libraryParam
+  try {
+    const response = await getLibraries()
+    const libraries = Array.isArray(response?.libraries) ? response.libraries : []
+    const resolved = resolveLibraryFromParam(libraryParam, libraries)
+    if (resolved) {
+      libraryId = resolved.library.id
+    }
+  } catch (err) {
+    // Layout already resolves/redirects unknown slugs; keep the raw param as a
+    // best-effort libraryId only when the param is already a UUID.
+    console.error('Failed to resolve library param for entity page', err)
+  }
+
+  const initialData = await fetchInitialData(entityType, libraryId, resolvedSearchParams)
 
   return (
     <div className="h-full w-full">

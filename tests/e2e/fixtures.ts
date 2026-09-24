@@ -30,11 +30,22 @@ async function performLogin(page: Page, email?: string, password?: string) {
   if (!email || !password) {
     throw new Error('PLAYWRIGHT_*_EMAIL/PASSWORD env not set')
   }
-  await page.goto('/login')
-  await page.getByLabel('Email').fill(email)
-  await page.getByRole('textbox', { name: 'Password' }).fill(password)
-  await page.getByRole('button', { name: 'Sign in' }).click()
-  await page.waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 30_000 })
+
+  const attempt = async () => {
+    await page.goto('/login')
+    await page.getByLabel('Email').fill(email)
+    await page.getByRole('textbox', { name: 'Password' }).fill(password)
+    await page.getByRole('button', { name: 'Sign in' }).click()
+    await page.waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 30_000 })
+  }
+
+  // One retry covers transient rate-limit / session thrash under serial workers.
+  try {
+    await attempt()
+  } catch {
+    await page.waitForTimeout(1_000)
+    await attempt()
+  }
 }
 
 export const test = base.extend<MyFixtures>({

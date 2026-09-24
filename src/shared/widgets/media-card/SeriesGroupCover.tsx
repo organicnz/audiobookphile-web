@@ -101,7 +101,7 @@ export default function SeriesGroupCover({ name, books, width, height, bookCover
   useEffect(() => {
     async function loadCovers() {
       // Filter books that have covers and haven't permanently failed
-      const validBooks = books
+      const validBooks = (Array.isArray(books) ? books : [])
         .filter((book) => {
           const state = loadingStates.get(book.id)
           const hasCover = (book as any).media?.coverPath || (book as any).cover

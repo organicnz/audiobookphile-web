@@ -5,10 +5,12 @@ import { defineConfig, devices } from '@playwright/test'
  */
 export default defineConfig({
   testDir: './tests/e2e',
-  fullyParallel: true,
+  // Serial workers avoid concurrent login races against the same account
+  // (rate limits / session thrash) while still allowing project parallelism.
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 4 : undefined,
+  workers: process.env.CI ? 2 : 2,
   reporter: 'html',
   use: {
     baseURL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000', // dev-only fallback

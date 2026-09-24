@@ -46,7 +46,8 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
     )
   }
 
-  const topGenres = stats.genresWithCount
+  const topGenres = (Array.isArray(stats.genresWithCount) ? stats.genresWithCount : [])
+    .slice()
     .sort((a, b) => b.count - a.count)
     .slice(0, 5)
     .map((stat) => ({
@@ -54,7 +55,8 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
       percentage: Math.round((stat.count / Math.max(1, stats.totalItems)) * 100),
     }))
 
-  const topAuthors = stats.authorsWithCount
+  const topAuthors = (Array.isArray(stats.authorsWithCount) ? stats.authorsWithCount : [])
+    .slice()
     .sort((a, b) => b.count - a.count)
     .slice(0, 10)
     .map((stat) => ({
@@ -196,8 +198,10 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
           className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md"
         >
           <h2 className="mb-6 text-2xl font-semibold text-white/90">Longest Items</h2>
-          {stats.longestItems.length === 0 && <p className="text-white/50">No items found.</p>}
-          {stats.longestItems.map((stat, index) => (
+          {(Array.isArray(stats.longestItems) ? stats.longestItems : []).length === 0 && (
+            <p className="text-white/50">No items found.</p>
+          )}
+          {(Array.isArray(stats.longestItems) ? stats.longestItems : []).map((stat, index) => (
             <div key={index} className="mb-2 flex w-full items-center justify-between py-2">
               <span className="pr-2 text-sm text-white/50">{index + 1}.</span>
               <Link
@@ -219,8 +223,10 @@ export function LibraryStatsDashboard({ libraryId }: { libraryId: string }) {
           className="w-full rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md"
         >
           <h2 className="mb-6 text-2xl font-semibold text-white/90">Largest Items</h2>
-          {stats.largestItems.length === 0 && <p className="text-white/50">No items found.</p>}
-          {stats.largestItems.map((stat, index) => (
+          {(Array.isArray(stats.largestItems) ? stats.largestItems : []).length === 0 && (
+            <p className="text-white/50">No items found.</p>
+          )}
+          {(Array.isArray(stats.largestItems) ? stats.largestItems : []).map((stat, index) => (
             <div key={index} className="mb-2 flex w-full items-center justify-between py-2">
               <span className="pr-2 text-sm text-white/50">{index + 1}.</span>
               <Link

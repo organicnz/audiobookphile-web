@@ -171,14 +171,14 @@ export function useLibrarySearch(options: UseLibrarySearchOptions = {}): UseLibr
         }
 
         // Map results back to SearchLibraryResponse structure
-        const items = data?.results || []
+        const items = Array.isArray(data?.results) ? data.results : []
         result = {
           book: items
-            .filter((item: any) => item.mediaType === 'book')
-            .map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
+            .filter((item: any) => item?.mediaType === 'book')
+            .map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item?.media?.metadata?.title })),
           podcast: items
-            .filter((item: any) => item.mediaType === 'podcast')
-            .map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item.media?.metadata?.title })),
+            .filter((item: any) => item?.mediaType === 'podcast')
+            .map((item: any) => ({ libraryItem: item, matchKey: 'title', matchText: item?.media?.metadata?.title })),
           tags: [],
           authors: [],
           series: [],

@@ -56,8 +56,12 @@ export function useInfiniteBookshelf({
         break
     }
 
-    const results = response.results || response.authors || []
-    const total = response.total ?? results.length
+    const results = Array.isArray(response?.results)
+      ? response.results
+      : Array.isArray(response?.authors)
+        ? response.authors
+        : []
+    const total = response?.total ?? results.length
 
     return {
       results,
@@ -79,12 +83,12 @@ export function useInfiniteBookshelf({
       queryClient.setQueriesData(
         { queryKey: ['bookshelf', libraryId] },
         (oldData: InfiniteData<BookshelfPage> | undefined) => {
-          if (!oldData) return oldData
+          if (!oldData || !Array.isArray(oldData.pages)) return oldData
           return {
             ...oldData,
             pages: oldData.pages.map((page: BookshelfPage) => ({
               ...page,
-              results: page.results.map(updater),
+              results: Array.isArray(page.results) ? page.results.map(updater) : [],
             })),
           }
         }

@@ -16,7 +16,7 @@ export default async function ItemMetadataUtilsTagsPage() {
     const { libraries } = await getLibraries()
     if (libraries.length > 0) {
       const filterData = await getLibraryFilterData(libraries[0].id)
-      tags = filterData.tags
+      tags = Array.isArray(filterData?.tags) ? filterData.tags : []
     }
   } catch (err) {
     console.error('Error loading tags', err)

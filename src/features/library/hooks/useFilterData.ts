@@ -8,25 +8,30 @@ import { isBookLibraryItem, isPodcastLibraryItem, LibraryFilterData, LibraryItem
  * Add unique strings to an array and sort alphabetically.
  */
 function addUniqueStrings(
-  existing: string[],
+  existing: string[] | undefined,
   newItems: string[] | undefined,
   sortFn: (a: string, b: string) => number = (a, b) => a.localeCompare(b)
 ): string[] {
-  if (!newItems?.length) return existing
-  const itemsToAdd = newItems.filter((item) => !existing.includes(item))
-  if (itemsToAdd.length === 0) return existing
-  return [...existing, ...itemsToAdd].sort(sortFn)
+  const base = Array.isArray(existing) ? existing : []
+  if (!newItems?.length) return base
+  const itemsToAdd = newItems.filter((item) => !base.includes(item))
+  if (itemsToAdd.length === 0) return base
+  return [...base, ...itemsToAdd].sort(sortFn)
 }
 
 /**
  * Add unique objects by id to an array and sort by name.
  */
-function addUniqueById<T extends { id: string; name: string }>(existing: T[], newItems: T[] | undefined): T[] {
-  if (!newItems?.length) return existing
-  const existingIds = new Set(existing.map((item) => item.id))
+function addUniqueById<T extends { id: string; name: string }>(
+  existing: T[] | undefined,
+  newItems: T[] | undefined
+): T[] {
+  const base = Array.isArray(existing) ? existing : []
+  if (!newItems?.length) return base
+  const existingIds = new Set(base.map((item) => item.id))
   const itemsToAdd = newItems.filter((item) => !existingIds.has(item.id))
-  if (itemsToAdd.length === 0) return existing
-  return [...existing, ...itemsToAdd].sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+  if (itemsToAdd.length === 0) return base
+  return [...base, ...itemsToAdd].sort((a, b) => (a.name || '').localeCompare(b.name || ''))
 }
 
 export function useFilterData(libraryId: string | undefined) {
@@ -89,7 +94,7 @@ export function useFilterData(libraryId: string | undefined) {
         if (!prev) return prev
         return {
           ...prev,
-          series: prev.series.filter((s) => s.id !== seriesId),
+          series: Array.isArray(prev.series) ? prev.series.filter((s) => s.id !== seriesId) : [],
         }
       })
     },

@@ -32,6 +32,7 @@ export default function MediaCardMoreMenu({
   className,
 }: MediaCardMoreMenuProps) {
   const contextMenuItems = useMemo<ContextMenuDropdownItem<string>[]>(() => {
+    if (!Array.isArray(items)) return []
     return items.map((item) => ({
       text: item.text,
       action: item.func ?? '',

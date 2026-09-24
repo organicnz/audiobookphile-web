@@ -9,6 +9,7 @@ import { useLibrary } from '@/features/library/contexts/LibraryContext'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
+import { normalizeShelves, shelfEntities } from '@/shared/lib/library-shelves'
 import IconBtn from '@/shared/ui/IconBtn'
 import Tooltip from '@/shared/ui/Tooltip'
 import ItemSlider from '@/shared/widgets/ItemSlider'
@@ -43,11 +44,11 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
   const { user, serverSettings, ereaderDevices, userIsAdminOrUp, getMediaItemProgress } = useUser()
   const { library, setContextMenuItems, setContextMenuActionHandler, homeBookshelfView } = useLibrary()
 
-  const [shelves, setShelves] = useState(personalized)
+  const [shelves, setShelves] = useState<PersonalizedShelf[]>(() => normalizeShelves(personalized))
   const [localViewMode, setLocalViewMode] = useState<'row' | 'grid'>('row')
 
   useEffect(() => {
-    setShelves(personalized)
+    setShelves(normalizeShelves(personalized))
   }, [personalized])
 
   /**
@@ -62,12 +63,14 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
       updater: (entity: LibraryItem | Series | Author) => LibraryItem | Series | Author
     ) => {
       setShelves((prev) => {
+        if (!Array.isArray(prev)) return normalizeShelves(prev)
         let shelvesChanged = false
         const nextShelves = prev.map((shelf) => {
           if (!shelfTypes.includes(shelf.type)) return shelf
 
           let changed = false
-          const nextEntities = (shelf.entities as (LibraryItem | Series | Author)[]).map((entity) => {
+          const rawEntities = shelfEntities(shelf)
+          const nextEntities = (rawEntities as (LibraryItem | Series | Author)[]).map((entity) => {
             const next = updater(entity)
             if (next !== entity) changed = true
             return next
@@ -220,9 +223,11 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
               ? BookShelfRow
               : ItemSlider
 
+        const entities = shelfEntities<LibraryItem | Series | Author>(shelf)
+
         return (
           <Wrapper key={shelf.id} title={shelf.label}>
-            {shelf.entities.map((entity, entityIndex) => {
+            {entities.map((entity, entityIndex) => {
               if (shelf.type === 'book' || shelf.type === 'podcast') {
                 const EntityMediaCard = shelf.type === 'book' ? BookMediaCard : PodcastMediaCard
                 const libraryItem = entity as LibraryItem
@@ -241,7 +246,7 @@ export default function LibraryClient({ personalized }: LibraryClientProps) {
                       ereaderDevices={ereaderDevices}
                       showSubtitles={true}
                       mediaProgress={mediaProgress}
-                      shelfEntities={shelf.entities as unknown as (BookshelfEntity | null)[]}
+                      shelfEntities={(entities as unknown as (BookshelfEntity | null)[]) ?? []}
                       entityIndex={entityIndex}
                       continueListeningShelf={shelf.id === 'continue-listening' || shelf.id === 'continue-reading'}
                     />

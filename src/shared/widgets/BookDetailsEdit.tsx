@@ -53,14 +53,20 @@ const BookDetailsEdit = ({
         : state.details.narrators,
       authors: detailsToUpdate.authors
         ? [
-            ...state.details.authors,
-            ...detailsToUpdate.authors.filter((newItem) => !state.details.authors.find((p) => p.id === newItem.id)),
+            ...(Array.isArray(state.details.authors) ? state.details.authors : []),
+            ...detailsToUpdate.authors.filter(
+              (newItem) =>
+                !(Array.isArray(state.details.authors) ? state.details.authors : []).find((p) => p.id === newItem.id)
+            ),
           ]
         : state.details.authors,
       series: detailsToUpdate.series
         ? [
-            ...state.details.series,
-            ...detailsToUpdate.series.filter((newItem) => !state.details.series.find((p) => p.id === newItem.id)),
+            ...(Array.isArray(state.details.series) ? state.details.series : []),
+            ...detailsToUpdate.series.filter(
+              (newItem) =>
+                !(Array.isArray(state.details.series) ? state.details.series : []).find((p) => p.id === newItem.id)
+            ),
           ]
         : state.details.series,
     }),
@@ -89,17 +95,22 @@ const BookDetailsEdit = ({
     batchAppendLogic,
   })
 
-  const authorItems = useMemo(() => details.authors.map((a) => ({ value: a.id, content: a.name })), [details.authors])
+  const authorItems = useMemo(
+    () => (Array.isArray(details.authors) ? details.authors : []).map((a) => ({ value: a.id, content: a.name })),
+    [details.authors]
+  )
   const handleAddAuthor = useCallback(
     (item: MultiSelectItem<string>) => {
       const newAuthor: Author = { id: item.value, name: item.content }
-      handleFieldUpdate('authors')([...details.authors, newAuthor])
+      handleFieldUpdate('authors')([...(Array.isArray(details.authors) ? details.authors : []), newAuthor])
     },
     [details.authors, handleFieldUpdate]
   )
   const handleRemoveAuthor = useCallback(
     (item: MultiSelectItem<string>) => {
-      handleFieldUpdate('authors')(details.authors.filter((a) => a.id !== item.value))
+      handleFieldUpdate('authors')(
+        (Array.isArray(details.authors) ? details.authors : []).filter((a) => a.id !== item.value)
+      )
     },
     [details.authors, handleFieldUpdate]
   )
@@ -114,7 +125,7 @@ const BookDetailsEdit = ({
 
   const seriesItems = useMemo(
     () =>
-      details.series.map((s) => ({
+      (Array.isArray(details.series) ? details.series : []).map((s) => ({
         value: s.id,
         content: { value: s.name, modifier: s.sequence || '' },
       })),
@@ -127,13 +138,15 @@ const BookDetailsEdit = ({
         name: item.content.value,
         sequence: item.content.modifier,
       }
-      handleFieldUpdate('series')([...details.series, newSeries])
+      handleFieldUpdate('series')([...(Array.isArray(details.series) ? details.series : []), newSeries])
     },
     [details.series, handleFieldUpdate]
   )
   const handleRemoveSeries = useCallback(
     (item: SeriesSelectItem) => {
-      handleFieldUpdate('series')(details.series.filter((s) => s.id !== item.value))
+      handleFieldUpdate('series')(
+        (Array.isArray(details.series) ? details.series : []).filter((s) => s.id !== item.value)
+      )
     },
     [details.series, handleFieldUpdate]
   )
@@ -144,7 +157,7 @@ const BookDetailsEdit = ({
         name: item.content.value,
         sequence: item.content.modifier,
       }
-      const newSeriesList = [...details.series]
+      const newSeriesList = [...(Array.isArray(details.series) ? details.series : [])]
       newSeriesList[index] = editedSeries
       handleFieldUpdate('series')(newSeriesList)
     },

@@ -30,7 +30,7 @@ export default function SortableList<T extends SortableItem>({
   // Ensure each item has a unique identifier
   const itemsWithIds = useMemo(
     () =>
-      items.map((item, index) => ({
+      (Array.isArray(items) ? items : []).map((item, index) => ({
         ...item,
         id: item.id || `item-${index}`,
       })),

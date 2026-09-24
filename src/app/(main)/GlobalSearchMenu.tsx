@@ -126,7 +126,7 @@ export default function GlobalSearchMenu({
         }
         onMouseDown={(e) => e.preventDefault()}
       >
-        {results.map((result, index) => {
+        {(Array.isArray(results) ? results : []).map((result, index) => {
           if (result.isPlaceholder) {
             return (
               <div key={result.id} className="text-foreground/40 px-4 py-3 text-sm font-medium italic">

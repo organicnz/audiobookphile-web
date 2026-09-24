@@ -17,7 +17,7 @@ export default async function ItemMetadataUtilsGenresPage() {
     const { libraries } = await getLibraries()
     if (libraries.length > 0) {
       const filterData = await getLibraryFilterData(libraries[0].id)
-      genres = filterData.genres
+      genres = Array.isArray(filterData?.genres) ? filterData.genres : []
     }
   } catch (err) {
     console.error('Error loading genres', err)

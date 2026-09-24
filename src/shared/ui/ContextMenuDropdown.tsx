@@ -296,7 +296,7 @@ export default function ContextMenuDropdown<T = string>({
   }
 
   // Convert items to the format expected by ContextMenu
-  const contextMenuItems: ContextMenuItem<T>[] = items.map((item) => ({
+  const contextMenuItems: ContextMenuItem<T>[] = (Array.isArray(items) ? items : []).map((item) => ({
     text: item.text,
     action: item.action,
     subitems: item.subitems?.map((subitem) => ({

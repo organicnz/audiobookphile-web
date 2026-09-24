@@ -1,10 +1,16 @@
 'use client'
 
 import * as Sentry from '@sentry/nextjs'
-import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useRef } from 'react'
 import Btn from '@/shared/ui/Btn'
 
+const MAX_AUTO_RESETS = 2
+
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const router = useRouter()
+  const resetCountRef = useRef(0)
+
   useEffect(() => {
     Sentry.captureException(error, {
       tags: { digest: error?.digest ?? 'none' },
@@ -36,6 +42,22 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
     navigator.clipboard?.writeText(buildDiagnostics())
   }
 
+  const handleTryAgain = () => {
+    // Cap retries so a hard-failing route cannot loop forever.
+    if (resetCountRef.current >= MAX_AUTO_RESETS) {
+      router.push('/account')
+      return
+    }
+    resetCountRef.current += 1
+    reset()
+  }
+
+  const handleGoHome = () => {
+    // Leave the crashed route. "/" redirects to the default library — if we
+    // crashed there, land on a known-good page instead of bouncing back.
+    router.push('/account')
+  }
+
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-6 text-center">
       <div className="mb-8">
@@ -63,24 +85,16 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
             >
               Copy diagnostics
             </button>
-            {typeof window !== 'undefined' && (
-              <span className="text-foreground-subdued font-mono text-xs">{window.location.pathname}</span>
-            )}
+            <span className="text-foreground-subdued font-mono text-xs">{window.location.pathname}</span>
           </div>
         )}
       </div>
 
       <div className="flex gap-4">
-        <Btn onClick={() => reset()} className="px-8 py-2">
+        <Btn onClick={handleTryAgain} className="px-8 py-2">
           Try Again
         </Btn>
-        <Btn
-          onClick={() => {
-            window.location.href = '/'
-          }}
-          color="bg-black-400"
-          className="px-8 py-2"
-        >
+        <Btn onClick={handleGoHome} color="bg-black-400" className="px-8 py-2">
           Go Home
         </Btn>
       </div>

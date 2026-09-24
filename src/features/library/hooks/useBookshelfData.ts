@@ -85,15 +85,17 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
           gcTime: 60 * 60 * 1000, // 1 hour memory retention
         })
 
-        const results = (data.results || data.authors || []) as BookshelfEntity[]
-        const total = data.total ?? results.length
+        const results = (
+          Array.isArray(data?.results) ? data.results : Array.isArray(data?.authors) ? data.authors : []
+        ) as BookshelfEntity[]
+        const total = data?.total ?? results.length
 
         setTotalEntities(total)
         setIsInitialized(true)
         setError(null)
 
         setSparseItems((prev) => {
-          let next = [...prev]
+          let next = Array.isArray(prev) ? [...prev] : []
           if (next.length !== total) {
             next = new Array(total).fill(null)
           }
@@ -142,6 +144,7 @@ export function useBookshelfData({ entityType, query, itemsPerPage }: UseBookshe
 
   const updateItems = useCallback((updater: (item: BookshelfEntity) => BookshelfEntity) => {
     setSparseItems((prev) => {
+      if (!Array.isArray(prev)) return prev
       let changed = false
       const next = prev.map((item) => {
         if (!item) return item

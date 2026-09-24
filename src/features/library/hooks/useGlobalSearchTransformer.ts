@@ -62,7 +62,7 @@ export function useGlobalSearchTransformer({
       headerTitle: string,
       mapItem: (item: T) => FlatResultItem | null
     ) => {
-      if (items?.length) {
+      if (Array.isArray(items) && items.length) {
         results.push({ type: 'header', id: headerId, title: headerTitle })
         items.slice(0, 3).forEach((item) => {
           const mapped = mapItem(item)

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { apiFetch } from '@/shared/lib/api/client'
+import { normalizeShelves } from '@/shared/lib/library-shelves'
 import { getLibrarySlug, resolveLibraryFromParam } from '@/shared/lib/library-slugs'
 import type { GetLibrariesResponse, PersonalizedShelf } from '@/types/api'
 import LibraryClient from './LibraryClient'
@@ -22,10 +23,11 @@ export default async function LibraryPage({ params }: { params: Promise<{ librar
   const librariesResult = await apiFetch<GetLibrariesResponse>('/api/libraries', {})
   if (librariesResult.ok) {
     const response = librariesResult.data
-    const resolved = resolveLibraryFromParam(paramValue, response.libraries)
+    const libraries = Array.isArray(response?.libraries) ? response.libraries : []
+    const resolved = resolveLibraryFromParam(paramValue, libraries)
     if (resolved) {
       if (resolved.isUuidRedirect) {
-        const canonicalSlug = getLibrarySlug(resolved.library, response.libraries)
+        const canonicalSlug = getLibrarySlug(resolved.library, libraries)
         redirect(`/library/${canonicalSlug}`)
       }
       libraryId = resolved.library.id
@@ -37,7 +39,10 @@ export default async function LibraryPage({ params }: { params: Promise<{ librar
     {}
   )
 
-  if (!personalizedResult.ok) {
+  const personalizedData = personalizedResult.ok ? personalizedResult.data : undefined
+  const shelves: PersonalizedShelf[] = normalizeShelves(personalizedData)
+
+  if (!personalizedResult.ok && !Array.isArray(personalizedData)) {
     return (
       <div className="flex w-full flex-col items-center justify-center p-12 text-center">
         <p className="text-lg font-medium">Unable to load library</p>
@@ -50,7 +55,7 @@ export default async function LibraryPage({ params }: { params: Promise<{ librar
 
   return (
     <div className="w-full">
-      <LibraryClient personalized={personalizedResult.data} />
+      <LibraryClient personalized={shelves} />
     </div>
   )
 }

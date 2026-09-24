@@ -39,7 +39,8 @@ export default function SearchClient({ libraryId, initialQuery, initialResults }
   )
 
   const items = useMemo(() => {
-    return initialResults?.results || initialResults?.items || []
+    const candidate = initialResults?.results ?? initialResults?.items
+    return Array.isArray(candidate) ? candidate : []
   }, [initialResults])
 
   const placeholder = getPlaceholderCoverUrl()

@@ -118,16 +118,16 @@ function SeriesCard(props: SeriesCardProps) {
 
   // Check if any books have valid covers
   const hasValidCovers = useMemo(() => {
-    const books = series.books || []
+    const books = Array.isArray(series.books) ? series.books : []
     return books.some((book) => book.media?.coverPath)
   }, [series.books])
 
   // For JSX usage
-  const books = series.books || []
+  const books = Array.isArray(series.books) ? series.books : []
 
   // Sort line for detail view
   const displaySortLine = useMemo(() => {
-    const seriesBooks = series.books || []
+    const seriesBooks = Array.isArray(series.books) ? series.books : []
     if (!orderBy) return null
 
     switch (orderBy) {

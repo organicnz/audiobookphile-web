@@ -252,7 +252,7 @@ export default function BookshelfClient({ entityType }: BookshelfClientProps) {
 
     // Build context menu items based on entity config
     const rawMenuItems = config.getContextMenuItems(user, library, { showSubtitles, collapseSeries })
-    const menuItems = rawMenuItems.map((item) => ({
+    const menuItems = (Array.isArray(rawMenuItems) ? rawMenuItems : []).map((item) => ({
       text: t(item.textKey),
       action: item.action,
     }))
