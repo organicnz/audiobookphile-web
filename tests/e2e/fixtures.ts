@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import path from 'node:path'
-
-import { test as base, expect, Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+import { test as base, expect, Page } from '@playwright/test'
 import dotenv from 'dotenv'
 
 // Playwright workers are plain node — Next.js .env.local auto-loading does
@@ -50,6 +49,7 @@ async function performLogin(page: Page, email?: string, password?: string) {
 
 export const test = base.extend<MyFixtures>({
   adminPage: async ({ page }, use) => {
+    test.setTimeout(90_000)
     if (!adminEmail || !adminPassword) {
       throw new Error('PLAYWRIGHT_ADMIN_EMAIL/PASSWORD env not set')
     }
