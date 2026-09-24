@@ -6,6 +6,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.5'
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       _backup_books_v1: {
@@ -640,32 +665,62 @@ export type Database = {
       library_item_deletion_audit: {
         Row: {
           audio_count: number | null
+          delete_mode: string
           deleted_at: string
           deleted_by: string
+          deleted_by_role: string | null
+          deleted_by_user_id: string | null
           id: number
           item_id: string
           media_id: string | null
           path: string | null
+          storage_cleanup_attempts: number
+          storage_cleanup_error: string | null
+          storage_cleanup_status: string
+          storage_cleanup_updated_at: string | null
+          storage_files_retained: number
+          storage_manifest: Json
+          storage_removed_files: number
           title: string | null
         }
         Insert: {
           audio_count?: number | null
+          delete_mode?: string
           deleted_at?: string
           deleted_by?: string
+          deleted_by_role?: string | null
+          deleted_by_user_id?: string | null
           id?: never
           item_id: string
           media_id?: string | null
           path?: string | null
+          storage_cleanup_attempts?: number
+          storage_cleanup_error?: string | null
+          storage_cleanup_status?: string
+          storage_cleanup_updated_at?: string | null
+          storage_files_retained?: number
+          storage_manifest?: Json
+          storage_removed_files?: number
           title?: string | null
         }
         Update: {
           audio_count?: number | null
+          delete_mode?: string
           deleted_at?: string
           deleted_by?: string
+          deleted_by_role?: string | null
+          deleted_by_user_id?: string | null
           id?: never
           item_id?: string
           media_id?: string | null
           path?: string | null
+          storage_cleanup_attempts?: number
+          storage_cleanup_error?: string | null
+          storage_cleanup_status?: string
+          storage_cleanup_updated_at?: string | null
+          storage_files_retained?: number
+          storage_manifest?: Json
+          storage_removed_files?: number
           title?: string | null
         }
         Relationships: []
@@ -688,7 +743,7 @@ export type Database = {
           deleted_by?: string
           dup_id: string
           dup_title?: string | null
-          id: number
+          id?: never
           merged_at?: string
           pass?: number | null
           primary_id: string
@@ -700,12 +755,42 @@ export type Database = {
           deleted_by?: string
           dup_id?: string
           dup_title?: string | null
-          id?: number
+          id?: never
           merged_at?: string
           pass?: number | null
           primary_id?: string
           primary_title?: string | null
           reason?: string | null
+        }
+        Relationships: []
+      }
+      library_item_split_audit: {
+        Row: {
+          created_at: string
+          created_item_id: string
+          decided_by: string
+          folder: string
+          id: string
+          source_item_id: string
+          track_count: number
+        }
+        Insert: {
+          created_at?: string
+          created_item_id: string
+          decided_by?: string
+          folder?: string
+          id?: string
+          source_item_id: string
+          track_count?: number
+        }
+        Update: {
+          created_at?: string
+          created_item_id?: string
+          decided_by?: string
+          folder?: string
+          id?: string
+          source_item_id?: string
+          track_count?: number
         }
         Relationships: []
       }
@@ -1520,6 +1605,14 @@ export type Database = {
         Returns: number
       }
       deduplicate_library_items_guarded: { Args: never; Returns: number }
+      delete_library_item_atomic: {
+        Args: { p_actor_id: string; p_hard_delete: boolean; p_item_id: string }
+        Returns: Json
+      }
+      get_library_item_delete_cleanup: {
+        Args: { p_actor_id: string; p_item_id: string }
+        Returns: Json
+      }
       get_library_stats: { Args: { p_library_id: string }; Returns: Json }
       is_admin: { Args: never; Returns: boolean }
       list_storage_orphans: {
@@ -1586,6 +1679,16 @@ export type Database = {
         }[]
       }
       read_secret: { Args: { p_name: string }; Returns: string }
+      record_library_item_storage_cleanup: {
+        Args: {
+          p_audit_id: number
+          p_error: string
+          p_files_retained?: number
+          p_removed_files?: number
+          p_status: string
+        }
+        Returns: undefined
+      }
       separate_title_and_author_for_all_books: {
         Args: never
         Returns: undefined
@@ -1720,6 +1823,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },
