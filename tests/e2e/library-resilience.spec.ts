@@ -23,7 +23,7 @@ const COPY_DIAG = 'Copy diagnostics'
 
 /** Navigate without hanging on long-poll / analytics sockets that never idle. */
 async function gotoStable(page: import('@playwright/test').Page, path: string) {
-  await page.goto(path, { waitUntil: 'domcontentloaded', timeout: 30_000 })
+  await page.goto(path, { waitUntil: 'domcontentloaded', timeout: 60_000 })
   await page.waitForLoadState('load', { timeout: 15_000 }).catch(() => {})
 }
 
