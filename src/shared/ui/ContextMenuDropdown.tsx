@@ -1,5 +1,6 @@
 'use client'
 
+import { EllipsisVertical } from 'lucide-react'
 import { useCallback, useId, useRef, useState } from 'react'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
@@ -306,7 +307,10 @@ export default function ContextMenuDropdown<T = string>({
     })),
   }))
 
-  const buttonClass = mergeClasses(size === 'small' ? 'w-9' : size === 'large' ? 'w-11' : 'w-10', className)
+  const buttonClass = mergeClasses(
+    size === 'small' ? 'h-9 w-9' : size === 'large' ? 'h-11 w-11' : 'h-10 w-10',
+    className
+  )
 
   return (
     <div cy-id="wrapper" className="relative">
@@ -319,7 +323,7 @@ export default function ContextMenuDropdown<T = string>({
           disabled={disabled}
           className={buttonClass}
           ariaLabel={t('LabelMoreOptions')}
-          aria-haspopup="true"
+          aria-haspopup="menu"
           aria-expanded={showMenu}
           aria-controls={dropdownId}
           aria-activedescendant={
@@ -331,11 +335,15 @@ export default function ContextMenuDropdown<T = string>({
           }
           onClick={handleButtonClick}
           onKeyDown={handleKeyDown}
-        >
-          more_vert
-        </IconBtn>
+          icon={EllipsisVertical}
+        />
       ) : (
-        <div className="flex h-full w-full items-center justify-center">
+        <div
+          className={mergeClasses(buttonClass, 'flex items-center justify-center')}
+          aria-label={t('LabelLoadingIndicator')}
+          aria-busy="true"
+          role="status"
+        >
           <LoadingSpinner />
         </div>
       )}

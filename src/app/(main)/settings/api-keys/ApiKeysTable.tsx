@@ -1,5 +1,6 @@
 'use client'
 
+import { Pencil, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useRef, useState } from 'react'
 import { useUser } from '@/shared/contexts/UserContext'
@@ -97,9 +98,8 @@ export default function ApiKeysTable({ apiKeys, onEditClick }: ApiKeysTableProps
             size="small"
             className="text-foreground-muted"
             onClick={() => onEditClick(apiKey)}
-          >
-            edit
-          </IconBtn>
+            icon={Pencil}
+          />
           <IconBtn
             ariaLabel={t('ButtonDelete')}
             borderless
@@ -107,9 +107,8 @@ export default function ApiKeysTable({ apiKeys, onEditClick }: ApiKeysTableProps
             className="text-foreground-muted hover:not-disabled:text-error"
             loading={deletingApiKeyId === apiKey.id}
             onClick={() => handleDeleteClick(apiKey)}
-          >
-            delete
-          </IconBtn>
+            icon={Trash2}
+          />
         </div>
       ),
     },

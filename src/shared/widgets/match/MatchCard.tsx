@@ -258,15 +258,10 @@ export default function MatchCard({
       {bookCovers.length > 1 && (
         <div className="flex">
           {bookCovers.map((cover, index) => (
-            <div
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  e.currentTarget.click()
-                }
-              }}
+            <button
+              type="button"
+              aria-label={`Select cover ${index + 1}`}
+              aria-pressed={cover === finalSelectedCover}
               key={index}
               className={mergeClasses(
                 'cursor-pointer border-2 border-transparent hover:border-yellow-300',
@@ -274,10 +269,10 @@ export default function MatchCard({
               )}
               onClick={(e) => handleCoverClick(e, cover)}
             >
-              <div className="relative mr-1 h-20 w-12">
+              <span className="relative mr-1 block h-20 w-12">
                 <Image src={cover} alt="" fill className="object-cover" unoptimized />
-              </div>
-            </div>
+              </span>
+            </button>
           ))}
         </div>
       )}

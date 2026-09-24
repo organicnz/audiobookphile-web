@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-import { KeyboardEvent, ReactNode, useCallback, useId, useMemo } from 'react'
+import { ReactNode, useCallback, useId, useMemo } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 
@@ -44,71 +44,50 @@ export default function CollapsibleTable({
     }
   }, [keepOpen, expanded, onExpandedChange])
 
-  const handleKeyDownBar = useCallback(
-    (e: KeyboardEvent) => {
-      if (!keepOpen && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault()
-        onExpandedChange(!expanded)
-      }
-    },
-    [keepOpen, expanded, onExpandedChange]
-  )
-
   const isExpanded = keepOpen || expanded
   const hasHeaderActions = Boolean(headerActions)
   const countAriaLabel = useMemo(() => t('LabelItemsPlural', { count }), [count, t])
 
   return (
     <div className="bg-primary/5 my-4 w-full overflow-hidden rounded-2xl border border-white/10 shadow-lg">
-      <div
-        className={mergeClasses(
-          'flex w-full items-center gap-4 bg-white/5 px-6 py-4 backdrop-blur-md transition-colors',
-          !keepOpen ? 'cursor-pointer hover:bg-white/10' : ''
-        )}
-        onClick={handleClickBar}
-        onKeyDown={handleKeyDownBar}
-        role={!keepOpen ? 'button' : undefined}
-        tabIndex={!keepOpen ? 0 : undefined}
-        aria-expanded={!keepOpen ? isExpanded : undefined}
-        aria-controls={!keepOpen ? `${id}-content` : undefined}
-      >
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <h3 className="text-foreground/80 truncate text-sm font-bold tracking-wider uppercase">{title}</h3>
-          <div
-            className="bg-primary/20 text-primary flex h-6 w-8 items-center justify-center rounded-full text-[10px] font-black shadow-inner"
-            aria-label={countAriaLabel}
-            role="status"
-          >
-            {count}
-          </div>
-          <div className="grow" />
-          {hasHeaderActions && (
-            <div
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  e.currentTarget.click()
-                }
-              }}
-              className="flex flex-shrink-0 items-center gap-2"
-              onClick={(e) => e.stopPropagation()}
+      <div className="flex w-full items-center gap-4 bg-white/5 px-6 py-4 backdrop-blur-md transition-colors">
+        {keepOpen ? (
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <span className="text-foreground/80 truncate text-sm font-bold tracking-wider uppercase">{title}</span>
+            <span
+              className="bg-primary/20 text-primary flex h-6 w-8 items-center justify-center rounded-full text-[10px] font-black shadow-inner"
+              aria-label={countAriaLabel}
             >
-              {headerActions}
-            </div>
-          )}
-        </div>
-
-        {!keepOpen && (
-          <motion.div
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="text-foreground/40"
+              {count}
+            </span>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-start hover:bg-white/10"
+            onClick={handleClickBar}
+            aria-expanded={isExpanded}
+            aria-controls={`${id}-content`}
           >
-            <ChevronDown size={20} strokeWidth={3} />
-          </motion.div>
+            <span className="text-foreground/80 truncate text-sm font-bold tracking-wider uppercase">{title}</span>
+            <span
+              className="bg-primary/20 text-primary flex h-6 w-8 items-center justify-center rounded-full text-[10px] font-black shadow-inner"
+              aria-label={countAriaLabel}
+            >
+              {count}
+            </span>
+            <span className="grow" />
+            <motion.span
+              animate={{ rotate: isExpanded ? 180 : 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              className="text-foreground/40"
+            >
+              <ChevronDown size={20} strokeWidth={3} aria-hidden="true" />
+            </motion.span>
+          </button>
         )}
+
+        {hasHeaderActions && <div className="flex flex-shrink-0 items-center gap-2">{headerActions}</div>}
       </div>
 
       <AnimatePresence initial={false}>
@@ -120,7 +99,7 @@ export default function CollapsibleTable({
             exit={{ height: 0, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 400, damping: 35 }}
           >
-            <div ref={containerRef} id={`${id}-content`} role="region" aria-label={title} className="p-4 pt-0">
+            <section ref={containerRef} id={`${id}-content`} aria-label={title} className="p-4 pt-0">
               <div className="overflow-x-auto">
                 <table className={mergeClasses('w-full border-collapse text-sm', tableClassName)}>
                   <caption className="sr-only">{title}</caption>
@@ -143,7 +122,7 @@ export default function CollapsibleTable({
                   <tbody className="divide-y divide-white/5">{children}</tbody>
                 </table>
               </div>
-            </div>
+            </section>
           </motion.div>
         )}
       </AnimatePresence>

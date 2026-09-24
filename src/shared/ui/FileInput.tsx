@@ -1,5 +1,6 @@
 'use client'
 
+import { Upload } from 'lucide-react'
 import React, { useId, useRef, useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import Btn from './Btn'
@@ -62,9 +63,7 @@ export default function FileInput({
       <Btn onClick={clickUpload} color="bg-primary" className="hidden w-full md:block" ariaLabel={label}>
         {children}
       </Btn>
-      <IconBtn onClick={clickUpload} className="block md:hidden" ariaLabel={label}>
-        Upload
-      </IconBtn>
+      <IconBtn onClick={clickUpload} className="block md:hidden" ariaLabel={label} icon={Upload} />
       {selectedFileName && (
         <div className="sr-only" aria-live="polite" aria-atomic="true">
           {selectedFileText}

@@ -1,5 +1,6 @@
 'use client'
 
+import { ArrowLeft } from 'lucide-react'
 import React, { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { applyMatchAction } from '@/features/metadata/actions/matchActions'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
@@ -138,9 +139,14 @@ export default function BaseMatchView<TUsage extends { [key: string]: boolean },
   return (
     <div className="flex h-full max-h-full w-full flex-col">
       <div className="mb-2 flex flex-shrink-0 items-center px-4 pt-4 pb-2">
-        <IconBtn borderless size="large" iconClass="text-3xl" onClick={onDone} ariaLabel={t('ButtonBack')}>
-          arrow_back
-        </IconBtn>
+        <IconBtn
+          borderless
+          size="large"
+          iconClass="text-3xl"
+          onClick={onDone}
+          ariaLabel={t('ButtonBack')}
+          icon={ArrowLeft}
+        />
         <p className="pl-3 text-xl">{t('HeaderUpdateDetails')}</p>
       </div>
 

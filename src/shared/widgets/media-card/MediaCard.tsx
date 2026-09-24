@@ -342,9 +342,17 @@ function MediaCard(props: MediaCardProps) {
           width={coverWidth}
           height={coverHeight}
           onClick={!processing ? handleCardClick : undefined}
+          onKeyDown={(event) => {
+            if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
+              event.preventDefault()
+              handleCardClick()
+            }
+          }}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
+          onFocus={() => setIsHovering(true)}
           cardId={cardId}
+          ariaLabel={!processing ? displayTitle : undefined}
           cy-id="MediaCard"
           footer={
             (isAlternativeBookshelfView || isAuthorBookshelfView) && (

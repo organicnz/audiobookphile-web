@@ -54,7 +54,7 @@ const ButtonBase = ({
     borderless && 'border-transparent bg-transparent shadow-none text-foreground/60 hover:text-foreground',
 
     // Focus states
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black',
 
     // Sizing
     size === 'small'
@@ -68,7 +68,7 @@ const ButtonBase = ({
             : 'h-10 px-8 text-base',
 
     // Disabled states
-    'disabled:opacity-40 disabled:cursor-not-allowed disabled:grayscale',
+    'disabled:opacity-40 disabled:cursor-not-allowed disabled:grayscale aria-disabled:opacity-40 aria-disabled:cursor-not-allowed aria-disabled:grayscale',
 
     className
   )
@@ -90,6 +90,7 @@ const ButtonBase = ({
   if (to) {
     return (
       <MotionLink
+        id={id}
         href={to}
         prefetch={prefetch}
         className={buttonClass}

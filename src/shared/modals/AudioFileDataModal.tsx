@@ -1,5 +1,6 @@
 'use client'
 
+import { Check, Copy } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { getAudioFileFFProbeDataAction } from '@/features/player/actions/audioFileActions'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
@@ -233,10 +234,9 @@ export default function AudioFileDataModal({ isOpen, audioFile, libraryItemId, o
                 onKeyDown={handleCopyKeyDown}
                 ariaLabel={t('ButtonCopyToClipboard')}
                 aria-live="polite"
-              >
-                <span aria-hidden="true">{hasCopied ? 'done' : 'content_copy'}</span>
-                {hasCopied && <span className="sr-only">{t('ButtonCopiedToClipboard')}</span>}
-              </IconBtn>
+                icon={hasCopied ? Check : Copy}
+              />
+              {hasCopied && <span className="sr-only">{t('ButtonCopiedToClipboard')}</span>}
             </div>
           </div>
         )}

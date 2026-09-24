@@ -1,5 +1,6 @@
 'use client'
 
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import IconBtn from '@/shared/ui/IconBtn'
@@ -29,9 +30,8 @@ const SliderNavBtn = ({ direction, disabled, onClick }: SliderNavBtnProps) => {
       disabled={disabled}
       onClick={onClick}
       ariaLabel={isLeft ? 'Scroll Left' : 'Scroll Right'}
-    >
-      <span style={{ fontSize: '1.5em' }}>{isLeft ? 'chevron_left' : 'chevron_right'}</span>
-    </IconBtn>
+      icon={isLeft ? ChevronLeft : ChevronRight}
+    />
   )
 }
 

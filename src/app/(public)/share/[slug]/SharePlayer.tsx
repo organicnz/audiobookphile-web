@@ -1,7 +1,7 @@
 'use client'
 
 import { AlertCircle, Download, Pause, Play, RotateCcw, RotateCw, Volume1, Volume2, VolumeX } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePlayerSettings } from '@/features/player/hooks/usePlayerSettings'
 import { AudioTrack } from '@/features/player/lib/AudioTrack'
 import { LocalAudioPlayer } from '@/features/player/lib/LocalAudioPlayer'
@@ -281,6 +281,24 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
     seek(Math.max(time - settings.jumpBackwardAmount, 0))
   }, [hasLoaded, seek, settings.jumpBackwardAmount])
 
+  const handleTrackKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLDivElement>) => {
+      if (!duration) return
+      const step = Math.max(1, settings.jumpForwardAmount)
+      let nextTime: number | null = null
+
+      if (event.key === 'ArrowRight' || event.key === 'ArrowUp') nextTime = currentTime + step
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') nextTime = currentTime - step
+      if (event.key === 'Home') nextTime = 0
+      if (event.key === 'End') nextTime = duration
+      if (nextTime === null) return
+
+      event.preventDefault()
+      seek(Math.min(duration, Math.max(0, nextTime)))
+    },
+    [currentTime, duration, seek, settings.jumpForwardAmount]
+  )
+
   const setVolume = useCallback(
     (vol: number) => {
       playerSettings.setVolume(vol)
@@ -495,14 +513,14 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
             {/* Track bar */}
             <div className="mb-2">
               <div
-                role="button"
+                role="slider"
                 tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    e.currentTarget.click()
-                  }
-                }}
+                aria-label="Playback position"
+                aria-valuemin={0}
+                aria-valuemax={Math.max(0, duration)}
+                aria-valuenow={Math.min(currentTime, Math.max(0, duration))}
+                aria-valuetext={currentTimeFormatted}
+                onKeyDown={handleTrackKeyDown}
                 ref={trackRef}
                 className="relative h-2 w-full cursor-pointer overflow-hidden rounded-full bg-white/10 transition-transform duration-100 hover:scale-y-125"
                 onClick={handleTrackClick}
@@ -540,6 +558,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
                   size="custom"
                   className="h-10 w-10 text-white/60 transition-colors hover:text-white"
                   onClick={toggleMute}
+                  ariaLabel="Volume"
                 >
                   <VolumeIcon size={24} />
                 </IconBtn>
@@ -552,6 +571,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
                   size="custom"
                   className="h-12 w-12 text-white/60 transition-colors hover:text-white"
                   onClick={jumpBackward}
+                  ariaLabel={`Jump back ${settings.jumpBackwardAmount}s`}
                 >
                   <RotateCcw size={28} />
                 </IconBtn>
@@ -565,6 +585,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
                 outlined={false}
                 className="bg-accent h-16 w-16 rounded-full text-white shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all hover:scale-110 active:scale-95"
                 onClick={playPause}
+                ariaLabel={isPlaying ? 'Pause' : 'Play'}
               >
                 {isPlaying ? (
                   <Pause size={32} fill="currentColor" />
@@ -580,6 +601,7 @@ export default function SharePlayer({ slug, startTime: startTimeParam }: SharePl
                   size="custom"
                   className="h-12 w-12 text-white/60 transition-colors hover:text-white"
                   onClick={jumpForward}
+                  ariaLabel={`Jump forward ${settings.jumpForwardAmount}s`}
                 >
                   <RotateCw size={28} />
                 </IconBtn>

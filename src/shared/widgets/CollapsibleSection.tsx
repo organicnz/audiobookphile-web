@@ -1,4 +1,5 @@
-import { KeyboardEvent, MouseEvent, ReactNode, useCallback, useId, useMemo, useState } from 'react'
+import { ChevronDown } from 'lucide-react'
+import { ReactNode, useCallback, useId, useMemo, useState } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import IconBtn from '@/shared/ui/IconBtn'
@@ -67,45 +68,16 @@ export default function CollapsibleSection({
     onExpandedChange?.(newValue)
   }, [isExpanded, controlledExpanded, onExpandedChange, keepOpen])
 
-  const handleHeaderClick = useCallback(
-    (e: MouseEvent) => {
-      if (keepOpen) return
-
-      // Prevent toggling if clicking on an interactive element
-      const target = e.target as HTMLElement
-      if (target.closest('button, a, input, [role="button"]')) {
-        return
-      }
-
-      handleToggle()
-    },
-    [keepOpen, handleToggle]
-  )
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (keepOpen) return
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
-        handleToggle()
-      }
-    },
-    [handleToggle, keepOpen]
-  )
-
   const contentId = useMemo(() => `${id}-content`, [id])
   const headerId = useMemo(() => `${id}-header`, [id])
 
   const headerClasses = useMemo(
     () =>
       mergeClasses(
-        'w-full bg-primary py-2 pl-4 pr-2 md:pl-6 md:pr-3 flex items-center',
-        'transition-colors duration-150',
-        keepOpen
-          ? ''
-          : 'cursor-pointer focus-visible:outline-1 focus-visible:outline-foreground-muted focus-visible:outline-offset-0'
+        'w-full bg-primary py-2 pl-4 pr-2 md:pl-6 md:pr-3 flex items-center gap-2',
+        'transition-colors duration-150'
       ),
-    [keepOpen]
+    []
   )
 
   const iconClasses = useMemo(
@@ -139,63 +111,60 @@ export default function CollapsibleSection({
   const countBadgeClasses =
     'h-5 md:h-7 w-5 md:w-7 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0'
   const countAriaLabel = count !== undefined ? t('LabelItemsPlural', { count }) : ''
+  const titleContent = (
+    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 md:gap-2">
+      <div className="flex min-w-0 flex-shrink-0 items-center gap-2">
+        <p className="overflow-hidden font-medium text-ellipsis whitespace-nowrap">{title}</p>
+        {count !== undefined && (
+          <div className={countBadgeClasses} aria-label={countAriaLabel} role="status">
+            <span className="font-mono text-sm" aria-hidden="true">
+              {count}
+            </span>
+          </div>
+        )}
+        {badge && (
+          <div
+            className="flex h-6 items-center justify-center rounded-full bg-white/10 px-2 text-sm"
+            aria-hidden="true"
+          >
+            {badge}
+          </div>
+        )}
+      </div>
+    </div>
+  )
 
   return (
     <div className={mergeClasses('w-full', className)}>
-      {/* Header - clickable to toggle */}
-      <div
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            e.currentTarget.click()
-          }
-        }}
-        id={headerId}
-        className={headerClasses}
-        onClick={handleHeaderClick}
-      >
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 border-none bg-transparent p-0 text-left text-inherit md:gap-2">
-          <div className="flex min-w-0 flex-shrink-0 items-center gap-2">
-            <p className="overflow-hidden font-medium text-ellipsis whitespace-nowrap">{title}</p>
-            {count !== undefined && (
-              <div className={countBadgeClasses} aria-label={countAriaLabel} role="status">
-                <span className="font-mono text-sm" aria-hidden="true">
-                  {count}
-                </span>
-              </div>
-            )}
-            {badge && (
-              <div
-                className="flex h-6 items-center justify-center rounded-full bg-white/10 px-2 text-sm"
-                aria-hidden="true"
-              >
-                {badge}
-              </div>
-            )}
-          </div>
-        </div>
+      <div id={headerId} className={headerClasses}>
+        {keepOpen ? (
+          <div className="flex min-w-0 flex-1 items-center text-left text-inherit">{titleContent}</div>
+        ) : (
+          <button
+            type="button"
+            className="flex min-w-0 flex-1 items-center rounded-lg text-left text-inherit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            aria-expanded={isExpanded}
+            aria-controls={contentId}
+            onClick={handleToggle}
+          >
+            {titleContent}
+          </button>
+        )}
 
-        {headerActions && <div className="ml-2 flex flex-shrink-0 items-center gap-1 md:gap-2">{headerActions}</div>}
+        {headerActions && <div className="flex flex-shrink-0 items-center gap-1 md:gap-2">{headerActions}</div>}
 
         {!keepOpen && (
           <IconBtn
             borderless
             size="custom"
-            className={mergeClasses(
-              iconClasses,
-              'focus-visible:outline-foreground-muted cursor-pointer focus-visible:outline-1 focus-visible:outline-offset-0'
-            )}
+            className={mergeClasses(iconClasses, 'focus-visible:ring-2 focus-visible:ring-accent')}
             iconClass="text-2xl md:text-3xl"
+            icon={ChevronDown}
             onClick={handleToggle}
-            onKeyDown={handleKeyDown}
             aria-expanded={isExpanded}
             aria-controls={contentId}
             ariaLabel={isExpanded ? t('LabelCollapse') : t('LabelExpand')}
-          >
-            keyboard_arrow_down
-          </IconBtn>
+          />
         )}
       </div>
 

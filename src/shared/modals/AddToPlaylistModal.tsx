@@ -1,6 +1,6 @@
 'use client'
 
-import { HelpCircle, Trash2 } from 'lucide-react'
+import { HelpCircle, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { fetchPlaylistsAction } from '@/features/library/actions/libraryActions'
@@ -245,9 +245,8 @@ export default function AddToPlaylistModal({
                             className="bg-success/80 hover:bg-success h-9 min-w-10 px-3 text-white"
                             disabled={controlsDisabled}
                             onClick={() => handleAdd(playlist)}
-                          >
-                            add
-                          </IconBtn>
+                            icon={Plus}
+                          />
                         )}
                       </div>
                     </div>

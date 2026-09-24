@@ -1,5 +1,6 @@
 'use client'
 
+import { Bold, Italic, Strikethrough } from 'lucide-react'
 import React, { memo, useCallback, useMemo } from 'react'
 import { Editor } from 'slate'
 import { useSlate } from 'slate-react'
@@ -87,6 +88,7 @@ export const MarkButton = memo(
     )
 
     const isActive = isMarkActive(editor, format)
+    const icon = buttonId === 'bold' ? Bold : buttonId === 'italic' ? Italic : Strikethrough
     const buttonClass = useMemo(
       () => mergeClasses(buttonClassBase, isActive ? 'bg-gray-300 text-black' : ''),
       [isActive]
@@ -100,6 +102,8 @@ export const MarkButton = memo(
         data-button-id={buttonId}
         onMouseDown={handleMouseDown}
         onKeyDown={handleKeyDown}
+        aria-pressed={isActive}
+        icon={icon}
         {...{ onFocus }}
       >
         {children}

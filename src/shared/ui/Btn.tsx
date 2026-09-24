@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import React, { memo } from 'react'
+import React, { memo, useId } from 'react'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import ButtonBase from './ButtonBase'
 
@@ -64,6 +64,7 @@ export default function Btn({
   ariaExpanded,
   ariaControls,
 }: BtnProps) {
+  const descriptionId = useId()
   const handleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     if (onClick && !disabled && !loading) {
       onClick(e)
@@ -78,10 +79,9 @@ export default function Btn({
       disabled={disabled || loading}
       type={type}
       onClick={handleClick}
-      onMouseDown={(e) => e.preventDefault()}
       ariaLabel={ariaLabel}
       aria-busy={loading || undefined}
-      aria-description={ariaDescription}
+      aria-describedby={ariaDescription ? descriptionId : undefined}
       aria-expanded={ariaExpanded}
       aria-controls={ariaControls}
     >
@@ -94,6 +94,12 @@ export default function Btn({
       </motion.span>
 
       <AnimatePresence>{loading && <LoadingOverlay progress={progress} />}</AnimatePresence>
+
+      {ariaDescription && (
+        <span id={descriptionId} className="sr-only">
+          {ariaDescription}
+        </span>
+      )}
 
       {loading && (
         <span className="sr-only" role="status" aria-live="polite">

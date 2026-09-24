@@ -72,6 +72,7 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
               size="custom"
               className="text-foreground/60 hover:text-foreground p-2"
               onClick={handlePreviousChapter}
+              ariaLabel={t('ButtonPreviousChapter')}
               icon={SkipBack}
               whileHover={{ x: -2 }}
               whileTap={{ scale: 0.9 }}
@@ -86,6 +87,7 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
                 size="custom"
                 className="text-foreground/80 hover:text-foreground p-2"
                 onClick={jumpBackward}
+                ariaLabel={jumpBackwardTooltipText}
                 icon={RotateCcw}
                 whileHover={{ rotate: -15 }}
                 whileTap={{ scale: 0.9 }}
@@ -105,6 +107,7 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
               outlined={false}
               className="bg-primary hover:bg-primary/90 shadow-primary/30 h-14 w-14 rounded-full text-white shadow-lg ring-2 ring-white/25 transition-all sm:h-16 sm:w-16"
               onClick={playPause}
+              ariaLabel={isPlaying ? t('ButtonPause') : t('ButtonPlay')}
               icon={isPlaying ? Pause : Play}
               whileHover={{ scale: 1.06 }}
               whileTap={{ scale: 0.94 }}
@@ -120,6 +123,7 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
                 size="custom"
                 className="text-foreground/80 hover:text-foreground p-2"
                 onClick={jumpForward}
+                ariaLabel={jumpForwardTooltipText}
                 icon={RotateCw}
                 whileHover={{ rotate: 15 }}
                 whileTap={{ scale: 0.9 }}
@@ -137,6 +141,7 @@ export default function PlayerControls({ playerHandler }: PlayerControlsProps) {
               size="custom"
               className="text-foreground/60 hover:text-foreground p-2"
               onClick={handleNextChapter}
+              ariaLabel={t('ButtonNextChapter')}
               icon={SkipForward}
               whileHover={{ x: 2 }}
               whileTap={{ scale: 0.9 }}

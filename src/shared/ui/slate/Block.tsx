@@ -1,5 +1,6 @@
 'use client'
 
+import { List, ListOrdered } from 'lucide-react'
 import React, { memo, useCallback, useMemo } from 'react'
 import { Editor, Element, Transforms } from 'slate'
 import { useSlate } from 'slate-react'
@@ -98,6 +99,7 @@ export const BlockButton = memo(
     )
 
     const isActive = isBlockActive(editor, format)
+    const icon = buttonId === 'bulleted-list' ? List : ListOrdered
     const buttonClass = useMemo(
       () => mergeClasses(buttonClassBase, isActive ? 'bg-gray-300 text-black' : ''),
       [isActive]
@@ -111,6 +113,8 @@ export const BlockButton = memo(
         data-button-id={buttonId}
         onMouseDown={handleMouseDown}
         onKeyDown={handleKeyDown}
+        aria-pressed={isActive}
+        icon={icon}
         {...{ onFocus }}
       >
         {children}

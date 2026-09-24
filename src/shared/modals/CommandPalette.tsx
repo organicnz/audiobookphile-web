@@ -210,20 +210,13 @@ export default function CommandPalette() {
               const isActive = index === activeIndex
 
               return (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      e.currentTarget.click()
-                    }
-                  }}
+                <button
+                  type="button"
                   key={item.id}
                   onClick={() => executeAction(item)}
                   onMouseEnter={() => setActiveIndex(index)}
                   className={mergeClasses(
-                    'flex cursor-pointer items-center rounded-lg px-3 py-2 transition-colors',
+                    'flex w-full cursor-pointer items-center rounded-lg px-3 py-2 text-start transition-colors',
                     isActive ? 'text-foreground bg-white/10' : 'text-foreground-muted hover:bg-white/5'
                   )}
                 >
@@ -253,7 +246,7 @@ export default function CommandPalette() {
                       {item.type !== 'action' && item.type}
                     </span>
                   </div>
-                </div>
+                </button>
               )
             })}
           </div>

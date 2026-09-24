@@ -264,25 +264,20 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
             <div className="absolute top-0 left-0 z-10 h-full w-full opacity-0 transition-opacity duration-100 hover:opacity-100">
               <div className="absolute top-0 left-0 h-16 w-full bg-gradient-to-b from-black/60 to-transparent" />
               {userCanDelete && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      e.currentTarget.click()
-                    }
-                  }}
+                <button
+                  type="button"
+                  aria-label={t('LabelRemoveCover')}
+                  disabled={isPendingUpdate}
                   className={mergeClasses(
                     'absolute top-1 right-1 h-8 w-8 rounded-full p-1 text-red-500',
                     isPendingUpdate ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:text-red-400'
                   )}
-                  onClick={isPendingUpdate ? undefined : handleRemoveCover}
+                  onClick={handleRemoveCover}
                 >
                   <Tooltip text={t('LabelRemoveCover')} position="top">
-                    <Trash2 size={24} strokeWidth={2.5} />
+                    <Trash2 size={24} strokeWidth={2.5} aria-hidden="true" />
                   </Tooltip>
-                </div>
+                </button>
               )}
             </div>
           )}
@@ -334,22 +329,17 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
               {showLocalCovers && (
                 <div className="flex flex-wrap items-center justify-center pb-2">
                   {localCovers.map((localCoverFile) => (
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
-                          e.currentTarget.click()
-                        }
-                      }}
+                    <button
+                      type="button"
+                      aria-label={t('ButtonSelect')}
+                      disabled={isPendingUpdate}
                       key={localCoverFile.ino}
                       className={mergeClasses(
                         'm-0.5 mb-5 border-2',
                         isPendingUpdate ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-yellow-300',
                         localCoverFile.metadata.path === coverPath ? 'border-yellow-300' : 'border-transparent'
                       )}
-                      onClick={isPendingUpdate ? undefined : () => handleSetCover(localCoverFile)}
+                      onClick={() => handleSetCover(localCoverFile)}
                     >
                       <div className="bg-primary h-24" style={{ width: 96 / bookCoverAspectRatio + 'px' }}>
                         <PreviewCover
@@ -358,7 +348,7 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
                           showResolution={false}
                         />
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -418,25 +408,20 @@ export default function CoverEdit({ libraryItem }: CoverEditProps) {
             <p className="text-foreground-muted py-4">{t('MessageNoCoversFound')}</p>
           ) : (
             coversFound.map((cover) => (
-              <div
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    e.currentTarget.click()
-                  }
-                }}
+              <button
+                type="button"
+                aria-label={t('LabelCoverPreview')}
+                disabled={isPendingUpdate}
                 key={cover}
                 className={mergeClasses(
                   'm-0.5 mb-5 border-2',
                   isPendingUpdate ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-yellow-300',
                   cover === coverPath ? 'border-yellow-300' : 'border-transparent'
                 )}
-                onClick={isPendingUpdate ? undefined : () => handleCoverClick(cover)}
+                onClick={() => handleCoverClick(cover)}
               >
                 <PreviewCover src={cover} width={80} />
-              </div>
+              </button>
             ))
           )}
         </div>

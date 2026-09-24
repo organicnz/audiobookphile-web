@@ -1,5 +1,6 @@
 'use client'
 
+import { Pencil } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
@@ -66,9 +67,8 @@ export default function CollectionClient({ collection }: CollectionClientProps) 
                         outlined
                         className="mx-0.5"
                         size="small"
-                      >
-                        edit
-                      </IconBtn>
+                        icon={Pencil}
+                      />
                     </span>
                   </Tooltip>
                 )}

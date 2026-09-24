@@ -114,14 +114,6 @@ export default function ViewEpisodeModal({ isOpen, onClose, episode, libraryItem
 
       {parsedDescription ? (
         <div
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              e.currentTarget.click()
-            }
-          }}
           dir="auto"
           className="default-style less-spacing break-words"
           onClick={handleDescriptionClick}

@@ -171,6 +171,42 @@ test.describe('library resilience', () => {
     expect(adminPage.url()).not.toContain('definitely-not-a-library-xyz')
   })
 
+  test('library controls render real icons and cover sizing stays usable at boundaries', async ({ adminPage }) => {
+    test.setTimeout(90_000)
+
+    await gotoStable(adminPage, '/library/books/items')
+    await expectNoErrorBoundary(adminPage)
+
+    const moreButton = adminPage.locator('button[aria-label="More options"]:visible').first()
+    await expect(moreButton).toBeVisible()
+    await expect(moreButton.locator('svg')).toHaveCount(1)
+
+    const coverSizeGroup = adminPage.getByRole('group', { name: 'Cover Size' })
+    await expect(coverSizeGroup).toBeVisible()
+    const increase = coverSizeGroup.getByRole('button', { name: 'Increase Cover Size' })
+    const decrease = coverSizeGroup.getByRole('button', { name: 'Decrease Cover Size' })
+    const value = coverSizeGroup.locator('[aria-live="polite"]')
+    const initialValue = await value.textContent()
+
+    for (let index = 0; index < 10; index += 1) {
+      if (await increase.isDisabled()) break
+      await increase.focus()
+      await increase.press('Enter')
+      await adminPage.waitForTimeout(50)
+    }
+    await expect(increase).toBeDisabled()
+    await expect(value).not.toHaveText(initialValue ?? '')
+
+    await decrease.click()
+    await expect(value).not.toHaveText('')
+    await expect(decrease).toBeVisible()
+    await expect.poll(async () => increase.isEnabled()).toBe(true)
+
+    const increaseBox = await increase.boundingBox()
+    expect(increaseBox?.width ?? 0).toBeGreaterThanOrEqual(32)
+    expect(increaseBox?.height ?? 0).toBeGreaterThanOrEqual(32)
+  })
+
   test('admin edit pen exposes delete with confirm and cancel is non-destructive', async ({ adminPage }) => {
     test.setTimeout(90_000)
 

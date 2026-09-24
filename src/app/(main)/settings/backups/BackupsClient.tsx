@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertCircle, Info } from 'lucide-react'
+import { AlertCircle, Download, Info, Pencil, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { getCookie } from '@/app/(main)/upload/actions'
@@ -274,9 +274,8 @@ export default function BackupsClient({
                     size="small"
                     className="text-foreground-muted cursor-pointer"
                     onClick={() => setIsBackupScheduleModalOpen(true)}
-                  >
-                    edit
-                  </IconBtn>
+                    icon={Pencil}
+                  />
                 </div>
               </div>
             </div>
@@ -445,20 +444,15 @@ function BackupsTable({
       {
         label: '',
         accessor: (backup) => (
-          <div
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                e.currentTarget.click()
-              }
-            }}
-            className="flex items-center justify-end gap-2"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="flex items-center justify-end gap-2">
             {backupIsRestorable(backup) ? (
-              <Btn size="small" onClick={() => onRestore?.(backup)}>
+              <Btn
+                size="small"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onRestore?.(backup)
+                }}
+              >
                 {t('ButtonRestore')}
               </Btn>
             ) : (
@@ -468,19 +462,28 @@ function BackupsTable({
                 </div>
               </Tooltip>
             )}
-            <IconBtn ariaLabel={t('LabelDownload')} borderless size="small" onClick={() => onDownload?.(backup)}>
-              download
-            </IconBtn>
+            <IconBtn
+              ariaLabel={t('LabelDownload')}
+              borderless
+              size="small"
+              onClick={(event) => {
+                event.stopPropagation()
+                onDownload?.(backup)
+              }}
+              icon={Download}
+            />
             <IconBtn
               ariaLabel={t('ButtonDelete')}
               borderless
               size="small"
               className="hover:not-disabled:text-error"
               loading={deletingBackupId === backup.id}
-              onClick={() => onDelete?.(backup)}
-            >
-              delete
-            </IconBtn>
+              onClick={(event) => {
+                event.stopPropagation()
+                onDelete?.(backup)
+              }}
+              icon={Trash2}
+            />
           </div>
         ),
         headerClassName: 'w-48',

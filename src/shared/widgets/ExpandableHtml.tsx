@@ -73,12 +73,14 @@ function ExpandableHtml({ html, lineClamp = 4, className = '' }: ExpandableHtmlP
         className="relative"
       >
         <div
-          role="button"
-          tabIndex={0}
+          role={isClamped ? 'button' : undefined}
+          tabIndex={isClamped ? 0 : undefined}
+          aria-expanded={isClamped ? isExpanded : undefined}
+          aria-label={isClamped ? (isExpanded ? t('ButtonReadLess') : t('ButtonReadMore')) : undefined}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+            if (isClamped && (e.key === 'Enter' || e.key === ' ')) {
               e.preventDefault()
-              e.currentTarget.click()
+              setIsExpanded((prev) => !prev)
             }
           }}
           ref={contentRef}

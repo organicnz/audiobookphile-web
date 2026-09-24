@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { Bell } from 'lucide-react'
+import { Bell, X } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTasks } from '@/shared/contexts/TasksContext'
@@ -139,8 +139,13 @@ export default function NotificationWidget({ className = '' }: NotificationWidge
               <h3 className="text-[10px] font-black tracking-[0.2em] text-white/50 uppercase">
                 {t('LabelActivities')}
               </h3>
-              <button onClick={closeMenu} className="text-white/30 transition-colors hover:text-white">
-                <Bell size={14} className="opacity-50" />
+              <button
+                type="button"
+                aria-label={t('ButtonCloseModal')}
+                onClick={closeMenu}
+                className="rounded-md p-2 text-white/30 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <X size={14} className="opacity-70" aria-hidden="true" />
               </button>
             </div>
             <ul

@@ -175,25 +175,17 @@ export default function RssFeedsTable({ rssFeeds: initialFeeds }: RssFeedsTableP
     {
       label: '',
       accessor: (rssFeed) => (
-        <div
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              e.currentTarget.click()
-            }
-          }}
-          className="flex items-center justify-end gap-1"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="flex items-center justify-end gap-1">
           <IconBtn
             ariaLabel={t('ButtonCloseFeed')}
             borderless
             size="small"
             className="text-foreground-muted hover:not-disabled:text-foreground"
             loading={closingFeedId === rssFeed.id}
-            onClick={() => handleCloseClick(rssFeed)}
+            onClick={(event) => {
+              event.stopPropagation()
+              handleCloseClick(rssFeed)
+            }}
           >
             <X size={18} />
           </IconBtn>

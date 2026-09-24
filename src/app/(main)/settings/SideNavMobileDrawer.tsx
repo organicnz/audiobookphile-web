@@ -1,5 +1,6 @@
 'use client'
 
+import { ArrowLeft } from 'lucide-react'
 import { useSettingsDrawer } from '@/shared/contexts/SettingsDrawerContext'
 import IconBtn from '@/shared/ui/IconBtn'
 import SideNavContent from './SideNavContent'
@@ -32,6 +33,8 @@ export default function SideNavMobileDrawer({ serverVersion, installSource }: Si
             e.currentTarget.click()
           }
         }}
+        aria-label="Close navigation"
+        aria-hidden={!isOpen}
         className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-100 ease-in-out md:hidden ${
           isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
@@ -45,9 +48,14 @@ export default function SideNavMobileDrawer({ serverVersion, installSource }: Si
         }`}
       >
         <div className="border-primary/30 flex h-12 w-full items-center justify-end border-b px-4 py-2">
-          <IconBtn className="md:hidden" ariaLabel="Menu" size="large" borderless onClick={toggle}>
-            arrow_back
-          </IconBtn>
+          <IconBtn
+            className="md:hidden"
+            ariaLabel="Close navigation"
+            size="large"
+            borderless
+            onClick={toggle}
+            icon={ArrowLeft}
+          />
         </div>
         <div className="h-full max-h-[calc(100%-3rem)] w-full">
           <SideNavContent

@@ -98,7 +98,10 @@ export function AlertExamples() {
                 <p className="font-medium">Update available</p>
                 <p className="mt-1 text-sm opacity-80">A new version of the application is available.</p>
               </div>
-              <button className="bg-warning hover:bg-warning/90 ml-4 rounded-md px-4 py-2 text-sm font-medium text-gray-900 transition-colors">
+              <button
+                type="button"
+                className="bg-warning hover:bg-warning/90 ml-4 rounded-md px-4 py-2 text-sm font-medium text-gray-900 transition-colors"
+              >
                 Update Now
               </button>
             </div>

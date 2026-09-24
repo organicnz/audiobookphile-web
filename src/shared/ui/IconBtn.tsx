@@ -1,9 +1,10 @@
 'use client'
 
-import { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import React, { memo } from 'react'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
+import AppIcon, { getIconLabel } from './AppIcon'
 import ButtonBase from './ButtonBase'
 
 interface IconBtnProps {
@@ -34,7 +35,7 @@ interface IconBtnProps {
 const LoadingSpinner = memo(() => (
   <div
     cy-id="icon-btn-loading-spinner"
-    className="text-foreground absolute start-0 top-0 flex h-full w-full items-center justify-center"
+    className="text-current absolute start-0 top-0 flex h-full w-full items-center justify-center"
     aria-hidden="true"
   >
     <svg className="animate-spin" style={{ width: '1.2em', height: '1.2em' }} viewBox="0 0 24 24">
@@ -76,6 +77,8 @@ export default function IconBtn({
     size === 'small' ? 'w-9' : size === 'large' ? 'w-11' : size === 'medium' ? 'w-10' : size === 'auto' ? 'w-auto' : ''
   const activeClass = isActive ? 'bg-primary/20 text-primary border-primary/40 shadow-primary/20' : ''
   const classList = mergeClasses(sizeClass, activeClass, className)
+  const legacyIconName = typeof children === 'string' ? children.trim() : null
+  const accessibleLabel = ariaLabel ?? (legacyIconName ? getIconLabel(legacyIconName) : 'Button')
 
   const iconSize = size === 'small' ? 18 : size === 'large' ? 24 : 20
 
@@ -92,13 +95,14 @@ export default function IconBtn({
       ref={ref}
       size={size}
       disabled={isDisabled}
-      borderless={borderless}
+      borderless={borderless || !outlined}
       to={to}
       onClick={handleClick}
       onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
       className={classList}
-      aria-label={ariaLabel}
+      aria-label={accessibleLabel}
+      aria-busy={loading || undefined}
       aria-pressed={ariaPressed}
       tabIndex={tabIndex}
       whileHover={whileHover ?? { scale: 1.1 }}
@@ -116,6 +120,8 @@ export default function IconBtn({
         <>
           {Icon ? (
             <Icon size={iconSize} className={mergeClasses('shrink-0', iconClass)} aria-hidden="true" />
+          ) : legacyIconName ? (
+            <AppIcon name={legacyIconName} size={iconSize} className={mergeClasses('shrink-0', iconClass)} />
           ) : (
             <span cy-id="icon-btn-icon" className={mergeClasses(iconClass)} aria-hidden="true">
               {children}

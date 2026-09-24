@@ -41,12 +41,13 @@ export default function MediaOverlayIconBtn({
         borderless
         size="small"
         className={mergeClasses(
-          'rounded-xl border border-white/10 bg-black/60 p-1.5 text-white/70 shadow-xl backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:not-disabled:text-white',
+          'h-11 w-11 rounded-xl border border-white/10 bg-black/60 p-1.5 text-white/70 shadow-xl backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:not-disabled:text-white',
           selected && 'bg-primary/90 border-primary shadow-primary/20 text-black',
           className
         )}
         onClick={onClick}
         ariaLabel={ariaLabel}
+        aria-pressed={selected}
         whileHover={whileHover ?? { scale: 1.1 }}
         transition={transition ?? { type: 'spring', stiffness: 500, damping: 25 }}
         icon={EffectiveIcon}

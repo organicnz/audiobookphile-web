@@ -53,25 +53,17 @@ export default function ChaptersTable({
         headerClassName: 'text-center px-2',
         cellClassName: 'text-center px-2',
         accessor: (row: Chapter) => (
-          <div
+          <button
+            type="button"
             className="cursor-pointer text-center font-mono hover:underline"
             onClick={(e) => {
               e.stopPropagation()
               handleGoToTimestamp(row.start)
             }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                e.stopPropagation()
-                handleGoToTimestamp(row.start)
-              }
-            }}
-            role="button"
-            tabIndex={0}
             aria-label={`Go to timestamp ${secondsToTimestamp(row.start)}`}
           >
             {secondsToTimestamp(row.start)}
-          </div>
+          </button>
         ),
       },
       {

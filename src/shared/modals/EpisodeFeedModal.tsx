@@ -305,14 +305,6 @@ export default function EpisodeFeedModal({
 
             return (
               <div
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    e.currentTarget.click()
-                  }
-                }}
                 key={episode.guid || episode.cleanUrl}
                 className={`border-border relative flex cursor-pointer items-center border-b last:border-0 ${bgClass}`}
                 onClick={() => toggleSelectEpisode(episode)}
@@ -327,21 +319,13 @@ export default function EpisodeFeedModal({
                     <Download size={20} className="text-primary animate-pulse" />
                   ) : (
                     <div
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
-                          e.currentTarget.click()
-                        }
-                      }}
                       onClick={(e) => {
                         e.stopPropagation()
                         toggleSelectEpisode(episode)
                       }}
                       className="flex items-center justify-center"
                     >
-                      <Checkbox value={isSelected} size="small" />
+                      <Checkbox value={isSelected} size="small" ariaLabel={episode.title} />
                     </div>
                   )}
                 </div>

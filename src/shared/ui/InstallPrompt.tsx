@@ -1,5 +1,6 @@
 'use client'
 
+import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export function InstallPrompt() {
@@ -60,26 +61,19 @@ export function InstallPrompt() {
           <span className="text-xs opacity-80">Add to home screen for offline listening</span>
         </div>
         <button
+          type="button"
           onClick={handleInstallClick}
           className="bg-background text-foreground hover:bg-background/90 rounded-full px-4 py-1.5 text-sm font-medium transition-colors"
         >
           Install
         </button>
-        <button onClick={() => setIsInstallable(false)} className="p-1 opacity-60 hover:opacity-100">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
+        <button
+          type="button"
+          aria-label="Dismiss install prompt"
+          onClick={() => setIsInstallable(false)}
+          className="rounded-full p-2 opacity-60 transition-opacity hover:opacity-100"
+        >
+          <X size={16} aria-hidden="true" />
         </button>
       </div>
     </div>

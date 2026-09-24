@@ -1,5 +1,6 @@
 'use client'
 
+import { CircleCheckBig } from 'lucide-react'
 import React from 'react'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import IconBtn from './IconBtn'
@@ -43,8 +44,7 @@ export default function ReadIconBtn({
       onClick={handleClick}
       aria-pressed={isRead}
       className={classes}
-    >
-      BeenHere
-    </IconBtn>
+      icon={CircleCheckBig}
+    />
   )
 }

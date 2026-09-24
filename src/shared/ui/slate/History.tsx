@@ -1,5 +1,6 @@
 'use client'
 
+import { Redo2, Undo2 } from 'lucide-react'
 import React, { memo, useCallback } from 'react'
 import { Editor } from 'slate'
 import { HistoryEditor } from 'slate-history'
@@ -39,9 +40,11 @@ export const UndoButton = memo(
     const handleMouseDown = useCallback(
       (event: React.MouseEvent) => {
         event.preventDefault()
-        editor.undo()
+        if (isUndoAvailable) {
+          editor.undo()
+        }
       },
-      [editor]
+      [editor, isUndoAvailable]
     )
 
     return (
@@ -53,10 +56,10 @@ export const UndoButton = memo(
         data-button-id={buttonId}
         onMouseDown={handleMouseDown}
         onKeyDown={handleKeyDown}
+        icon={Undo2}
+        aria-label="Undo"
         {...{ onFocus }}
-      >
-        undo
-      </IconBtn>
+      />
     )
   }
 )
@@ -94,9 +97,11 @@ export const RedoButton = memo(
     const handleMouseDown = useCallback(
       (event: React.MouseEvent) => {
         event.preventDefault()
-        editor.redo()
+        if (isRedoAvailable) {
+          editor.redo()
+        }
       },
-      [editor]
+      [editor, isRedoAvailable]
     )
 
     return (
@@ -108,10 +113,10 @@ export const RedoButton = memo(
         data-button-id={buttonId}
         onMouseDown={handleMouseDown}
         onKeyDown={handleKeyDown}
+        icon={Redo2}
+        aria-label="Redo"
         {...{ onFocus }}
-      >
-        redo
-      </IconBtn>
+      />
     )
   }
 )

@@ -1,5 +1,6 @@
 'use client'
 
+import { Trash2 } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
@@ -92,9 +93,8 @@ export default function CustomMetadataProvidersTable({
               className="text-foreground-muted hover:not-disabled:text-error"
               loading={deletingProviderId === provider.id && processing}
               onClick={() => handleDeleteClick(provider)}
-            >
-              delete
-            </IconBtn>
+              icon={Trash2}
+            />
           </div>
         ),
       },

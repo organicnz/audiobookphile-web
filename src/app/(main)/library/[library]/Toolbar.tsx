@@ -50,7 +50,7 @@ export default function Toolbar() {
 
   return (
     <div className="bg-bg box-shadow-toolbar relative z-40 h-10 w-full" cy-id="library-toolbar">
-      <div className="flex h-full w-full items-center justify-between px-4">
+      <div className="flex h-full w-full items-center justify-between gap-2 px-2 sm:px-4">
         {showBookshelfSummary && (
           <p className="text-foreground hidden text-base md:block">
             {itemCount} {itemName}
@@ -68,7 +68,7 @@ export default function Toolbar() {
 
         <div className="flex-grow" />
 
-        {showToolbarExtras && <div className="mr-2 flex items-center gap-4">{toolbarExtras}</div>}
+        {showToolbarExtras && <div className="flex min-w-0 items-center gap-2 sm:gap-4">{toolbarExtras}</div>}
 
         {showContextMenu && (
           <ContextMenuDropdown

@@ -1,5 +1,6 @@
 'use client'
 
+import { Minus, Plus } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useCardSize } from '@/features/library/contexts/CardSizeContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
@@ -49,16 +50,16 @@ export default function CoverSizeWidget({ className }: CoverSizeWidgetProps) {
   const isAtMinSize = sizeIndex === 0
   const isAtMaxSize = sizeIndex === numAvailableCoverSizes - 1
 
-  const buttonClass = useMemo(() => 'text-base h-6 w-4 disabled:bg-transparent disabled:cursor-default', [])
+  const buttonClass = useMemo(() => 'h-9 w-9 rounded-full disabled:bg-transparent disabled:cursor-default', [])
   const containerClass = useMemo(
     () =>
       mergeClasses(
-        'rounded-full py-1 bg-primary px-2 border border-border text-center flex items-center shadow-modal-content select-none',
+        'rounded-full bg-primary p-1 border border-border text-center flex items-center gap-1 shadow-modal-content select-none',
         className
       ),
     [className]
   )
-  const textClass = useMemo(() => 'px-2 font-mono text-center w-10 text-base', [])
+  const textClass = useMemo(() => 'px-1 font-mono text-center w-12 text-base tabular-nums', [])
 
   return (
     <div>
@@ -69,9 +70,8 @@ export default function CoverSizeWidget({ className }: CoverSizeWidgetProps) {
           onClick={decreaseSize}
           ariaLabel={t('LabelDecreaseCoverSize')}
           borderless
-        >
-          remove
-        </IconBtn>
+          icon={Minus}
+        />
         <p className={textClass} aria-live="polite">
           {coverWidth}
         </p>
@@ -81,9 +81,8 @@ export default function CoverSizeWidget({ className }: CoverSizeWidgetProps) {
           onClick={increaseSize}
           ariaLabel={t('LabelIncreaseCoverSize')}
           borderless
-        >
-          add
-        </IconBtn>
+          icon={Plus}
+        />
       </div>
     </div>
   )

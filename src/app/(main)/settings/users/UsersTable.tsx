@@ -1,6 +1,7 @@
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'
+import { Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useRef, useState } from 'react'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
@@ -94,18 +95,7 @@ export default function UsersTable({ profiles, dateFormat, timeFormat }: UsersTa
     {
       label: '',
       accessor: (profile) => (
-        <div
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              e.currentTarget.click()
-            }
-          }}
-          className="flex items-center justify-end gap-1"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="flex items-center justify-end gap-1">
           {profile.user_type !== 'root' && (
             <IconBtn
               ariaLabel={t('ButtonUserDelete', { 0: profile.username ?? profile.id })}
@@ -113,10 +103,12 @@ export default function UsersTable({ profiles, dateFormat, timeFormat }: UsersTa
               size="small"
               className="text-foreground-muted hover:not-disabled:text-error"
               loading={deletingUserId === profile.id}
-              onClick={() => handleDeleteClick(profile)}
-            >
-              delete
-            </IconBtn>
+              onClick={(event) => {
+                event.stopPropagation()
+                handleDeleteClick(profile)
+              }}
+              icon={Trash2}
+            />
           )}
         </div>
       ),

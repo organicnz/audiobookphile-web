@@ -1,5 +1,6 @@
 'use client'
 
+import { Pencil } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
@@ -82,9 +83,9 @@ export default function AuthorClient({ author: authorProp }: AuthorClientProps) 
               // todo add this affect to icon btn?
               iconClass="hover:text-warning hover:scale-120 transition-colors transition-transform duration-100"
               onClick={() => setIsEditModalOpen(true)}
-            >
-              edit
-            </IconBtn>
+              ariaLabel={t('LabelEdit')}
+              icon={Pencil}
+            />
           </div>
           {author.description && <ExpandableHtml html={author.description} lineClamp={7} className="max-w-[48em]" />}
         </div>

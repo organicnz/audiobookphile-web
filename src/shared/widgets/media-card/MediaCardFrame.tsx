@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { type ReactNode } from 'react'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 
@@ -9,7 +8,9 @@ interface MediaCardFrameProps {
   onMouseEnter?: () => void
   onMouseLeave?: () => void
   onKeyDown?: (event: React.KeyboardEvent) => void
+  onFocus?: () => void
   cardId?: string
+  ariaLabel?: string
   cover: ReactNode
   overlay: ReactNode
   footer?: ReactNode
@@ -25,7 +26,9 @@ export default function MediaCardFrame({
   onMouseEnter,
   onMouseLeave,
   onKeyDown,
+  onFocus,
   cardId,
+  ariaLabel,
   cover,
   overlay,
   footer,
@@ -37,10 +40,13 @@ export default function MediaCardFrame({
     <div
       cy-id={cyId}
       id={cardId}
-      tabIndex={0}
+      role={onClick ? 'link' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={ariaLabel}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onFocus={onFocus}
       onKeyDown={onKeyDown}
       className={mergeClasses(
         '@container relative z-30 overflow-hidden rounded-xl',

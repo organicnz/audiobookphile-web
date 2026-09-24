@@ -51,7 +51,7 @@ export default function LibraryLayoutWrapper({ children }: LibraryLayoutWrapperP
         </div>
       </div>
 
-      {!isLibraryItemPage && <CoverSizeWidget className="absolute right-4 bottom-4 z-50" />}
+      {!isLibraryItemPage && <CoverSizeWidget className="absolute right-3 bottom-3 z-50 sm:right-4 sm:bottom-4" />}
       {boundModal}
     </div>
   )

@@ -1,3 +1,4 @@
+import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { getTypeSafeTranslations } from '@/shared/lib/getTypeSafeTranslations'
 import SettingsContent from '../SettingsContent'
@@ -34,7 +35,7 @@ export default async function ItemMetadataUtilsPage() {
           >
             <div className="flex items-center justify-between">
               <span>{item.label}</span>
-              <span className="material-symbols text-xl">arrow_forward</span>
+              <ArrowRight className="text-primary" size={20} aria-hidden="true" />
             </div>
           </Link>
         ))}

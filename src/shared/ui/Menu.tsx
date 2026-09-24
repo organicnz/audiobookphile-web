@@ -92,7 +92,10 @@ export default function Menu({
         onKeyDown={handleKeyDown}
         className="cursor-pointer"
         role="button"
-        tabIndex={0}
+        tabIndex={-1}
+        aria-label="Menu"
+        aria-haspopup="menu"
+        aria-expanded={showMenu}
       >
         {trigger(showMenu)}
       </div>

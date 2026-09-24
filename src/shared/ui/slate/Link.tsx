@@ -1,5 +1,6 @@
 'use client'
 
+import { Link2 } from 'lucide-react'
 import React, { memo, useCallback, useMemo } from 'react'
 import { Editor, Element, NodeEntry, Range, Transforms } from 'slate'
 import { useSlate } from 'slate-react'
@@ -197,10 +198,11 @@ export const LinkButton = memo(
         data-button-id={buttonId}
         onMouseDown={handleOpenModal}
         onKeyDown={handleKeyDown}
+        aria-pressed={isActive}
+        icon={Link2}
+        aria-label="Link"
         {...{ onFocus }}
-      >
-        link
-      </IconBtn>
+      />
     )
   }
 )

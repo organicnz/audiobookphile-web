@@ -175,7 +175,7 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
       {/* Increment/decrement row */}
       <div className="flex items-center gap-2">
         {/* Minus button */}
-        <IconBtn onClick={handleDecrement} icon={Minus} size="small" />
+        <IconBtn onClick={handleDecrement} icon={Minus} size="small" ariaLabel="Decrease playback rate" />
 
         {/* Current rate display */}
         <div className="text-foreground flex min-w-[100px] flex-1 items-center justify-center text-2xl font-bold tabular-nums">
@@ -183,7 +183,7 @@ export default function PlaybackRateWidget({ playerHandler }: PlaybackRateWidget
         </div>
 
         {/* Plus button */}
-        <IconBtn onClick={handleIncrement} icon={Plus} size="small" />
+        <IconBtn onClick={handleIncrement} icon={Plus} size="small" ariaLabel="Increase playback rate" />
       </div>
 
       {/* Arrow */}

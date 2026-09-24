@@ -1,3 +1,4 @@
+import { Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useAuthorActions } from '@/features/metadata/hooks/useAuthorActions'
 import { useSocketEvent } from '@/shared/contexts/SocketContext'
@@ -128,9 +129,9 @@ export default function AuthorEditModal({ isOpen, user, author: authorProp, onCl
                         borderless={true}
                         className="text-error hover:not-disabled:text-error absolute top-0 right-0 transform cursor-pointer transition-transform hover:scale-125"
                         onClick={handleRemoveImageWrapper}
-                      >
-                        delete
-                      </IconBtn>
+                        ariaLabel={t('ButtonRemove')}
+                        icon={Trash2}
+                      />
                     </div>
                   )}
                 </div>

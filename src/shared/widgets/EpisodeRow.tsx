@@ -121,18 +121,7 @@ export default function EpisodeRow({
         onMouseLeave={() => setIsHovering(false)}
       >
         {/* Main content */}
-        <div
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              e.currentTarget.click()
-            }
-          }}
-          className="flex h-full flex-col rounded-xl"
-          onClick={handleRowClick}
-        >
+        <div className="flex h-full flex-col rounded-xl" onClick={handleRowClick}>
           <div className="flex min-h-0 w-full flex-1">
             <div className="flex min-w-0 grow flex-col justify-start">
               {/* Title */}
@@ -156,14 +145,6 @@ export default function EpisodeRow({
               {/* Subtitle/Description */}
               <div className="relative mt-2 mb-1 flex h-10 min-h-0 items-start overflow-hidden pe-12">
                 <div
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      e.currentTarget.click()
-                    }
-                  }}
                   dir="auto"
                   className="line-clamp-2 w-full text-xs leading-relaxed font-medium break-words whitespace-normal text-white/40"
                   dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(descriptionHtml) }} /* lefthook-ignore */
@@ -205,18 +186,14 @@ export default function EpisodeRow({
 
             {/* Selection checkbox area */}
             <div
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  e.currentTarget.click()
-                }
-              }}
               className={`absolute top-4 right-3 z-10 flex flex-shrink-0 items-center justify-center transition-all duration-300 ${isHovering || isSelected || isSelectionMode ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}`}
               onClick={(e) => e.stopPropagation()}
             >
-              <Checkbox value={isSelected} onChange={(checked) => onSelect(episode, checked)} />
+              <Checkbox
+                value={isSelected}
+                onChange={(checked) => onSelect(episode, checked)}
+                ariaLabel={`Select ${episode.title}`}
+              />
             </div>
           </div>
 
@@ -248,17 +225,7 @@ export default function EpisodeRow({
                 text={userIsFinished ? t('MessageMarkAsNotFinished') : t('MessageMarkAsFinished')}
                 className="flex-shrink-0"
               >
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      e.currentTarget.click()
-                    }
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <div onClick={(e) => e.stopPropagation()}>
                   <ReadIconBtn borderless isRead={userIsFinished} onClick={() => onToggleFinished(episode)} />
                 </div>
               </Tooltip>
@@ -297,18 +264,7 @@ export default function EpisodeRow({
               )}
 
               {episode.audioFile && contextMenuItems.length > 0 && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      e.currentTarget.click()
-                    }
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="ms-auto flex-shrink-0"
-                >
+                <div onClick={(e) => e.stopPropagation()} className="ms-auto flex-shrink-0">
                   <ContextMenuDropdown
                     items={contextMenuItems}
                     autoWidth
