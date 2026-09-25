@@ -9,7 +9,13 @@ import type { LibraryItem } from '@/types/api'
  */
 export function getLibraryItemCoverUrl(libraryItemId: string, timestamp?: number | null, raw: boolean = false): string {
   const params = new URLSearchParams()
-  params.set('ts', String(timestamp || Date.now()))
+  // `ts` must be a STABLE, content-derived value. Falling back to Date.now()
+  // produced a brand-new URL on every re-render for items whose updatedAt is 0,
+  // which re-triggered MediaCardCover's "src changed -> imageReady = false"
+  // effect and left covers stuck on the loading placeholder. updated_at is
+  // bumped by the library_items cover trigger whenever cover_path changes, so
+  // 0 is a safe, cacheable fallback.
+  params.set('ts', String(timestamp || 0))
   if (raw) {
     params.set('raw', '1')
   }
