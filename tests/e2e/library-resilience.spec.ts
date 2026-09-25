@@ -208,8 +208,6 @@ test.describe('library resilience', () => {
   })
 
   test('admin edit pen exposes delete with confirm and cancel is non-destructive', async ({ adminPage }) => {
-    test.setTimeout(90_000)
-
     await gotoStable(adminPage, '/library/books/items')
     await expectNoErrorBoundary(adminPage)
 
@@ -225,7 +223,10 @@ test.describe('library resilience', () => {
     })
 
     const editButton = adminPage.getByRole('button', { name: 'Edit', exact: true }).first()
-    await expect(editButton).toBeVisible({ timeout: 15_000 })
+    await expect(
+      editButton,
+      'No "Edit" button rendered on any media card. The edit affordance is gated on userCanUpdate, which UserContext derives from profile.user_type (admin|root) — so this almost always means PLAYWRIGHT_ADMIN_EMAIL is signed in as a non-admin profile. Verify with: select username,user_type from profiles where username = \'<PLAYWRIGHT_ADMIN_EMAIL>\''
+    ).toBeVisible({ timeout: 30_000 })
     await editButton.click()
 
     const deleteButton = adminPage.getByRole('button', { name: 'Delete', exact: true }).first()

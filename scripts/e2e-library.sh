@@ -11,6 +11,20 @@ cd "$REPO_ROOT"
 if [ -f .env.local ]; then set -a; . ./.env.local; set +a; fi
 if [ -f .env ]; then set -a; . ./.env; set +a; fi
 
+# playwright.config reuses whatever already answers on the target URL
+# (reuseExistingServer), so a localhost target can silently bind this gate to
+# an unrelated dev server on :3000 — every route then 404s and the run dies in
+# fixture setup. Pin local runs to a dedicated port. Remote targets (CI preview
+# deployments) are left untouched.
+case "${NEXT_PUBLIC_SITE_URL:-}" in
+  "" | *localhost* | *127.0.0.1*)
+    E2E_PORT="${E2E_PORT:-3100}"
+    export NEXT_PUBLIC_SITE_URL="http://localhost:${E2E_PORT}"
+    export PORT="${E2E_PORT}"
+    echo "🔒 Local e2e pinned to port ${E2E_PORT} (override with E2E_PORT)."
+    ;;
+esac
+
 if [ -z "${PLAYWRIGHT_ADMIN_EMAIL:-}" ] || [ -z "${PLAYWRIGHT_ADMIN_PASSWORD:-}" ]; then
   echo "🚫 e2e gate requires PLAYWRIGHT_ADMIN_EMAIL and PLAYWRIGHT_ADMIN_PASSWORD"
   exit 1
@@ -20,4 +34,15 @@ fi
 PROJECT="${E2E_PROJECT:-chromium}"
 
 echo "🧪 Running library resilience e2e (project=$PROJECT)..."
+
+# Playwright owns the dev server for this run and tears it down on exit. If it
+# is killed mid-write, next dev leaves a truncated .next/dev/types/*.d.ts behind,
+# and next-env.d.ts imports those files directly — so the very next
+# `bun run typecheck` fails on syntax errors that have nothing to do with the
+# source tree. Drop the generated dev types so the gate leaves a clean tree.
+cleanup_dev_types() {
+  rm -rf "$REPO_ROOT/.next/dev"
+}
+trap cleanup_dev_types EXIT
+
 bunx playwright test tests/e2e/library-resilience.spec.ts --project="$PROJECT" --reporter=line

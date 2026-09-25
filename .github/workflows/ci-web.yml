@@ -7,7 +7,7 @@ on:
       - 'src/**'
       - 'public/**'
       - 'package.json'
-      - 'bun.lockb'
+      - 'bun.lock'
       - 'tsconfig.json'
       - 'biome.json'
       - '.oxlintrc.json'
@@ -18,11 +18,14 @@ on:
       - 'src/**'
       - 'public/**'
       - 'package.json'
-      - 'bun.lockb'
+      - 'bun.lock'
       - 'tsconfig.json'
       - 'biome.json'
       - '.oxlintrc.json'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-web-${{ github.ref }}
