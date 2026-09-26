@@ -207,8 +207,10 @@ export default function LibraryItemClient({ libraryItem: initialLibraryItem }: L
                 <ChaptersTable libraryItem={libraryItem as BookLibraryItem} />
               )}
 
-              {/* audio tracks table */}
-              {libraryItem.mediaType === 'book' && (libraryItem.media?.tracks?.length ?? 0) > 0 && (
+              {/* audio tracks table — audioFiles is the API's per-track array;
+                  `tracks` never exists on an API payload, so gating on it hid
+                  the table entirely. */}
+              {libraryItem.mediaType === 'book' && (libraryItem.media?.audioFiles?.length ?? 0) > 0 && (
                 <AudioTracksTable libraryItem={libraryItem as BookLibraryItem} />
               )}
 

@@ -10,6 +10,7 @@ import {
   toggleFinishedAction,
 } from '@/features/player/actions/mediaActions'
 import { useMediaContext } from '@/features/player/contexts/MediaContext'
+import { usePlayLibraryItem } from '@/features/player/hooks/usePlayLibraryItem'
 import type { PlayerHandlerControls } from '@/features/player/hooks/usePlayerHandler'
 import { useGlobalToast } from '@/shared/contexts/ToastContext'
 import { useUser } from '@/shared/contexts/UserContext'
@@ -68,7 +69,7 @@ export function useMediaCardActions({
   const t = useTypeSafeTranslations()
   const { userCanUpdate, userCanDelete, userCanDownload, userIsAdminOrUp } = useUser()
   const { showToast } = useGlobalToast()
-  const { addItemToQueue, removeItemFromQueue, playItem } = useMediaContext()
+  const { addItemToQueue, removeItemFromQueue } = useMediaContext()
   const [processing, setProcessing] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [confirmState, setConfirmState] = useState<ConfirmState | null>(null)
@@ -80,67 +81,23 @@ export function useMediaCardActions({
   const rssFeed = libraryItem.rssFeed ?? null
   const showRssFeedButton = userIsAdminOrUp || rssFeed != null
 
+  const { play: playLibraryItem } = usePlayLibraryItem({
+    libraryItem,
+    episode: episodeForQueue,
+    playerControls,
+  })
+
   useEffect(() => {
     setMediaItemShare(initialShare)
   }, [initialShare])
 
   const handlePlay = useCallback(() => {
-    if (isStreaming(libraryItem.id, episodeForQueue?.id ?? null)) {
-      playerControls.playPause()
-      return
-    }
-
-    startTransition(async () => {
-      try {
-        setProcessing(true)
-
-        // Fetch the full library item via server action
-        const fullLibraryItem = await getExpandedLibraryItemAction(libraryItem.id)
-
-        const queueItems = []
-
-        if (episodeForQueue) {
-          const caption =
-            episodeForQueue.publishedAt != null
-              ? t('LabelPublishedDate', { 0: new Date(episodeForQueue.publishedAt).toLocaleDateString() })
-              : t('LabelUnknownPublishDate')
-
-          queueItems.push({
-            libraryItemId: libraryItem.id,
-            libraryId: libraryItem.libraryId,
-            episodeId: episodeForQueue.id,
-            title: episodeForQueue.title,
-            subtitle: title,
-            caption,
-            duration: episodeForQueue.audioFile?.duration ?? null,
-            coverPath: (media as { coverPath?: string }).coverPath ?? null,
-          })
-        } else {
-          queueItems.push({
-            libraryItemId: libraryItem.id,
-            libraryId: libraryItem.libraryId,
-            episodeId: null,
-            title,
-            subtitle: author || '',
-            caption: '',
-            duration: (media as { duration?: number }).duration ?? null,
-            coverPath: (media as { coverPath?: string }).coverPath ?? null,
-          })
-        }
-
-        playItem({
-          libraryItem: fullLibraryItem,
-          episodeId: episodeForQueue?.id ?? null,
-          queueItems,
-        })
-      } catch (error) {
-        console.error('Failed to load library item for playback', error)
-        showToast(t('ToastFailedToLoadData'), { type: 'error' })
-      } finally {
-        setProcessing(false)
-      }
-    })
-  }, [author, episodeForQueue, isStreaming, libraryItem, media, playItem, playerControls, showToast, t, title])
+    // Shared entry point: toggles pause when the item is already the active
+    // stream, otherwise fetches the expanded item (the shelf projection omits
+    // audio_files) and starts playback. Previously duplicated here and stubbed
+    // out on the detail page's cover overlay.
+    playLibraryItem()
+  }, [playLibraryItem])
 
   const handleReadEBook = useCallback(() => {
     startTransition(async () => {

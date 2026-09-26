@@ -6,6 +6,7 @@ import { useMediaContext } from '@/features/player/contexts/MediaContext'
 import { useUser } from '@/shared/contexts/UserContext'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { mergeClasses } from '@/shared/lib/merge-classes'
+import { isLibraryItemPlayable } from '@/shared/lib/mediaPlayability'
 import AddToCollectionModal from '@/shared/modals/AddToCollectionModal'
 import AddToPlaylistModal from '@/shared/modals/AddToPlaylistModal'
 import MatchModal from '@/shared/modals/MatchModal'
@@ -58,12 +59,13 @@ export default function LibraryItemActionButtons({
   const isBook = libraryItem.mediaType === 'book'
   const bookMedia = !isPodcast ? libraryItem.media : null
   const podcastMedia = isPodcast ? libraryItem.media : null
-  const tracks = isBook ? (bookMedia?.tracks ?? []) : []
   const podcastEpisodes = isPodcast ? (podcastMedia?.episodes ?? []) : []
   const ebookFile = isBook ? bookMedia?.ebookFile : undefined
 
-  const showPlayButton =
-    !libraryItem.isMissing && !libraryItem.isInvalid && (isPodcast ? podcastEpisodes.length > 0 : tracks.length > 0)
+  // Was `bookMedia?.tracks` — a field the API never emits, so this was always
+  // [] and the Play button was hidden for every book on the detail page.
+  // isLibraryItemPlayable() reads audioFiles / numTracks / duration instead.
+  const showPlayButton = isLibraryItemPlayable(libraryItem)
   const isStreaming = isStreamingFn(libraryItem.id, null)
   const isItemPlaying = isPlayingFn(libraryItem.id, null)
   const showQueueBtn = isBook && !!streamLibraryItem && !isStreamingFromDifferentLibrary(libraryItem.libraryId)

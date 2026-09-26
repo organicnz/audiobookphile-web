@@ -3,8 +3,11 @@
 import { Pencil, Play } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useBookCoverAspectRatio } from '@/features/library/contexts/LibraryContext'
+import { useMediaContext } from '@/features/player/contexts/MediaContext'
+import { usePlayLibraryItem } from '@/features/player/hooks/usePlayLibraryItem'
 import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { getLibraryItemCoverUrl, getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
+import { isLibraryItemPlayable } from '@/shared/lib/mediaPlayability'
 import { computeProgress } from '@/shared/lib/mediaProgress'
 import { mergeClasses } from '@/shared/lib/merge-classes'
 import RawCoverPreviewModal from '@/shared/modals/RawCoverPreviewModal'
@@ -33,11 +36,31 @@ export default function LibraryItemCover({
   const coverAspectRatio = useBookCoverAspectRatio()
   const t = useTypeSafeTranslations()
   const [isHovering, setIsHovering] = useState(false)
+  const { playerHandler } = useMediaContext()
 
   const [showPreviewModal, setShowPreviewModal] = useState(false)
 
   const isPodcast = isPodcastLibraryItem(libraryItem)
   const mediaMetadata = libraryItem.media?.metadata
+
+  // The overlay Play button used to render unconditionally and call an empty
+  // handler, so tapping it silently did nothing. Drive both visibility and
+  // behaviour from the same playability check + shared play hook that the
+  // action button bar and the media card use.
+  const isPlayable = isLibraryItemPlayable(libraryItem)
+  const { play: playFromCover, processing: isStartingPlayback } = usePlayLibraryItem({
+    libraryItem,
+    playerControls: playerHandler.controls,
+  })
+
+  const handlePlayFromCover = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      playFromCover()
+    },
+    [playFromCover]
+  )
 
   const title = mediaMetadata?.title || ''
   const author = isPodcast ? mediaMetadata?.author : (mediaMetadata as BookMetadata)?.authorName || ''
@@ -84,6 +107,7 @@ export default function LibraryItemCover({
   )
 
   const showOverlay = isHovering
+  const hasOverlayActions = isPlayable || (canUpdate && !!onEdit)
 
   return (
     <>
@@ -111,44 +135,45 @@ export default function LibraryItemCover({
           />
         }
         overlay={
-          <div
-            className={mergeClasses(
-              'absolute inset-0 z-10 bg-black/40 transition-opacity duration-200',
-              showOverlay
-                ? 'opacity-100'
-                : 'pointer-events-none opacity-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100'
-            )}
-          >
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <IconBtn
-                borderless
-                outlined={false}
-                className="pointer-events-auto transform text-gray-200 duration-200 hover:scale-110 hover:text-white"
-                style={{ fontSize: '4rem' }}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  // Implementation pending
-                }}
-                ariaLabel={t('ButtonPlay')}
-              >
-                <Play size={48} fill="currentColor" />
-              </IconBtn>
-            </div>
+          hasOverlayActions ? (
+            <div
+              className={mergeClasses(
+                'absolute inset-0 z-10 bg-black/40 transition-opacity duration-200',
+                showOverlay
+                  ? 'opacity-100'
+                  : 'pointer-events-none opacity-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100'
+              )}
+            >
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                {isPlayable && (
+                  <IconBtn
+                    borderless
+                    outlined={false}
+                    className="pointer-events-auto transform text-gray-200 duration-200 hover:scale-110 hover:text-white disabled:pointer-events-none disabled:opacity-60"
+                    style={{ fontSize: '4rem' }}
+                    disabled={isStartingPlayback}
+                    onClick={handlePlayFromCover}
+                    ariaLabel={t('ButtonPlay')}
+                  >
+                    <Play size={48} fill="currentColor" />
+                  </IconBtn>
+                )}
+              </div>
 
-            {canUpdate && onEdit && (
-              <MediaOverlayIconBtn
-                position="bottom-end"
-                icon={Pencil}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  onEdit()
-                }}
-                ariaLabel={t('ButtonEdit')}
-              />
-            )}
-          </div>
+              {canUpdate && onEdit && (
+                <MediaOverlayIconBtn
+                  position="bottom-end"
+                  icon={Pencil}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    onEdit()
+                  }}
+                  ariaLabel={t('ButtonEdit')}
+                />
+              )}
+            </div>
+          ) : undefined
         }
       />
 

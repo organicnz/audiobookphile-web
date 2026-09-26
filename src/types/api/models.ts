@@ -451,7 +451,6 @@ export interface BookMedia {
   ebookFile?: EBookFile
   duration?: number
   size?: number
-  tracks?: AudioTrack[]
   numTracks?: number
   numAudioFiles?: number
   numChapters?: number

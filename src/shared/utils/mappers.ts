@@ -347,7 +347,9 @@ function mapBook(book: LibraryItemRow): BookMedia {
     coverPath: book.cover_path ?? undefined,
     tags: (book.tags as string[]) || [],
     audioFiles: audioFiles as AudioFile[],
-    tracks: tracks.filter(Boolean) as AudioTrack[],
+    // `tracks` was dropped here: it duplicated audioFiles, was never emitted by
+    // the API, and every `media.tracks.length > 0` guard built on it silently
+    // read undefined -- which is what hid Play on the item detail page.
     numTracks: tracks.length,
     numAudioFiles: audioFiles.length,
     chapters: (book.chapters as any as Chapter[]) || [],

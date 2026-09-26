@@ -10,6 +10,7 @@ import { useTypeSafeTranslations } from '@/shared/hooks/useTypeSafeTranslations'
 import { getMediaCardModalNavigationContext } from '@/shared/lib/bookshelfNavigationContext'
 import { getPlaceholderCoverUrl } from '@/shared/lib/coverUtils'
 import { computeProgress } from '@/shared/lib/mediaProgress'
+import { isLibraryItemPlayable } from '@/shared/lib/mediaPlayability'
 import AddToCollectionModal from '@/shared/modals/AddToCollectionModal'
 import AddToPlaylistModal from '@/shared/modals/AddToPlaylistModal'
 import LibraryItemEditModal from '@/shared/modals/LibraryItemEditModal'
@@ -263,12 +264,13 @@ function MediaCard(props: MediaCardProps) {
   const isStreamingFromDifferentLib = isStreamingFromDifferentLibrary(libraryItem.libraryId)
   const isQueued = getIsMediaQueued(libraryItem.id, episode?.id ?? null)
 
-  const numTracks = isBookMedia(media) ? (media.tracks ? media.tracks.length : media.numTracks || 0) : 0
+  // Was `media.tracks ? media.tracks.length : media.numTracks` — `tracks` is
+  // never emitted by the API, and on shelf payloads numTracks came back 0
+  // because the projection omitted audio_files. Both now flow through the
+  // shared helper, which also honours a known duration.
+  const showPlayButton = !isSelectionMode && isLibraryItemPlayable(libraryItem, { episode })
 
   const isItemPlaying = isPlaying(libraryItem.id, episode?.id ?? null)
-
-  const showPlayButton =
-    !isSelectionMode && !isMissing && !isInvalid && (numTracks > 0 || !!episode || !!libraryItem.recentEpisode)
 
   const showReadButton = !isSelectionMode && !showPlayButton && isBookMedia(media) && !!media.ebookFormat
 

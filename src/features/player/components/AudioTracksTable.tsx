@@ -74,14 +74,19 @@ export default function AudioTracksTable({
   }, [])
 
   const tracksWithAudioFile = useMemo<TrackWithAudioFile[]>(() => {
-    const tracks = libraryItem.media?.tracks || []
+    // Built from `audioFiles`, the only per-track array the API actually
+    // emits. This table previously mapped `libraryItem.media.tracks`, a field
+    // that does not exist on any API payload, so it always rendered empty.
     const audioFiles = libraryItem.media?.audioFiles || []
 
-    return tracks.map((track) => ({
-      ...track,
-      audioFile: audioFiles.find((af) => af.metadata?.path === track.metadata?.path),
+    return audioFiles.map((audioFile) => ({
+      ...audioFile,
+      title: audioFile.metadata?.filename || `Track ${(audioFile.index ?? 0) + 1}`,
+      contentUrl: audioFile.metadata?.path ?? '',
+      startOffset: 0,
+      audioFile,
     }))
-  }, [libraryItem.media?.tracks, libraryItem.media?.audioFiles])
+  }, [libraryItem.media?.audioFiles])
 
   const columns = useMemo(
     () => [
